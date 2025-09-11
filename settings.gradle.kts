@@ -1,6 +1,6 @@
 rootProject.name = "KMPMaps"
 
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+// enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
@@ -31,4 +31,4 @@ dependencyResolutionManagement {
 
 include(":sample")
 
-include(":library")
+include(":kmpmaps")
