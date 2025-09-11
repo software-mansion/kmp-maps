@@ -47,7 +47,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.kmpmaps.library"
+    namespace = "com.swmansion.kmpmaps"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {

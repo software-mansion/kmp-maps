@@ -1,4 +1,4 @@
-package com.kmpmaps.library
+package com.swmansion.kmpmaps
 
 import androidx.compose.runtime.*
 
