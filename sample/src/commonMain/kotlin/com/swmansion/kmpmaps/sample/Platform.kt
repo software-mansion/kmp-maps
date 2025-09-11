@@ -1,4 +1,4 @@
-package com.swmansion.sample
+package com.swmansion.kmpmaps.sample
 
 interface Platform {
     val name: String

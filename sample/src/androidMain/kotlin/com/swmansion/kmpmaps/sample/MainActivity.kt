@@ -1,4 +1,4 @@
-package com.swmansion.sample
+package com.swmansion.kmpmaps.sample
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

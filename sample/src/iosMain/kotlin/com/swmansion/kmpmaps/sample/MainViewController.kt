@@ -1,4 +1,4 @@
-package com.swmansion.sample
+package com.swmansion.kmpmaps.sample
 
 import androidx.compose.ui.window.ComposeUIViewController
 import platform.UIKit.UIViewController

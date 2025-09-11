@@ -1,4 +1,4 @@
-package com.swmansion.sample
+package com.swmansion.kmpmaps.sample
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
