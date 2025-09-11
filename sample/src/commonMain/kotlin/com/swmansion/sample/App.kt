@@ -10,27 +10,17 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        MapScreen()
-    }
+    MaterialTheme { MapScreen() }
 }
 
 @Composable
 fun MapScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Button(
-                onClick = {}
-            ) {
-                Text("Test")
-            }
+            Button(onClick = {}) { Text("Test") }
         }
     }
 }

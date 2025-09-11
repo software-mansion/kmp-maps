@@ -2,5 +2,4 @@ package com.swmansion.kmpmaps
 
 import androidx.compose.runtime.*
 
-@Composable
-expect fun MapView()
+@Composable expect fun MapView()
