@@ -48,11 +48,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.kmpmaps"
+    namespace = "com.swmansion.sample"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.kmpmaps"
+        applicationId = "com.swmansion.sample"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

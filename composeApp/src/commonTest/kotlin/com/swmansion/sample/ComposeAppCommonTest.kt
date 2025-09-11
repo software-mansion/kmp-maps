@@ -1,4 +1,4 @@
-package com.example.kmpmaps
+package com.swmansion.sample
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

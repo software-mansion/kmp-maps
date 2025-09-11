@@ -1,4 +1,4 @@
-package com.example.kmpmaps
+package com.swmansion.sample
 
 import android.os.Build
 
