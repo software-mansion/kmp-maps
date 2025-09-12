@@ -12,7 +12,7 @@ import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun MapView(
+actual fun Map(
     region: MapRegion?,
     mapType: MapType,
     annotations: List<MapAnnotation>,
@@ -47,9 +47,16 @@ actual fun MapView(
                 MapType.HYBRID -> mkMapView.mapType = MKMapTypeHybrid
             }
 
+            
             region?.let { reg ->
-                val coordinate = CLLocationCoordinate2DMake(reg.latitude, reg.longitude)
-                val span = MKCoordinateSpanMake(reg.latitudeDelta, reg.longitudeDelta)
+                val coordinate = CLLocationCoordinate2DMake(
+                    reg.coordinates.latitude,
+                    reg.coordinates.longitude
+                )
+                val span = MKCoordinateSpanMake(
+                    calculateLatitudeDelta(reg.zoom),
+                    calculateLongitudeDelta(reg.zoom, reg.coordinates.latitude)
+                )
                 val mapRegion = MKCoordinateRegionMake(coordinate, span)
                 mkMapView.setRegion(mapRegion, animated = false)
             }
@@ -58,7 +65,7 @@ actual fun MapView(
                 val pointAnnotation =
                     MKPointAnnotation().apply {
                         setCoordinate(
-                            CLLocationCoordinate2DMake(annotation.latitude, annotation.longitude)
+                            CLLocationCoordinate2DMake(annotation.coordinates.latitude, annotation.coordinates.longitude)
                         )
                         setTitle(annotation.title)
                         setSubtitle(annotation.subtitle)
@@ -86,8 +93,8 @@ actual fun MapView(
                         MKPointAnnotation().apply {
                             setCoordinate(
                                 CLLocationCoordinate2DMake(
-                                    annotation.latitude,
-                                    annotation.longitude,
+                                    annotation.coordinates.latitude,
+                                    annotation.coordinates.longitude,
                                 )
                             )
                             setTitle(annotation.title)

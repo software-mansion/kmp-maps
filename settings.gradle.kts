@@ -28,5 +28,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":sample")
-include(":kmpmaps")
+include(":sample", ":kmpmaps")

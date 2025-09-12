@@ -12,7 +12,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-actual fun MapView(
+actual fun Map(
     region: MapRegion?,
     mapType: MapType,
     annotations: List<MapAnnotation>,
@@ -30,8 +30,8 @@ actual fun MapView(
     val cameraPositionState = rememberCameraPositionState {
         region?.let { reg ->
             position = CameraPosition.fromLatLngZoom(
-                LatLng(reg.latitude, reg.longitude),
-                calculateZoomLevel(reg.latitudeDelta, reg.longitudeDelta)
+                LatLng(reg.coordinates.latitude, reg.coordinates.longitude),
+                reg.zoom
             )
         }
     }
@@ -51,7 +51,10 @@ actual fun MapView(
         annotations.forEach { annotation ->
             Marker(
                 state = MarkerState(
-                    position = LatLng(annotation.latitude, annotation.longitude)
+                    position = LatLng(
+                        annotation.coordinates.latitude,
+                        annotation.coordinates.longitude
+                    )
                 ),
                 title = annotation.title,
                 snippet = annotation.subtitle,
@@ -68,32 +71,14 @@ actual fun MapView(
         val target = position.target
         val zoom = position.zoom
         
-        val latitudeDelta = calculateLatitudeDelta(zoom)
-        val longitudeDelta = calculateLongitudeDelta(zoom, target.latitude)
-        
         val mapRegion = MapRegion(
-            latitude = target.latitude,
-            longitude = target.longitude,
-            latitudeDelta = latitudeDelta,
-            longitudeDelta = longitudeDelta
+            coordinates = Coordinates(
+                latitude = target.latitude,
+                longitude = target.longitude,
+            ),
+            zoom = zoom
         )
         
         onRegionChange(mapRegion)
     }
-}
-
-private fun calculateZoomLevel(latitudeDelta: Double, longitudeDelta: Double): Float {
-    val latZoom = Math.log(360.0 / latitudeDelta) / Math.log(2.0)
-    val lngZoom = Math.log(360.0 / longitudeDelta) / Math.log(2.0)
-    return Math.min(latZoom, lngZoom).toFloat()
-}
-
-private fun calculateLatitudeDelta(zoom: Float): Double {
-    return 360.0 / Math.pow(2.0, zoom.toDouble())
-}
-
-private fun calculateLongitudeDelta(zoom: Float, latitude: Double): Double {
-    val latRad = Math.toRadians(latitude)
-    val lngDelta = 360.0 / Math.pow(2.0, zoom.toDouble())
-    return lngDelta / Math.cos(latRad)
 }

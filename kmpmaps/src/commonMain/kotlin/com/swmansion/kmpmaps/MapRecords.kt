@@ -1,18 +1,18 @@
 package com.swmansion.kmpmaps
 
-data class MapAnnotation(
-    val id: String,
+data class Coordinates(
     val latitude: Double,
     val longitude: Double,
+)
+data class MapAnnotation(
+    val coordinates: Coordinates,
     val title: String? = null,
     val subtitle: String? = null,
 )
 
 data class MapRegion(
-    val latitude: Double,
-    val longitude: Double,
-    val latitudeDelta: Double,
-    val longitudeDelta: Double,
+    val coordinates: Coordinates,
+    val zoom: Float
 )
 
 enum class MapType {

@@ -6,10 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.MapAnnotation
 import com.swmansion.kmpmaps.MapRegion
 import com.swmansion.kmpmaps.MapType
-import com.swmansion.kmpmaps.MapView
+import com.swmansion.kmpmaps.Map
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -25,17 +26,19 @@ fun MapScreen() {
     var currentRegion by remember {
         mutableStateOf(
             MapRegion(
-                latitude = 50.0619,
-                longitude = 19.9373,
-                latitudeDelta = 0.1,
-                longitudeDelta = 0.1,
+                coordinates = Coordinates(
+                    latitude = 50.0619,
+                    longitude = 19.9373,
+                ),
+                zoom = 13f
             )
         )
     }
     val exampleAnnotation = MapAnnotation(
-        id = "1",
-        latitude = 50.0486,
-        longitude = 19.9654,
+        coordinates = Coordinates(
+            latitude = 50.0486,
+            longitude = 19.9654,
+        ),
         title = "Software Mansion",
         subtitle = "React Native Company",
     )
@@ -48,7 +51,7 @@ fun MapScreen() {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        MapView(
+        Map(
             region = currentRegion,
             mapType = selectedMapType,
             annotations = annotations,
