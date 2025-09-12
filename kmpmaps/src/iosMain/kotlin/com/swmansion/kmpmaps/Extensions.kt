@@ -17,22 +17,18 @@ import platform.UIKit.UIView
 @OptIn(ExperimentalForeignApi::class)
 fun MapRegion.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
-    val span = MKCoordinateSpanMake(
-        calculateLatitudeDelta(zoom),
-        calculateLongitudeDelta(zoom, coordinates.latitude),
-    )
+    val span =
+        MKCoordinateSpanMake(
+            calculateLatitudeDelta(zoom),
+            calculateLongitudeDelta(zoom, coordinates.latitude),
+        )
     return MKCoordinateRegionMake(coordinate, span)
 }
 
 @OptIn(ExperimentalForeignApi::class)
 fun MapAnnotation.toMKPointAnnotation(): MKPointAnnotation {
     return MKPointAnnotation().apply {
-        setCoordinate(
-            CLLocationCoordinate2DMake(
-                coordinates.latitude,
-                coordinates.longitude,
-            ),
-        )
+        setCoordinate(CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude))
         setTitle(title)
         setSubtitle(subtitle)
     }
@@ -47,17 +43,18 @@ fun MapType.toMKMapType(): platform.MapKit.MKMapType {
 }
 
 fun MKMapView.setupMapConstraints(parentView: UIView) {
-    val constraints = listOf(
-        topAnchor.constraintEqualToAnchor(parentView.topAnchor),
-        leadingAnchor.constraintEqualToAnchor(parentView.leadingAnchor),
-        trailingAnchor.constraintEqualToAnchor(parentView.trailingAnchor),
-        bottomAnchor.constraintEqualToAnchor(parentView.bottomAnchor),
-    )
+    val constraints =
+        listOf(
+            topAnchor.constraintEqualToAnchor(parentView.topAnchor),
+            leadingAnchor.constraintEqualToAnchor(parentView.leadingAnchor),
+            trailingAnchor.constraintEqualToAnchor(parentView.trailingAnchor),
+            bottomAnchor.constraintEqualToAnchor(parentView.bottomAnchor),
+        )
     NSLayoutConstraint.activateConstraints(constraints)
 }
 
 fun MKMapView.updateAnnotations(annotations: List<MapAnnotation>) {
-    removeAnnotations(annotations)
+    removeAnnotations(this.annotations)
     annotations.forEach { annotation ->
         addAnnotation(annotation.toMKPointAnnotation())
     }

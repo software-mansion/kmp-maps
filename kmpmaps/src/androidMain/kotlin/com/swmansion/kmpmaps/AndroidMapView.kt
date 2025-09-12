@@ -5,9 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
-
 
 @Composable
 actual fun Map(
@@ -21,16 +22,19 @@ actual fun Map(
 ) {
 
     val cameraPositionState = rememberCameraPositionState {
-        region?.let { reg ->
-            position = reg.toCameraPosition()
-        }
+        region?.let { reg -> position = reg.toCameraPosition() }
     }
 
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = createMapProperties(mapType, showUserLocation),
-        uiSettings = createMapUiSettings(showUserLocation),
+        properties =
+            MapProperties(
+                mapType = mapType.toGoogleMapType(),
+                isMyLocationEnabled = showUserLocation,
+            ),
+        uiSettings =
+            MapUiSettings(myLocationButtonEnabled = showUserLocation, zoomControlsEnabled = true),
     ) {
         annotations.forEach { annotation ->
             Marker(

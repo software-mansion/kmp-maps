@@ -13,27 +13,16 @@ fun MapType.toGoogleMapType(): com.google.maps.android.compose.MapType {
 }
 
 fun MapRegion.toCameraPosition(): CameraPosition {
-    return CameraPosition.fromLatLngZoom(
-        LatLng(coordinates.latitude, coordinates.longitude),
-        zoom,
-    )
+    return CameraPosition.fromLatLngZoom(LatLng(coordinates.latitude, coordinates.longitude), zoom)
 }
 
 fun MapAnnotation.toMarkerState(): MarkerState {
-    return MarkerState(
-        position = LatLng(
-            coordinates.latitude,
-            coordinates.longitude,
-        ),
-    )
+    return MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 }
 
 fun CameraPosition.toMapRegion(): MapRegion {
     return MapRegion(
-        coordinates = Coordinates(
-            latitude = target.latitude,
-            longitude = target.longitude,
-        ),
+        coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
     )
 }
