@@ -7,10 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.Map
 import com.swmansion.kmpmaps.MapAnnotation
 import com.swmansion.kmpmaps.MapRegion
 import com.swmansion.kmpmaps.MapType
-import com.swmansion.kmpmaps.Map
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -26,29 +26,18 @@ fun MapScreen() {
     var currentRegion by remember {
         mutableStateOf(
             MapRegion(
-                coordinates = Coordinates(
-                    latitude = 50.0619,
-                    longitude = 19.9373,
-                ),
-                zoom = 13f
+                coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
+                zoom = 13f,
             )
         )
     }
-    val exampleAnnotation = MapAnnotation(
-        coordinates = Coordinates(
-            latitude = 50.0486,
-            longitude = 19.9654,
-        ),
-        title = "Software Mansion",
-        subtitle = "React Native Company",
-    )
-    var annotations by remember {
-        mutableStateOf(
-            listOf(
-                exampleAnnotation
-            )
+    val exampleAnnotation =
+        MapAnnotation(
+            coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
+            title = "Software Mansion",
+            subtitle = "React Native Company",
         )
-    }
+    var annotations by remember { mutableStateOf(listOf(exampleAnnotation)) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Map(
@@ -67,21 +56,17 @@ fun MapScreen() {
         )
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FilterChip(
                         onClick = { selectedMapType = MapType.STANDARD },
@@ -101,7 +86,7 @@ fun MapScreen() {
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FilterChip(
                         onClick = {

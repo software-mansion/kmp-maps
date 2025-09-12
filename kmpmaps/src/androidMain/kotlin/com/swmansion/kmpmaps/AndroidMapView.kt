@@ -21,64 +21,61 @@ actual fun Map(
     onAnnotationPress: (MapAnnotation) -> Unit,
     modifier: Modifier,
 ) {
-    val googleMapType = when (mapType) {
-        MapType.STANDARD -> com.google.maps.android.compose.MapType.NORMAL
-        MapType.SATELLITE -> com.google.maps.android.compose.MapType.SATELLITE
-        MapType.HYBRID -> com.google.maps.android.compose.MapType.HYBRID
-    }
-    
+    val googleMapType =
+        when (mapType) {
+            MapType.STANDARD -> com.google.maps.android.compose.MapType.NORMAL
+            MapType.SATELLITE -> com.google.maps.android.compose.MapType.SATELLITE
+            MapType.HYBRID -> com.google.maps.android.compose.MapType.HYBRID
+        }
+
     val cameraPositionState = rememberCameraPositionState {
         region?.let { reg ->
-            position = CameraPosition.fromLatLngZoom(
-                LatLng(reg.coordinates.latitude, reg.coordinates.longitude),
-                reg.zoom
-            )
+            position =
+                CameraPosition.fromLatLngZoom(
+                    LatLng(reg.coordinates.latitude, reg.coordinates.longitude),
+                    reg.zoom,
+                )
         }
     }
-    
+
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(
-            mapType = googleMapType,
-            isMyLocationEnabled = showUserLocation
-        ),
-        uiSettings = MapUiSettings(
-            myLocationButtonEnabled = showUserLocation,
-            zoomControlsEnabled = true
-        ),
+        properties = MapProperties(mapType = googleMapType, isMyLocationEnabled = showUserLocation),
+        uiSettings =
+            MapUiSettings(myLocationButtonEnabled = showUserLocation, zoomControlsEnabled = true),
     ) {
         annotations.forEach { annotation ->
             Marker(
-                state = MarkerState(
-                    position = LatLng(
-                        annotation.coordinates.latitude,
-                        annotation.coordinates.longitude
-                    )
-                ),
+                state =
+                    MarkerState(
+                        position =
+                            LatLng(
+                                annotation.coordinates.latitude,
+                                annotation.coordinates.longitude,
+                            )
+                    ),
                 title = annotation.title,
                 snippet = annotation.subtitle,
                 onClick = {
                     onAnnotationPress(annotation)
                     true
-                }
+                },
             )
         }
     }
-    
+
     LaunchedEffect(cameraPositionState.position) {
         val position = cameraPositionState.position
         val target = position.target
         val zoom = position.zoom
-        
-        val mapRegion = MapRegion(
-            coordinates = Coordinates(
-                latitude = target.latitude,
-                longitude = target.longitude,
-            ),
-            zoom = zoom
-        )
-        
+
+        val mapRegion =
+            MapRegion(
+                coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
+                zoom = zoom,
+            )
+
         onRegionChange(mapRegion)
     }
 }

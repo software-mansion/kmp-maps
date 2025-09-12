@@ -55,9 +55,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures { buildConfig = true }
 }
 
 dependencies { debugImplementation(compose.uiTooling) }

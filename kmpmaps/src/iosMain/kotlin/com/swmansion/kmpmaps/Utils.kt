@@ -1,8 +1,8 @@
 package com.swmansion.kmpmaps
 
-import platform.posix.pow
 import kotlin.math.PI
 import kotlin.math.cos
+import platform.posix.pow
 
 fun calculateLatitudeDelta(zoom: Float): Double {
     return 360.0 / pow(2.0, zoom.toDouble())

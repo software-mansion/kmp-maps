@@ -1,12 +1,22 @@
 package com.swmansion.kmpmaps
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
-import platform.MapKit.*
+import platform.MapKit.MKCoordinateRegionMake
+import platform.MapKit.MKCoordinateSpanMake
+import platform.MapKit.MKMapTypeHybrid
+import platform.MapKit.MKMapTypeSatellite
+import platform.MapKit.MKMapTypeStandard
+import platform.MapKit.MKMapView
+import platform.MapKit.MKPointAnnotation
 import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIView
 
@@ -47,16 +57,14 @@ actual fun Map(
                 MapType.HYBRID -> mkMapView.mapType = MKMapTypeHybrid
             }
 
-            
             region?.let { reg ->
-                val coordinate = CLLocationCoordinate2DMake(
-                    reg.coordinates.latitude,
-                    reg.coordinates.longitude
-                )
-                val span = MKCoordinateSpanMake(
-                    calculateLatitudeDelta(reg.zoom),
-                    calculateLongitudeDelta(reg.zoom, reg.coordinates.latitude)
-                )
+                val coordinate =
+                    CLLocationCoordinate2DMake(reg.coordinates.latitude, reg.coordinates.longitude)
+                val span =
+                    MKCoordinateSpanMake(
+                        calculateLatitudeDelta(reg.zoom),
+                        calculateLongitudeDelta(reg.zoom, reg.coordinates.latitude),
+                    )
                 val mapRegion = MKCoordinateRegionMake(coordinate, span)
                 mkMapView.setRegion(mapRegion, animated = false)
             }
@@ -65,7 +73,10 @@ actual fun Map(
                 val pointAnnotation =
                     MKPointAnnotation().apply {
                         setCoordinate(
-                            CLLocationCoordinate2DMake(annotation.coordinates.latitude, annotation.coordinates.longitude)
+                            CLLocationCoordinate2DMake(
+                                annotation.coordinates.latitude,
+                                annotation.coordinates.longitude,
+                            )
                         )
                         setTitle(annotation.title)
                         setSubtitle(annotation.subtitle)
