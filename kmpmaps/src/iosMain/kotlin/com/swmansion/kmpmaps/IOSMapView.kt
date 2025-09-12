@@ -9,15 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.CoreLocation.CLLocationCoordinate2DMake
-import platform.MapKit.MKCoordinateRegionMake
-import platform.MapKit.MKCoordinateSpanMake
-import platform.MapKit.MKMapTypeHybrid
-import platform.MapKit.MKMapTypeSatellite
-import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
-import platform.MapKit.MKPointAnnotation
-import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
@@ -37,82 +29,28 @@ actual fun Map(
         factory = {
             val view = UIView()
             val mkMapView = MKMapView()
-            mkMapView.translatesAutoresizingMaskIntoConstraints = false
+
             view.addSubview(mkMapView)
 
-            val constraints =
-                listOf(
-                    mkMapView.topAnchor.constraintEqualToAnchor(view.topAnchor),
-                    mkMapView.leadingAnchor.constraintEqualToAnchor(view.leadingAnchor),
-                    mkMapView.trailingAnchor.constraintEqualToAnchor(view.trailingAnchor),
-                    mkMapView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor),
-                )
-            NSLayoutConstraint.activateConstraints(constraints)
-
+            mkMapView.translatesAutoresizingMaskIntoConstraints = false
+            mkMapView.setupMapConstraints(view)
             mkMapView.showsUserLocation = showUserLocation
-
-            when (mapType) {
-                MapType.STANDARD -> mkMapView.mapType = MKMapTypeStandard
-                MapType.SATELLITE -> mkMapView.mapType = MKMapTypeSatellite
-                MapType.HYBRID -> mkMapView.mapType = MKMapTypeHybrid
-            }
+            mkMapView.mapType = mapType.toMKMapType()
 
             region?.let { reg ->
-                val coordinate =
-                    CLLocationCoordinate2DMake(reg.coordinates.latitude, reg.coordinates.longitude)
-                val span =
-                    MKCoordinateSpanMake(
-                        calculateLatitudeDelta(reg.zoom),
-                        calculateLongitudeDelta(reg.zoom, reg.coordinates.latitude),
-                    )
-                val mapRegion = MKCoordinateRegionMake(coordinate, span)
-                mkMapView.setRegion(mapRegion, animated = false)
+                mkMapView.setRegion(reg.toMKCoordinateRegion(), animated = false)
             }
 
-            annotations.forEach { annotation ->
-                val pointAnnotation =
-                    MKPointAnnotation().apply {
-                        setCoordinate(
-                            CLLocationCoordinate2DMake(
-                                annotation.coordinates.latitude,
-                                annotation.coordinates.longitude,
-                            )
-                        )
-                        setTitle(annotation.title)
-                        setSubtitle(annotation.subtitle)
-                    }
-                mkMapView.addAnnotation(pointAnnotation)
-            }
-
+            mkMapView.updateAnnotations(annotations)
             mapView = mkMapView
             view
         },
         modifier = modifier,
         update = { view ->
             mapView?.let { mkMapView ->
-                when (mapType) {
-                    MapType.STANDARD -> mkMapView.mapType = MKMapTypeStandard
-                    MapType.SATELLITE -> mkMapView.mapType = MKMapTypeSatellite
-                    MapType.HYBRID -> mkMapView.mapType = MKMapTypeHybrid
-                }
-
+                mkMapView.mapType = mapType.toMKMapType()
                 mkMapView.showsUserLocation = showUserLocation
-
-                mkMapView.removeAnnotations(mkMapView.annotations)
-                annotations.forEach { annotation ->
-                    val pointAnnotation =
-                        MKPointAnnotation().apply {
-                            setCoordinate(
-                                CLLocationCoordinate2DMake(
-                                    annotation.coordinates.latitude,
-                                    annotation.coordinates.longitude,
-                                )
-                            )
-                            setTitle(annotation.title)
-                            setSubtitle(annotation.subtitle)
-                        }
-                    mkMapView.addAnnotation(pointAnnotation)
-                }
+                mkMapView.updateAnnotations(annotations)
             }
         },
         properties =
