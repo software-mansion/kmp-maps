@@ -8,9 +8,8 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
+buildscript {
+    dependencies {
+        classpath(libs.secrets.gradle.plugin)
     }
 }

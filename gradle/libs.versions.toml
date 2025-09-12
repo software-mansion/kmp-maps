@@ -14,6 +14,7 @@ junit = "4.13.2"
 kotlin = "2.2.20"
 google-maps = "18.2.0"
 maps-compose = "4.3.0"
+secretsGradlePlugin = "2.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -28,6 +29,7 @@ androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecyc
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 google-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "google-maps" }
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
