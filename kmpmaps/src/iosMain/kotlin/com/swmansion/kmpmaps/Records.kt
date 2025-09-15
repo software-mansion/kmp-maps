@@ -13,10 +13,11 @@ public class AppleMapsAnnotations(
     public var backgroundColor: String? = null,
     public var text: String? = null,
     public var textColor: String? = null,
-) : AppleMapsMarker()
+    coordinates: Coordinates
+) : AppleMapsMarker(coordinates)
 
 public open class AppleMapsMarker(
-    public val coordinates: Coordinates? = null,
+    public val coordinates: Coordinates,
     public val systemImage: String? = null,
     public val tintColor: String? = null,
     public val title: String? = null,
@@ -58,6 +59,7 @@ public data class AppleMapsProperties(
     val pointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val polylineTapThreshold: Float? = null,
     val selectionEnabled: Boolean = false,
+    val showsBuildings: Boolean = true,
 )
 
 public enum class AppleMapsMapStyleElevation {
@@ -155,25 +157,15 @@ public enum class AppleMapPointOfInterestCategory {
 public data class AppleMapsUISettings(
     val compassEnabled: Boolean = true,
     val myLocationButtonEnabled: Boolean = true,
-    val zoomControlsEnabled: Boolean = true,
-    val scaleBarEnabled: Boolean = true,
-    val togglePitchEnabled: Boolean = true,
+    val zoomGesturesEnabled: Boolean = true,
+    val scrollGesturesEnabled: Boolean = true,
+    val rotateGesturesEnabled: Boolean = true,
+    val tiltGesturesEnabled: Boolean = true,
 )
 
-// Legacy data classes for iOS Extensions compatibility
-public data class MapRegion(
-    val coordinates: Coordinates,
-    val zoom: Float,
-)
-
-public data class MapAnnotation(
-    val coordinates: Coordinates,
-    val title: String? = null,
-    val subtitle: String? = null,
-)
 
 public enum class AppleMapsMapType {
     STANDARD,
-    IMAGERY,
+    SATELLITE,
     HYBRID,
 }

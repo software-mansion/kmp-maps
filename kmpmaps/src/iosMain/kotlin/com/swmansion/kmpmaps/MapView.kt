@@ -16,21 +16,19 @@ import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-public fun AppleMap(
+public fun AppleMapsView(
     annotations: List<AppleMapsAnnotations> = emptyList(),
     cameraPosition: CameraPosition? = null,
     circles: List<AppleMapsCircle> = emptyList(),
+    markers: List<AppleMapsMarker> = emptyList(),
     polygons: List<AppleMapsPolygon> = emptyList(),
     polylines: List<AppleMapsPolyline> = emptyList(),
     onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onMarkerClick: ((AppleMapsMarker) -> Unit)? = null,
     onCircleClick: ((AppleMapsCircle) -> Unit)? = null,
+    onMapClick: ((Coordinates) -> Unit)? = null,
+    onMarkerClick: ((AppleMapsMarker) -> Unit)? = null,
     onPolygonClick: ((AppleMapsPolygon) -> Unit)? = null,
     onPolylineClick: ((AppleMapsPolyline) -> Unit)? = null,
-    onMapClick: ((Coordinates) -> Unit)? = null,
-    onMapLongClick: ((Coordinates) -> Unit)? = null,
-    onPOIClick: ((Coordinates) -> Unit)? = null,
-    onMapLoaded: (() -> Unit)? = null,
     properties: AppleMapsProperties = AppleMapsProperties(),
     uiSettings: AppleMapsUISettings = AppleMapsUISettings(),
     modifier: Modifier = Modifier,
@@ -56,60 +54,46 @@ public fun AppleMap(
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.setupMapConstraints(view)
 
-            // Set initial properties
             mkMapView.mapType = properties.mapType.toMKMapType()
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
-            mkMapView.showsBuildings = properties.isBuildingsEnabled
+            mkMapView.showsBuildings = properties.showsBuildings
             mkMapView.showsPointsOfInterest = true
 
-            // Set UI settings
             mkMapView.showsCompass = uiSettings.compassEnabled
-            mkMapView.showsUserLocation = uiSettings.myLocationButtonEnabled
-            mkMapView.isZoomEnabled = uiSettings.zoomGesturesEnabled
-            mkMapView.isScrollEnabled = uiSettings.scrollGesturesEnabled
-            mkMapView.isRotateEnabled = uiSettings.rotateGesturesEnabled
-            mkMapView.isPitchEnabled = uiSettings.tiltGesturesEnabled
+            mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
+            mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
+            mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
+            mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
 
-            // Set initial camera position
             cameraPosition?.let { pos ->
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            // Add markers
             mkMapView.updateAppleMapsAnnotations(annotations)
-
-            // Add circles, polygons, and polylines
-            mkMapView.updateAppleMapsCircles(circles)
-            mkMapView.updateAppleMapsPolygons(polygons)
-            mkMapView.updateAppleMapsPolylines(polylines)
+            mkMapView.updateAppleMapsMarkers(markers)
 
             mapView = mkMapView
-            onMapLoaded?.invoke()
             view
         },
         modifier = modifier.fillMaxSize(),
         update = { view ->
             mapView?.let { mkMapView ->
-                // Update properties
                 mkMapView.mapType = properties.mapType.toMKMapType()
                 mkMapView.showsUserLocation =
                     properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
                 mkMapView.showsTraffic = properties.isTrafficEnabled
-                mkMapView.showsBuildings = properties.isBuildingsEnabled
+                mkMapView.showsBuildings = properties.showsBuildings
 
-                // Update UI settings
                 mkMapView.showsCompass = uiSettings.compassEnabled
-                mkMapView.isZoomEnabled = uiSettings.zoomGesturesEnabled
-                mkMapView.isScrollEnabled = uiSettings.scrollGesturesEnabled
-                mkMapView.isRotateEnabled = uiSettings.rotateGesturesEnabled
-                mkMapView.isPitchEnabled = uiSettings.tiltGesturesEnabled
+                mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
+                mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
+                mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
+                mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
 
-                // Update circles, polygons, and polylines
-                mkMapView.updateAppleMapsCircles(circles)
-                mkMapView.updateAppleMapsPolygons(polygons)
-                mkMapView.updateAppleMapsPolylines(polylines)
+                mkMapView.updateAppleMapsAnnotations(annotations)
+                mkMapView.updateAppleMapsMarkers(markers)
             }
         },
         properties = UIKitInteropProperties(
