@@ -74,6 +74,8 @@ public fun AppleMapsView(
             mkMapView.updateAppleMapsAnnotations(annotations)
             mkMapView.updateAppleMapsMarkers(markers)
 
+            mkMapView.updateAppleMapsCircles(circles)
+
             mapView = mkMapView
             view
         },
@@ -94,6 +96,8 @@ public fun AppleMapsView(
 
                 mkMapView.updateAppleMapsAnnotations(annotations)
                 mkMapView.updateAppleMapsMarkers(markers)
+
+                mkMapView.updateAppleMapsCircles(circles)
             }
         },
         properties = UIKitInteropProperties(

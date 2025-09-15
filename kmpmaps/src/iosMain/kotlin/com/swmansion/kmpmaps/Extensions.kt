@@ -3,6 +3,7 @@ package com.swmansion.kmpmaps
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.MapKit.MKCircle
 import platform.MapKit.MKCoordinateRegion
 import platform.MapKit.MKCoordinateRegionMake
 import platform.MapKit.MKCoordinateSpanMake
@@ -12,6 +13,7 @@ import platform.MapKit.MKMapTypeSatellite
 import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
+import platform.MapKit.addOverlay
 import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIView
 
@@ -80,5 +82,14 @@ public fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
             setTitle(marker.title)
         }
         addAnnotation(mkAnnotation)
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+public fun MKMapView.updateAppleMapsCircles(circles: List<AppleMapsCircle>) {
+    circles.forEach { circle ->
+        val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
+        val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
+        addOverlay(mkCircle)
     }
 }
