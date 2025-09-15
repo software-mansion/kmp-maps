@@ -6,6 +6,7 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
     androidTarget { publishLibraryVariants("release", "debug") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->

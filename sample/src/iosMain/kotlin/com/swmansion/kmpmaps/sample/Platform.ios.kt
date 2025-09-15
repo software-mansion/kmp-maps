@@ -2,9 +2,9 @@ package com.swmansion.kmpmaps.sample
 
 import platform.UIKit.UIDevice
 
-class IOSPlatform : Platform {
+public class IOSPlatform : Platform {
     override val name: String =
         UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
 }
 
-actual fun getPlatform(): Platform = IOSPlatform()
+public actual fun getPlatform(): Platform = IOSPlatform()
