@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps
 
+import platform.UIKit.UIColor
+
 public data class Coordinates(val latitude: Double, val longitude: Double)
 
 public data class CameraPosition(
@@ -27,9 +29,9 @@ public data class AppleMapsCircle(
     val center: Coordinates,
     val radius: Double,
     val width: Float? = 0f,
-    val lineColor: String? = null,
+    val lineColor: UIColor? = null,
     val lineWidth: Float = 0f,
-    val color: String? = null,
+    val color: UIColor? = null,
 )
 
 public data class AppleMapsPolygon(

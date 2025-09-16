@@ -27,29 +27,15 @@ public class SimpleMapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = parseColor(circleStyle?.lineColor ?: "#1111111")
+                renderer.strokeColor = circleStyle?.lineColor ?: UIColor.redColor
                 renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = parseColor(circleStyle?.color ?: "#1111111")
+                renderer.fillColor = circleStyle?.color ?: UIColor.greenColor
                 renderer
             }
 
             is MKPolygon -> MKPolygonRenderer(rendererForOverlay)
             is MKPolyline -> MKPolylineRenderer(rendererForOverlay)
             else -> MKCircleRenderer(rendererForOverlay)
-        }
-    }
-
-    private fun parseColor(colorHex: String): UIColor {
-        return when (colorHex.uppercase()) {
-            "#FF0000", "#FF0000FF" -> UIColor.redColor
-            "#00FF00", "#00FF00FF" -> UIColor.greenColor
-            "#0000FF", "#0000FF00" -> UIColor.blueColor
-            "#FFFF00", "#FFFF00FF" -> UIColor.yellowColor
-            "#FF00FF", "#FF00FFFF" -> UIColor.magentaColor
-            "#00FFFF", "#00FFFFFF" -> UIColor.cyanColor
-            "#FFFFFF", "#FFFFFFFF" -> UIColor.whiteColor
-            "#000000", "#000000FF" -> UIColor.blackColor
-            else -> UIColor.redColor
         }
     }
 }

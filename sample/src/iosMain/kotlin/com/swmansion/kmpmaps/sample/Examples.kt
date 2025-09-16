@@ -6,6 +6,7 @@ import com.swmansion.kmpmaps.AppleMapsMarker
 import com.swmansion.kmpmaps.AppleMapsPolygon
 import com.swmansion.kmpmaps.AppleMapsPolyline
 import com.swmansion.kmpmaps.Coordinates
+import platform.UIKit.UIColor
 
 public val exampleAppleMapsMarkers: List<AppleMapsMarker> = listOf(
     AppleMapsMarker(
@@ -51,23 +52,16 @@ public val exampleAppleMapsCircles: List<AppleMapsCircle> = listOf(
     AppleMapsCircle(
         center = Coordinates(latitude = 50.0486, longitude = 19.9654),
         radius = 500.0,
-        lineColor = "#FF0000",
+        lineColor = UIColor.blueColor,
         lineWidth = 3f,
-        color = "#80FF0000",
+        color = UIColor.cyanColor,
     ),
     AppleMapsCircle(
         center = Coordinates(latitude = 50.0619, longitude = 19.9373),
         radius = 300.0,
-        lineColor = "#00FF00",
+        lineColor = UIColor.brownColor,
         lineWidth = 2f,
-        color = "#8000FF00",
-    ),
-    AppleMapsCircle(
-        center = Coordinates(latitude = 50.0755, longitude = 19.9442),
-        radius = 200.0,
-        lineColor = "#0000FF",
-        lineWidth = 4f,
-        color = "#800000FF",
+        color = UIColor.clearColor,
     ),
 )
 public val exampleAppleMapsPolygons: List<AppleMapsPolygon> = listOf(
