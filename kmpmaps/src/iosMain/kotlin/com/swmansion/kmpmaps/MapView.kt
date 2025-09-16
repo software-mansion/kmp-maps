@@ -11,8 +11,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.MapKit.MKCircle
+import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
+import platform.MapKit.MKMapViewDelegateProtocol
+import platform.MapKit.MKOverlayProtocol
+import platform.MapKit.MKOverlayRenderer
+import platform.MapKit.MKPolygon
+import platform.MapKit.MKPolygonRenderer
+import platform.MapKit.MKPolyline
+import platform.MapKit.MKPolylineRenderer
+import platform.UIKit.UIColor
 import platform.UIKit.UIView
+import platform.darwin.NSObject
+
+@OptIn(ExperimentalForeignApi::class)
+public class SimpleMapDelegate : NSObject(), MKMapViewDelegateProtocol {
+    override fun mapView(
+        mapView: MKMapView,
+        rendererForOverlay: MKOverlayProtocol
+    ): MKOverlayRenderer {
+        return when (rendererForOverlay) {
+            is MKCircle -> {
+                val renderer = MKCircleRenderer(rendererForOverlay)
+                renderer.strokeColor = UIColor.redColor
+                renderer.fillColor = UIColor.redColor.colorWithAlphaComponent(0.3)
+                renderer.lineWidth = 3.0
+                renderer
+            }
+
+            is MKPolygon -> MKPolygonRenderer(rendererForOverlay)
+            is MKPolyline -> MKPolylineRenderer(rendererForOverlay)
+            else -> MKCircleRenderer(rendererForOverlay)
+        }
+    }
+}
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -61,7 +94,6 @@ public fun AppleMapsView(
             mkMapView.showsBuildings = properties.showsBuildings
             mkMapView.showsPointsOfInterest = true
 
-            // Apply POI filtering if configured
             properties.pointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
@@ -76,6 +108,8 @@ public fun AppleMapsView(
             cameraPosition?.let { pos ->
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
+
+            mkMapView.delegate = SimpleMapDelegate()
 
             mkMapView.updateAppleMapsAnnotations(annotations)
             mkMapView.updateAppleMapsMarkers(markers)
@@ -94,7 +128,6 @@ public fun AppleMapsView(
                 mkMapView.showsTraffic = properties.isTrafficEnabled
                 mkMapView.showsBuildings = properties.showsBuildings
 
-                // Apply POI filtering if configured
                 properties.pointsOfInterest?.let { poiCategories ->
                     val poiFilter = poiCategories.toMKPointOfInterestFilter()
                     mkMapView.pointOfInterestFilter = poiFilter
@@ -105,6 +138,8 @@ public fun AppleMapsView(
                 mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
                 mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
+
+                mkMapView.delegate = SimpleMapDelegate()
 
                 mkMapView.updateAppleMapsAnnotations(annotations)
                 mkMapView.updateAppleMapsMarkers(markers)

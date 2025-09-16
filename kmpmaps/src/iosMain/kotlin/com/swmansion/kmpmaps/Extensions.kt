@@ -161,15 +161,6 @@ public fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-public fun MKMapView.updateAppleMapsCircles(circles: List<AppleMapsCircle>) {
-    circles.forEach { circle ->
-        val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
-        val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
-        addOverlay(mkCircle)
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
 public fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory {
     return when (this) {
         AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
@@ -265,3 +256,16 @@ public fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPoi
         else -> null
     }
 }
+
+
+@OptIn(ExperimentalForeignApi::class)
+public fun MKMapView.updateAppleMapsCircles(
+    circles: List<AppleMapsCircle>,
+) {
+    circles.forEach { circle ->
+        val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
+        val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
+        addOverlay(mkCircle)
+    }
+}
+
