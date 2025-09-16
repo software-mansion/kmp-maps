@@ -261,10 +261,12 @@ public fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPoi
 @OptIn(ExperimentalForeignApi::class)
 public fun MKMapView.updateAppleMapsCircles(
     circles: List<AppleMapsCircle>,
+    circleStyles: MutableMap<MKCircle, AppleMapsCircle>
 ) {
     circles.forEach { circle ->
         val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
         val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
+        circleStyles[mkCircle] = circle
         addOverlay(mkCircle)
     }
 }

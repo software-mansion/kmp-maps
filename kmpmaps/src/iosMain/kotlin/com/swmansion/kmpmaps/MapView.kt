@@ -12,40 +12,8 @@ import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.MapKit.MKCircle
-import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
-import platform.MapKit.MKMapViewDelegateProtocol
-import platform.MapKit.MKOverlayProtocol
-import platform.MapKit.MKOverlayRenderer
-import platform.MapKit.MKPolygon
-import platform.MapKit.MKPolygonRenderer
-import platform.MapKit.MKPolyline
-import platform.MapKit.MKPolylineRenderer
-import platform.UIKit.UIColor
 import platform.UIKit.UIView
-import platform.darwin.NSObject
-
-@OptIn(ExperimentalForeignApi::class)
-public class SimpleMapDelegate : NSObject(), MKMapViewDelegateProtocol {
-    override fun mapView(
-        mapView: MKMapView,
-        rendererForOverlay: MKOverlayProtocol
-    ): MKOverlayRenderer {
-        return when (rendererForOverlay) {
-            is MKCircle -> {
-                val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = UIColor.redColor
-                renderer.fillColor = UIColor.redColor.colorWithAlphaComponent(0.3)
-                renderer.lineWidth = 3.0
-                renderer
-            }
-
-            is MKPolygon -> MKPolygonRenderer(rendererForOverlay)
-            is MKPolyline -> MKPolylineRenderer(rendererForOverlay)
-            else -> MKCircleRenderer(rendererForOverlay)
-        }
-    }
-}
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -68,6 +36,7 @@ public fun AppleMapsView(
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
+    val circleStyles = remember { mutableMapOf<MKCircle, AppleMapsCircle>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -109,12 +78,12 @@ public fun AppleMapsView(
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            mkMapView.delegate = SimpleMapDelegate()
+            mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
             mkMapView.updateAppleMapsAnnotations(annotations)
             mkMapView.updateAppleMapsMarkers(markers)
 
-            mkMapView.updateAppleMapsCircles(circles)
+            mkMapView.updateAppleMapsCircles(circles, circleStyles)
 
             mapView = mkMapView
             view
@@ -139,12 +108,12 @@ public fun AppleMapsView(
                 mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
 
-                mkMapView.delegate = SimpleMapDelegate()
+                mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
                 mkMapView.updateAppleMapsAnnotations(annotations)
                 mkMapView.updateAppleMapsMarkers(markers)
 
-                mkMapView.updateAppleMapsCircles(circles)
+                mkMapView.updateAppleMapsCircles(circles, circleStyles)
             }
         },
         properties = UIKitInteropProperties(
