@@ -61,6 +61,12 @@ public fun AppleMapsView(
             mkMapView.showsBuildings = properties.showsBuildings
             mkMapView.showsPointsOfInterest = true
 
+            // Apply POI filtering if configured
+            properties.pointsOfInterest?.let { poiCategories ->
+                val poiFilter = poiCategories.toMKPointOfInterestFilter()
+                mkMapView.pointOfInterestFilter = poiFilter
+            }
+
             mkMapView.showsCompass = uiSettings.compassEnabled
             mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
             mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
@@ -88,6 +94,12 @@ public fun AppleMapsView(
                 mkMapView.showsTraffic = properties.isTrafficEnabled
                 mkMapView.showsBuildings = properties.showsBuildings
 
+                // Apply POI filtering if configured
+                properties.pointsOfInterest?.let { poiCategories ->
+                    val poiFilter = poiCategories.toMKPointOfInterestFilter()
+                    mkMapView.pointOfInterestFilter = poiFilter
+                }
+
                 mkMapView.showsCompass = uiSettings.compassEnabled
                 mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
                 mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
@@ -106,12 +118,9 @@ public fun AppleMapsView(
         ),
     )
 
-    // Handle camera movement
     LaunchedEffect(mapView) {
         mapView?.let { mkMapView ->
-            // Note: Camera movement detection would require implementing MKMapViewDelegate
-            // This is a simplified version - in a full implementation, you'd need to
-            // implement the delegate methods to detect camera changes
+            // todo
         }
     }
 }

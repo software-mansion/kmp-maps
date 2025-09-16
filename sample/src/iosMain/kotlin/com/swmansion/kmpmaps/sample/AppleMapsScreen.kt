@@ -19,7 +19,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.swmansion.kmpmaps.AppleMapPointOfInterestCategory
 import com.swmansion.kmpmaps.AppleMapsMapType
+import com.swmansion.kmpmaps.AppleMapsPointOfInterestCategories
 import com.swmansion.kmpmaps.AppleMapsProperties
 import com.swmansion.kmpmaps.AppleMapsUISettings
 import com.swmansion.kmpmaps.AppleMapsView
@@ -52,6 +54,12 @@ public actual fun MapsScreen() {
                 isMyLocationEnabled = showUserLocation,
                 showsBuildings = true,
                 isTrafficEnabled = false,
+                pointsOfInterest = AppleMapsPointOfInterestCategories(
+                    including = listOf(
+                        AppleMapPointOfInterestCategory.RESTAURANT,
+                        AppleMapPointOfInterestCategory.CAFE,
+                    ),
+                ),
             ),
             uiSettings = AppleMapsUISettings(
                 compassEnabled = true,
@@ -126,7 +134,7 @@ public actual fun MapsScreen() {
                     )
                     FilterChip(
                         onClick = { showUserLocation = !showUserLocation },
-                        label = { Text("Show My Location") },
+                        label = { Text("Show My Location aaa") },
                         selected = showUserLocation,
                     )
                 }
