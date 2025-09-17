@@ -7,6 +7,7 @@ plugins {
 
 kotlin {
     explicitApi()
+    jvmToolchain(17)
     androidTarget { publishLibraryVariants("release", "debug") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -47,7 +48,7 @@ android {
     defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
