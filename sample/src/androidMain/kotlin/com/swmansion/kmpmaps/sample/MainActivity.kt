@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
-public class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -18,6 +18,6 @@ public class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-public fun AppAndroidPreview() {
+fun AppAndroidPreview() {
     App()
 }

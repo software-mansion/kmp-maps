@@ -1,86 +1,70 @@
 package com.swmansion.kmpmaps
 
-import platform.UIKit.UIColor
+data class AppleMapsProperties(
+    override val mapType: MapType = MapType.STANDARD,
+    val elevation: AppleMapsMapStyleElevation? = AppleMapsMapStyleElevation.AUTOMATIC,
+    val emphasis: AppleMapsMapStyleEmphasis? = AppleMapsMapStyleEmphasis.AUTOMATIC,
+    override val isMyLocationEnabled: Boolean = false,
+    override val isTrafficEnabled: Boolean = false,
+    val pointsOfInterest: AppleMapsPointOfInterestCategories? = null,
+    val polylineTapThreshold: Float? = null,
+    val selectionEnabled: Boolean = false,
+    override val showsBuildings: Boolean = true,
+) : MapProperties
 
-public data class Coordinates(val latitude: Double, val longitude: Double)
 
-public data class CameraPosition(
-    val coordinates: Coordinates,
-    val zoom: Float,
-    val bearing: Float = 0f,
-    val tilt: Float = 0f,
-)
+data class AppleMapsUISettings(
+    override val compassEnabled: Boolean = true,
+    override val myLocationButtonEnabled: Boolean = true,
+    override val zoomGesturesEnabled: Boolean = true,
+    override val scrollGesturesEnabled: Boolean = true,
+    override val rotateGesturesEnabled: Boolean = true,
+    override val tiltGesturesEnabled: Boolean = true,
+) : MapUISettings
 
-public class AppleMapsAnnotations(
+
+open class AppleMapsMarker(
+    override val coordinates: Coordinates,
+    val systemImage: String? = null,
+    val tintColor: String? = null,
+    override val title: String? = null,
+) : MapMarker {
+    override val subtitle: String? = null
+}
+
+class AppleMapsAnnotations(
     public var backgroundColor: String? = null,
     public var text: String? = null,
     public var textColor: String? = null,
     coordinates: Coordinates
 ) : AppleMapsMarker(coordinates)
 
-public open class AppleMapsMarker(
-    public val coordinates: Coordinates,
-    public val systemImage: String? = null,
-    public val tintColor: String? = null,
-    public val title: String? = null,
-)
-
-public data class AppleMapsCircle(
-    val center: Coordinates,
-    val radius: Double,
-    val width: Float? = 0f,
-    val lineColor: UIColor? = null,
-    val lineWidth: Float = 0f,
-    val color: UIColor? = null,
-)
-
-public data class AppleMapsPolygon(
-    val coordinates: List<Coordinates>,
-    val lineColor: String? = null,
-    val lineWidth: Float = 0f,
-    val color: String? = null
-)
-
-public data class AppleMapsPolyline(
-    val coordinates: List<Coordinates>,
-    val width: Float? = 0f,
-    val contourStyle: AppleMapsContourStyle? = AppleMapsContourStyle.GEODESIC,
-)
-
-public enum class AppleMapsContourStyle {
-    GEODESIC,
-    STRAIGHT
+fun MapType.toAppleMapsMapType(): AppleMapsMapType {
+    return when (this) {
+        MapType.STANDARD -> AppleMapsMapType.STANDARD
+        MapType.SATELLITE -> AppleMapsMapType.SATELLITE
+        MapType.HYBRID -> AppleMapsMapType.HYBRID
+        MapType.TERRAIN -> AppleMapsMapType.STANDARD // Apple Maps doesn't have terrain
+    }
 }
 
-public data class AppleMapsProperties(
-    val mapType: AppleMapsMapType = AppleMapsMapType.STANDARD,
-    val elevation: AppleMapsMapStyleElevation? = AppleMapsMapStyleElevation.AUTOMATIC,
-    val emphasis: AppleMapsMapStyleEmphasis? = AppleMapsMapStyleEmphasis.AUTOMATIC,
-    val isMyLocationEnabled: Boolean = false,
-    val isTrafficEnabled: Boolean = false,
-    val pointsOfInterest: AppleMapsPointOfInterestCategories? = null,
-    val polylineTapThreshold: Float? = null,
-    val selectionEnabled: Boolean = false,
-    val showsBuildings: Boolean = true,
-)
-
-public enum class AppleMapsMapStyleElevation {
+enum class AppleMapsMapStyleElevation {
     AUTOMATIC,
     FLAT,
     REALISTIC
 }
 
-public enum class AppleMapsMapStyleEmphasis {
+enum class AppleMapsMapStyleEmphasis {
     AUTOMATIC,
     MUTED,
 }
 
-public data class AppleMapsPointOfInterestCategories(
+data class AppleMapsPointOfInterestCategories(
     val excluding: List<AppleMapPointOfInterestCategory>? = emptyList(),
     val including: List<AppleMapPointOfInterestCategory>? = emptyList(),
 )
 
-public enum class AppleMapPointOfInterestCategory {
+enum class AppleMapPointOfInterestCategory {
     AIRPORT,
     AMUSEMENT_PARK,
     ANIMAL_SERVICE,
@@ -156,17 +140,7 @@ public enum class AppleMapPointOfInterestCategory {
     ZOO
 }
 
-public data class AppleMapsUISettings(
-    val compassEnabled: Boolean = true,
-    val myLocationButtonEnabled: Boolean = true,
-    val zoomGesturesEnabled: Boolean = true,
-    val scrollGesturesEnabled: Boolean = true,
-    val rotateGesturesEnabled: Boolean = true,
-    val tiltGesturesEnabled: Boolean = true,
-)
-
-
-public enum class AppleMapsMapType {
+enum class AppleMapsMapType {
     STANDARD,
     SATELLITE,
     HYBRID,

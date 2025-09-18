@@ -11,12 +11,11 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
-import platform.UIKit.UIColor
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
-public class SimpleMapDelegate(
-    private val circleStyles: MutableMap<MKCircle, AppleMapsCircle>
+class SimpleMapDelegate(
+    private val circleStyles: MutableMap<MKCircle, MapCircle>
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     override fun mapView(
@@ -27,9 +26,9 @@ public class SimpleMapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor ?: UIColor.redColor
-                renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = circleStyle?.color ?: UIColor.greenColor
+                renderer.strokeColor = circleStyle?.strokeColor.toUIColor()
+                renderer.lineWidth = (circleStyle?.strokeWidth ?: 1).toDouble()
+                renderer.fillColor = circleStyle?.fillColor.toUIColor()
                 renderer
             }
 

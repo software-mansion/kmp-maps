@@ -1,27 +1,29 @@
 package com.swmansion.kmpmaps
 
-public data class Coordinates(val latitude: Double, val longitude: Double)
+data class GoogleMapsProperties(
+    override val mapType: MapType = MapType.STANDARD,
+    override val isMyLocationEnabled: Boolean = false,
+    override val isTrafficEnabled: Boolean = false,
+    override val showsBuildings: Boolean = true,
+    val isIndoorEnabled: Boolean = true,
+    val minZoomPreference: Float? = null,
+    val maxZoomPreference: Float? = null,
+) : MapProperties
 
-public data class CameraPosition(
-    val coordinates: Coordinates,
-    val zoom: Float,
-    val bearing: Float = 0f,
-    val tilt: Float = 0f,
-)
+data class GoogleMapsUISettings(
+    override val compassEnabled: Boolean = true,
+    override val myLocationButtonEnabled: Boolean = true,
+    val zoomControlsEnabled: Boolean = true,
+    override val scrollGesturesEnabled: Boolean = true,
+    override val zoomGesturesEnabled: Boolean = true,
+    override val tiltGesturesEnabled: Boolean = true,
+    override val rotateGesturesEnabled: Boolean = true,
+) : MapUISettings
 
-public data class GoogleMapsCircle(
-    val center: Coordinates,
-    val radius: Double,
-    val strokeColor: String? = null,
-    val strokeWidth: Float = 0f,
-    val fillColor: String? = null,
-    val visible: Boolean = true,
-)
-
-public data class GoogleMapsMarker(
-    val coordinates: Coordinates,
-    val title: String? = null,
-    val subtitle: String? = null,
+data class GoogleMapsMarker(
+    override val coordinates: Coordinates,
+    override val title: String? = null,
+    override val subtitle: String? = null,
     val description: String? = null,
     val anchor: MapAnchor? = null,
     val draggable: Boolean = false,
@@ -29,46 +31,59 @@ public data class GoogleMapsMarker(
     val rotation: Float = 0f,
     val opacity: Float = 1f,
     val visible: Boolean = true,
-)
+) : MapMarker
 
-public data class GoogleMapsPolygon(
-    val coordinates: List<Coordinates>,
-    val strokeColor: String? = null,
-    val strokeWidth: Float = 0f,
-    val fillColor: String? = null,
+data class GoogleMapsCircle(
+    override val center: Coordinates,
+    override val radius: Double,
+    override val strokeColor: String? = null,
+    override val strokeWidth: Float = 0f,
+    override val fillColor: String? = null,
     val visible: Boolean = true,
-)
+) : MapCircle
 
-public data class GoogleMapsPolyline(
-    val coordinates: List<Coordinates>,
-    val strokeColor: String? = null,
-    val strokeWidth: Float = 0f,
+data class GoogleMapsPolygon(
+    override val coordinates: List<Coordinates>,
+    override val strokeColor: String? = null,
+    override val strokeWidth: Float = 0f,
+    override val fillColor: String? = null,
     val visible: Boolean = true,
-)
+) : MapPolygon {
+    constructor(commonPolygon: CommonMapPolygon) : this(
+        coordinates = commonPolygon.coordinates,
+        strokeColor = commonPolygon.strokeColor,
+        strokeWidth = commonPolygon.strokeWidth,
+        fillColor = commonPolygon.fillColor,
+        visible = commonPolygon.visible
+    )
+}
+data class GoogleMapsPolyline(
+    override val coordinates: List<Coordinates>,
+    override val strokeColor: String? = null,
+    override val strokeWidth: Float = 0f,
+    val visible: Boolean = true,
+) : MapPolyline {
+    constructor(commonPolyline: CommonMapPolyline) : this(
+        coordinates = commonPolyline.coordinates,
+        strokeColor = commonPolyline.strokeColor,
+        strokeWidth = commonPolyline.strokeWidth,
+        visible = commonPolyline.visible
+    )
+}
 
-public data class GoogleMapsProperties(
-    val mapType: GoogleMapsMapType = GoogleMapsMapType.NORMAL,
-    val isMyLocationEnabled: Boolean = false,
-    val isTrafficEnabled: Boolean = false,
-    val isBuildingsEnabled: Boolean = true,
-    val isIndoorEnabled: Boolean = true,
-    val minZoomPreference: Float? = null,
-    val maxZoomPreference: Float? = null,
-)
+data class MapAnchor(val x: Float, val y: Float)
 
-public data class GoogleMapsUISettings(
-    val compassEnabled: Boolean = true,
-    val myLocationButtonEnabled: Boolean = true,
-    val zoomControlsEnabled: Boolean = true,
-    val scrollGesturesEnabled: Boolean = true,
-    val zoomGesturesEnabled: Boolean = true,
-    val tiltGesturesEnabled: Boolean = true,
-    val rotateGesturesEnabled: Boolean = true,
-)
+fun MapType.toGoogleMapsMapType(): com.google.maps.android.compose.MapType {
+    return when (this) {
+        MapType.STANDARD -> com.google.maps.android.compose.MapType.NORMAL
+        MapType.SATELLITE -> com.google.maps.android.compose.MapType.SATELLITE
+        MapType.HYBRID -> com.google.maps.android.compose.MapType.HYBRID
+        MapType.TERRAIN -> com.google.maps.android.compose.MapType.TERRAIN
+    }
+}
 
-public data class MapAnchor(val x: Float, val y: Float)
 
-public enum class GoogleMapsMapType {
+enum class GoogleMapsMapType {
     HYBRID,
     NORMAL,
     SATELLITE,

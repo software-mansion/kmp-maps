@@ -6,6 +6,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-public fun App() {
+fun App() {
     MaterialTheme { MapsScreen() }
 }

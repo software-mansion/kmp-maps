@@ -17,26 +17,60 @@ import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-public fun AppleMapsView(
-    annotations: List<AppleMapsAnnotations> = emptyList(),
-    cameraPosition: CameraPosition? = null,
-    circles: List<AppleMapsCircle> = emptyList(),
-    markers: List<AppleMapsMarker> = emptyList(),
-    polygons: List<AppleMapsPolygon> = emptyList(),
-    polylines: List<AppleMapsPolyline> = emptyList(),
-    onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onCircleClick: ((AppleMapsCircle) -> Unit)? = null,
-    onMapClick: ((Coordinates) -> Unit)? = null,
-    onMarkerClick: ((AppleMapsMarker) -> Unit)? = null,
-    onPolygonClick: ((AppleMapsPolygon) -> Unit)? = null,
-    onPolylineClick: ((AppleMapsPolyline) -> Unit)? = null,
-    properties: AppleMapsProperties = AppleMapsProperties(),
-    uiSettings: AppleMapsUISettings = AppleMapsUISettings(),
-    modifier: Modifier = Modifier,
+actual fun Map(
+    cameraPosition: CameraPosition?,
+    properties: MapProperties,
+    uiSettings: MapUISettings,
+    markers: List<MapMarker>,
+    circles: List<MapCircle>,
+    polygons: List<MapPolygon>,
+    polylines: List<MapPolyline>,
+    onCameraMove: ((CameraPosition) -> Unit)?,
+    onMarkerClick: ((MapMarker) -> Unit)?,
+    onCircleClick: ((MapCircle) -> Unit)?,
+    onPolygonClick: ((MapPolygon) -> Unit)?,
+    onPolylineClick: ((MapPolyline) -> Unit)?,
+    onMapClick: ((Coordinates) -> Unit)?,
+    onMapLongClick: ((Coordinates) -> Unit)?,
+    onPOIClick: ((Coordinates) -> Unit)?,
+    onMapLoaded: (() -> Unit)?,
+    modifier: Modifier,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
-    val circleStyles = remember { mutableMapOf<MKCircle, AppleMapsCircle>() }
+    val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
+
+    val appleMapsProperties = when (properties) {
+        is AppleMapsProperties -> properties
+        else -> AppleMapsProperties(
+            mapType = properties.mapType,
+            isMyLocationEnabled = properties.isMyLocationEnabled,
+            isTrafficEnabled = properties.isTrafficEnabled,
+            showsBuildings = properties.showsBuildings
+        )
+    }
+
+    val appleMapsUISettings = when (uiSettings) {
+        is AppleMapsUISettings -> uiSettings
+        else -> AppleMapsUISettings(
+            compassEnabled = uiSettings.compassEnabled,
+            myLocationButtonEnabled = uiSettings.myLocationButtonEnabled,
+            scrollGesturesEnabled = uiSettings.scrollGesturesEnabled,
+            zoomGesturesEnabled = uiSettings.zoomGesturesEnabled,
+            tiltGesturesEnabled = uiSettings.tiltGesturesEnabled,
+            rotateGesturesEnabled = uiSettings.rotateGesturesEnabled
+        )
+    }
+
+    val appleMapsMarkers = markers.map { marker ->
+        when (marker) {
+            is AppleMapsMarker -> marker
+            else -> AppleMapsMarker(
+                coordinates = marker.coordinates,
+                title = marker.title
+            )
+        }
+    }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -56,23 +90,23 @@ public fun AppleMapsView(
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.setupMapConstraints(view)
 
-            mkMapView.mapType = properties.mapType.toMKMapType()
+            mkMapView.mapType = appleMapsProperties.mapType.toAppleMapsMapType().toMKMapType()
             mkMapView.showsUserLocation =
-                properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
-            mkMapView.showsTraffic = properties.isTrafficEnabled
-            mkMapView.showsBuildings = properties.showsBuildings
+                appleMapsProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+            mkMapView.showsTraffic = appleMapsProperties.isTrafficEnabled
+            mkMapView.showsBuildings = appleMapsProperties.showsBuildings
             mkMapView.showsPointsOfInterest = true
 
-            properties.pointsOfInterest?.let { poiCategories ->
+            appleMapsProperties.pointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
 
-            mkMapView.showsCompass = uiSettings.compassEnabled
-            mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
-            mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
-            mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
-            mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
+            mkMapView.showsCompass = appleMapsUISettings.compassEnabled
+            mkMapView.zoomEnabled = appleMapsUISettings.zoomGesturesEnabled
+            mkMapView.scrollEnabled = appleMapsUISettings.scrollGesturesEnabled
+            mkMapView.rotateEnabled = appleMapsUISettings.rotateGesturesEnabled
+            mkMapView.pitchEnabled = appleMapsUISettings.tiltGesturesEnabled
 
             cameraPosition?.let { pos ->
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
@@ -80,9 +114,7 @@ public fun AppleMapsView(
 
             mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
-            mkMapView.updateAppleMapsAnnotations(annotations)
-            mkMapView.updateAppleMapsMarkers(markers)
-
+            mkMapView.updateAppleMapsMarkers(appleMapsMarkers)
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
 
             mapView = mkMapView
@@ -91,28 +123,26 @@ public fun AppleMapsView(
         modifier = modifier.fillMaxSize(),
         update = { view ->
             mapView?.let { mkMapView ->
-                mkMapView.mapType = properties.mapType.toMKMapType()
+                mkMapView.mapType = appleMapsProperties.mapType.toAppleMapsMapType().toMKMapType()
                 mkMapView.showsUserLocation =
-                    properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
-                mkMapView.showsTraffic = properties.isTrafficEnabled
-                mkMapView.showsBuildings = properties.showsBuildings
+                    appleMapsProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+                mkMapView.showsTraffic = appleMapsProperties.isTrafficEnabled
+                mkMapView.showsBuildings = appleMapsProperties.showsBuildings
 
-                properties.pointsOfInterest?.let { poiCategories ->
+                appleMapsProperties.pointsOfInterest?.let { poiCategories ->
                     val poiFilter = poiCategories.toMKPointOfInterestFilter()
                     mkMapView.pointOfInterestFilter = poiFilter
                 }
 
-                mkMapView.showsCompass = uiSettings.compassEnabled
-                mkMapView.zoomEnabled = uiSettings.zoomGesturesEnabled
-                mkMapView.scrollEnabled = uiSettings.scrollGesturesEnabled
-                mkMapView.rotateEnabled = uiSettings.rotateGesturesEnabled
-                mkMapView.pitchEnabled = uiSettings.tiltGesturesEnabled
+                mkMapView.showsCompass = appleMapsUISettings.compassEnabled
+                mkMapView.zoomEnabled = appleMapsUISettings.zoomGesturesEnabled
+                mkMapView.scrollEnabled = appleMapsUISettings.scrollGesturesEnabled
+                mkMapView.rotateEnabled = appleMapsUISettings.rotateGesturesEnabled
+                mkMapView.pitchEnabled = appleMapsUISettings.tiltGesturesEnabled
 
                 mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
-                mkMapView.updateAppleMapsAnnotations(annotations)
-                mkMapView.updateAppleMapsMarkers(markers)
-
+                mkMapView.updateAppleMapsMarkers(appleMapsMarkers)
                 mkMapView.updateAppleMapsCircles(circles, circleStyles)
             }
         },
@@ -124,7 +154,7 @@ public fun AppleMapsView(
 
     LaunchedEffect(mapView) {
         mapView?.let { mkMapView ->
-            // todo
+            onMapLoaded?.invoke()
         }
     }
 }

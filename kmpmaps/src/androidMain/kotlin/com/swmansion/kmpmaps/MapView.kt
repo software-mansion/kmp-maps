@@ -15,27 +15,83 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-public fun GoogleMap(
-    cameraPosition: CameraPosition? = null,
-    properties: GoogleMapsProperties = GoogleMapsProperties(),
-    uiSettings: GoogleMapsUISettings = GoogleMapsUISettings(),
-    markers: List<GoogleMapsMarker> = emptyList(),
-    circles: List<GoogleMapsCircle> = emptyList(),
-    polygons: List<GoogleMapsPolygon> = emptyList(),
-    polylines: List<GoogleMapsPolyline> = emptyList(),
-    onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onMarkerClick: ((GoogleMapsMarker) -> Unit)? = null,
-    onCircleClick: ((GoogleMapsCircle) -> Unit)? = null,
-    onPolygonClick: ((GoogleMapsPolygon) -> Unit)? = null,
-    onPolylineClick: ((GoogleMapsPolyline) -> Unit)? = null,
-    onMapClick: ((Coordinates) -> Unit)? = null,
-    onMapLongClick: ((Coordinates) -> Unit)? = null,
-    onPOIClick: ((Coordinates) -> Unit)? = null,
-    onMapLoaded: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
+actual fun Map(
+    cameraPosition: CameraPosition?,
+    properties: MapProperties,
+    uiSettings: MapUISettings,
+    markers: List<MapMarker>,
+    circles: List<MapCircle>,
+    polygons: List<MapPolygon>,
+    polylines: List<MapPolyline>,
+    onCameraMove: ((CameraPosition) -> Unit)?,
+    onMarkerClick: ((MapMarker) -> Unit)?,
+    onCircleClick: ((MapCircle) -> Unit)?,
+    onPolygonClick: ((MapPolygon) -> Unit)?,
+    onPolylineClick: ((MapPolyline) -> Unit)?,
+    onMapClick: ((Coordinates) -> Unit)?,
+    onMapLongClick: ((Coordinates) -> Unit)?,
+    onPOIClick: ((Coordinates) -> Unit)?,
+    onMapLoaded: (() -> Unit)?,
+    modifier: Modifier,
 ) {
     val context = LocalContext.current
     val locationPermissionHandler = remember { LocationPermissionHandler(context) }
+
+    val convertedProperties = when (properties) {
+        is GoogleMapsProperties -> properties
+        else -> GoogleMapsProperties(
+            mapType = properties.mapType,
+            isMyLocationEnabled = properties.isMyLocationEnabled,
+            isTrafficEnabled = properties.isTrafficEnabled,
+            showsBuildings = properties.showsBuildings
+        )
+    }
+
+    val convertedUISettings = when (uiSettings) {
+        is GoogleMapsUISettings -> uiSettings
+        else -> GoogleMapsUISettings(
+            compassEnabled = uiSettings.compassEnabled,
+            myLocationButtonEnabled = uiSettings.myLocationButtonEnabled,
+            scrollGesturesEnabled = uiSettings.scrollGesturesEnabled,
+            zoomGesturesEnabled = uiSettings.zoomGesturesEnabled,
+            tiltGesturesEnabled = uiSettings.tiltGesturesEnabled,
+            rotateGesturesEnabled = uiSettings.rotateGesturesEnabled
+        )
+    }
+
+    val convertedMapsMarkers = markers.map { marker ->
+        when (marker) {
+            is GoogleMapsMarker -> marker
+            else -> GoogleMapsMarker(
+                coordinates = marker.coordinates,
+                title = marker.title,
+                subtitle = marker.subtitle
+            )
+        }
+    }
+
+    val convertedPolygons = polygons.map { polygon ->
+        when (polygon) {
+            is GoogleMapsPolygon -> polygon
+            else -> GoogleMapsPolygon(
+                coordinates = polygon.coordinates,
+                strokeColor = polygon.strokeColor,
+                strokeWidth = polygon.strokeWidth,
+                fillColor = polygon.fillColor
+            )
+        }
+    }
+
+    val convertedPolylines = polylines.map { polyline ->
+        when (polyline) {
+            is GoogleMapsPolyline -> polyline
+            else -> GoogleMapsPolyline(
+                coordinates = polyline.coordinates,
+                strokeColor = polyline.strokeColor,
+                strokeWidth = polyline.strokeWidth
+            )
+        }
+    }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -44,6 +100,7 @@ public fun GoogleMap(
             }
         }
     }
+    
     val cameraPositionState = rememberCameraPositionState {
         cameraPosition?.let { pos -> position = pos.toGoogleCameraPosition() }
     }
@@ -51,10 +108,10 @@ public fun GoogleMap(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = properties.copy(
-            isMyLocationEnabled = properties.isMyLocationEnabled && locationPermissionHandler.hasPermission(),
-        ).toGoogleMapProperties(),
-        uiSettings = uiSettings.toGoogleMapUiSettings(),
+        properties = convertedProperties.copy(
+            isMyLocationEnabled = convertedProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission(),
+        ).toComposeMapProperties(),
+        uiSettings = convertedUISettings.toComposeMapUiSettings(),
         onMapClick = onMapClick?.let { callback ->
             { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
         },
@@ -73,9 +130,9 @@ public fun GoogleMap(
         },
         onMapLoaded = onMapLoaded,
     ) {
-        markers.forEach { marker ->
+        convertedMapsMarkers.forEach { marker ->
             Marker(
-                state = marker.toGoogleMarkerState(),
+                state = marker.toComposeMarkerState(),
                 title = marker.title,
                 snippet = marker.subtitle,
                 onClick = {
@@ -102,7 +159,7 @@ public fun GoogleMap(
             )
         }
 
-        polygons.forEach { polygon ->
+        convertedPolygons.forEach { polygon ->
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
                 strokeColor = Color(
@@ -118,7 +175,7 @@ public fun GoogleMap(
             )
         }
 
-        polylines.forEach { polyline ->
+        convertedPolylines.forEach { polyline ->
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
                 color = Color(

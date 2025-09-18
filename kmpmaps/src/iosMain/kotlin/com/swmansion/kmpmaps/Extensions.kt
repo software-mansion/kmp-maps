@@ -90,11 +90,12 @@ import platform.MapKit.MKPointOfInterestCategoryZoo
 import platform.MapKit.MKPointOfInterestFilter
 import platform.MapKit.addOverlay
 import platform.UIKit.NSLayoutConstraint
+import platform.UIKit.UIColor
 import platform.UIKit.UIView
 
 
 @OptIn(ExperimentalForeignApi::class)
-public fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
+fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
     val span =
         MKCoordinateSpanMake(
@@ -104,24 +105,15 @@ public fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     return MKCoordinateRegionMake(coordinate, span)
 }
 
-@OptIn(ExperimentalForeignApi::class)
-public fun AppleMapsAnnotations.toMKPointAnnotation(): MKPointAnnotation {
-    return MKPointAnnotation().apply {
-        setCoordinate(CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude))
-        setTitle(title)
-        setSubtitle(subtitle)
-    }
-}
-
-public fun AppleMapsMapType.toMKMapType(): MKMapType {
-    return when (this) {
+fun AppleMapsMapType.toMKMapType(): MKMapType =
+    when (this) {
         AppleMapsMapType.STANDARD -> MKMapTypeStandard
         AppleMapsMapType.SATELLITE -> MKMapTypeSatellite
         AppleMapsMapType.HYBRID -> MKMapTypeHybrid
     }
-}
 
-public fun MKMapView.setupMapConstraints(parentView: UIView) {
+
+fun MKMapView.setupMapConstraints(parentView: UIView) {
     val constraints =
         listOf(
             topAnchor.constraintEqualToAnchor(parentView.topAnchor),
@@ -133,21 +125,7 @@ public fun MKMapView.setupMapConstraints(parentView: UIView) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-public fun MKMapView.updateAppleMapsAnnotations(annotations: List<AppleMapsAnnotations>) {
-    removeAnnotations(this.annotations)
-    annotations.forEach { annotation ->
-        val mkAnnotation = MKPointAnnotation().apply {
-            annotation.coordinates.let { coords ->
-                setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
-            }
-            setTitle(annotation.title)
-        }
-        addAnnotation(mkAnnotation)
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-public fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
+fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
     removeAnnotations(this.annotations)
     markers.forEach { marker ->
         val mkAnnotation = MKPointAnnotation().apply {
@@ -161,8 +139,7 @@ public fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-public fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory {
-    return when (this) {
+fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
         AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
         AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
         AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
@@ -237,10 +214,9 @@ public fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPoin
         AppleMapPointOfInterestCategory.WINERY -> MKPointOfInterestCategoryWinery
         AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
     }
-}
 
 @OptIn(ExperimentalForeignApi::class)
-public fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
+fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
     val includingCategories = including?.map { it.toMKPointOfInterestCategory() }
     val excludingCategories = excluding?.map { it.toMKPointOfInterestCategory() }
 
@@ -259,15 +235,55 @@ public fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPoi
 
 
 @OptIn(ExperimentalForeignApi::class)
-public fun MKMapView.updateAppleMapsCircles(
-    circles: List<AppleMapsCircle>,
-    circleStyles: MutableMap<MKCircle, AppleMapsCircle>
+fun MKMapView.updateAppleMapsCircles(
+    circles: List<MapCircle>,
+    circleStyles: MutableMap<MKCircle, MapCircle>
 ) {
     circles.forEach { circle ->
         val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
         val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
         circleStyles[mkCircle] = circle
         addOverlay(mkCircle)
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+fun String?.toUIColor(): UIColor? {
+    return when {
+        this == null -> null
+        this.startsWith("#") -> {
+            try {
+                val cleanHex = this.removePrefix("#")
+                val colorValue = when (cleanHex.length) {
+                    6 -> cleanHex + "FF"
+                    8 -> cleanHex
+                    else -> "000000FF"
+                }
+                val color = colorValue.toLong(16)
+                UIColor.colorWithRed(
+                    red = ((color shr 16) and 0xFF) / 255.0,
+                    green = ((color shr 8) and 0xFF) / 255.0,
+                    blue = (color and 0xFF) / 255.0,
+                    alpha = ((color shr 24) and 0xFF) / 255.0
+                )
+            } catch (_: Exception) {
+                UIColor.redColor
+            }
+        }
+        else -> {
+            when (this.lowercase()) {
+                "red" -> UIColor.redColor
+                "blue" -> UIColor.blueColor
+                "green" -> UIColor.greenColor
+                "black" -> UIColor.blackColor
+                "white" -> UIColor.whiteColor
+                "yellow" -> UIColor.yellowColor
+                "orange" -> UIColor.orangeColor
+                "purple" -> UIColor.purpleColor
+                "gray", "grey" -> UIColor.grayColor
+                else -> UIColor.redColor
+            }
+        }
     }
 }
 
