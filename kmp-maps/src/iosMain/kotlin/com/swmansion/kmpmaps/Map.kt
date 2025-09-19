@@ -14,14 +14,14 @@ import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun Map(
+public actual fun Map(
+    modifier: Modifier,
     region: MapRegion?,
     mapType: MapType,
     annotations: List<MapAnnotation>,
     showUserLocation: Boolean,
     onRegionChange: (MapRegion) -> Unit,
     onAnnotationPress: (MapAnnotation) -> Unit,
-    modifier: Modifier,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
 
