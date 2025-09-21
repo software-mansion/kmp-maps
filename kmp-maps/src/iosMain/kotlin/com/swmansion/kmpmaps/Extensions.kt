@@ -15,7 +15,7 @@ import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
-fun MapRegion.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
+internal fun MapRegion.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
     val span =
         MKCoordinateSpanMake(
@@ -26,7 +26,7 @@ fun MapRegion.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun MapAnnotation.toMKPointAnnotation(): MKPointAnnotation {
+internal fun MapAnnotation.toMKPointAnnotation(): MKPointAnnotation {
     return MKPointAnnotation().apply {
         setCoordinate(CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude))
         setTitle(title)
@@ -34,7 +34,7 @@ fun MapAnnotation.toMKPointAnnotation(): MKPointAnnotation {
     }
 }
 
-fun MapType.toMKMapType(): platform.MapKit.MKMapType {
+internal fun MapType.toMKMapType(): platform.MapKit.MKMapType {
     return when (this) {
         MapType.STANDARD -> MKMapTypeStandard
         MapType.SATELLITE -> MKMapTypeSatellite
@@ -42,7 +42,7 @@ fun MapType.toMKMapType(): platform.MapKit.MKMapType {
     }
 }
 
-fun MKMapView.setupMapConstraints(parentView: UIView) {
+internal fun MKMapView.setupMapConstraints(parentView: UIView) {
     val constraints =
         listOf(
             topAnchor.constraintEqualToAnchor(parentView.topAnchor),
@@ -53,7 +53,7 @@ fun MKMapView.setupMapConstraints(parentView: UIView) {
     NSLayoutConstraint.activateConstraints(constraints)
 }
 
-fun MKMapView.updateAnnotations(annotations: List<MapAnnotation>) {
+internal fun MKMapView.updateAnnotations(annotations: List<MapAnnotation>) {
     removeAnnotations(this.annotations)
     annotations.forEach { annotation ->
         addAnnotation(annotation.toMKPointAnnotation())

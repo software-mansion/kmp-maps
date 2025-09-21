@@ -1,4 +1,6 @@
-rootProject.name = "KMPMaps"
+@file:Suppress("UnstableApiUsage")
+
+rootProject.name = "kmp-maps"
 
 pluginManagement {
     repositories {
@@ -28,4 +30,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":sample", ":kmpmaps")
+include(":kmp-maps", ":sample")

@@ -11,14 +11,14 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-actual fun Map(
+public actual fun Map(
+    modifier: Modifier,
     region: MapRegion?,
     mapType: MapType,
     annotations: List<MapAnnotation>,
     showUserLocation: Boolean,
     onRegionChange: (MapRegion) -> Unit,
     onAnnotationPress: (MapAnnotation) -> Unit,
-    modifier: Modifier,
 ) {
 
     val cameraPositionState = rememberCameraPositionState {

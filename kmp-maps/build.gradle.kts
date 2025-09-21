@@ -1,12 +1,12 @@
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.jetBrains.compose)
+    alias(libs.plugins.jetBrains.kotlin.multiplatform)
+    alias(libs.plugins.jetBrains.kotlin.plugin.compose)
 }
 
 kotlin {
-    androidTarget { publishLibraryVariants("release", "debug") }
+    androidTarget { publishLibraryVariants("release") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -17,26 +17,28 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
+            implementation(compose.components.resources)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.runtime)
             implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
+            implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
         }
 
         androidMain.dependencies {
-            implementation(libs.google.maps)
-            implementation(libs.maps.compose)
+            implementation(libs.google.android.gms.playServicesMaps)
+            implementation(libs.google.maps.android.mapsCompose)
         }
 
         iosMain.dependencies {
             // iOS dependencies will be handled through CocoaPods or manual framework linking
         }
 
-        commonTest.dependencies { implementation(libs.kotlin.test) }
+        commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
     }
+
+    explicitApi()
 }
 
 android {
