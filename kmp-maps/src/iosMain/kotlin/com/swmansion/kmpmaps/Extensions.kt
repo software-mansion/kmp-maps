@@ -55,7 +55,5 @@ internal fun MKMapView.setupMapConstraints(parentView: UIView) {
 
 internal fun MKMapView.updateAnnotations(annotations: List<MapAnnotation>) {
     removeAnnotations(this.annotations)
-    annotations.forEach { annotation ->
-        addAnnotation(annotation.toMKPointAnnotation())
-    }
+    annotations.forEach { annotation -> addAnnotation(annotation.toMKPointAnnotation()) }
 }

@@ -37,9 +37,7 @@ public actual fun Map(
             mkMapView.showsUserLocation = showUserLocation
             mkMapView.mapType = mapType.toMKMapType()
 
-            region?.let { reg ->
-                mkMapView.setRegion(reg.toMKCoordinateRegion(), animated = false)
-            }
+            region?.let { reg -> mkMapView.setRegion(reg.toMKCoordinateRegion(), animated = false) }
 
             mkMapView.updateAnnotations(annotations)
             mapView = mkMapView
