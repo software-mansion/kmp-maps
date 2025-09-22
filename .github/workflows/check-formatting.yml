@@ -1,6 +1,9 @@
 name: Check formatting
 on:
+  merge_group:
+  pull_request:
   push:
+    branches: [main]
 jobs:
   check-formatting:
     runs-on: ubuntu-latest
