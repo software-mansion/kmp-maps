@@ -41,44 +41,25 @@ val exampleCircles = listOf(
 val examplePolygons = listOf(
     MapPolygon(
         coordinates = listOf(
-            Coordinates(latitude = 50.0619, longitude = 19.9373),
-            Coordinates(latitude = 50.0629, longitude = 19.9383),
-            Coordinates(latitude = 50.0609, longitude = 19.9393),
-            Coordinates(latitude = 50.0619, longitude = 19.9373)
-        ),
-        lineColor = "#00FF00",
-        lineWidth = 2f,
-        color = "#00FF0020"
-    ),
-    MapPolygon(
-        coordinates = listOf(
-            Coordinates(latitude = 50.0647, longitude = 19.9450),
-            Coordinates(latitude = 50.0657, longitude = 19.9460),
-            Coordinates(latitude = 50.0637, longitude = 19.9470),
-            Coordinates(latitude = 50.0647, longitude = 19.9450)
+            Coordinates(latitude = 50.0600, longitude = 19.9300),
+            Coordinates(latitude = 50.0650, longitude = 19.9300),
+            Coordinates(latitude = 50.0650, longitude = 19.9400),
+            Coordinates(latitude = 50.0600, longitude = 19.9400),
         ),
         lineColor = "#FF00FF",
-        lineWidth = 2f,
-        color = "#FF00FF20"
+        lineWidth = 3f,
+        color = "#80FF00FF",
     )
 )
 
 val examplePolylines = listOf(
     MapPolyline(
         coordinates = listOf(
-            Coordinates(latitude = 50.0619, longitude = 19.9373),
+            Coordinates(latitude = 50.0486, longitude = 19.9654),
             Coordinates(latitude = 50.0647, longitude = 19.9450),
-            Coordinates(latitude = 50.0596, longitude = 19.9316)
+            Coordinates(latitude = 50.0596, longitude = 19.9316),
         ),
         lineColor = "#FFA500",
-        width = 4f
+        width = 10f
     ),
-    MapPolyline(
-        coordinates = listOf(
-            Coordinates(latitude = 50.0600, longitude = 19.9300),
-            Coordinates(latitude = 50.0660, longitude = 19.9500)
-        ),
-        lineColor = "#800080",
-        width = 3f
-    )
 )

@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
-import com.swmansion.kmpmaps.MapPolygon
-import com.swmansion.kmpmaps.MapPolyline
 import com.swmansion.kmpmaps.MapType
 
 @Composable
@@ -40,8 +38,8 @@ fun MapsScreen() {
     }
     var markers by remember { mutableStateOf(exampleMarkers) }
     var circles by remember { mutableStateOf(exampleCircles) }
-    var polygons by remember { mutableStateOf<List<MapPolygon>>(emptyList()) }
-    var polylines by remember { mutableStateOf<List<MapPolyline>>(emptyList()) }
+    var polygons by remember { mutableStateOf(examplePolygons) }
+    var polylines by remember { mutableStateOf(examplePolylines) }
     var showAllComponents by remember { mutableStateOf(true) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -114,7 +112,7 @@ fun MapsScreen() {
                     )
                     FilterChip(
                         onClick = { showUserLocation = !showUserLocation },
-                        label = { Text("Show My Location aaa") },
+                        label = { Text("Show My Location") },
                         selected = showUserLocation,
                     )
                 }

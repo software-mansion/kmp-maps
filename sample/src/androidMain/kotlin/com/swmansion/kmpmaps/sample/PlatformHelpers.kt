@@ -15,6 +15,8 @@ actual fun createMapProperties(
         selectionEnabled = true,
         androidIsBuildingEnabled = true,
         androidIsIndoorEnabled = true,
+        androidMinZoomPreference = 3f,
+        androidMaxZoomPreference = 21f,
     )
 }
 
@@ -24,5 +26,6 @@ actual fun createMapUISettings(
     return MapUISettings(
         compassEnabled = true,
         myLocationButtonEnabled = showUserLocation,
+        scaleBarEnabled = true,
     )
 }
