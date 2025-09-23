@@ -2,8 +2,6 @@ package com.swmansion.kmpmaps.sample
 
 import com.swmansion.kmpmaps.AppleMapPointOfInterestCategory
 import com.swmansion.kmpmaps.AppleMapsPointOfInterestCategories
-import com.swmansion.kmpmaps.AppleMapsProperties
-import com.swmansion.kmpmaps.AppleMapsUISettings
 import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapType
 import com.swmansion.kmpmaps.MapUISettings
@@ -11,12 +9,11 @@ import com.swmansion.kmpmaps.MapUISettings
 actual fun createMapProperties(
     mapType: MapType,
     showUserLocation: Boolean
-): MapProperties = AppleMapsProperties(
+): MapProperties = MapProperties(
     mapType = mapType,
     isMyLocationEnabled = showUserLocation,
     isTrafficEnabled = false,
-    showsBuildings = true,
-    pointsOfInterest = AppleMapsPointOfInterestCategories(
+    applePointsOfInterest = AppleMapsPointOfInterestCategories(
         including = listOf(
             AppleMapPointOfInterestCategory.RESTAURANT
         ),
@@ -26,12 +23,8 @@ actual fun createMapProperties(
 actual fun createMapUISettings(
     showUserLocation: Boolean
 ): MapUISettings {
-    return AppleMapsUISettings(
+    return MapUISettings(
         compassEnabled = true,
         myLocationButtonEnabled = showUserLocation,
-        zoomGesturesEnabled = true,
-        scrollGesturesEnabled = true,
-        rotateGesturesEnabled = true,
-        tiltGesturesEnabled = true
     )
 }

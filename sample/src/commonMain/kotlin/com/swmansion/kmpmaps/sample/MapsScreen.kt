@@ -22,15 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
-import com.swmansion.kmpmaps.MapCircle
-import com.swmansion.kmpmaps.MapMarker
 import com.swmansion.kmpmaps.MapPolygon
 import com.swmansion.kmpmaps.MapPolyline
 import com.swmansion.kmpmaps.MapType
 
 @Composable
 fun MapsScreen() {
-    var selectedMapType by remember { mutableStateOf(MapType.STANDARD) }
+    var selectedMapType by remember { mutableStateOf(MapType.NORMAL) }
     var showUserLocation by remember { mutableStateOf(false) }
     var currentCameraPosition by remember {
         mutableStateOf(
@@ -40,11 +38,12 @@ fun MapsScreen() {
             ),
         )
     }
-    var markers by remember { mutableStateOf<List<MapMarker>>(exampleMarkers) }
-    var circles by remember { mutableStateOf<List<MapCircle>>(exampleCircles) }
+    var markers by remember { mutableStateOf(exampleMarkers) }
+    var circles by remember { mutableStateOf(exampleCircles) }
     var polygons by remember { mutableStateOf<List<MapPolygon>>(emptyList()) }
     var polylines by remember { mutableStateOf<List<MapPolyline>>(emptyList()) }
     var showAllComponents by remember { mutableStateOf(true) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Map(
             cameraPosition = currentCameraPosition,
@@ -85,9 +84,9 @@ fun MapsScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FilterChip(
-                        onClick = { selectedMapType = MapType.STANDARD },
+                        onClick = { selectedMapType = MapType.NORMAL },
                         label = { Text("Normal") },
-                        selected = selectedMapType == MapType.STANDARD,
+                        selected = selectedMapType == MapType.NORMAL,
                     )
                     FilterChip(
                         onClick = { selectedMapType = MapType.SATELLITE },

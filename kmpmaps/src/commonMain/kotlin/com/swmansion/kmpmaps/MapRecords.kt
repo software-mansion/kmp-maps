@@ -9,3 +9,7 @@ data class GoogleMapsAnchor(
     var x: Float,
     var y: Float
 )
+
+data class GoogleMapsMapStyleOptions(
+    val json: String?
+)

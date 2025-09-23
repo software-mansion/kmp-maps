@@ -37,62 +37,6 @@ actual fun Map(
     val context = LocalContext.current
     val locationPermissionHandler = remember { LocationPermissionHandler(context) }
 
-    val convertedProperties = when (properties) {
-        is GoogleMapsProperties -> properties
-        else -> GoogleMapsProperties(
-            mapType = properties.mapType,
-            isMyLocationEnabled = properties.isMyLocationEnabled,
-            isTrafficEnabled = properties.isTrafficEnabled,
-            showsBuildings = properties.showsBuildings
-        )
-    }
-
-    val convertedUISettings = when (uiSettings) {
-        is GoogleMapsUISettings -> uiSettings
-        else -> GoogleMapsUISettings(
-            compassEnabled = uiSettings.compassEnabled,
-            myLocationButtonEnabled = uiSettings.myLocationButtonEnabled,
-            scrollGesturesEnabled = uiSettings.scrollGesturesEnabled,
-            zoomGesturesEnabled = uiSettings.zoomGesturesEnabled,
-            tiltGesturesEnabled = uiSettings.tiltGesturesEnabled,
-            rotateGesturesEnabled = uiSettings.rotateGesturesEnabled
-        )
-    }
-
-    val convertedMapsMarkers = markers.map { marker ->
-        when (marker) {
-            is GoogleMapsMarker -> marker
-            else -> GoogleMapsMarker(
-                coordinates = marker.coordinates,
-                title = marker.title,
-                subtitle = marker.subtitle
-            )
-        }
-    }
-
-    val convertedPolygons = polygons.map { polygon ->
-        when (polygon) {
-            is GoogleMapsPolygon -> polygon
-            else -> GoogleMapsPolygon(
-                coordinates = polygon.coordinates,
-                strokeColor = polygon.strokeColor,
-                strokeWidth = polygon.strokeWidth,
-                fillColor = polygon.fillColor
-            )
-        }
-    }
-
-    val convertedPolylines = polylines.map { polyline ->
-        when (polyline) {
-            is GoogleMapsPolyline -> polyline
-            else -> GoogleMapsPolyline(
-                coordinates = polyline.coordinates,
-                strokeColor = polyline.strokeColor,
-                strokeWidth = polyline.strokeWidth
-            )
-        }
-    }
-
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
             if (!locationPermissionHandler.checkPermission()) {
@@ -108,10 +52,8 @@ actual fun Map(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = convertedProperties.copy(
-            isMyLocationEnabled = convertedProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission(),
-        ).toComposeMapProperties(),
-        uiSettings = convertedUISettings.toComposeMapUiSettings(),
+        properties = properties.toGoogleMapsProperties(),
+        uiSettings = uiSettings.toGoogleMapsUiSettings(),
         onMapClick = onMapClick?.let { callback ->
             { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
         },
@@ -130,11 +72,15 @@ actual fun Map(
         },
         onMapLoaded = onMapLoaded,
     ) {
-        convertedMapsMarkers.forEach { marker ->
+        markers.forEach { marker ->
             Marker(
-                state = marker.toComposeMarkerState(),
+                state = marker.toGoogleMapsMarkerState(),
                 title = marker.title,
-                snippet = marker.subtitle,
+                contentDescription = marker.subtitle,
+                anchor = marker.androidAnchor.toOffset(),
+                draggable = marker.androidDraggable,
+                snippet = marker.androidSnippet,
+                zIndex = marker.androidZIndex ?: 0.0f,
                 onClick = {
                     onMarkerClick?.invoke(marker)
                     onMarkerClick == null
@@ -145,13 +91,14 @@ actual fun Map(
         circles.forEach { circle ->
             Circle(
                 center = circle.center.toGoogleLatLng(),
-                radius = circle.radius,
+                radius = circle.radius.toDouble(),
                 strokeColor = Color(
-                    circle.strokeColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
+                    circle.lineColor?.toGoogleColor()
+                        ?: android.graphics.Color.BLACK,
                 ),
-                strokeWidth = circle.strokeWidth,
+                strokeWidth = circle.lineWidth ?: 10f,
                 fillColor = Color(
-                    circle.fillColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
+                    circle.color?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
                 ),
                 onClick = onCircleClick?.let { callback ->
                     { callback(circle) }
@@ -159,15 +106,15 @@ actual fun Map(
             )
         }
 
-        convertedPolygons.forEach { polygon ->
+        polygons.forEach { polygon ->
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
                 strokeColor = Color(
-                    polygon.strokeColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
+                    polygon.lineColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
                 ),
-                strokeWidth = polygon.strokeWidth,
+                strokeWidth = polygon.lineWidth,
                 fillColor = Color(
-                    polygon.fillColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
+                    polygon.color?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
                 ),
                 onClick = onPolygonClick?.let { callback ->
                     { callback(polygon) }
@@ -175,13 +122,13 @@ actual fun Map(
             )
         }
 
-        convertedPolylines.forEach { polyline ->
+        polylines.forEach { polyline ->
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
                 color = Color(
-                    polyline.strokeColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
+                    polyline.lineColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
                 ),
-                width = polyline.strokeWidth,
+                width = polyline.width,
                 onClick = onPolylineClick?.let { callback ->
                     { callback(polyline) }
                 } ?: { false },

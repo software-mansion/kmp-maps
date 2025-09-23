@@ -3,71 +3,71 @@ package com.swmansion.kmpmaps
 import androidx.compose.ui.graphics.ImageBitmap
 
 data class MapProperties(
-    val isMyLocationEnabled: Boolean,
-    val isTrafficEnabled: Boolean,
-    val selectionEnabled: Boolean,
-    val appleMapType: AppleMapsMapType?,
-    val appleElevation: AppleMapsMapStyleElevation?,
-    val appleEmphasis: AppleMapsMapStyleEmphasis?,
-    val applePointsOfInterest: AppleMapsPointOfInterestCategories?,
-    val applePolylineTapThreshold: Float?,
-    val androidMapType: GoogleMapsMapType,
-    val androidIsBuildingEnabled: Boolean,
-    val androidIsIndoorEnabled: Boolean,
-    val androidMaxZoomPreference: Float?,
-    val androidMinZoomPreference: Float?
+    val isMyLocationEnabled: Boolean = false,
+    val isTrafficEnabled: Boolean = false,
+    val selectionEnabled: Boolean = false,
+    val mapType: MapType? = MapType.NORMAL,
+    val appleElevation: AppleMapsMapStyleElevation? = AppleMapsMapStyleElevation.AUTOMATIC,
+    val appleEmphasis: AppleMapsMapStyleEmphasis? = AppleMapsMapStyleEmphasis.AUTOMATIC,
+    val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
+    val applePolylineTapThreshold: Float? = null,
+    val androidIsBuildingEnabled: Boolean = false,
+    val androidIsIndoorEnabled: Boolean = false,
+    val androidMaxZoomPreference: Float? = null,
+    val androidMinZoomPreference: Float? = null,
+    val androidMapStyleOptions: GoogleMapsMapStyleOptions? = null,
 )
 
 data class MapUISettings(
-    val compassEnabled: Boolean,
-    val myLocationButtonEnabled: Boolean,
-    val scaleBarEnabled: Boolean,
-    val togglePitchEnabled: Boolean,
-    val androidIndoorLevelPickerEnabled: Boolean,
-    val androidMapToolbarEnabled: Boolean,
-    val androidRotationGesturesEnabled: Boolean,
-    val androidScrollGesturesEnabled: Boolean,
-    val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean,
-    val androidTiltGesturesEnabled: Boolean,
-    val androidTogglePitchEnabled: Boolean,
-    val androidZoomControlsEnabled: Boolean,
-    val androidZoomGesturesEnabled: Boolean,
+    val compassEnabled: Boolean = false,
+    val myLocationButtonEnabled: Boolean = false,
+    val scaleBarEnabled: Boolean = false,
+    val togglePitchEnabled: Boolean = false,
+    val androidIndoorLevelPickerEnabled: Boolean = false,
+    val androidMapToolbarEnabled: Boolean = false,
+    val androidRotationGesturesEnabled: Boolean = false,
+    val androidScrollGesturesEnabled: Boolean = false,
+    val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean = false,
+    val androidTiltGesturesEnabled: Boolean = false,
+    val androidTogglePitchEnabled: Boolean = false,
+    val androidZoomControlsEnabled: Boolean = false,
+    val androidZoomGesturesEnabled: Boolean = false,
 )
 
 data class MapMarker(
     val coordinates: Coordinates,
-    val title: String?,
-    val appleSystemImage: String?,
-    val appleTintColor: String?,
-    val androidAnchor: GoogleMapsAnchor?,
-    val androidDraggable: Boolean,
-    val androidIcon: ImageBitmap?,
-    val androidShowCallout: Boolean?,
-    val androidSnippet: String?,
-    val androidZIndex: Float?,
+    val title: String? = "No title was provided",
+    val subtitle: String? = "No subtitle was provided",
+    val appleSystemImage: String? = null,
+    val appleTintColor: String? = null,
+    val androidAnchor: GoogleMapsAnchor? = null,
+    val androidDraggable: Boolean = false,
+    val androidIcon: ImageBitmap? = null,  // todo: not working
+    val androidSnippet: String? = null,
+    val androidZIndex: Float? = null,
 )
 
 data class MapCircle(
     val center: Coordinates,
-    val color: String?,
-    val lineColor: String?,
-    val lineWidth: Float?,
     val radius: Float,
+    val color: String? = null,
+    val lineColor: String? = null,
+    val lineWidth: Float? = null,
 )
 
 data class MapPolygon(
     val coordinates: List<Coordinates>,
-    val color: String?,
-    val lineColor: String?,
     val lineWidth: Float,
+    val color: String? = null,
+    val lineColor: String? = null,
 )
 
 data class MapPolyline(
     val coordinates: List<Coordinates>,
-    val color: String?,
     val width: Float,
-    val strokeColor: String?,
-    val appleContourStyle: AppleMapsContourStyle?,
+    val color: String? = null,
+    val lineColor: String? = null,
+    val appleContourStyle: AppleMapsContourStyle? = null,
 )
 
 data class Coordinates(
@@ -78,4 +78,6 @@ data class Coordinates(
 data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
+    val androidBearing: Float? = null,
+    val androidTilt: Float? = null
 )

@@ -1,12 +1,5 @@
 package com.swmansion.kmpmaps
 
-enum class AppleMapsMapType {
-    STANDARD,
-    SATELLITE,
-    HYBRID,
-    TERRAIN
-}
-
 enum class AppleMapsMapStyleElevation {
     AUTOMATIC,
     FLAT,
@@ -99,9 +92,9 @@ enum class AppleMapsContourStyle {
     STRAIGHT
 }
 
-enum class GoogleMapsMapType {
+enum class MapType {
     HYBRID,
     NORMAL,
     SATELLITE,
-    TERRAIN,
+    TERRAIN;
 }

@@ -25,15 +25,14 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-        }
-
-        androidMain.dependencies {
             implementation(libs.google.maps)
             implementation(libs.maps.compose)
         }
 
+        androidMain.dependencies {
+        }
+
         iosMain.dependencies {
-            // iOS dependencies will be handled through CocoaPods or manual framework linking
         }
 
         commonTest.dependencies { implementation(libs.kotlin.test) }
