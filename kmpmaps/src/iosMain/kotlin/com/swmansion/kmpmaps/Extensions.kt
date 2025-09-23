@@ -130,82 +130,7 @@ internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>) {
     }
 }
 
-@OptIn(ExperimentalForeignApi::class)
-internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
-        AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
-        AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
-        AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
-        AppleMapPointOfInterestCategory.AQUARIUM -> MKPointOfInterestCategoryAquarium
-        AppleMapPointOfInterestCategory.ATM -> MKPointOfInterestCategoryATM
-        AppleMapPointOfInterestCategory.AUTOMOTIVE_REPAIR -> MKPointOfInterestCategoryAutomotiveRepair
-        AppleMapPointOfInterestCategory.BAKERY -> MKPointOfInterestCategoryBakery
-        AppleMapPointOfInterestCategory.BANK -> MKPointOfInterestCategoryBank
-        AppleMapPointOfInterestCategory.BASEBALL -> MKPointOfInterestCategoryBaseball
-        AppleMapPointOfInterestCategory.BASKETBALL -> MKPointOfInterestCategoryBasketball
-        AppleMapPointOfInterestCategory.BEACH -> MKPointOfInterestCategoryBeach
-        AppleMapPointOfInterestCategory.BEAUTY -> MKPointOfInterestCategoryBeauty
-        AppleMapPointOfInterestCategory.BOWLING -> MKPointOfInterestCategoryBowling
-        AppleMapPointOfInterestCategory.BREWERY -> MKPointOfInterestCategoryBrewery
-        AppleMapPointOfInterestCategory.CAFE -> MKPointOfInterestCategoryCafe
-        AppleMapPointOfInterestCategory.CAMPGROUND -> MKPointOfInterestCategoryCampground
-        AppleMapPointOfInterestCategory.CAR_RENTAL -> MKPointOfInterestCategoryCarRental
-        AppleMapPointOfInterestCategory.CASTLE -> MKPointOfInterestCategoryCastle
-        AppleMapPointOfInterestCategory.CONVENTION_CENTER -> MKPointOfInterestCategoryConventionCenter
-        AppleMapPointOfInterestCategory.DISTILLERY -> MKPointOfInterestCategoryDistillery
-        AppleMapPointOfInterestCategory.EV_CHARGER -> MKPointOfInterestCategoryEVCharger
-        AppleMapPointOfInterestCategory.FAIRGROUND -> MKPointOfInterestCategoryFairground
-        AppleMapPointOfInterestCategory.FIRE_STATION -> MKPointOfInterestCategoryFireStation
-        AppleMapPointOfInterestCategory.FISHING -> MKPointOfInterestCategoryFishing
-        AppleMapPointOfInterestCategory.FITNESS_CENTER -> MKPointOfInterestCategoryFitnessCenter
-        AppleMapPointOfInterestCategory.FOOD_MARKET -> MKPointOfInterestCategoryFoodMarket
-        AppleMapPointOfInterestCategory.FORTRESS -> MKPointOfInterestCategoryFortress
-        AppleMapPointOfInterestCategory.GAS_STATION -> MKPointOfInterestCategoryGasStation
-        AppleMapPointOfInterestCategory.GO_KART -> MKPointOfInterestCategoryGoKart
-        AppleMapPointOfInterestCategory.GOLF -> MKPointOfInterestCategoryGolf
-        AppleMapPointOfInterestCategory.HIKING -> MKPointOfInterestCategoryHiking
-        AppleMapPointOfInterestCategory.HOSPITAL -> MKPointOfInterestCategoryHospital
-        AppleMapPointOfInterestCategory.HOTEL -> MKPointOfInterestCategoryHotel
-        AppleMapPointOfInterestCategory.KAYAKING -> MKPointOfInterestCategoryKayaking
-        AppleMapPointOfInterestCategory.LANDMARK -> MKPointOfInterestCategoryLandmark
-        AppleMapPointOfInterestCategory.LAUNDRY -> MKPointOfInterestCategoryLaundry
-        AppleMapPointOfInterestCategory.LIBRARY -> MKPointOfInterestCategoryLibrary
-        AppleMapPointOfInterestCategory.MAILBOX -> MKPointOfInterestCategoryMailbox
-        AppleMapPointOfInterestCategory.MARINA -> MKPointOfInterestCategoryMarina
-        AppleMapPointOfInterestCategory.MINI_GOLF -> MKPointOfInterestCategoryMiniGolf
-        AppleMapPointOfInterestCategory.MOVIE_THEATER -> MKPointOfInterestCategoryMovieTheater
-        AppleMapPointOfInterestCategory.MUSEUM -> MKPointOfInterestCategoryMuseum
-        AppleMapPointOfInterestCategory.MUSIC_VENUE -> MKPointOfInterestCategoryMusicVenue
-        AppleMapPointOfInterestCategory.NATIONAL_MONUMENT -> MKPointOfInterestCategoryNationalMonument
-        AppleMapPointOfInterestCategory.NATIONAL_PARK -> MKPointOfInterestCategoryNationalPark
-        AppleMapPointOfInterestCategory.NIGHTLIFE -> MKPointOfInterestCategoryNightlife
-        AppleMapPointOfInterestCategory.PARK -> MKPointOfInterestCategoryPark
-        AppleMapPointOfInterestCategory.PARKING -> MKPointOfInterestCategoryParking
-        AppleMapPointOfInterestCategory.PHARMACY -> MKPointOfInterestCategoryPharmacy
-        AppleMapPointOfInterestCategory.PLANETARIUM -> MKPointOfInterestCategoryPlanetarium
-        AppleMapPointOfInterestCategory.POLICE -> MKPointOfInterestCategoryPolice
-        AppleMapPointOfInterestCategory.POST_OFFICE -> MKPointOfInterestCategoryPostOffice
-        AppleMapPointOfInterestCategory.PUBLIC_TRANSPORT -> MKPointOfInterestCategoryPublicTransport
-        AppleMapPointOfInterestCategory.RESTAURANT -> MKPointOfInterestCategoryRestaurant
-        AppleMapPointOfInterestCategory.RESTROOM -> MKPointOfInterestCategoryRestroom
-        AppleMapPointOfInterestCategory.ROCK_CLIMBING -> MKPointOfInterestCategoryRockClimbing
-        AppleMapPointOfInterestCategory.RV_PARK -> MKPointOfInterestCategoryRVPark
-        AppleMapPointOfInterestCategory.SCHOOL -> MKPointOfInterestCategorySchool
-        AppleMapPointOfInterestCategory.SKATE_PARK -> MKPointOfInterestCategorySkatePark
-        AppleMapPointOfInterestCategory.SKATING -> MKPointOfInterestCategorySkating
-        AppleMapPointOfInterestCategory.SKIING -> MKPointOfInterestCategorySkiing
-        AppleMapPointOfInterestCategory.SOCCER -> MKPointOfInterestCategorySoccer
-        AppleMapPointOfInterestCategory.SPA -> MKPointOfInterestCategorySpa
-        AppleMapPointOfInterestCategory.STADIUM -> MKPointOfInterestCategoryStadium
-        AppleMapPointOfInterestCategory.STORE -> MKPointOfInterestCategoryStore
-        AppleMapPointOfInterestCategory.SURFING -> MKPointOfInterestCategorySurfing
-        AppleMapPointOfInterestCategory.SWIMMING -> MKPointOfInterestCategorySwimming
-        AppleMapPointOfInterestCategory.TENNIS -> MKPointOfInterestCategoryTennis
-        AppleMapPointOfInterestCategory.THEATER -> MKPointOfInterestCategoryTheater
-        AppleMapPointOfInterestCategory.UNIVERSITY -> MKPointOfInterestCategoryUniversity
-        AppleMapPointOfInterestCategory.VOLLEYBALL -> MKPointOfInterestCategoryVolleyball
-        AppleMapPointOfInterestCategory.WINERY -> MKPointOfInterestCategoryWinery
-        AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
-    }
+
 
 @OptIn(ExperimentalForeignApi::class)
 internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
@@ -241,13 +166,88 @@ internal fun MKMapView.updateAppleMapsCircles(
     }
 }
 
-internal fun MapType?.toAppleMapsMapType() : MKMapType {
-    return when(this) {
-        MapType.HYBRID -> MKMapTypeHybrid
-        MapType.NORMAL -> MKMapTypeStandard
-        MapType.SATELLITE -> MKMapTypeSatellite
-        else -> MKMapTypeStandard
-    }
+internal fun MapType?.toAppleMapsMapType() : MKMapType = when(this) {
+    MapType.HYBRID -> MKMapTypeHybrid
+    MapType.NORMAL -> MKMapTypeStandard
+    MapType.SATELLITE -> MKMapTypeSatellite
+    else -> MKMapTypeStandard
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
+    AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
+    AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
+    AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
+    AppleMapPointOfInterestCategory.AQUARIUM -> MKPointOfInterestCategoryAquarium
+    AppleMapPointOfInterestCategory.ATM -> MKPointOfInterestCategoryATM
+    AppleMapPointOfInterestCategory.AUTOMOTIVE_REPAIR -> MKPointOfInterestCategoryAutomotiveRepair
+    AppleMapPointOfInterestCategory.BAKERY -> MKPointOfInterestCategoryBakery
+    AppleMapPointOfInterestCategory.BANK -> MKPointOfInterestCategoryBank
+    AppleMapPointOfInterestCategory.BASEBALL -> MKPointOfInterestCategoryBaseball
+    AppleMapPointOfInterestCategory.BASKETBALL -> MKPointOfInterestCategoryBasketball
+    AppleMapPointOfInterestCategory.BEACH -> MKPointOfInterestCategoryBeach
+    AppleMapPointOfInterestCategory.BEAUTY -> MKPointOfInterestCategoryBeauty
+    AppleMapPointOfInterestCategory.BOWLING -> MKPointOfInterestCategoryBowling
+    AppleMapPointOfInterestCategory.BREWERY -> MKPointOfInterestCategoryBrewery
+    AppleMapPointOfInterestCategory.CAFE -> MKPointOfInterestCategoryCafe
+    AppleMapPointOfInterestCategory.CAMPGROUND -> MKPointOfInterestCategoryCampground
+    AppleMapPointOfInterestCategory.CAR_RENTAL -> MKPointOfInterestCategoryCarRental
+    AppleMapPointOfInterestCategory.CASTLE -> MKPointOfInterestCategoryCastle
+    AppleMapPointOfInterestCategory.CONVENTION_CENTER -> MKPointOfInterestCategoryConventionCenter
+    AppleMapPointOfInterestCategory.DISTILLERY -> MKPointOfInterestCategoryDistillery
+    AppleMapPointOfInterestCategory.EV_CHARGER -> MKPointOfInterestCategoryEVCharger
+    AppleMapPointOfInterestCategory.FAIRGROUND -> MKPointOfInterestCategoryFairground
+    AppleMapPointOfInterestCategory.FIRE_STATION -> MKPointOfInterestCategoryFireStation
+    AppleMapPointOfInterestCategory.FISHING -> MKPointOfInterestCategoryFishing
+    AppleMapPointOfInterestCategory.FITNESS_CENTER -> MKPointOfInterestCategoryFitnessCenter
+    AppleMapPointOfInterestCategory.FOOD_MARKET -> MKPointOfInterestCategoryFoodMarket
+    AppleMapPointOfInterestCategory.FORTRESS -> MKPointOfInterestCategoryFortress
+    AppleMapPointOfInterestCategory.GAS_STATION -> MKPointOfInterestCategoryGasStation
+    AppleMapPointOfInterestCategory.GO_KART -> MKPointOfInterestCategoryGoKart
+    AppleMapPointOfInterestCategory.GOLF -> MKPointOfInterestCategoryGolf
+    AppleMapPointOfInterestCategory.HIKING -> MKPointOfInterestCategoryHiking
+    AppleMapPointOfInterestCategory.HOSPITAL -> MKPointOfInterestCategoryHospital
+    AppleMapPointOfInterestCategory.HOTEL -> MKPointOfInterestCategoryHotel
+    AppleMapPointOfInterestCategory.KAYAKING -> MKPointOfInterestCategoryKayaking
+    AppleMapPointOfInterestCategory.LANDMARK -> MKPointOfInterestCategoryLandmark
+    AppleMapPointOfInterestCategory.LAUNDRY -> MKPointOfInterestCategoryLaundry
+    AppleMapPointOfInterestCategory.LIBRARY -> MKPointOfInterestCategoryLibrary
+    AppleMapPointOfInterestCategory.MAILBOX -> MKPointOfInterestCategoryMailbox
+    AppleMapPointOfInterestCategory.MARINA -> MKPointOfInterestCategoryMarina
+    AppleMapPointOfInterestCategory.MINI_GOLF -> MKPointOfInterestCategoryMiniGolf
+    AppleMapPointOfInterestCategory.MOVIE_THEATER -> MKPointOfInterestCategoryMovieTheater
+    AppleMapPointOfInterestCategory.MUSEUM -> MKPointOfInterestCategoryMuseum
+    AppleMapPointOfInterestCategory.MUSIC_VENUE -> MKPointOfInterestCategoryMusicVenue
+    AppleMapPointOfInterestCategory.NATIONAL_MONUMENT -> MKPointOfInterestCategoryNationalMonument
+    AppleMapPointOfInterestCategory.NATIONAL_PARK -> MKPointOfInterestCategoryNationalPark
+    AppleMapPointOfInterestCategory.NIGHTLIFE -> MKPointOfInterestCategoryNightlife
+    AppleMapPointOfInterestCategory.PARK -> MKPointOfInterestCategoryPark
+    AppleMapPointOfInterestCategory.PARKING -> MKPointOfInterestCategoryParking
+    AppleMapPointOfInterestCategory.PHARMACY -> MKPointOfInterestCategoryPharmacy
+    AppleMapPointOfInterestCategory.PLANETARIUM -> MKPointOfInterestCategoryPlanetarium
+    AppleMapPointOfInterestCategory.POLICE -> MKPointOfInterestCategoryPolice
+    AppleMapPointOfInterestCategory.POST_OFFICE -> MKPointOfInterestCategoryPostOffice
+    AppleMapPointOfInterestCategory.PUBLIC_TRANSPORT -> MKPointOfInterestCategoryPublicTransport
+    AppleMapPointOfInterestCategory.RESTAURANT -> MKPointOfInterestCategoryRestaurant
+    AppleMapPointOfInterestCategory.RESTROOM -> MKPointOfInterestCategoryRestroom
+    AppleMapPointOfInterestCategory.ROCK_CLIMBING -> MKPointOfInterestCategoryRockClimbing
+    AppleMapPointOfInterestCategory.RV_PARK -> MKPointOfInterestCategoryRVPark
+    AppleMapPointOfInterestCategory.SCHOOL -> MKPointOfInterestCategorySchool
+    AppleMapPointOfInterestCategory.SKATE_PARK -> MKPointOfInterestCategorySkatePark
+    AppleMapPointOfInterestCategory.SKATING -> MKPointOfInterestCategorySkating
+    AppleMapPointOfInterestCategory.SKIING -> MKPointOfInterestCategorySkiing
+    AppleMapPointOfInterestCategory.SOCCER -> MKPointOfInterestCategorySoccer
+    AppleMapPointOfInterestCategory.SPA -> MKPointOfInterestCategorySpa
+    AppleMapPointOfInterestCategory.STADIUM -> MKPointOfInterestCategoryStadium
+    AppleMapPointOfInterestCategory.STORE -> MKPointOfInterestCategoryStore
+    AppleMapPointOfInterestCategory.SURFING -> MKPointOfInterestCategorySurfing
+    AppleMapPointOfInterestCategory.SWIMMING -> MKPointOfInterestCategorySwimming
+    AppleMapPointOfInterestCategory.TENNIS -> MKPointOfInterestCategoryTennis
+    AppleMapPointOfInterestCategory.THEATER -> MKPointOfInterestCategoryTheater
+    AppleMapPointOfInterestCategory.UNIVERSITY -> MKPointOfInterestCategoryUniversity
+    AppleMapPointOfInterestCategory.VOLLEYBALL -> MKPointOfInterestCategoryVolleyball
+    AppleMapPointOfInterestCategory.WINERY -> MKPointOfInterestCategoryWinery
+    AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
 }
 
 @OptIn(ExperimentalForeignApi::class)
