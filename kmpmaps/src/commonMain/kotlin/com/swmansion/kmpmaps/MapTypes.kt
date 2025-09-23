@@ -1,54 +1,74 @@
 package com.swmansion.kmpmaps
 
-interface MapProperties {
-    val mapType: MapType
-    val isMyLocationEnabled: Boolean
-    val isTrafficEnabled: Boolean
-    val showsBuildings: Boolean
-}
+import androidx.compose.ui.graphics.ImageBitmap
 
-interface MapUISettings {
-    val compassEnabled: Boolean
-    val myLocationButtonEnabled: Boolean
-    val zoomGesturesEnabled: Boolean
-    val scrollGesturesEnabled: Boolean
-    val rotateGesturesEnabled: Boolean
-    val tiltGesturesEnabled: Boolean
-}
+data class MapProperties(
+    val isMyLocationEnabled: Boolean,
+    val isTrafficEnabled: Boolean,
+    val selectionEnabled: Boolean,
+    val appleMapType: AppleMapsMapType?,
+    val appleElevation: AppleMapsMapStyleElevation?,
+    val appleEmphasis: AppleMapsMapStyleEmphasis?,
+    val applePointsOfInterest: AppleMapsPointOfInterestCategories?,
+    val applePolylineTapThreshold: Float?,
+    val androidMapType: GoogleMapsMapType,
+    val androidIsBuildingEnabled: Boolean,
+    val androidIsIndoorEnabled: Boolean,
+    val androidMaxZoomPreference: Float?,
+    val androidMinZoomPreference: Float?
+)
 
-interface MapMarker {
-    val coordinates: Coordinates
-    val title: String?
-    val subtitle: String?
-}
+data class MapUISettings(
+    val compassEnabled: Boolean,
+    val myLocationButtonEnabled: Boolean,
+    val scaleBarEnabled: Boolean,
+    val togglePitchEnabled: Boolean,
+    val androidIndoorLevelPickerEnabled: Boolean,
+    val androidMapToolbarEnabled: Boolean,
+    val androidRotationGesturesEnabled: Boolean,
+    val androidScrollGesturesEnabled: Boolean,
+    val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean,
+    val androidTiltGesturesEnabled: Boolean,
+    val androidTogglePitchEnabled: Boolean,
+    val androidZoomControlsEnabled: Boolean,
+    val androidZoomGesturesEnabled: Boolean,
+)
 
-interface MapCircle {
-    val center: Coordinates
-    val radius: Double
-    val strokeColor: String?
-    val strokeWidth: Float
-    val fillColor: String?
-}
+data class MapMarker(
+    val coordinates: Coordinates,
+    val title: String?,
+    val appleSystemImage: String?,
+    val appleTintColor: String?,
+    val androidAnchor: GoogleMapsAnchor?,
+    val androidDraggable: Boolean,
+    val androidIcon: ImageBitmap?,
+    val androidShowCallout: Boolean?,
+    val androidSnippet: String?,
+    val androidZIndex: Float?,
+)
 
-interface MapPolygon {
-    val coordinates: List<Coordinates>
-    val strokeColor: String?
-    val strokeWidth: Float
-    val fillColor: String?
-}
+data class MapCircle(
+    val center: Coordinates,
+    val color: String?,
+    val lineColor: String?,
+    val lineWidth: Float?,
+    val radius: Float,
+)
 
-interface MapPolyline {
-    val coordinates: List<Coordinates>
-    val strokeColor: String?
-    val strokeWidth: Float
-}
+data class MapPolygon(
+    val coordinates: List<Coordinates>,
+    val color: String?,
+    val lineColor: String?,
+    val lineWidth: Float,
+)
 
-enum class MapType {
-    STANDARD,
-    SATELLITE,
-    HYBRID,
-    TERRAIN
-}
+data class MapPolyline(
+    val coordinates: List<Coordinates>,
+    val color: String?,
+    val width: Float,
+    val strokeColor: String?,
+    val appleContourStyle: AppleMapsContourStyle?,
+)
 
 data class Coordinates(
     val latitude: Double,
@@ -58,37 +78,4 @@ data class Coordinates(
 data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
-    val bearing: Float = 0f,
-    val tilt: Float = 0f
 )
-
-data class CommonMapCircle(
-    override val center: Coordinates,
-    override val radius: Double,
-    override val strokeColor: String? = null,
-    override val strokeWidth: Float = 2f,
-    override val fillColor: String? = null,
-    val visible: Boolean = true,
-) : MapCircle
-
-data class CommonMapPolygon(
-    override val coordinates: List<Coordinates>,
-    override val strokeColor: String? = null,
-    override val strokeWidth: Float = 2f,
-    override val fillColor: String? = null,
-    val visible: Boolean = true,
-) : MapPolygon
-
-data class CommonMapPolyline(
-    override val coordinates: List<Coordinates>,
-    override val strokeColor: String? = null,
-    override val strokeWidth: Float = 2f,
-    val visible: Boolean = true,
-) : MapPolyline
-
-data class CommonMapMarker(
-    override val coordinates: Coordinates,
-    override val title: String? = null,
-    override val subtitle: String? = null,
-    val visible: Boolean = true,
-) : MapMarker

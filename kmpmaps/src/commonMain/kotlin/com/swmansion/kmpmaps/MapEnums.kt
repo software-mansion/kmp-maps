@@ -1,0 +1,107 @@
+package com.swmansion.kmpmaps
+
+enum class AppleMapsMapType {
+    STANDARD,
+    SATELLITE,
+    HYBRID,
+    TERRAIN
+}
+
+enum class AppleMapsMapStyleElevation {
+    AUTOMATIC,
+    FLAT,
+    REALISTIC
+}
+
+enum class AppleMapsMapStyleEmphasis {
+    AUTOMATIC,
+    MUTED,
+}
+
+enum class AppleMapPointOfInterestCategory {
+    AIRPORT,
+    AMUSEMENT_PARK,
+    ANIMAL_SERVICE,
+    AQUARIUM,
+    ATM,
+    AUTOMOTIVE_REPAIR,
+    BAKERY,
+    BANK,
+    BASEBALL,
+    BASKETBALL,
+    BEACH,
+    BEAUTY,
+    BOWLING,
+    BREWERY,
+    CAFE,
+    CAMPGROUND,
+    CAR_RENTAL,
+    CASTLE,
+    CONVENTION_CENTER,
+    DISTILLERY,
+    EV_CHARGER,
+    FAIRGROUND,
+    FIRE_STATION,
+    FISHING,
+    FITNESS_CENTER,
+    FOOD_MARKET,
+    FORTRESS,
+    GAS_STATION,
+    GO_KART,
+    GOLF,
+    HIKING,
+    HOSPITAL,
+    HOTEL,
+    KAYAKING,
+    LANDMARK,
+    LAUNDRY,
+    LIBRARY,
+    MAILBOX,
+    MARINA,
+    MINI_GOLF,
+    MOVIE_THEATER,
+    MUSEUM,
+    MUSIC_VENUE,
+    NATIONAL_MONUMENT,
+    NATIONAL_PARK,
+    NIGHTLIFE,
+    PARK,
+    PARKING,
+    PHARMACY,
+    PLANETARIUM,
+    POLICE,
+    POST_OFFICE,
+    PUBLIC_TRANSPORT,
+    RESTAURANT,
+    RESTROOM,
+    ROCK_CLIMBING,
+    RV_PARK,
+    SCHOOL,
+    SKATE_PARK,
+    SKATING,
+    SKIING,
+    SOCCER,
+    SPA,
+    STADIUM,
+    STORE,
+    SURFING,
+    SWIMMING,
+    TENNIS,
+    THEATER,
+    UNIVERSITY,
+    VOLLEYBALL,
+    WINERY,
+    ZOO
+}
+
+enum class AppleMapsContourStyle {
+    GEODESIC,
+    STRAIGHT
+}
+
+enum class GoogleMapsMapType {
+    HYBRID,
+    NORMAL,
+    SATELLITE,
+    TERRAIN,
+}
