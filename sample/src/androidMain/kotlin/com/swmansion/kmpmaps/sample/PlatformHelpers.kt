@@ -13,7 +13,7 @@ actual fun createMapProperties(
         isMyLocationEnabled = showUserLocation,
         isTrafficEnabled = true,
         selectionEnabled = true,
-        androidIsBuildingEnabled = true,
+        isBuildingEnabled = true,
         androidIsIndoorEnabled = true,
         androidMinZoomPreference = 3f,
         androidMaxZoomPreference = 21f,

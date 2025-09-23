@@ -15,7 +15,7 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
-actual fun Map(
+public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,

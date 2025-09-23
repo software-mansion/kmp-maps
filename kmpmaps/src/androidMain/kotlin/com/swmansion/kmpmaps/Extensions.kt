@@ -10,16 +10,16 @@ import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.MapType
 
-fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition {
+internal fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition {
     return GoogleCameraPosition.Builder()
         .target(LatLng(coordinates.latitude, coordinates.longitude))
         .zoom(zoom)
-//        .bearing(androidBearing ?: 0f)
-//        .tilt(androidTilt ?: 0f)
+        .bearing(androidBearing ?: 0f)
+        .tilt(androidTilt ?: 0f)
         .build()
 }
 
-fun GoogleCameraPosition.toCameraPosition(): CameraPosition {
+internal fun GoogleCameraPosition.toCameraPosition(): CameraPosition {
     return CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
@@ -28,45 +28,45 @@ fun GoogleCameraPosition.toCameraPosition(): CameraPosition {
     )
 }
 
-fun MapMarker.toGoogleMapsMarkerState(): MarkerState {
+internal fun MapMarker.toGoogleMapsMarkerState(): MarkerState {
     return MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 }
 
-fun Coordinates.toGoogleLatLng(): LatLng {
+internal fun Coordinates.toGoogleLatLng(): LatLng {
     return LatLng(latitude, longitude)
 }
 
-fun String.toGoogleColor(): Int = toColorInt()
+internal fun String.toGoogleColor(): Int = toColorInt()
 
-fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties {
+internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties {
     return GoogleMapProperties(
         mapType = mapType.toGoogleMapsMapType(),
         isMyLocationEnabled = isMyLocationEnabled,
         isTrafficEnabled = isTrafficEnabled,
+        isBuildingEnabled = isBuildingEnabled,
         isIndoorEnabled = androidIsIndoorEnabled,
-        isBuildingEnabled = androidIsBuildingEnabled,
         minZoomPreference = androidMinZoomPreference ?: 0f,
         maxZoomPreference = androidMaxZoomPreference ?: 20f,
         mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
     )
 }
 
-fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings {
+internal fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings {
     return GoogleMapUiSettings(
         compassEnabled = compassEnabled,
         myLocationButtonEnabled = myLocationButtonEnabled,
         indoorLevelPickerEnabled = androidIndoorLevelPickerEnabled,
         mapToolbarEnabled = androidMapToolbarEnabled,
         rotationGesturesEnabled = androidRotationGesturesEnabled,
-        scrollGesturesEnabled = androidScrollGesturesEnabled,
+        scrollGesturesEnabled = scrollEnabled,
         scrollGesturesEnabledDuringRotateOrZoom = androidScrollGesturesEnabledDuringRotateOrZoom,
         tiltGesturesEnabled = androidTiltGesturesEnabled,
         zoomControlsEnabled = androidZoomControlsEnabled,
-        zoomGesturesEnabled = androidZoomGesturesEnabled,
+        zoomGesturesEnabled = zoomEnabled,
     )
 }
 
-fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType {
+internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType {
     return when(this) {
         com.swmansion.kmpmaps.MapType.HYBRID -> MapType.HYBRID
         com.swmansion.kmpmaps.MapType.NORMAL -> MapType.NORMAL
@@ -76,10 +76,10 @@ fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType {
     }
 }
 
-fun GoogleMapsMapStyleOptions?.toNativeStyleOptions(): MapStyleOptions? {
+internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions(): MapStyleOptions? {
     return this?.json?.let { MapStyleOptions(it) }
 }
 
-fun GoogleMapsAnchor?.toOffset(): Offset {
+internal fun GoogleMapsAnchor?.toOffset(): Offset {
     return Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
 }

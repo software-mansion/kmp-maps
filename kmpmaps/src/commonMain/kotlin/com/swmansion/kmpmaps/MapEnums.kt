@@ -1,17 +1,17 @@
 package com.swmansion.kmpmaps
 
-enum class AppleMapsMapStyleElevation {
+public enum class AppleMapsMapStyleElevation {
     AUTOMATIC,
     FLAT,
     REALISTIC
 }
 
-enum class AppleMapsMapStyleEmphasis {
+public enum class AppleMapsMapStyleEmphasis {
     AUTOMATIC,
     MUTED,
 }
 
-enum class AppleMapPointOfInterestCategory {
+public enum class AppleMapPointOfInterestCategory {
     AIRPORT,
     AMUSEMENT_PARK,
     ANIMAL_SERVICE,
@@ -87,12 +87,12 @@ enum class AppleMapPointOfInterestCategory {
     ZOO
 }
 
-enum class AppleMapsContourStyle {
+public enum class AppleMapsContourStyle {
     GEODESIC,
     STRAIGHT
 }
 
-enum class MapType {
+public enum class MapType {
     HYBRID,
     NORMAL,
     SATELLITE,

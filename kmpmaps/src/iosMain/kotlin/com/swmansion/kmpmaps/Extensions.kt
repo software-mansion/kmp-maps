@@ -95,7 +95,7 @@ import platform.UIKit.UIView
 
 
 @OptIn(ExperimentalForeignApi::class)
-fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
+internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
     val span =
         MKCoordinateSpanMake(
@@ -105,15 +105,7 @@ fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     return MKCoordinateRegionMake(coordinate, span)
 }
 
-fun AppleMapsMapType.toMKMapType(): MKMapType =
-    when (this) {
-        AppleMapsMapType.STANDARD -> MKMapTypeStandard
-        AppleMapsMapType.SATELLITE -> MKMapTypeSatellite
-        AppleMapsMapType.HYBRID -> MKMapTypeHybrid
-    }
-
-
-fun MKMapView.setupMapConstraints(parentView: UIView) {
+internal fun MKMapView.setupMapConstraints(parentView: UIView) {
     val constraints =
         listOf(
             topAnchor.constraintEqualToAnchor(parentView.topAnchor),
@@ -125,7 +117,7 @@ fun MKMapView.setupMapConstraints(parentView: UIView) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
+internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>) {
     removeAnnotations(this.annotations)
     markers.forEach { marker ->
         val mkAnnotation = MKPointAnnotation().apply {
@@ -139,7 +131,7 @@ fun MKMapView.updateAppleMapsMarkers(markers: List<AppleMapsMarker>) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
+internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
         AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
         AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
         AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
@@ -216,7 +208,7 @@ fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInte
     }
 
 @OptIn(ExperimentalForeignApi::class)
-fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
+internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
     val includingCategories = including?.map { it.toMKPointOfInterestCategory() }
     val excludingCategories = excluding?.map { it.toMKPointOfInterestCategory() }
 
@@ -235,20 +227,31 @@ fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInt
 
 
 @OptIn(ExperimentalForeignApi::class)
-fun MKMapView.updateAppleMapsCircles(
+internal fun MKMapView.updateAppleMapsCircles(
     circles: List<MapCircle>,
     circleStyles: MutableMap<MKCircle, MapCircle>
 ) {
     circles.forEach { circle ->
-        val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
-        val mkCircle = MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius)
+        val coordinate =
+            CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
+        val mkCircle =
+            MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius.toDouble())
         circleStyles[mkCircle] = circle
         addOverlay(mkCircle)
     }
 }
 
+internal fun MapType?.toAppleMapsMapType() : MKMapType {
+    return when(this) {
+        MapType.HYBRID -> MKMapTypeHybrid
+        MapType.NORMAL -> MKMapTypeStandard
+        MapType.SATELLITE -> MKMapTypeSatellite
+        else -> MKMapTypeStandard
+    }
+}
+
 @OptIn(ExperimentalForeignApi::class)
-fun String?.toUIColor(): UIColor? {
+internal fun String?.toUIColor(): UIColor? {
     return when {
         this == null -> null
         this.startsWith("#") -> {

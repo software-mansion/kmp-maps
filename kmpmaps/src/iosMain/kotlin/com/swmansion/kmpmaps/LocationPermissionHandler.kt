@@ -8,7 +8,7 @@ import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
-class LocationPermissionHandler : NSObject(), CLLocationManagerDelegateProtocol {
+internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegateProtocol {
     private val locationManager = CLLocationManager()
 
     init {

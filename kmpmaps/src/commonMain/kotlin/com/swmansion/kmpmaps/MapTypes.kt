@@ -2,39 +2,40 @@ package com.swmansion.kmpmaps
 
 import androidx.compose.ui.graphics.ImageBitmap
 
-data class MapProperties(
+public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
     val isTrafficEnabled: Boolean = true,
+    val isBuildingEnabled: Boolean = true,
     val selectionEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
     val appleElevation: AppleMapsMapStyleElevation? = AppleMapsMapStyleElevation.AUTOMATIC,
     val appleEmphasis: AppleMapsMapStyleEmphasis? = AppleMapsMapStyleEmphasis.AUTOMATIC,
     val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val applePolylineTapThreshold: Float? = null,
-    val androidIsBuildingEnabled: Boolean = true,
     val androidIsIndoorEnabled: Boolean = true,
     val androidMaxZoomPreference: Float? = null,
     val androidMinZoomPreference: Float? = null,
     val androidMapStyleOptions: GoogleMapsMapStyleOptions? = null,
 )
 
-data class MapUISettings(
+public data class MapUISettings(
     val compassEnabled: Boolean = false,
     val myLocationButtonEnabled: Boolean = false,
     val scaleBarEnabled: Boolean = true,
     val togglePitchEnabled: Boolean = true,
+    val scrollEnabled: Boolean = true,
+    val zoomEnabled: Boolean = true,
+    val appleRotateGesturesEnabled: Boolean = true,
     val androidIndoorLevelPickerEnabled: Boolean = true,
     val androidMapToolbarEnabled: Boolean = true,
     val androidRotationGesturesEnabled: Boolean = true,
-    val androidScrollGesturesEnabled: Boolean = true,
     val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
     val androidTiltGesturesEnabled: Boolean = true,
     val androidTogglePitchEnabled: Boolean = true,
     val androidZoomControlsEnabled: Boolean = true,
-    val androidZoomGesturesEnabled: Boolean = true,
 )
 
-data class MapMarker(
+public data class MapMarker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val subtitle: String? = "No subtitle was provided",
@@ -47,7 +48,7 @@ data class MapMarker(
     val androidZIndex: Float? = null,
 )
 
-data class MapCircle(
+public data class MapCircle(
     val center: Coordinates,
     val radius: Float,
     val color: String? = null,
@@ -55,14 +56,14 @@ data class MapCircle(
     val lineWidth: Float? = null,
 )
 
-data class MapPolygon(
+public data class MapPolygon(
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
     val color: String? = null,
     val lineColor: String? = null,
 )
 
-data class MapPolyline(
+public data class MapPolyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val color: String? = null,
@@ -70,12 +71,12 @@ data class MapPolyline(
     val appleContourStyle: AppleMapsContourStyle? = null,
 )
 
-data class Coordinates(
+public data class Coordinates(
     val latitude: Double,
     val longitude: Double
 )
 
-data class CameraPosition(
+public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
     val androidBearing: Float? = null,

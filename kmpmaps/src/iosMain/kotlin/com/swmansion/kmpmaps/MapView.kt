@@ -17,7 +17,7 @@ import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun Map(
+public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
@@ -40,38 +40,6 @@ actual fun Map(
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
 
-    val appleMapsProperties = when (properties) {
-        is AppleMapsProperties -> properties
-        else -> AppleMapsProperties(
-            mapType = properties.mapType,
-            isMyLocationEnabled = properties.isMyLocationEnabled,
-            isTrafficEnabled = properties.isTrafficEnabled,
-            showsBuildings = properties.showsBuildings
-        )
-    }
-
-    val appleMapsUISettings = when (uiSettings) {
-        is AppleMapsUISettings -> uiSettings
-        else -> AppleMapsUISettings(
-            compassEnabled = uiSettings.compassEnabled,
-            myLocationButtonEnabled = uiSettings.myLocationButtonEnabled,
-            scrollGesturesEnabled = uiSettings.scrollGesturesEnabled,
-            zoomGesturesEnabled = uiSettings.zoomGesturesEnabled,
-            tiltGesturesEnabled = uiSettings.tiltGesturesEnabled,
-            rotateGesturesEnabled = uiSettings.rotateGesturesEnabled
-        )
-    }
-
-    val appleMapsMarkers = markers.map { marker ->
-        when (marker) {
-            is AppleMapsMarker -> marker
-            else -> AppleMapsMarker(
-                coordinates = marker.coordinates,
-                title = marker.title
-            )
-        }
-    }
-
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
             if (!locationPermissionHandler.checkPermission()) {
@@ -90,23 +58,22 @@ actual fun Map(
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.setupMapConstraints(view)
 
-            mkMapView.mapType = appleMapsProperties.mapType.toAppleMapsMapType().toMKMapType()
+            mkMapView.mapType = properties.mapType.toAppleMapsMapType()
             mkMapView.showsUserLocation =
-                appleMapsProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
-            mkMapView.showsTraffic = appleMapsProperties.isTrafficEnabled
-            mkMapView.showsBuildings = appleMapsProperties.showsBuildings
-            mkMapView.showsPointsOfInterest = true
-
-            appleMapsProperties.pointsOfInterest?.let { poiCategories ->
+                properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+            mkMapView.showsTraffic = properties.isTrafficEnabled
+            mkMapView.showsBuildings = properties.isBuildingEnabled
+            mkMapView.showsPointsOfInterest = properties.applePointsOfInterest != null
+            properties.applePointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
 
-            mkMapView.showsCompass = appleMapsUISettings.compassEnabled
-            mkMapView.zoomEnabled = appleMapsUISettings.zoomGesturesEnabled
-            mkMapView.scrollEnabled = appleMapsUISettings.scrollGesturesEnabled
-            mkMapView.rotateEnabled = appleMapsUISettings.rotateGesturesEnabled
-            mkMapView.pitchEnabled = appleMapsUISettings.tiltGesturesEnabled
+            mkMapView.showsCompass = uiSettings.compassEnabled
+            mkMapView.zoomEnabled = uiSettings.zoomEnabled
+            mkMapView.scrollEnabled = uiSettings.scrollEnabled
+            mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
+            mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
 
             cameraPosition?.let { pos ->
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
@@ -114,7 +81,7 @@ actual fun Map(
 
             mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
-            mkMapView.updateAppleMapsMarkers(appleMapsMarkers)
+            mkMapView.updateAppleMapsMarkers(markers)
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
 
             mapView = mkMapView
@@ -123,26 +90,25 @@ actual fun Map(
         modifier = modifier.fillMaxSize(),
         update = { view ->
             mapView?.let { mkMapView ->
-                mkMapView.mapType = appleMapsProperties.mapType.toAppleMapsMapType().toMKMapType()
+                mkMapView.mapType = properties.mapType.toAppleMapsMapType()
                 mkMapView.showsUserLocation =
-                    appleMapsProperties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
-                mkMapView.showsTraffic = appleMapsProperties.isTrafficEnabled
-                mkMapView.showsBuildings = appleMapsProperties.showsBuildings
+                    properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+                mkMapView.showsTraffic = properties.isTrafficEnabled
+                mkMapView.showsBuildings = properties.isBuildingEnabled
 
-                appleMapsProperties.pointsOfInterest?.let { poiCategories ->
+                properties.applePointsOfInterest?.let { poiCategories ->
                     val poiFilter = poiCategories.toMKPointOfInterestFilter()
                     mkMapView.pointOfInterestFilter = poiFilter
                 }
 
-                mkMapView.showsCompass = appleMapsUISettings.compassEnabled
-                mkMapView.zoomEnabled = appleMapsUISettings.zoomGesturesEnabled
-                mkMapView.scrollEnabled = appleMapsUISettings.scrollGesturesEnabled
-                mkMapView.rotateEnabled = appleMapsUISettings.rotateGesturesEnabled
-                mkMapView.pitchEnabled = appleMapsUISettings.tiltGesturesEnabled
-
+                mkMapView.showsCompass = uiSettings.compassEnabled
+                mkMapView.zoomEnabled = uiSettings.zoomEnabled
+                mkMapView.scrollEnabled = uiSettings.scrollEnabled
+                mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
+                mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
                 mkMapView.delegate = SimpleMapDelegate(circleStyles)
 
-                mkMapView.updateAppleMapsMarkers(appleMapsMarkers)
+                mkMapView.updateAppleMapsMarkers(markers)
                 mkMapView.updateAppleMapsCircles(circles, circleStyles)
             }
         },
