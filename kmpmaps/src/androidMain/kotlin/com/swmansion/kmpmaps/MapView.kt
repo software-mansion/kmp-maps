@@ -93,12 +93,12 @@ public actual fun Map(
                 center = circle.center.toGoogleLatLng(),
                 radius = circle.radius.toDouble(),
                 strokeColor = Color(
-                    circle.lineColor?.toGoogleColor()
+                    circle.lineColor?.hexColor?.toGoogleColor()
                         ?: android.graphics.Color.BLACK,
                 ),
                 strokeWidth = circle.lineWidth ?: 10f,
                 fillColor = Color(
-                    circle.color?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
+                    circle.color?.hexColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
                 ),
                 onClick = onCircleClick?.let { callback ->
                     { callback(circle) }
@@ -110,11 +110,11 @@ public actual fun Map(
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
                 strokeColor = Color(
-                    polygon.lineColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
+                    polygon.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
                 ),
                 strokeWidth = polygon.lineWidth,
                 fillColor = Color(
-                    polygon.color?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
+                    polygon.color?.hexColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
                 ),
                 onClick = onPolygonClick?.let { callback ->
                     { callback(polygon) }
@@ -126,7 +126,7 @@ public actual fun Map(
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
                 color = Color(
-                    polyline.lineColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
+                    polyline.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
                 ),
                 width = polyline.width,
                 onClick = onPolylineClick?.let { callback ->

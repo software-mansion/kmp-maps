@@ -98,3 +98,19 @@ public enum class MapType {
     SATELLITE,
     TERRAIN;
 }
+
+public enum class AppleColors {
+    RED,
+    DARK_GRAY,
+    BLACK,
+    GREEN,
+    BROWN,
+    CYAN,
+    MAGENTA,
+    WHITE,
+    YELLOW,
+    PURPLE,
+    LIGHT_GRAY,
+    BLUE,
+    ORANGE,
+}

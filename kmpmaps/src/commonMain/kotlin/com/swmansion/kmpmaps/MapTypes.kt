@@ -40,7 +40,7 @@ public data class MapMarker(
     val title: String? = "No title was provided",
     val subtitle: String? = "No subtitle was provided",
     val appleSystemImage: String? = null,
-    val appleTintColor: String? = null,
+    val appleTintColor: Color? = null,
     val androidAnchor: GoogleMapsAnchor? = null,
     val androidDraggable: Boolean = false,
     val androidIcon: ImageBitmap? = null,  // todo: not working
@@ -51,23 +51,23 @@ public data class MapMarker(
 public data class MapCircle(
     val center: Coordinates,
     val radius: Float,
-    val color: String? = null,
-    val lineColor: String? = null,
+    val color: Color? = null,
+    val lineColor: Color? = null,
     val lineWidth: Float? = null,
 )
 
 public data class MapPolygon(
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
-    val color: String? = null,
-    val lineColor: String? = null,
+    val color: Color? = null,
+    val lineColor: Color? = null,
 )
 
 public data class MapPolyline(
     val coordinates: List<Coordinates>,
     val width: Float,
-    val color: String? = null,
-    val lineColor: String? = null,
+    val color: Color? = null,
+    val lineColor: Color? = null,
     val appleContourStyle: AppleMapsContourStyle? = null,
 )
 
@@ -81,4 +81,9 @@ public data class CameraPosition(
     val zoom: Float,
     val androidBearing: Float? = null,
     val androidTilt: Float? = null
+)
+
+public data class Color(
+    var hexColor: String? = null,
+    var appleUIColor: AppleColors? = null,
 )

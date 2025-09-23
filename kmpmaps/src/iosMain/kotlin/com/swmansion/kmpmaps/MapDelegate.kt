@@ -26,9 +26,9 @@ internal class SimpleMapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor.toUIColor()
+                renderer.strokeColor = circleStyle?.lineColor?.toUIColor()
                 renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = circleStyle?.color.toUIColor()
+                renderer.fillColor = circleStyle?.color?.toUIColor()
                 renderer
             }
 

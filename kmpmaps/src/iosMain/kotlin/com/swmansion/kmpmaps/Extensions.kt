@@ -251,41 +251,43 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPo
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun String?.toUIColor(): UIColor? {
-    return when {
-        this == null -> null
-        this.startsWith("#") -> {
-            try {
-                val cleanHex = this.removePrefix("#")
-                val colorValue = when (cleanHex.length) {
-                    6 -> cleanHex + "FF"
-                    8 -> cleanHex
-                    else -> "000000FF"
-                }
-                val color = colorValue.toLong(16)
-                UIColor.colorWithRed(
-                    red = ((color shr 16) and 0xFF) / 255.0,
-                    green = ((color shr 8) and 0xFF) / 255.0,
-                    blue = (color and 0xFF) / 255.0,
-                    alpha = ((color shr 24) and 0xFF) / 255.0
-                )
-            } catch (_: Exception) {
-                UIColor.redColor
+internal fun Color?.toUIColor(): UIColor? = when {
+    this == null -> null
+    this.hexColor != null && this.hexColor!!.startsWith("#") -> {
+        try {
+            val cleanHex = this.hexColor!!.removePrefix("#")
+            val colorValue = when (cleanHex.length) {
+                6 -> cleanHex + "FF"
+                8 -> cleanHex
+                else -> "000000FF"
             }
+            val color = colorValue.toLong(16)
+            UIColor.colorWithRed(
+                red = ((color shr 16) and 0xFF) / 255.0,
+                green = ((color shr 8) and 0xFF) / 255.0,
+                blue = (color and 0xFF) / 255.0,
+                alpha = ((color shr 24) and 0xFF) / 255.0
+            )
+        } catch (_: Exception) {
+            UIColor.redColor
         }
-        else -> {
-            when (this.lowercase()) {
-                "red" -> UIColor.redColor
-                "blue" -> UIColor.blueColor
-                "green" -> UIColor.greenColor
-                "black" -> UIColor.blackColor
-                "white" -> UIColor.whiteColor
-                "yellow" -> UIColor.yellowColor
-                "orange" -> UIColor.orangeColor
-                "purple" -> UIColor.purpleColor
-                "gray", "grey" -> UIColor.grayColor
-                else -> UIColor.redColor
-            }
+    }
+    else -> {
+        when (this.appleUIColor) {
+            AppleColors.RED -> UIColor.redColor
+            AppleColors.DARK_GRAY -> UIColor.darkGrayColor
+            AppleColors.BLACK -> UIColor.blackColor
+            AppleColors.GREEN -> UIColor.greenColor
+            AppleColors.BROWN -> UIColor.brownColor
+            AppleColors.CYAN -> UIColor.cyanColor
+            AppleColors.MAGENTA -> UIColor.magentaColor
+            AppleColors.WHITE -> UIColor.whiteColor
+            AppleColors.YELLOW -> UIColor.yellowColor
+            AppleColors.PURPLE -> UIColor.purpleColor
+            AppleColors.LIGHT_GRAY -> UIColor.lightGrayColor
+            AppleColors.BLUE -> UIColor.blueColor
+            AppleColors.ORANGE -> UIColor.orangeColor
+            else -> UIColor.redColor
         }
     }
 }
