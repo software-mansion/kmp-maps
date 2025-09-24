@@ -6,6 +6,7 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.sizeOf
+import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCircle
@@ -110,6 +111,20 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
             calculateLongitudeDelta(zoom, coordinates.latitude),
         )
     return MKCoordinateRegionMake(coordinate, span)
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun CValue<MKCoordinateRegion>.toCameraPosition(): CameraPosition {
+    return this.useContents {
+        val latZoom = kotlin.math.ln(360.0 / span.latitudeDelta) / kotlin.math.ln(2.0)
+        val lngZoom = kotlin.math.ln(360.0 / span.longitudeDelta) / kotlin.math.ln(2.0)
+        val zoom = kotlin.math.min(latZoom, lngZoom).toFloat()
+        
+        CameraPosition(
+            coordinates = Coordinates(center.latitude, center.longitude),
+            zoom = zoom
+        )
+    }
 }
 
 internal fun MKMapView.setupMapConstraints(parentView: UIView) {

@@ -20,7 +20,14 @@ internal class MapDelegate(
     private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
     private val polylineStyles: MutableMap<MKPolyline, MapPolyline>,
     private val markerMapping: MutableMap<MKPointAnnotation, MapMarker>,
-    private val onMarkerClick: ((MapMarker) -> Unit)?,
+    private var onMarkerClick: ((MapMarker) -> Unit)?,
+    private var onCircleClick: ((MapCircle) -> Unit)?,
+    private var onPolygonClick: ((MapPolygon) -> Unit)?,
+    private var onPolylineClick: ((MapPolyline) -> Unit)?,
+    private var onMapClick: ((Coordinates) -> Unit)?,
+    private var onMapLongClick: ((Coordinates) -> Unit)?,
+    private var onPOIClick: ((Coordinates) -> Unit)?,
+    private var onCameraMove: ((CameraPosition) -> Unit)?,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     override fun mapView(
@@ -62,5 +69,31 @@ internal class MapDelegate(
                 onMarkerClick?.invoke(marker)
             }
         }
+    }
+
+    override fun mapView(mapView: MKMapView, regionDidChangeAnimated: Boolean) {
+        val region = mapView.region
+        val cameraPosition = region.toCameraPosition()
+        onCameraMove?.invoke(cameraPosition)
+    }
+
+    fun updateCallbacks(
+        onMarkerClick: ((MapMarker) -> Unit)?,
+        onCircleClick: ((MapCircle) -> Unit)?,
+        onPolygonClick: ((MapPolygon) -> Unit)?,
+        onPolylineClick: ((MapPolyline) -> Unit)?,
+        onMapClick: ((Coordinates) -> Unit)?,
+        onMapLongClick: ((Coordinates) -> Unit)?,
+        onPOIClick: ((Coordinates) -> Unit)?,
+        onCameraMove: ((CameraPosition) -> Unit)?,
+    ) {
+        this.onMarkerClick = onMarkerClick
+        this.onCircleClick = onCircleClick
+        this.onPolygonClick = onPolygonClick
+        this.onPolylineClick = onPolylineClick
+        this.onMapClick = onMapClick
+        this.onMapLongClick = onMapLongClick
+        this.onPOIClick = onPOIClick
+        this.onCameraMove = onCameraMove
     }
 }

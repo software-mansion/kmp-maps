@@ -44,6 +44,7 @@ public actual fun Map(
     onMapLoaded: (() -> Unit)?,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
+    var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
@@ -89,13 +90,22 @@ public actual fun Map(
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            mkMapView.delegate = MapDelegate(
+            val delegate = MapDelegate(
                 circleStyles = circleStyles,
                 polygonStyles = polygonStyles,
                 polylineStyles = polylineStyles,
                 markerMapping = markerMapping,
                 onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
+                onMapClick = onMapClick,
+                onMapLongClick = onMapLongClick,
+                onPOIClick = onPOIClick,
+                onCameraMove = onCameraMove
             )
+            mkMapView.delegate = delegate
+            mapDelegate = delegate
 
             markerMapping.clear()
             markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
@@ -125,12 +135,16 @@ public actual fun Map(
                 mkMapView.scrollEnabled = uiSettings.scrollEnabled
                 mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-                mkMapView.delegate = MapDelegate(
-                    circleStyles = circleStyles,
-                    polygonStyles = polygonStyles,
-                    polylineStyles = polylineStyles,
-                    markerMapping = markerMapping,
+
+                mapDelegate?.updateCallbacks(
                     onMarkerClick = onMarkerClick,
+                    onCircleClick = onCircleClick,
+                    onPolygonClick = onPolygonClick,
+                    onPolylineClick = onPolylineClick,
+                    onMapClick = onMapClick,
+                    onMapLongClick = onMapLongClick,
+                    onPOIClick = onPOIClick,
+                    onCameraMove = onCameraMove
                 )
 
                 markerMapping.clear()
