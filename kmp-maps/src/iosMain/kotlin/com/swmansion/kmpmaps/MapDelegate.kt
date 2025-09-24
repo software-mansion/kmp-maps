@@ -17,9 +17,7 @@ import platform.MapKit.MKPolylineRenderer
 import platform.darwin.NSObject
 import platform.UIKit.UITapGestureRecognizer
 import platform.UIKit.UILongPressGestureRecognizer
-import platform.UIKit.UIGestureRecognizerState
 import platform.UIKit.UIGestureRecognizerStateBegan
-import platform.Foundation.NSSelectorFromString
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
@@ -112,8 +110,17 @@ internal class MapDelegate(
             .convertPoint(tapPoint, toCoordinateFromView = mapView)
 
         coordinate.useContents {
-            val coordinates = Coordinates(latitude, longitude)
-            onMapClick?.invoke(coordinates)
+            val tapLat = latitude
+            val tapLon = longitude
+            val tapCoord = Coordinates(tapLat, tapLon)
+            
+            for ((mkPolygon, mapPolygon) in polygonStyles) {
+                if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
+                    onPolygonClick?.invoke(mapPolygon)
+                    return@useContents
+                }
+            }
+            onMapClick?.invoke(tapCoord)
         }
     }
 
