@@ -13,6 +13,7 @@ import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.MapKit.MKCircle
 import platform.MapKit.MKMapView
+import platform.MapKit.MKPolygon
 import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
@@ -39,6 +40,7 @@ public actual fun Map(
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
+    val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -79,10 +81,11 @@ public actual fun Map(
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            mkMapView.delegate = SimpleMapDelegate(circleStyles)
+            mkMapView.delegate = SimpleMapDelegate(circleStyles, polygonStyles)
 
             mkMapView.updateAppleMapsMarkers(markers)
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
+            mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
 
             mapView = mkMapView
             view
@@ -106,10 +109,11 @@ public actual fun Map(
                 mkMapView.scrollEnabled = uiSettings.scrollEnabled
                 mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-                mkMapView.delegate = SimpleMapDelegate(circleStyles)
+                mkMapView.delegate = SimpleMapDelegate(circleStyles, polygonStyles)
 
                 mkMapView.updateAppleMapsMarkers(markers)
                 mkMapView.updateAppleMapsCircles(circles, circleStyles)
+                mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             }
         },
         properties = UIKitInteropProperties(

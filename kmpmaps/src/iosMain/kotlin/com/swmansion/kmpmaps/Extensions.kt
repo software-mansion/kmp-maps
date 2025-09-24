@@ -1,7 +1,21 @@
 package com.swmansion.kmpmaps
 
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.useContents
+import kotlinx.cinterop.pointed
+import kotlinx.cinterop.plus
+import kotlinx.cinterop.sizeOf
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.refTo
+import kotlinx.cinterop.usePinned
+import kotlinx.cinterop.interpretCPointer
+import platform.posix.memcpy
+import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCoordinateRegion
@@ -13,6 +27,7 @@ import platform.MapKit.MKMapTypeSatellite
 import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
+import platform.MapKit.MKPolygon
 import platform.MapKit.MKPointOfInterestCategory
 import platform.MapKit.MKPointOfInterestCategoryATM
 import platform.MapKit.MKPointOfInterestCategoryAirport
@@ -92,6 +107,7 @@ import platform.MapKit.addOverlay
 import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIColor
 import platform.UIKit.UIView
+import platform.posix.memcpy
 
 
 @OptIn(ExperimentalForeignApi::class)
@@ -163,6 +179,34 @@ internal fun MKMapView.updateAppleMapsCircles(
             MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius.toDouble())
         circleStyles[mkCircle] = circle
         addOverlay(mkCircle)
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun MKMapView.updateAppleMapsPolygons(
+    polygons: List<MapPolygon>,
+    polygonStyles: MutableMap<MKPolygon, MapPolygon>
+) {
+    polygons.forEach { polygon ->
+        memScoped {
+            val coordinates = polygon.coordinates.map { coord ->
+                CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
+            }
+            
+            val nativeArray = allocArray<CLLocationCoordinate2D>(coordinates.size)
+            for ((index, coord) in coordinates.withIndex()) {
+                val elementPtr =
+                    interpretCPointer<CLLocationCoordinate2D>(nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>()))
+                memcpy(elementPtr, coord.ptr, sizeOf<CLLocationCoordinate2D>().toULong())
+            }
+            
+            val mkPolygon = MKPolygon.polygonWithCoordinates(
+                nativeArray,
+                count = coordinates.size.toULong()
+            )
+            polygonStyles[mkPolygon] = polygon
+            addOverlay(mkPolygon)
+        }
     }
 }
 
