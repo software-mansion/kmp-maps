@@ -108,7 +108,6 @@ import platform.MapKit.addOverlay
 import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIColor
 import platform.UIKit.UIView
-import platform.posix.memcpy
 
 
 @OptIn(ExperimentalForeignApi::class)
