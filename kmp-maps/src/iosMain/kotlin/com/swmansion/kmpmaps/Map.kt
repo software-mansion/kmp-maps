@@ -46,6 +46,7 @@ public actual fun Map(
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     var tapGesture by remember { mutableStateOf<UITapGestureRecognizer?>(null) }
+    var longPressGesture by remember { mutableStateOf<UILongPressGestureRecognizer?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
@@ -117,10 +118,18 @@ public actual fun Map(
             val tapGestureRecognizer = UITapGestureRecognizer()
             tapGestureRecognizer.addTarget(
                 target = delegate as Any,
-                action = platform.objc.sel_registerName("handleMapTap:")
+                action = platform.Foundation.NSSelectorFromString("handleMapTap:")
             )
             mkMapView.addGestureRecognizer(tapGestureRecognizer)
             tapGesture = tapGestureRecognizer
+
+            val longPressGestureRecognizer = UILongPressGestureRecognizer()
+            longPressGestureRecognizer.addTarget(
+                target = delegate as Any,
+                action = platform.Foundation.NSSelectorFromString("handleMapLongPress:")
+            )
+            mkMapView.addGestureRecognizer(longPressGestureRecognizer)
+            longPressGesture = longPressGestureRecognizer
 
             mapView = mkMapView
             view
@@ -158,7 +167,13 @@ public actual fun Map(
 
                 tapGesture?.let { gesture ->
                     mkMapView.removeGestureRecognizer(gesture)
-                    gesture.addTarget(mapDelegate as Any, action = platform.objc.sel_registerName("handleMapTap:"))
+                    gesture.addTarget(mapDelegate as Any, action = platform.Foundation.NSSelectorFromString("handleMapTap:"))
+                    mkMapView.addGestureRecognizer(gesture)
+                }
+
+                longPressGesture?.let { gesture ->
+                    mkMapView.removeGestureRecognizer(gesture)
+                    gesture.addTarget(mapDelegate as Any, action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"))
                     mkMapView.addGestureRecognizer(gesture)
                 }
 

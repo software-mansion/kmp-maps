@@ -16,6 +16,10 @@ import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
 import platform.darwin.NSObject
 import platform.UIKit.UITapGestureRecognizer
+import platform.UIKit.UILongPressGestureRecognizer
+import platform.UIKit.UIGestureRecognizerState
+import platform.UIKit.UIGestureRecognizerStateBegan
+import platform.Foundation.NSSelectorFromString
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
@@ -110,6 +114,21 @@ internal class MapDelegate(
         coordinate.useContents {
             val coordinates = Coordinates(latitude, longitude)
             onMapClick?.invoke(coordinates)
+        }
+    }
+
+    @ObjCAction
+    fun handleMapLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
+        if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+            val mapView = gestureRecognizer.view as? MKMapView ?: return
+            val longPressPoint = gestureRecognizer.locationInView(mapView)
+            val coordinate = mapView
+                .convertPoint(longPressPoint, toCoordinateFromView = mapView)
+
+            coordinate.useContents {
+                val coordinates = Coordinates(latitude, longitude)
+                onMapLongClick?.invoke(coordinates)
+            }
         }
     }
 }
