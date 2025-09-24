@@ -28,6 +28,7 @@ import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
+import platform.MapKit.MKPolyline
 import platform.MapKit.MKPointOfInterestCategory
 import platform.MapKit.MKPointOfInterestCategoryATM
 import platform.MapKit.MKPointOfInterestCategoryAirport
@@ -206,6 +207,33 @@ internal fun MKMapView.updateAppleMapsPolygons(
             )
             polygonStyles[mkPolygon] = polygon
             addOverlay(mkPolygon)
+        }
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun MKMapView.updateAppleMapsPolylines(
+    polylines: List<MapPolyline>,
+    polylineStyles: MutableMap<MKPolyline, MapPolyline>
+) {
+    polylines.forEach { polyline ->
+        memScoped {
+            val coordinates = polyline.coordinates.map { coord ->
+                CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
+            }
+            
+            val nativeArray = allocArray<CLLocationCoordinate2D>(coordinates.size)
+            for ((index, coord) in coordinates.withIndex()) {
+                val elementPtr = interpretCPointer<CLLocationCoordinate2D>(nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>()))
+                memcpy(elementPtr, coord.ptr, sizeOf<CLLocationCoordinate2D>().toULong())
+            }
+            
+            val mkPolyline = MKPolyline.polylineWithCoordinates(
+                nativeArray,
+                count = coordinates.size.toULong()
+            )
+            polylineStyles[mkPolyline] = polyline
+            addOverlay(mkPolyline)
         }
     }
 }

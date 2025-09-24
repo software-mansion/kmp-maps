@@ -14,6 +14,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.MapKit.MKCircle
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPolygon
+import platform.MapKit.MKPolyline
 import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
@@ -41,6 +42,7 @@ public actual fun Map(
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
+    val polylineStyles = remember { mutableMapOf<MKPolyline, MapPolyline>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -81,11 +83,12 @@ public actual fun Map(
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            mkMapView.delegate = SimpleMapDelegate(circleStyles, polygonStyles)
+            mkMapView.delegate = MapDelegate(circleStyles, polygonStyles, polylineStyles)
 
             mkMapView.updateAppleMapsMarkers(markers)
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
+            mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
 
             mapView = mkMapView
             view
@@ -109,11 +112,12 @@ public actual fun Map(
                 mkMapView.scrollEnabled = uiSettings.scrollEnabled
                 mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-                mkMapView.delegate = SimpleMapDelegate(circleStyles, polygonStyles)
+                mkMapView.delegate = MapDelegate(circleStyles, polygonStyles, polylineStyles)
 
                 mkMapView.updateAppleMapsMarkers(markers)
                 mkMapView.updateAppleMapsCircles(circles, circleStyles)
                 mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
+                mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
             }
         },
         properties = UIKitInteropProperties(

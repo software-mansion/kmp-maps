@@ -14,9 +14,10 @@ import platform.MapKit.MKPolylineRenderer
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
-internal class SimpleMapDelegate(
+internal class MapDelegate(
     private val circleStyles: MutableMap<MKCircle, MapCircle>,
-    private val polygonStyles: MutableMap<MKPolygon, MapPolygon>
+    private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
+    private val polylineStyles: MutableMap<MKPolyline, MapPolyline>
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     override fun mapView(
@@ -32,7 +33,6 @@ internal class SimpleMapDelegate(
                 renderer.fillColor = circleStyle?.color?.toUIColor()
                 renderer
             }
-
             is MKPolygon -> {
                 val polygonStyle = polygonStyles[rendererForOverlay]
                 val renderer = MKPolygonRenderer(rendererForOverlay)
@@ -41,7 +41,13 @@ internal class SimpleMapDelegate(
                 renderer.fillColor = polygonStyle?.color?.toUIColor()
                 renderer
             }
-            is MKPolyline -> MKPolylineRenderer(rendererForOverlay)
+            is MKPolyline -> {
+                val polylineStyle = polylineStyles[rendererForOverlay]
+                val renderer = MKPolylineRenderer(rendererForOverlay)
+                renderer.strokeColor = polylineStyle?.lineColor?.toUIColor()
+                renderer.lineWidth = (polylineStyle?.width ?: 1).toDouble()
+                renderer
+            }
             else -> MKCircleRenderer(rendererForOverlay)
         }
     }
