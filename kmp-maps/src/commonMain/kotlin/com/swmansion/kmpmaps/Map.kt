@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 public expect fun Map(
+    modifier: Modifier = Modifier,
     cameraPosition: CameraPosition? = null,
     properties: MapProperties,
     uiSettings: MapUISettings,
@@ -21,5 +22,4 @@ public expect fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
 )

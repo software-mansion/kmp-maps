@@ -16,6 +16,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 public actual fun Map(
+    modifier: Modifier,
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
@@ -32,7 +33,6 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
-    modifier: Modifier,
 ) {
     val context = LocalContext.current
     val locationPermissionHandler = remember { LocationPermissionHandler(context) }

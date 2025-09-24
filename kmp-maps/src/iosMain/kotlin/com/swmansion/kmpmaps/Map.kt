@@ -20,6 +20,7 @@ import platform.UIKit.UIView
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 public actual fun Map(
+    modifier: Modifier,
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
@@ -36,7 +37,6 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
-    modifier: Modifier,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }

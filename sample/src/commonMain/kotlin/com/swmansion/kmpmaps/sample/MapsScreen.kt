@@ -44,6 +44,7 @@ fun MapsScreen() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Map(
+            modifier = Modifier.fillMaxSize(),
             cameraPosition = currentCameraPosition,
             properties = createMapProperties(selectedMapType, showUserLocation),
             uiSettings = createMapUISettings(showUserLocation),
@@ -61,7 +62,6 @@ fun MapsScreen() {
             onMapClick = { coordinates ->
                 println("Map clicked at: $coordinates")
             },
-            modifier = Modifier.fillMaxSize(),
         )
 
         Card(

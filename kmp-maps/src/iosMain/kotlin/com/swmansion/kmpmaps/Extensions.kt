@@ -1,18 +1,10 @@
 package com.swmansion.kmpmaps
 
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.nativeHeap
-import kotlinx.cinterop.useContents
-import kotlinx.cinterop.pointed
-import kotlinx.cinterop.plus
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.refTo
-import kotlinx.cinterop.usePinned
 import kotlinx.cinterop.interpretCPointer
 import platform.posix.memcpy
 import platform.CoreLocation.CLLocationCoordinate2D
