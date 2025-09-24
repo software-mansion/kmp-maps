@@ -4,11 +4,6 @@ import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapType
 import com.swmansion.kmpmaps.MapUISettings
 
-expect fun createMapProperties(
-    mapType: MapType,
-    showUserLocation: Boolean
-): MapProperties
+expect fun createMapProperties(mapType: MapType, showUserLocation: Boolean): MapProperties
 
-expect fun createMapUISettings(
-    showUserLocation: Boolean
-): MapUISettings
+expect fun createMapUISettings(showUserLocation: Boolean): MapUISettings

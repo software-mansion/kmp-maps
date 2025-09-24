@@ -5,11 +5,6 @@ public data class AppleMapsPointOfInterestCategories(
     val including: List<AppleMapPointOfInterestCategory>? = emptyList(),
 )
 
-public data class GoogleMapsAnchor(
-    var x: Float,
-    var y: Float
-)
+public data class GoogleMapsAnchor(var x: Float, var y: Float)
 
-public data class GoogleMapsMapStyleOptions(
-    val json: String?
-)
+public data class GoogleMapsMapStyleOptions(val json: String?)

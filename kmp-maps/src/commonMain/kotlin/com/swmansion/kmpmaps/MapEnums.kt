@@ -3,7 +3,7 @@ package com.swmansion.kmpmaps
 public enum class AppleMapsMapStyleElevation {
     AUTOMATIC,
     FLAT,
-    REALISTIC
+    REALISTIC,
 }
 
 public enum class AppleMapsMapStyleEmphasis {
@@ -84,19 +84,19 @@ public enum class AppleMapPointOfInterestCategory {
     UNIVERSITY,
     VOLLEYBALL,
     WINERY,
-    ZOO
+    ZOO,
 }
 
 public enum class AppleMapsContourStyle {
     GEODESIC,
-    STRAIGHT
+    STRAIGHT,
 }
 
 public enum class MapType {
     HYBRID,
     NORMAL,
     SATELLITE,
-    TERRAIN;
+    TERRAIN,
 }
 
 public enum class AppleColors {

@@ -120,15 +120,9 @@ public actual fun Map(
                 mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
             }
         },
-        properties = UIKitInteropProperties(
-            isInteractive = true,
-            isNativeAccessibilityEnabled = true,
-        ),
+        properties =
+            UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
 
-    LaunchedEffect(mapView) {
-        mapView?.let { mkMapView ->
-            onMapLoaded?.invoke()
-        }
-    }
+    LaunchedEffect(mapView) { mapView?.let { mkMapView -> onMapLoaded?.invoke() } }
 }

@@ -6,64 +6,67 @@ import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
+import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
 import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.MapType
 
-internal fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition = GoogleCameraPosition
-    .Builder()
-    .target(LatLng(coordinates.latitude, coordinates.longitude))
-    .zoom(zoom)
-    .bearing(androidBearing ?: 0f)
-    .tilt(androidTilt ?: 0f)
-    .build()
+internal fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition =
+    GoogleCameraPosition.Builder()
+        .target(LatLng(coordinates.latitude, coordinates.longitude))
+        .zoom(zoom)
+        .bearing(androidBearing ?: 0f)
+        .tilt(androidTilt ?: 0f)
+        .build()
 
-internal fun GoogleCameraPosition.toCameraPosition(): CameraPosition = CameraPosition(
-    coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
-    zoom = zoom,
-    androidBearing = bearing,
-    androidTilt = tilt,
-)
+internal fun GoogleCameraPosition.toCameraPosition(): CameraPosition =
+    CameraPosition(
+        coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
+        zoom = zoom,
+        androidBearing = bearing,
+        androidTilt = tilt,
+    )
 
-internal fun MapMarker.toGoogleMapsMarkerState(): MarkerState = MarkerState(
-    position = LatLng(coordinates.latitude, coordinates.longitude)
-)
+internal fun MapMarker.toGoogleMapsMarkerState(): MarkerState =
+    MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
 internal fun String.toGoogleColor(): Int = toColorInt()
 
-internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties = GoogleMapProperties(
-    mapType = mapType.toGoogleMapsMapType(),
-    isMyLocationEnabled = isMyLocationEnabled,
-    isTrafficEnabled = isTrafficEnabled,
-    isBuildingEnabled = isBuildingEnabled,
-    isIndoorEnabled = androidIsIndoorEnabled,
-    minZoomPreference = androidMinZoomPreference ?: 0f,
-    maxZoomPreference = androidMaxZoomPreference ?: 20f,
-    mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
-)
+internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties =
+    GoogleMapProperties(
+        mapType = mapType.toGoogleMapsMapType(),
+        isMyLocationEnabled = isMyLocationEnabled,
+        isTrafficEnabled = isTrafficEnabled,
+        isBuildingEnabled = isBuildingEnabled,
+        isIndoorEnabled = androidIsIndoorEnabled,
+        minZoomPreference = androidMinZoomPreference ?: 0f,
+        maxZoomPreference = androidMaxZoomPreference ?: 20f,
+        mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
+    )
 
-internal fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings = GoogleMapUiSettings(
-    compassEnabled = compassEnabled,
-    myLocationButtonEnabled = myLocationButtonEnabled,
-    indoorLevelPickerEnabled = androidIndoorLevelPickerEnabled,
-    mapToolbarEnabled = androidMapToolbarEnabled,
-    rotationGesturesEnabled = androidRotationGesturesEnabled,
-    scrollGesturesEnabled = scrollEnabled,
-    scrollGesturesEnabledDuringRotateOrZoom = androidScrollGesturesEnabledDuringRotateOrZoom,
-    tiltGesturesEnabled = androidTiltGesturesEnabled,
-    zoomControlsEnabled = androidZoomControlsEnabled,
-    zoomGesturesEnabled = zoomEnabled,
-)
+internal fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings =
+    GoogleMapUiSettings(
+        compassEnabled = compassEnabled,
+        myLocationButtonEnabled = myLocationButtonEnabled,
+        indoorLevelPickerEnabled = androidIndoorLevelPickerEnabled,
+        mapToolbarEnabled = androidMapToolbarEnabled,
+        rotationGesturesEnabled = androidRotationGesturesEnabled,
+        scrollGesturesEnabled = scrollEnabled,
+        scrollGesturesEnabledDuringRotateOrZoom = androidScrollGesturesEnabledDuringRotateOrZoom,
+        tiltGesturesEnabled = androidTiltGesturesEnabled,
+        zoomControlsEnabled = androidZoomControlsEnabled,
+        zoomGesturesEnabled = zoomEnabled,
+    )
 
-internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType = when(this) {
-    com.swmansion.kmpmaps.MapType.HYBRID -> MapType.HYBRID
-    com.swmansion.kmpmaps.MapType.NORMAL -> MapType.NORMAL
-    com.swmansion.kmpmaps.MapType.SATELLITE -> MapType.SATELLITE
-    com.swmansion.kmpmaps.MapType.TERRAIN -> MapType.TERRAIN
-    else -> MapType.NORMAL
-}
+internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType =
+    when (this) {
+        com.swmansion.kmpmaps.MapType.HYBRID -> MapType.HYBRID
+        com.swmansion.kmpmaps.MapType.NORMAL -> MapType.NORMAL
+        com.swmansion.kmpmaps.MapType.SATELLITE -> MapType.SATELLITE
+        com.swmansion.kmpmaps.MapType.TERRAIN -> MapType.TERRAIN
+        else -> MapType.NORMAL
+    }
 
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions(): MapStyleOptions? =
     this?.json?.let { MapStyleOptions(it) }

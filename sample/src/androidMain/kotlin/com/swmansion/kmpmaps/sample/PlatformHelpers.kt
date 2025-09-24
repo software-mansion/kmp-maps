@@ -4,10 +4,7 @@ import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapType
 import com.swmansion.kmpmaps.MapUISettings
 
-actual fun createMapProperties(
-    mapType: MapType,
-    showUserLocation: Boolean
-): MapProperties {
+actual fun createMapProperties(mapType: MapType, showUserLocation: Boolean): MapProperties {
     return MapProperties(
         mapType = mapType,
         isMyLocationEnabled = showUserLocation,
@@ -20,9 +17,7 @@ actual fun createMapProperties(
     )
 }
 
-actual fun createMapUISettings(
-    showUserLocation: Boolean
-): MapUISettings {
+actual fun createMapUISettings(showUserLocation: Boolean): MapUISettings {
     return MapUISettings(
         compassEnabled = true,
         myLocationButtonEnabled = showUserLocation,

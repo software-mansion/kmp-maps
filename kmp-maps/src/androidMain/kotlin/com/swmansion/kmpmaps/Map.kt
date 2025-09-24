@@ -44,7 +44,7 @@ public actual fun Map(
             }
         }
     }
-    
+
     val cameraPositionState = rememberCameraPositionState {
         cameraPosition?.let { pos -> position = pos.toGoogleCameraPosition() }
     }
@@ -54,22 +54,18 @@ public actual fun Map(
         cameraPositionState = cameraPositionState,
         properties = properties.toGoogleMapsProperties(),
         uiSettings = uiSettings.toGoogleMapsUiSettings(),
-        onMapClick = onMapClick?.let { callback ->
-            { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
-        },
-        onMapLongClick = onMapLongClick?.let { callback ->
-            { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
-        },
-        onPOIClick = onPOIClick?.let { callback ->
-            { poi ->
-                callback(
-                    Coordinates(
-                        poi.latLng.latitude,
-                        poi.latLng.longitude,
-                    ),
-                )
-            }
-        },
+        onMapClick =
+            onMapClick?.let { callback ->
+                { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
+            },
+        onMapLongClick =
+            onMapLongClick?.let { callback ->
+                { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
+            },
+        onPOIClick =
+            onPOIClick?.let { callback ->
+                { poi -> callback(Coordinates(poi.latLng.latitude, poi.latLng.longitude)) }
+            },
         onMapLoaded = onMapLoaded,
     ) {
         markers.forEach { marker ->
@@ -92,46 +88,47 @@ public actual fun Map(
             Circle(
                 center = circle.center.toGoogleLatLng(),
                 radius = circle.radius.toDouble(),
-                strokeColor = Color(
-                    circle.lineColor?.hexColor?.toGoogleColor()
-                        ?: android.graphics.Color.BLACK,
-                ),
+                strokeColor =
+                    Color(
+                        circle.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK
+                    ),
                 strokeWidth = circle.lineWidth ?: 10f,
-                fillColor = Color(
-                    circle.color?.hexColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
-                ),
-                onClick = onCircleClick?.let { callback ->
-                    { callback(circle) }
-                } ?: { false },
+                fillColor =
+                    Color(
+                        circle.color?.hexColor?.toGoogleColor()
+                            ?: android.graphics.Color.TRANSPARENT
+                    ),
+                onClick = onCircleClick?.let { callback -> { callback(circle) } } ?: { false },
             )
         }
 
         polygons.forEach { polygon ->
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
-                strokeColor = Color(
-                    polygon.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
-                ),
+                strokeColor =
+                    Color(
+                        polygon.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK
+                    ),
                 strokeWidth = polygon.lineWidth,
-                fillColor = Color(
-                    polygon.color?.hexColor?.toGoogleColor() ?: android.graphics.Color.TRANSPARENT,
-                ),
-                onClick = onPolygonClick?.let { callback ->
-                    { callback(polygon) }
-                } ?: { false },
+                fillColor =
+                    Color(
+                        polygon.color?.hexColor?.toGoogleColor()
+                            ?: android.graphics.Color.TRANSPARENT
+                    ),
+                onClick = onPolygonClick?.let { callback -> { callback(polygon) } } ?: { false },
             )
         }
 
         polylines.forEach { polyline ->
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
-                color = Color(
-                    polyline.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK,
-                ),
+                color =
+                    Color(
+                        polyline.lineColor?.hexColor?.toGoogleColor()
+                            ?: android.graphics.Color.BLACK
+                    ),
                 width = polyline.width,
-                onClick = onPolylineClick?.let { callback ->
-                    { callback(polyline) }
-                } ?: { false },
+                onClick = onPolylineClick?.let { callback -> { callback(polyline) } } ?: { false },
             )
         }
     }

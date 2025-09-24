@@ -38,8 +38,7 @@ kotlin {
             implementation(libs.google.maps.android.mapsCompose)
         }
 
-        iosMain.dependencies {
-        }
+        iosMain.dependencies {}
     }
 }
 
@@ -47,9 +46,7 @@ android {
     namespace = "com.swmansion.kmpmaps"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
-    defaultConfig { 
-        minSdk = libs.versions.android.minSdk.get().toInt() 
-    }
+    defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

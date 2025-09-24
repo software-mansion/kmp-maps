@@ -3,10 +3,9 @@ package com.swmansion.kmpmaps
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.sizeOf
-import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.interpretCPointer
-import platform.posix.memcpy
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.sizeOf
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCircle
@@ -19,8 +18,6 @@ import platform.MapKit.MKMapTypeSatellite
 import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
-import platform.MapKit.MKPolygon
-import platform.MapKit.MKPolyline
 import platform.MapKit.MKPointOfInterestCategory
 import platform.MapKit.MKPointOfInterestCategoryATM
 import platform.MapKit.MKPointOfInterestCategoryAirport
@@ -96,11 +93,13 @@ import platform.MapKit.MKPointOfInterestCategoryVolleyball
 import platform.MapKit.MKPointOfInterestCategoryWinery
 import platform.MapKit.MKPointOfInterestCategoryZoo
 import platform.MapKit.MKPointOfInterestFilter
+import platform.MapKit.MKPolygon
+import platform.MapKit.MKPolyline
 import platform.MapKit.addOverlay
 import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIColor
 import platform.UIKit.UIView
-
+import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
@@ -128,20 +127,20 @@ internal fun MKMapView.setupMapConstraints(parentView: UIView) {
 internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>) {
     removeAnnotations(this.annotations)
     markers.forEach { marker ->
-        val mkAnnotation = MKPointAnnotation().apply {
-            marker.coordinates.let { coords ->
-                setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
+        val mkAnnotation =
+            MKPointAnnotation().apply {
+                marker.coordinates.let { coords ->
+                    setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
+                }
+                setTitle(marker.title)
             }
-            setTitle(marker.title)
-        }
         addAnnotation(mkAnnotation)
     }
 }
 
-
-
 @OptIn(ExperimentalForeignApi::class)
-internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKPointOfInterestFilter? {
+internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
+    MKPointOfInterestFilter? {
     val includingCategories = including?.map { it.toMKPointOfInterestCategory() }
     val excludingCategories = excluding?.map { it.toMKPointOfInterestCategory() }
 
@@ -158,15 +157,13 @@ internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter(): MKP
     }
 }
 
-
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsCircles(
     circles: List<MapCircle>,
-    circleStyles: MutableMap<MKCircle, MapCircle>
+    circleStyles: MutableMap<MKCircle, MapCircle>,
 ) {
     circles.forEach { circle ->
-        val coordinate =
-            CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
+        val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
         val mkCircle =
             MKCircle.circleWithCenterCoordinate(coordinate, radius = circle.radius.toDouble())
         circleStyles[mkCircle] = circle
@@ -177,25 +174,26 @@ internal fun MKMapView.updateAppleMapsCircles(
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolygons(
     polygons: List<MapPolygon>,
-    polygonStyles: MutableMap<MKPolygon, MapPolygon>
+    polygonStyles: MutableMap<MKPolygon, MapPolygon>,
 ) {
     polygons.forEach { polygon ->
         memScoped {
-            val coordinates = polygon.coordinates.map { coord ->
-                CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
-            }
-            
+            val coordinates =
+                polygon.coordinates.map { coord ->
+                    CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
+                }
+
             val nativeArray = allocArray<CLLocationCoordinate2D>(coordinates.size)
             for ((index, coord) in coordinates.withIndex()) {
                 val elementPtr =
-                    interpretCPointer<CLLocationCoordinate2D>(nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>()))
+                    interpretCPointer<CLLocationCoordinate2D>(
+                        nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>())
+                    )
                 memcpy(elementPtr, coord.ptr, sizeOf<CLLocationCoordinate2D>().toULong())
             }
-            
-            val mkPolygon = MKPolygon.polygonWithCoordinates(
-                nativeArray,
-                count = coordinates.size.toULong()
-            )
+
+            val mkPolygon =
+                MKPolygon.polygonWithCoordinates(nativeArray, count = coordinates.size.toULong())
             polygonStyles[mkPolygon] = polygon
             addOverlay(mkPolygon)
         }
@@ -205,153 +203,162 @@ internal fun MKMapView.updateAppleMapsPolygons(
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolylines(
     polylines: List<MapPolyline>,
-    polylineStyles: MutableMap<MKPolyline, MapPolyline>
+    polylineStyles: MutableMap<MKPolyline, MapPolyline>,
 ) {
     polylines.forEach { polyline ->
         memScoped {
-            val coordinates = polyline.coordinates.map { coord ->
-                CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
-            }
-            
+            val coordinates =
+                polyline.coordinates.map { coord ->
+                    CLLocationCoordinate2DMake(coord.latitude, coord.longitude)
+                }
+
             val nativeArray = allocArray<CLLocationCoordinate2D>(coordinates.size)
             for ((index, coord) in coordinates.withIndex()) {
-                val elementPtr = interpretCPointer<CLLocationCoordinate2D>(nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>()))
+                val elementPtr =
+                    interpretCPointer<CLLocationCoordinate2D>(
+                        nativeArray.rawValue + (index * sizeOf<CLLocationCoordinate2D>())
+                    )
                 memcpy(elementPtr, coord.ptr, sizeOf<CLLocationCoordinate2D>().toULong())
             }
-            
-            val mkPolyline = MKPolyline.polylineWithCoordinates(
-                nativeArray,
-                count = coordinates.size.toULong()
-            )
+
+            val mkPolyline =
+                MKPolyline.polylineWithCoordinates(nativeArray, count = coordinates.size.toULong())
             polylineStyles[mkPolyline] = polyline
             addOverlay(mkPolyline)
         }
     }
 }
 
-internal fun MapType?.toAppleMapsMapType() : MKMapType = when(this) {
-    MapType.HYBRID -> MKMapTypeHybrid
-    MapType.NORMAL -> MKMapTypeStandard
-    MapType.SATELLITE -> MKMapTypeSatellite
-    else -> MKMapTypeStandard
-}
+internal fun MapType?.toAppleMapsMapType(): MKMapType =
+    when (this) {
+        MapType.HYBRID -> MKMapTypeHybrid
+        MapType.NORMAL -> MKMapTypeStandard
+        MapType.SATELLITE -> MKMapTypeSatellite
+        else -> MKMapTypeStandard
+    }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory(): MKPointOfInterestCategory = when (this) {
-    AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
-    AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
-    AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
-    AppleMapPointOfInterestCategory.AQUARIUM -> MKPointOfInterestCategoryAquarium
-    AppleMapPointOfInterestCategory.ATM -> MKPointOfInterestCategoryATM
-    AppleMapPointOfInterestCategory.AUTOMOTIVE_REPAIR -> MKPointOfInterestCategoryAutomotiveRepair
-    AppleMapPointOfInterestCategory.BAKERY -> MKPointOfInterestCategoryBakery
-    AppleMapPointOfInterestCategory.BANK -> MKPointOfInterestCategoryBank
-    AppleMapPointOfInterestCategory.BASEBALL -> MKPointOfInterestCategoryBaseball
-    AppleMapPointOfInterestCategory.BASKETBALL -> MKPointOfInterestCategoryBasketball
-    AppleMapPointOfInterestCategory.BEACH -> MKPointOfInterestCategoryBeach
-    AppleMapPointOfInterestCategory.BEAUTY -> MKPointOfInterestCategoryBeauty
-    AppleMapPointOfInterestCategory.BOWLING -> MKPointOfInterestCategoryBowling
-    AppleMapPointOfInterestCategory.BREWERY -> MKPointOfInterestCategoryBrewery
-    AppleMapPointOfInterestCategory.CAFE -> MKPointOfInterestCategoryCafe
-    AppleMapPointOfInterestCategory.CAMPGROUND -> MKPointOfInterestCategoryCampground
-    AppleMapPointOfInterestCategory.CAR_RENTAL -> MKPointOfInterestCategoryCarRental
-    AppleMapPointOfInterestCategory.CASTLE -> MKPointOfInterestCategoryCastle
-    AppleMapPointOfInterestCategory.CONVENTION_CENTER -> MKPointOfInterestCategoryConventionCenter
-    AppleMapPointOfInterestCategory.DISTILLERY -> MKPointOfInterestCategoryDistillery
-    AppleMapPointOfInterestCategory.EV_CHARGER -> MKPointOfInterestCategoryEVCharger
-    AppleMapPointOfInterestCategory.FAIRGROUND -> MKPointOfInterestCategoryFairground
-    AppleMapPointOfInterestCategory.FIRE_STATION -> MKPointOfInterestCategoryFireStation
-    AppleMapPointOfInterestCategory.FISHING -> MKPointOfInterestCategoryFishing
-    AppleMapPointOfInterestCategory.FITNESS_CENTER -> MKPointOfInterestCategoryFitnessCenter
-    AppleMapPointOfInterestCategory.FOOD_MARKET -> MKPointOfInterestCategoryFoodMarket
-    AppleMapPointOfInterestCategory.FORTRESS -> MKPointOfInterestCategoryFortress
-    AppleMapPointOfInterestCategory.GAS_STATION -> MKPointOfInterestCategoryGasStation
-    AppleMapPointOfInterestCategory.GO_KART -> MKPointOfInterestCategoryGoKart
-    AppleMapPointOfInterestCategory.GOLF -> MKPointOfInterestCategoryGolf
-    AppleMapPointOfInterestCategory.HIKING -> MKPointOfInterestCategoryHiking
-    AppleMapPointOfInterestCategory.HOSPITAL -> MKPointOfInterestCategoryHospital
-    AppleMapPointOfInterestCategory.HOTEL -> MKPointOfInterestCategoryHotel
-    AppleMapPointOfInterestCategory.KAYAKING -> MKPointOfInterestCategoryKayaking
-    AppleMapPointOfInterestCategory.LANDMARK -> MKPointOfInterestCategoryLandmark
-    AppleMapPointOfInterestCategory.LAUNDRY -> MKPointOfInterestCategoryLaundry
-    AppleMapPointOfInterestCategory.LIBRARY -> MKPointOfInterestCategoryLibrary
-    AppleMapPointOfInterestCategory.MAILBOX -> MKPointOfInterestCategoryMailbox
-    AppleMapPointOfInterestCategory.MARINA -> MKPointOfInterestCategoryMarina
-    AppleMapPointOfInterestCategory.MINI_GOLF -> MKPointOfInterestCategoryMiniGolf
-    AppleMapPointOfInterestCategory.MOVIE_THEATER -> MKPointOfInterestCategoryMovieTheater
-    AppleMapPointOfInterestCategory.MUSEUM -> MKPointOfInterestCategoryMuseum
-    AppleMapPointOfInterestCategory.MUSIC_VENUE -> MKPointOfInterestCategoryMusicVenue
-    AppleMapPointOfInterestCategory.NATIONAL_MONUMENT -> MKPointOfInterestCategoryNationalMonument
-    AppleMapPointOfInterestCategory.NATIONAL_PARK -> MKPointOfInterestCategoryNationalPark
-    AppleMapPointOfInterestCategory.NIGHTLIFE -> MKPointOfInterestCategoryNightlife
-    AppleMapPointOfInterestCategory.PARK -> MKPointOfInterestCategoryPark
-    AppleMapPointOfInterestCategory.PARKING -> MKPointOfInterestCategoryParking
-    AppleMapPointOfInterestCategory.PHARMACY -> MKPointOfInterestCategoryPharmacy
-    AppleMapPointOfInterestCategory.PLANETARIUM -> MKPointOfInterestCategoryPlanetarium
-    AppleMapPointOfInterestCategory.POLICE -> MKPointOfInterestCategoryPolice
-    AppleMapPointOfInterestCategory.POST_OFFICE -> MKPointOfInterestCategoryPostOffice
-    AppleMapPointOfInterestCategory.PUBLIC_TRANSPORT -> MKPointOfInterestCategoryPublicTransport
-    AppleMapPointOfInterestCategory.RESTAURANT -> MKPointOfInterestCategoryRestaurant
-    AppleMapPointOfInterestCategory.RESTROOM -> MKPointOfInterestCategoryRestroom
-    AppleMapPointOfInterestCategory.ROCK_CLIMBING -> MKPointOfInterestCategoryRockClimbing
-    AppleMapPointOfInterestCategory.RV_PARK -> MKPointOfInterestCategoryRVPark
-    AppleMapPointOfInterestCategory.SCHOOL -> MKPointOfInterestCategorySchool
-    AppleMapPointOfInterestCategory.SKATE_PARK -> MKPointOfInterestCategorySkatePark
-    AppleMapPointOfInterestCategory.SKATING -> MKPointOfInterestCategorySkating
-    AppleMapPointOfInterestCategory.SKIING -> MKPointOfInterestCategorySkiing
-    AppleMapPointOfInterestCategory.SOCCER -> MKPointOfInterestCategorySoccer
-    AppleMapPointOfInterestCategory.SPA -> MKPointOfInterestCategorySpa
-    AppleMapPointOfInterestCategory.STADIUM -> MKPointOfInterestCategoryStadium
-    AppleMapPointOfInterestCategory.STORE -> MKPointOfInterestCategoryStore
-    AppleMapPointOfInterestCategory.SURFING -> MKPointOfInterestCategorySurfing
-    AppleMapPointOfInterestCategory.SWIMMING -> MKPointOfInterestCategorySwimming
-    AppleMapPointOfInterestCategory.TENNIS -> MKPointOfInterestCategoryTennis
-    AppleMapPointOfInterestCategory.THEATER -> MKPointOfInterestCategoryTheater
-    AppleMapPointOfInterestCategory.UNIVERSITY -> MKPointOfInterestCategoryUniversity
-    AppleMapPointOfInterestCategory.VOLLEYBALL -> MKPointOfInterestCategoryVolleyball
-    AppleMapPointOfInterestCategory.WINERY -> MKPointOfInterestCategoryWinery
-    AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
-}
+internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
+    MKPointOfInterestCategory =
+    when (this) {
+        AppleMapPointOfInterestCategory.AIRPORT -> MKPointOfInterestCategoryAirport
+        AppleMapPointOfInterestCategory.AMUSEMENT_PARK -> MKPointOfInterestCategoryAmusementPark
+        AppleMapPointOfInterestCategory.ANIMAL_SERVICE -> MKPointOfInterestCategoryAnimalService
+        AppleMapPointOfInterestCategory.AQUARIUM -> MKPointOfInterestCategoryAquarium
+        AppleMapPointOfInterestCategory.ATM -> MKPointOfInterestCategoryATM
+        AppleMapPointOfInterestCategory.AUTOMOTIVE_REPAIR ->
+            MKPointOfInterestCategoryAutomotiveRepair
+        AppleMapPointOfInterestCategory.BAKERY -> MKPointOfInterestCategoryBakery
+        AppleMapPointOfInterestCategory.BANK -> MKPointOfInterestCategoryBank
+        AppleMapPointOfInterestCategory.BASEBALL -> MKPointOfInterestCategoryBaseball
+        AppleMapPointOfInterestCategory.BASKETBALL -> MKPointOfInterestCategoryBasketball
+        AppleMapPointOfInterestCategory.BEACH -> MKPointOfInterestCategoryBeach
+        AppleMapPointOfInterestCategory.BEAUTY -> MKPointOfInterestCategoryBeauty
+        AppleMapPointOfInterestCategory.BOWLING -> MKPointOfInterestCategoryBowling
+        AppleMapPointOfInterestCategory.BREWERY -> MKPointOfInterestCategoryBrewery
+        AppleMapPointOfInterestCategory.CAFE -> MKPointOfInterestCategoryCafe
+        AppleMapPointOfInterestCategory.CAMPGROUND -> MKPointOfInterestCategoryCampground
+        AppleMapPointOfInterestCategory.CAR_RENTAL -> MKPointOfInterestCategoryCarRental
+        AppleMapPointOfInterestCategory.CASTLE -> MKPointOfInterestCategoryCastle
+        AppleMapPointOfInterestCategory.CONVENTION_CENTER ->
+            MKPointOfInterestCategoryConventionCenter
+        AppleMapPointOfInterestCategory.DISTILLERY -> MKPointOfInterestCategoryDistillery
+        AppleMapPointOfInterestCategory.EV_CHARGER -> MKPointOfInterestCategoryEVCharger
+        AppleMapPointOfInterestCategory.FAIRGROUND -> MKPointOfInterestCategoryFairground
+        AppleMapPointOfInterestCategory.FIRE_STATION -> MKPointOfInterestCategoryFireStation
+        AppleMapPointOfInterestCategory.FISHING -> MKPointOfInterestCategoryFishing
+        AppleMapPointOfInterestCategory.FITNESS_CENTER -> MKPointOfInterestCategoryFitnessCenter
+        AppleMapPointOfInterestCategory.FOOD_MARKET -> MKPointOfInterestCategoryFoodMarket
+        AppleMapPointOfInterestCategory.FORTRESS -> MKPointOfInterestCategoryFortress
+        AppleMapPointOfInterestCategory.GAS_STATION -> MKPointOfInterestCategoryGasStation
+        AppleMapPointOfInterestCategory.GO_KART -> MKPointOfInterestCategoryGoKart
+        AppleMapPointOfInterestCategory.GOLF -> MKPointOfInterestCategoryGolf
+        AppleMapPointOfInterestCategory.HIKING -> MKPointOfInterestCategoryHiking
+        AppleMapPointOfInterestCategory.HOSPITAL -> MKPointOfInterestCategoryHospital
+        AppleMapPointOfInterestCategory.HOTEL -> MKPointOfInterestCategoryHotel
+        AppleMapPointOfInterestCategory.KAYAKING -> MKPointOfInterestCategoryKayaking
+        AppleMapPointOfInterestCategory.LANDMARK -> MKPointOfInterestCategoryLandmark
+        AppleMapPointOfInterestCategory.LAUNDRY -> MKPointOfInterestCategoryLaundry
+        AppleMapPointOfInterestCategory.LIBRARY -> MKPointOfInterestCategoryLibrary
+        AppleMapPointOfInterestCategory.MAILBOX -> MKPointOfInterestCategoryMailbox
+        AppleMapPointOfInterestCategory.MARINA -> MKPointOfInterestCategoryMarina
+        AppleMapPointOfInterestCategory.MINI_GOLF -> MKPointOfInterestCategoryMiniGolf
+        AppleMapPointOfInterestCategory.MOVIE_THEATER -> MKPointOfInterestCategoryMovieTheater
+        AppleMapPointOfInterestCategory.MUSEUM -> MKPointOfInterestCategoryMuseum
+        AppleMapPointOfInterestCategory.MUSIC_VENUE -> MKPointOfInterestCategoryMusicVenue
+        AppleMapPointOfInterestCategory.NATIONAL_MONUMENT ->
+            MKPointOfInterestCategoryNationalMonument
+        AppleMapPointOfInterestCategory.NATIONAL_PARK -> MKPointOfInterestCategoryNationalPark
+        AppleMapPointOfInterestCategory.NIGHTLIFE -> MKPointOfInterestCategoryNightlife
+        AppleMapPointOfInterestCategory.PARK -> MKPointOfInterestCategoryPark
+        AppleMapPointOfInterestCategory.PARKING -> MKPointOfInterestCategoryParking
+        AppleMapPointOfInterestCategory.PHARMACY -> MKPointOfInterestCategoryPharmacy
+        AppleMapPointOfInterestCategory.PLANETARIUM -> MKPointOfInterestCategoryPlanetarium
+        AppleMapPointOfInterestCategory.POLICE -> MKPointOfInterestCategoryPolice
+        AppleMapPointOfInterestCategory.POST_OFFICE -> MKPointOfInterestCategoryPostOffice
+        AppleMapPointOfInterestCategory.PUBLIC_TRANSPORT -> MKPointOfInterestCategoryPublicTransport
+        AppleMapPointOfInterestCategory.RESTAURANT -> MKPointOfInterestCategoryRestaurant
+        AppleMapPointOfInterestCategory.RESTROOM -> MKPointOfInterestCategoryRestroom
+        AppleMapPointOfInterestCategory.ROCK_CLIMBING -> MKPointOfInterestCategoryRockClimbing
+        AppleMapPointOfInterestCategory.RV_PARK -> MKPointOfInterestCategoryRVPark
+        AppleMapPointOfInterestCategory.SCHOOL -> MKPointOfInterestCategorySchool
+        AppleMapPointOfInterestCategory.SKATE_PARK -> MKPointOfInterestCategorySkatePark
+        AppleMapPointOfInterestCategory.SKATING -> MKPointOfInterestCategorySkating
+        AppleMapPointOfInterestCategory.SKIING -> MKPointOfInterestCategorySkiing
+        AppleMapPointOfInterestCategory.SOCCER -> MKPointOfInterestCategorySoccer
+        AppleMapPointOfInterestCategory.SPA -> MKPointOfInterestCategorySpa
+        AppleMapPointOfInterestCategory.STADIUM -> MKPointOfInterestCategoryStadium
+        AppleMapPointOfInterestCategory.STORE -> MKPointOfInterestCategoryStore
+        AppleMapPointOfInterestCategory.SURFING -> MKPointOfInterestCategorySurfing
+        AppleMapPointOfInterestCategory.SWIMMING -> MKPointOfInterestCategorySwimming
+        AppleMapPointOfInterestCategory.TENNIS -> MKPointOfInterestCategoryTennis
+        AppleMapPointOfInterestCategory.THEATER -> MKPointOfInterestCategoryTheater
+        AppleMapPointOfInterestCategory.UNIVERSITY -> MKPointOfInterestCategoryUniversity
+        AppleMapPointOfInterestCategory.VOLLEYBALL -> MKPointOfInterestCategoryVolleyball
+        AppleMapPointOfInterestCategory.WINERY -> MKPointOfInterestCategoryWinery
+        AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
+    }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color?.toUIColor(): UIColor? = when {
-    this == null -> null
-    this.hexColor != null && this.hexColor!!.startsWith("#") -> {
-        try {
-            val cleanHex = this.hexColor!!.removePrefix("#")
-            val colorValue = when (cleanHex.length) {
-                6 -> cleanHex + "FF"
-                8 -> cleanHex
-                else -> "000000FF"
+internal fun Color?.toUIColor(): UIColor? =
+    when {
+        this == null -> null
+        this.hexColor != null && this.hexColor!!.startsWith("#") -> {
+            try {
+                val cleanHex = this.hexColor!!.removePrefix("#")
+                val colorValue =
+                    when (cleanHex.length) {
+                        6 -> cleanHex + "FF"
+                        8 -> cleanHex
+                        else -> "000000FF"
+                    }
+                val color = colorValue.toLong(16)
+                UIColor.colorWithRed(
+                    red = ((color shr 16) and 0xFF) / 255.0,
+                    green = ((color shr 8) and 0xFF) / 255.0,
+                    blue = (color and 0xFF) / 255.0,
+                    alpha = ((color shr 24) and 0xFF) / 255.0,
+                )
+            } catch (_: Exception) {
+                UIColor.redColor
             }
-            val color = colorValue.toLong(16)
-            UIColor.colorWithRed(
-                red = ((color shr 16) and 0xFF) / 255.0,
-                green = ((color shr 8) and 0xFF) / 255.0,
-                blue = (color and 0xFF) / 255.0,
-                alpha = ((color shr 24) and 0xFF) / 255.0
-            )
-        } catch (_: Exception) {
-            UIColor.redColor
+        }
+        else -> {
+            when (this.appleUIColor) {
+                AppleColors.RED -> UIColor.redColor
+                AppleColors.DARK_GRAY -> UIColor.darkGrayColor
+                AppleColors.BLACK -> UIColor.blackColor
+                AppleColors.GREEN -> UIColor.greenColor
+                AppleColors.BROWN -> UIColor.brownColor
+                AppleColors.CYAN -> UIColor.cyanColor
+                AppleColors.MAGENTA -> UIColor.magentaColor
+                AppleColors.WHITE -> UIColor.whiteColor
+                AppleColors.YELLOW -> UIColor.yellowColor
+                AppleColors.PURPLE -> UIColor.purpleColor
+                AppleColors.LIGHT_GRAY -> UIColor.lightGrayColor
+                AppleColors.BLUE -> UIColor.blueColor
+                AppleColors.ORANGE -> UIColor.orangeColor
+                else -> UIColor.redColor
+            }
         }
     }
-    else -> {
-        when (this.appleUIColor) {
-            AppleColors.RED -> UIColor.redColor
-            AppleColors.DARK_GRAY -> UIColor.darkGrayColor
-            AppleColors.BLACK -> UIColor.blackColor
-            AppleColors.GREEN -> UIColor.greenColor
-            AppleColors.BROWN -> UIColor.brownColor
-            AppleColors.CYAN -> UIColor.cyanColor
-            AppleColors.MAGENTA -> UIColor.magentaColor
-            AppleColors.WHITE -> UIColor.whiteColor
-            AppleColors.YELLOW -> UIColor.yellowColor
-            AppleColors.PURPLE -> UIColor.purpleColor
-            AppleColors.LIGHT_GRAY -> UIColor.lightGrayColor
-            AppleColors.BLUE -> UIColor.blueColor
-            AppleColors.ORANGE -> UIColor.orangeColor
-            else -> UIColor.redColor
-        }
-    }
-}
-

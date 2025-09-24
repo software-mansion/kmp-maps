@@ -33,7 +33,7 @@ fun MapsScreen() {
             CameraPosition(
                 coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
                 zoom = 13f,
-            ),
+            )
         )
     }
     var markers by remember { mutableStateOf(exampleMarkers) }
@@ -56,24 +56,16 @@ fun MapsScreen() {
                 currentCameraPosition = position
                 println("Camera moved: $position")
             },
-            onMarkerClick = { marker ->
-                println("Marker clicked: ${marker.title}")
-            },
-            onMapClick = { coordinates ->
-                println("Map clicked at: $coordinates")
-            },
+            onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
+            onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
         )
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -102,12 +94,8 @@ fun MapsScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FilterChip(
-                        onClick = {
-                            showAllComponents = !showAllComponents
-                        },
-                        label = {
-                            Text(if (showAllComponents) "Hide All" else "Show All")
-                        },
+                        onClick = { showAllComponents = !showAllComponents },
+                        label = { Text(if (showAllComponents) "Hide All" else "Show All") },
                         selected = showAllComponents,
                     )
                     FilterChip(

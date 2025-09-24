@@ -43,7 +43,7 @@ public data class MapMarker(
     val appleTintColor: Color? = null,
     val androidAnchor: GoogleMapsAnchor? = null,
     val androidDraggable: Boolean = false,
-    val androidIcon: ImageBitmap? = null,  // todo: not working
+    val androidIcon: ImageBitmap? = null, // todo: not working
     val androidSnippet: String? = null,
     val androidZIndex: Float? = null,
 )
@@ -71,19 +71,13 @@ public data class MapPolyline(
     val appleContourStyle: AppleMapsContourStyle? = null,
 )
 
-public data class Coordinates(
-    val latitude: Double,
-    val longitude: Double
-)
+public data class Coordinates(val latitude: Double, val longitude: Double)
 
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
     val androidBearing: Float? = null,
-    val androidTilt: Float? = null
+    val androidTilt: Float? = null,
 )
 
-public data class Color(
-    var hexColor: String? = null,
-    var appleUIColor: AppleColors? = null,
-)
+public data class Color(var hexColor: String? = null, var appleUIColor: AppleColors? = null)

@@ -17,12 +17,12 @@ import platform.darwin.NSObject
 internal class MapDelegate(
     private val circleStyles: MutableMap<MKCircle, MapCircle>,
     private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
-    private val polylineStyles: MutableMap<MKPolyline, MapPolyline>
+    private val polylineStyles: MutableMap<MKPolyline, MapPolyline>,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     override fun mapView(
         mapView: MKMapView,
-        rendererForOverlay: MKOverlayProtocol
+        rendererForOverlay: MKOverlayProtocol,
     ): MKOverlayRenderer {
         return when (rendererForOverlay) {
             is MKCircle -> {
