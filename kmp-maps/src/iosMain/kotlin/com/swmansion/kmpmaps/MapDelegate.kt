@@ -7,6 +7,7 @@ import platform.MapKit.MKMapView
 import platform.MapKit.MKMapViewDelegateProtocol
 import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKOverlayRenderer
+import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
@@ -18,6 +19,8 @@ internal class MapDelegate(
     private val circleStyles: MutableMap<MKCircle, MapCircle>,
     private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
     private val polylineStyles: MutableMap<MKPolyline, MapPolyline>,
+    private val markerMapping: MutableMap<MKPointAnnotation, MapMarker>,
+    private val onMarkerClick: ((MapMarker) -> Unit)?,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     override fun mapView(
@@ -49,6 +52,15 @@ internal class MapDelegate(
                 renderer
             }
             else -> MKCircleRenderer(rendererForOverlay)
+        }
+    }
+
+    override fun mapView(mapView: MKMapView, didSelectAnnotationView: platform.MapKit.MKAnnotationView) {
+        val annotation = didSelectAnnotationView.annotation
+        if (annotation is MKPointAnnotation) {
+            markerMapping[annotation]?.let { marker ->
+                onMarkerClick?.invoke(marker)
+            }
         }
     }
 }

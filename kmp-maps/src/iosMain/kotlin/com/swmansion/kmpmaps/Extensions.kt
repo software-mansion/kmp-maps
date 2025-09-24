@@ -124,8 +124,9 @@ internal fun MKMapView.setupMapConstraints(parentView: UIView) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>) {
+internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>): MutableMap<MKPointAnnotation, MapMarker> {
     removeAnnotations(this.annotations)
+    val markerMapping = mutableMapOf<MKPointAnnotation, MapMarker>()
     markers.forEach { marker ->
         val mkAnnotation =
             MKPointAnnotation().apply {
@@ -134,8 +135,10 @@ internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>) {
                 }
                 setTitle(marker.title)
             }
+        markerMapping[mkAnnotation] = marker
         addAnnotation(mkAnnotation)
     }
+    return markerMapping
 }
 
 @OptIn(ExperimentalForeignApi::class)

@@ -72,7 +72,6 @@ public actual fun Map(
             Marker(
                 state = marker.toGoogleMapsMarkerState(),
                 title = marker.title,
-                contentDescription = marker.subtitle,
                 anchor = marker.androidAnchor.toOffset(),
                 draggable = marker.androidDraggable,
                 snippet = marker.androidSnippet,

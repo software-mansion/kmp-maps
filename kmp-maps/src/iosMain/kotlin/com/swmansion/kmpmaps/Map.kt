@@ -13,8 +13,13 @@ import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.MapKit.MKCircle
 import platform.MapKit.MKMapView
+import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.UIKit.UIGestureRecognizer
+import platform.UIKit.UIGestureRecognizerState
+import platform.UIKit.UILongPressGestureRecognizer
+import platform.UIKit.UITapGestureRecognizer
 import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
@@ -43,6 +48,7 @@ public actual fun Map(
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, MapPolyline>() }
+    val markerMapping = remember { mutableMapOf<MKPointAnnotation, MapMarker>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled) {
@@ -83,9 +89,16 @@ public actual fun Map(
                 mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
             }
 
-            mkMapView.delegate = MapDelegate(circleStyles, polygonStyles, polylineStyles)
+            mkMapView.delegate = MapDelegate(
+                circleStyles = circleStyles,
+                polygonStyles = polygonStyles,
+                polylineStyles = polylineStyles,
+                markerMapping = markerMapping,
+                onMarkerClick = onMarkerClick,
+            )
 
-            mkMapView.updateAppleMapsMarkers(markers)
+            markerMapping.clear()
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
@@ -112,9 +125,16 @@ public actual fun Map(
                 mkMapView.scrollEnabled = uiSettings.scrollEnabled
                 mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
                 mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-                mkMapView.delegate = MapDelegate(circleStyles, polygonStyles, polylineStyles)
+                mkMapView.delegate = MapDelegate(
+                    circleStyles = circleStyles,
+                    polygonStyles = polygonStyles,
+                    polylineStyles = polylineStyles,
+                    markerMapping = markerMapping,
+                    onMarkerClick = onMarkerClick,
+                )
 
-                mkMapView.updateAppleMapsMarkers(markers)
+                markerMapping.clear()
+                markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
                 mkMapView.updateAppleMapsCircles(circles, circleStyles)
                 mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
                 mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)

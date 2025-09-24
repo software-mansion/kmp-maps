@@ -7,17 +7,17 @@ val exampleMarkers =
         MapMarker(
             coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
             title = "Software Mansion",
-            subtitle = "React Native Company",
+            androidSnippet = "React Native Company",
         ),
         MapMarker(
             coordinates = Coordinates(latitude = 50.0647, longitude = 19.9450),
             title = "Wawel",
-            subtitle = "Zamek Królewski",
+            androidSnippet = "Zamek Królewski",
         ),
         MapMarker(
             coordinates = Coordinates(latitude = 50.0596, longitude = 19.9316),
             title = "Kazimierz",
-            subtitle = "Dzielnica żydowska",
+            androidSnippet = "Dzielnica żydowska",
         ),
     )
 
