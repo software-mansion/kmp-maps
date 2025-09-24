@@ -97,7 +97,15 @@ public actual fun Map(
                         circle.color?.hexColor?.toGoogleColor()
                             ?: android.graphics.Color.TRANSPARENT
                     ),
-                onClick = onCircleClick?.let { callback -> { callback(circle) } } ?: { false },
+                clickable = true,
+                onClick = {
+                    if (onCircleClick != null) {
+                        onCircleClick.invoke(circle)
+                    } else {
+                        onMapClick?.invoke(circle.center)
+                    }
+
+                }
             )
         }
 
@@ -114,7 +122,15 @@ public actual fun Map(
                         polygon.color?.hexColor?.toGoogleColor()
                             ?: android.graphics.Color.TRANSPARENT
                     ),
-                onClick = onPolygonClick?.let { callback -> { callback(polygon) } } ?: { false },
+                clickable = true,
+                onClick = {
+                    if (onPolygonClick != null) {
+                        onPolygonClick.invoke(polygon)
+                    } else {
+                        onMapClick?.invoke(polygon.coordinates[0])
+                    }
+
+                },
             )
         }
 
@@ -127,7 +143,14 @@ public actual fun Map(
                             ?: android.graphics.Color.BLACK
                     ),
                 width = polyline.width,
-                onClick = onPolylineClick?.let { callback -> { callback(polyline) } } ?: { false },
+                clickable = true,
+                onClick = {
+                    if (onPolylineClick != null) {
+                        onPolylineClick.invoke(polyline)
+                    } else {
+                        onMapClick?.invoke(polyline.coordinates[0])
+                    }
+                },
             )
         }
     }
