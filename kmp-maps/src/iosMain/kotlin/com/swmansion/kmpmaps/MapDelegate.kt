@@ -1,6 +1,8 @@
 package com.swmansion.kmpmaps
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.ObjCAction
+import kotlinx.cinterop.useContents
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
@@ -13,6 +15,7 @@ import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
 import platform.darwin.NSObject
+import platform.UIKit.UITapGestureRecognizer
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
@@ -95,5 +98,18 @@ internal class MapDelegate(
         this.onMapLongClick = onMapLongClick
         this.onPOIClick = onPOIClick
         this.onCameraMove = onCameraMove
+    }
+
+    @ObjCAction
+    fun handleMapTap(gestureRecognizer: UITapGestureRecognizer) {
+        val mapView = gestureRecognizer.view as? MKMapView ?: return
+        val tapPoint = gestureRecognizer.locationInView(mapView)
+        val coordinate = mapView
+            .convertPoint(tapPoint, toCoordinateFromView = mapView)
+
+        coordinate.useContents {
+            val coordinates = Coordinates(latitude, longitude)
+            onMapClick?.invoke(coordinates)
+        }
     }
 }

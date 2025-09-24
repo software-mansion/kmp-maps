@@ -45,6 +45,7 @@ public actual fun Map(
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
+    var tapGesture by remember { mutableStateOf<UITapGestureRecognizer?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
@@ -113,6 +114,14 @@ public actual fun Map(
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
 
+            val tapGestureRecognizer = UITapGestureRecognizer()
+            tapGestureRecognizer.addTarget(
+                target = delegate as Any,
+                action = platform.objc.sel_registerName("handleMapTap:")
+            )
+            mkMapView.addGestureRecognizer(tapGestureRecognizer)
+            tapGesture = tapGestureRecognizer
+
             mapView = mkMapView
             view
         },
@@ -146,6 +155,12 @@ public actual fun Map(
                     onPOIClick = onPOIClick,
                     onCameraMove = onCameraMove
                 )
+
+                tapGesture?.let { gesture ->
+                    mkMapView.removeGestureRecognizer(gesture)
+                    gesture.addTarget(mapDelegate as Any, action = platform.objc.sel_registerName("handleMapTap:"))
+                    mkMapView.addGestureRecognizer(gesture)
+                }
 
                 markerMapping.clear()
                 markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
