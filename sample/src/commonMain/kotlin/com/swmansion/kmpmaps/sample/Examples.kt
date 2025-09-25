@@ -2,20 +2,20 @@ package com.swmansion.kmpmaps.sample
 
 import com.swmansion.kmpmaps.*
 
+val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
+val wawelPin = Coordinates(latitude = 50.0647, longitude = 19.9450)
+val kazimierzPin = Coordinates(latitude = 50.0515, longitude = 19.9449)
+
 val exampleMarkers =
     listOf(
         MapMarker(
-            coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
+            coordinates = softwareMansionPin,
             title = "Software Mansion",
             androidSnippet = "React Native Company",
         ),
+        MapMarker(coordinates = wawelPin, title = "Wawel", androidSnippet = "Zamek Królewski"),
         MapMarker(
-            coordinates = Coordinates(latitude = 50.0647, longitude = 19.9450),
-            title = "Wawel",
-            androidSnippet = "Zamek Królewski",
-        ),
-        MapMarker(
-            coordinates = Coordinates(latitude = 50.0596, longitude = 19.9316),
+            coordinates = kazimierzPin,
             title = "Kazimierz",
             androidSnippet = "Dzielnica żydowska",
         ),
@@ -44,10 +44,11 @@ val examplePolygons =
         MapPolygon(
             coordinates =
                 listOf(
-                    Coordinates(latitude = 50.0600, longitude = 19.9300),
-                    Coordinates(latitude = 50.0650, longitude = 19.9300),
-                    Coordinates(latitude = 50.0650, longitude = 19.9400),
-                    Coordinates(latitude = 50.0600, longitude = 19.9400),
+                    Coordinates(latitude = 50.0550, longitude = 19.9400),
+                    Coordinates(latitude = 50.0550, longitude = 19.9500),
+                    Coordinates(latitude = 50.0480, longitude = 19.9500),
+                    Coordinates(latitude = 50.0480, longitude = 19.9400),
+                    Coordinates(latitude = 50.0550, longitude = 19.9400),
                 ),
             lineColor = Color(hexColor = "#10FF0000"),
             lineWidth = 1f,
@@ -58,12 +59,7 @@ val examplePolygons =
 val examplePolylines =
     listOf(
         MapPolyline(
-            coordinates =
-                listOf(
-                    Coordinates(latitude = 50.0486, longitude = 19.9654),
-                    Coordinates(latitude = 50.0647, longitude = 19.9450),
-                    Coordinates(latitude = 50.0596, longitude = 19.9316),
-                ),
+            coordinates = listOf(softwareMansionPin, wawelPin, kazimierzPin),
             lineColor = Color(hexColor = "#60FF0000"),
             width = 1f,
         )
