@@ -19,10 +19,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.swmansion.kmpmaps.AppleMapPointOfInterestCategory
+import com.swmansion.kmpmaps.AppleMapsPointOfInterestCategories
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
+import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapType
+import com.swmansion.kmpmaps.MapUISettings
 
 @Composable
 fun MapsScreen() {
@@ -46,8 +50,26 @@ fun MapsScreen() {
         Map(
             modifier = Modifier.fillMaxSize(),
             cameraPosition = currentCameraPosition,
-            properties = createMapProperties(selectedMapType, showUserLocation),
-            uiSettings = createMapUISettings(showUserLocation),
+            properties =
+                MapProperties(
+                    mapType = selectedMapType,
+                    isMyLocationEnabled = showUserLocation,
+                    isTrafficEnabled = true,
+                    isBuildingEnabled = true,
+                    androidIsIndoorEnabled = true,
+                    androidMinZoomPreference = 3f,
+                    androidMaxZoomPreference = 21f,
+                    applePointsOfInterest =
+                        AppleMapsPointOfInterestCategories(
+                            including = listOf(AppleMapPointOfInterestCategory.RESTAURANT)
+                        ),
+                ),
+            uiSettings =
+                MapUISettings(
+                    compassEnabled = true,
+                    myLocationButtonEnabled = showUserLocation,
+                    scaleBarEnabled = true,
+                ),
             markers = if (showAllComponents) markers else emptyList(),
             circles = if (showAllComponents) circles else emptyList(),
             polygons = if (showAllComponents) polygons else emptyList(),
