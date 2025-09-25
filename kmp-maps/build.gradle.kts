@@ -11,11 +11,13 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
+    jvmToolchain(17)
     androidTarget { publishLibraryVariants("release") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "KmpMaps"
+            baseName = "kmp-maps"
             isStatic = true
         }
     }
@@ -35,15 +37,7 @@ kotlin {
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
         }
-
-        iosMain.dependencies {
-            // iOS dependencies will be handled through CocoaPods or manual framework linking
-        }
-
-        commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
     }
-
-    explicitApi()
 }
 
 android {
@@ -53,7 +47,7 @@ android {
     defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
