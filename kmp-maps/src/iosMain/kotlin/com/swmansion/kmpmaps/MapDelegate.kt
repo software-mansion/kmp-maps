@@ -113,6 +113,13 @@ internal class MapDelegate(
             val tapLat = latitude
             val tapLon = longitude
             val tapCoord = Coordinates(tapLat, tapLon)
+
+            for ((mkCircle, mapCircle) in circleStyles) {
+                if (isPointInCircle(tapLat, tapLon, mapCircle)) {
+                    onCircleClick?.invoke(mapCircle)
+                    return@useContents
+                }
+            }
             
             for ((mkPolygon, mapPolygon) in polygonStyles) {
                 if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
