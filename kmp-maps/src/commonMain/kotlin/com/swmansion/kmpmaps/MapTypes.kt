@@ -82,5 +82,5 @@ public data class CameraPosition(
 public data class Color(
     var hexColor: String? = null,
     var appleColor: AppleColors? = null,
-    val androidColor: AndroidColors? = null
+    val androidColor: AndroidColors? = null,
 )

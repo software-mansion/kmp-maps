@@ -47,7 +47,7 @@ internal fun Color?.toAndroidColor(): Int =
                     ((color shr 24) and 0xFF).toInt(),
                     ((color shr 16) and 0xFF).toInt(),
                     ((color shr 8) and 0xFF).toInt(),
-                    (color and 0xFF).toInt()
+                    (color and 0xFF).toInt(),
                 )
             } catch (_: Exception) {
                 android.graphics.Color.RED

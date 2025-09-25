@@ -88,15 +88,10 @@ public actual fun Map(
                 center = circle.center.toGoogleLatLng(),
                 radius = circle.radius.toDouble(),
                 strokeColor =
-                    Color(
-                        circle.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK
-                    ),
+                    Color(circle.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
                 strokeWidth = circle.lineWidth ?: 10f,
                 fillColor =
-                    Color(
-                        circle.color?.toAndroidColor()
-                            ?: android.graphics.Color.TRANSPARENT
-                    ),
+                    Color(circle.color?.toAndroidColor() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onCircleClick != null) {
@@ -112,15 +107,10 @@ public actual fun Map(
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
                 strokeColor =
-                    Color(
-                        polygon.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK
-                    ),
+                    Color(polygon.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
                 fillColor =
-                    Color(
-                        polygon.color?.toAndroidColor()
-                            ?: android.graphics.Color.TRANSPARENT
-                    ),
+                    Color(polygon.color?.toAndroidColor() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onPolygonClick != null) {
@@ -135,11 +125,7 @@ public actual fun Map(
         polylines.forEach { polyline ->
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
-                color =
-                    Color(
-                        polyline.lineColor?.toAndroidColor()
-                            ?: android.graphics.Color.BLACK
-                    ),
+                color = Color(polyline.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
                 width = polyline.width,
                 clickable = true,
                 onClick = {
