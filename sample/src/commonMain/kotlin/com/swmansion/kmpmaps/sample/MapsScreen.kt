@@ -40,10 +40,6 @@ fun MapsScreen() {
             )
         )
     }
-    var markers by remember { mutableStateOf(exampleMarkers) }
-    var circles by remember { mutableStateOf(exampleCircles) }
-    var polygons by remember { mutableStateOf(examplePolygons) }
-    var polylines by remember { mutableStateOf(examplePolylines) }
     var showAllComponents by remember { mutableStateOf(true) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -70,10 +66,10 @@ fun MapsScreen() {
                     myLocationButtonEnabled = showUserLocation,
                     scaleBarEnabled = true,
                 ),
-            markers = if (showAllComponents) markers else emptyList(),
-            circles = if (showAllComponents) circles else emptyList(),
-            polygons = if (showAllComponents) polygons else emptyList(),
-            polylines = if (showAllComponents) polylines else emptyList(),
+            markers = if (showAllComponents) exampleMarkers else emptyList(),
+            circles = if (showAllComponents) exampleCircles else emptyList(),
+            polygons = if (showAllComponents) examplePolygons else emptyList(),
+            polylines = if (showAllComponents) examplePolylines else emptyList(),
             onCameraMove = { position ->
                 currentCameraPosition = position
                 println("Camera moved: $position")

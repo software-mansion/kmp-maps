@@ -33,9 +33,9 @@ internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 internal fun Color?.toAndroidColor() =
     when {
         this == null -> android.graphics.Color.TRANSPARENT
-        this.hexColor != null && this.hexColor.startsWith("#") -> {
+        hexColor != null && hexColor.startsWith("#") -> {
             try {
-                val cleanHex = this.hexColor.removePrefix("#")
+                val cleanHex = hexColor.removePrefix("#")
                 val colorValue =
                     when (cleanHex.length) {
                         6 -> cleanHex + "FF"
@@ -54,7 +54,7 @@ internal fun Color?.toAndroidColor() =
             }
         }
         else -> {
-            when (this.androidColor) {
+            when (androidColor) {
                 AndroidColors.BLACK -> android.graphics.Color.BLACK
                 AndroidColors.DARK_GRAY -> android.graphics.Color.DKGRAY
                 AndroidColors.GRAY -> android.graphics.Color.GRAY

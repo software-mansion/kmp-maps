@@ -8,7 +8,6 @@ import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
 import platform.MapKit.MKMapViewDelegateProtocol
 import platform.MapKit.MKOverlayProtocol
-import platform.MapKit.MKOverlayRenderer
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
@@ -36,11 +35,8 @@ internal class MapDelegate(
     private var onCameraMove: ((CameraPosition) -> Unit)?,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
-    override fun mapView(
-        mapView: MKMapView,
-        rendererForOverlay: MKOverlayProtocol,
-    ): MKOverlayRenderer {
-        return when (rendererForOverlay) {
+    override fun mapView(mapView: MKMapView, rendererForOverlay: MKOverlayProtocol) =
+        when (rendererForOverlay) {
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
@@ -66,7 +62,6 @@ internal class MapDelegate(
             }
             else -> MKCircleRenderer(rendererForOverlay)
         }
-    }
 
     override fun mapView(
         mapView: MKMapView,
@@ -116,21 +111,21 @@ internal class MapDelegate(
             val tapLon = longitude
             val tapCoord = Coordinates(tapLat, tapLon)
 
-            for ((_, mapCircle) in circleStyles) {
+            for (mapCircle in circleStyles.values) {
                 if (isPointInCircle(tapLat, tapLon, mapCircle)) {
                     onCircleClick?.invoke(mapCircle)
                     return@useContents
                 }
             }
 
-            for ((_, mapPolygon) in polygonStyles) {
+            for (mapPolygon in polygonStyles.values) {
                 if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
                     onPolygonClick?.invoke(mapPolygon)
                     return@useContents
                 }
             }
 
-            for ((_, mapPolyline) in polylineStyles) {
+            for (mapPolyline in polylineStyles.values) {
                 if (
                     isPointNearPolyline(
                         tapLat,

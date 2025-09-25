@@ -109,7 +109,7 @@ public actual fun Map(
 
             val tapGestureRecognizer = UITapGestureRecognizer()
             tapGestureRecognizer.addTarget(
-                target = delegate as Any,
+                target = delegate,
                 action = platform.Foundation.NSSelectorFromString("handleMapTap:"),
             )
             mkMapView.addGestureRecognizer(tapGestureRecognizer)
@@ -117,7 +117,7 @@ public actual fun Map(
 
             val longPressGestureRecognizer = UILongPressGestureRecognizer()
             longPressGestureRecognizer.addTarget(
-                target = delegate as Any,
+                target = delegate,
                 action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"),
             )
             mkMapView.addGestureRecognizer(longPressGestureRecognizer)

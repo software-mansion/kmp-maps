@@ -3,21 +3,21 @@ package com.swmansion.kmpmaps.sample
 import com.swmansion.kmpmaps.*
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
-val wawelPin = Coordinates(latitude = 50.0647, longitude = 19.9450)
-val kazimierzPin = Coordinates(latitude = 50.0515, longitude = 19.9449)
+val royalCastlePin = Coordinates(latitude = 50.0647, longitude = 19.9450)
+val jewishQuarterPin = Coordinates(latitude = 50.0515, longitude = 19.9449)
 
 val exampleMarkers =
     listOf(
         MapMarker(
             coordinates = softwareMansionPin,
             title = "Software Mansion",
-            androidSnippet = "React Native Company",
+            androidSnippet = "Software house",
         ),
-        MapMarker(coordinates = wawelPin, title = "Wawel", androidSnippet = "Zamek Królewski"),
+        MapMarker(coordinates = royalCastlePin, title = "Wawel", androidSnippet = "Royal castle"),
         MapMarker(
-            coordinates = kazimierzPin,
+            coordinates = jewishQuarterPin,
             title = "Kazimierz",
-            androidSnippet = "Dzielnica żydowska",
+            androidSnippet = "Jewish quarter",
         ),
     )
 
@@ -59,7 +59,7 @@ val examplePolygons =
 val examplePolylines =
     listOf(
         MapPolyline(
-            coordinates = listOf(softwareMansionPin, wawelPin, kazimierzPin),
+            coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
             lineColor = Color(hexColor = "#60FF0000"),
             width = 1f,
         )
