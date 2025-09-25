@@ -107,8 +107,6 @@ internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType() =
         else -> MapType.NORMAL
     }
 
-internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
-    this?.json?.let(::MapStyleOptions)
+internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let(::MapStyleOptions)
 
-internal fun GoogleMapsAnchor?.toOffset() =
-    Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
+internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)

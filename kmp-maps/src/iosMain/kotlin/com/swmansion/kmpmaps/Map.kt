@@ -18,7 +18,6 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
-import platform.UIKit.UIView
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -59,14 +58,9 @@ public actual fun Map(
 
     UIKitView(
         factory = {
-            val view = UIView()
             val mkMapView = MKMapView()
 
-            view.addSubview(mkMapView)
-
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
-            mkMapView.setupMapConstraints(view)
-
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
@@ -130,63 +124,61 @@ public actual fun Map(
             longPressGesture = longPressGestureRecognizer
 
             mapView = mkMapView
-            view
+            mkMapView
         },
         modifier = modifier.fillMaxSize(),
-        update = { view ->
-            mapView?.let { mkMapView ->
-                mkMapView.mapType = properties.mapType.toAppleMapsMapType()
-                mkMapView.showsUserLocation =
-                    properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
-                mkMapView.showsTraffic = properties.isTrafficEnabled
-                mkMapView.showsBuildings = properties.isBuildingEnabled
+        update = { mkMapView ->
+            mkMapView.mapType = properties.mapType.toAppleMapsMapType()
+            mkMapView.showsUserLocation =
+                properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
+            mkMapView.showsTraffic = properties.isTrafficEnabled
+            mkMapView.showsBuildings = properties.isBuildingEnabled
 
-                properties.applePointsOfInterest?.let { poiCategories ->
-                    val poiFilter = poiCategories.toMKPointOfInterestFilter()
-                    mkMapView.pointOfInterestFilter = poiFilter
-                }
-
-                mkMapView.showsCompass = uiSettings.compassEnabled
-                mkMapView.zoomEnabled = uiSettings.zoomEnabled
-                mkMapView.scrollEnabled = uiSettings.scrollEnabled
-                mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
-                mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-
-                mapDelegate?.updateCallbacks(
-                    onMarkerClick = onMarkerClick,
-                    onCircleClick = onCircleClick,
-                    onPolygonClick = onPolygonClick,
-                    onPolylineClick = onPolylineClick,
-                    onMapClick = onMapClick,
-                    onMapLongClick = onMapLongClick,
-                    onPOIClick = onPOIClick,
-                    onCameraMove = onCameraMove,
-                )
-
-                tapGesture?.let { gesture ->
-                    mkMapView.removeGestureRecognizer(gesture)
-                    gesture.addTarget(
-                        mapDelegate as Any,
-                        action = platform.Foundation.NSSelectorFromString("handleMapTap:"),
-                    )
-                    mkMapView.addGestureRecognizer(gesture)
-                }
-
-                longPressGesture?.let { gesture ->
-                    mkMapView.removeGestureRecognizer(gesture)
-                    gesture.addTarget(
-                        mapDelegate as Any,
-                        action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"),
-                    )
-                    mkMapView.addGestureRecognizer(gesture)
-                }
-
-                markerMapping.clear()
-                markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
-                mkMapView.updateAppleMapsCircles(circles, circleStyles)
-                mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
-                mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
+            properties.applePointsOfInterest?.let { poiCategories ->
+                val poiFilter = poiCategories.toMKPointOfInterestFilter()
+                mkMapView.pointOfInterestFilter = poiFilter
             }
+
+            mkMapView.showsCompass = uiSettings.compassEnabled
+            mkMapView.zoomEnabled = uiSettings.zoomEnabled
+            mkMapView.scrollEnabled = uiSettings.scrollEnabled
+            mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
+            mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
+
+            mapDelegate?.updateCallbacks(
+                onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
+                onMapClick = onMapClick,
+                onMapLongClick = onMapLongClick,
+                onPOIClick = onPOIClick,
+                onCameraMove = onCameraMove,
+            )
+
+            tapGesture?.let { gesture ->
+                mkMapView.removeGestureRecognizer(gesture)
+                gesture.addTarget(
+                    mapDelegate as Any,
+                    action = platform.Foundation.NSSelectorFromString("handleMapTap:"),
+                )
+                mkMapView.addGestureRecognizer(gesture)
+            }
+
+            longPressGesture?.let { gesture ->
+                mkMapView.removeGestureRecognizer(gesture)
+                gesture.addTarget(
+                    mapDelegate as Any,
+                    action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"),
+                )
+                mkMapView.addGestureRecognizer(gesture)
+            }
+
+            markerMapping.clear()
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
+            mkMapView.updateAppleMapsCircles(circles, circleStyles)
+            mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
+            mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
         },
         properties =
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),

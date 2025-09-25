@@ -96,9 +96,7 @@ import platform.MapKit.MKPointOfInterestFilter
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.MapKit.addOverlay
-import platform.UIKit.NSLayoutConstraint
 import platform.UIKit.UIColor
-import platform.UIKit.UIView
 import platform.posix.memcpy
 
 @OptIn(ExperimentalForeignApi::class)
@@ -119,17 +117,6 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
     val zoom = kotlin.math.min(latZoom, lngZoom).toFloat()
 
     CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
-}
-
-internal fun MKMapView.setupMapConstraints(parentView: UIView) {
-    val constraints =
-        listOf(
-            topAnchor.constraintEqualToAnchor(parentView.topAnchor),
-            leadingAnchor.constraintEqualToAnchor(parentView.leadingAnchor),
-            trailingAnchor.constraintEqualToAnchor(parentView.trailingAnchor),
-            bottomAnchor.constraintEqualToAnchor(parentView.bottomAnchor),
-        )
-    NSLayoutConstraint.activateConstraints(constraints)
 }
 
 @OptIn(ExperimentalForeignApi::class)
