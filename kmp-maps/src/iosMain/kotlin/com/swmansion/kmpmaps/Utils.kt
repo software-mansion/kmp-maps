@@ -103,13 +103,13 @@ private fun distanceToLineSegment(
     lineEndLat: Double,
     lineEndLon: Double,
 ): Double {
-    val A = pointLat - lineStartLat
-    val B = pointLon - lineStartLon
-    val C = lineEndLat - lineStartLat
-    val D = lineEndLon - lineStartLon
+    val a = pointLat - lineStartLat
+    val b = pointLon - lineStartLon
+    val c = lineEndLat - lineStartLat
+    val d = lineEndLon - lineStartLon
 
-    val dot = A * C + B * D
-    val lenSq = C * C + D * D
+    val dot = a * c + b * d
+    val lenSq = c * c + d * d
 
     if (lenSq == 0.0) {
         return calculateDistance(pointLat, pointLon, lineStartLat, lineStartLon)
@@ -127,8 +127,8 @@ private fun distanceToLineSegment(
         xx = lineEndLat
         yy = lineEndLon
     } else {
-        xx = lineStartLat + param * C
-        yy = lineStartLon + param * D
+        xx = lineStartLat + param * c
+        yy = lineStartLon + param * d
     }
 
     return calculateDistance(pointLat, pointLon, xx, yy)

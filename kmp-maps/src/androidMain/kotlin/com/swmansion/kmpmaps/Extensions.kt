@@ -9,7 +9,7 @@ import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
 import com.google.maps.android.compose.MarkerState
 
-internal fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition =
+internal fun CameraPosition.toGoogleCameraPosition() =
     GoogleCameraPosition.Builder()
         .target(LatLng(coordinates.latitude, coordinates.longitude))
         .zoom(zoom)
@@ -17,7 +17,7 @@ internal fun CameraPosition.toGoogleCameraPosition(): GoogleCameraPosition =
         .tilt(androidTilt ?: 0f)
         .build()
 
-internal fun GoogleCameraPosition.toCameraPosition(): CameraPosition =
+internal fun GoogleCameraPosition.toCameraPosition() =
     CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
@@ -25,17 +25,17 @@ internal fun GoogleCameraPosition.toCameraPosition(): CameraPosition =
         androidTilt = tilt,
     )
 
-internal fun MapMarker.toGoogleMapsMarkerState(): MarkerState =
+internal fun MapMarker.toGoogleMapsMarkerState() =
     MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
-internal fun Color?.toAndroidColor(): Int =
+internal fun Color?.toAndroidColor() =
     when {
         this == null -> android.graphics.Color.TRANSPARENT
-        this.hexColor != null && this.hexColor!!.startsWith("#") -> {
+        this.hexColor != null && this.hexColor.startsWith("#") -> {
             try {
-                val cleanHex = this.hexColor!!.removePrefix("#")
+                val cleanHex = this.hexColor.removePrefix("#")
                 val colorValue =
                     when (cleanHex.length) {
                         6 -> cleanHex + "FF"
@@ -72,7 +72,7 @@ internal fun Color?.toAndroidColor(): Int =
         }
     }
 
-internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties =
+internal fun MapProperties.toGoogleMapsProperties() =
     GoogleMapProperties(
         mapType = mapType.toGoogleMapsMapType(),
         isMyLocationEnabled = isMyLocationEnabled,
@@ -84,7 +84,7 @@ internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties =
         mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
     )
 
-internal fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings =
+internal fun MapUISettings.toGoogleMapsUiSettings() =
     GoogleMapUiSettings(
         compassEnabled = compassEnabled,
         myLocationButtonEnabled = myLocationButtonEnabled,
@@ -98,7 +98,7 @@ internal fun MapUISettings.toGoogleMapsUiSettings(): GoogleMapUiSettings =
         zoomGesturesEnabled = zoomEnabled,
     )
 
-internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType =
+internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType() =
     when (this) {
         com.swmansion.kmpmaps.MapType.HYBRID -> MapType.HYBRID
         com.swmansion.kmpmaps.MapType.NORMAL -> MapType.NORMAL
@@ -107,7 +107,8 @@ internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType =
         else -> MapType.NORMAL
     }
 
-internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions(): MapStyleOptions? =
+internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
     this?.json?.let(::MapStyleOptions)
 
-internal fun GoogleMapsAnchor?.toOffset(): Offset = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
+internal fun GoogleMapsAnchor?.toOffset() =
+    Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)

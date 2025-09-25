@@ -13,7 +13,6 @@ import platform.MapKit.MKCircle
 import platform.MapKit.MKCoordinateRegion
 import platform.MapKit.MKCoordinateRegionMake
 import platform.MapKit.MKCoordinateSpanMake
-import platform.MapKit.MKMapType
 import platform.MapKit.MKMapTypeHybrid
 import platform.MapKit.MKMapTypeSatellite
 import platform.MapKit.MKMapTypeStandard
@@ -114,14 +113,12 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun CValue<MKCoordinateRegion>.toCameraPosition(): CameraPosition {
-    return this.useContents {
-        val latZoom = kotlin.math.ln(360.0 / span.latitudeDelta) / kotlin.math.ln(2.0)
-        val lngZoom = kotlin.math.ln(360.0 / span.longitudeDelta) / kotlin.math.ln(2.0)
-        val zoom = kotlin.math.min(latZoom, lngZoom).toFloat()
+internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
+    val latZoom = kotlin.math.ln(360.0 / span.latitudeDelta) / kotlin.math.ln(2.0)
+    val lngZoom = kotlin.math.ln(360.0 / span.longitudeDelta) / kotlin.math.ln(2.0)
+    val zoom = kotlin.math.min(latZoom, lngZoom).toFloat()
 
-        CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
-    }
+    CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
 }
 
 internal fun MKMapView.setupMapConstraints(parentView: UIView) {
@@ -163,14 +160,12 @@ internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
     val excludingCategories = excluding?.map { it.toMKPointOfInterestCategory() }
 
     return when {
-        includingCategories != null && includingCategories.isNotEmpty() -> {
+        !includingCategories.isNullOrEmpty() -> {
             MKPointOfInterestFilter(includingCategories = includingCategories)
         }
-
-        excludingCategories != null && excludingCategories.isNotEmpty() -> {
+        !excludingCategories.isNullOrEmpty() -> {
             MKPointOfInterestFilter(excludingCategories = excludingCategories)
         }
-
         else -> null
     }
 }
@@ -247,7 +242,7 @@ internal fun MKMapView.updateAppleMapsPolylines(
     }
 }
 
-internal fun MapType?.toAppleMapsMapType(): MKMapType =
+internal fun MapType?.toAppleMapsMapType() =
     when (this) {
         MapType.HYBRID -> MKMapTypeHybrid
         MapType.NORMAL -> MKMapTypeStandard
@@ -338,12 +333,12 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
     }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color?.toAppleColor(): UIColor? =
+internal fun Color?.toAppleColor() =
     when {
         this == null -> null
-        this.hexColor != null && this.hexColor!!.startsWith("#") -> {
+        this.hexColor != null && this.hexColor.startsWith("#") -> {
             try {
-                val cleanHex = this.hexColor!!.removePrefix("#")
+                val cleanHex = this.hexColor.removePrefix("#")
                 val colorValue =
                     when (cleanHex.length) {
                         6 -> cleanHex + "FF"
