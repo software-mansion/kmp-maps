@@ -14,10 +14,10 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
-import platform.darwin.NSObject
-import platform.UIKit.UITapGestureRecognizer
-import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UIGestureRecognizerStateBegan
+import platform.UIKit.UILongPressGestureRecognizer
+import platform.UIKit.UITapGestureRecognizer
+import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
@@ -67,12 +67,13 @@ internal class MapDelegate(
         }
     }
 
-    override fun mapView(mapView: MKMapView, didSelectAnnotationView: platform.MapKit.MKAnnotationView) {
+    override fun mapView(
+        mapView: MKMapView,
+        didSelectAnnotationView: platform.MapKit.MKAnnotationView,
+    ) {
         val annotation = didSelectAnnotationView.annotation
         if (annotation is MKPointAnnotation) {
-            markerMapping[annotation]?.let { marker ->
-                onMarkerClick?.invoke(marker)
-            }
+            markerMapping[annotation]?.let { marker -> onMarkerClick?.invoke(marker) }
         }
     }
 
@@ -106,8 +107,7 @@ internal class MapDelegate(
     fun handleMapTap(gestureRecognizer: UITapGestureRecognizer) {
         val mapView = gestureRecognizer.view as? MKMapView ?: return
         val tapPoint = gestureRecognizer.locationInView(mapView)
-        val coordinate = mapView
-            .convertPoint(tapPoint, toCoordinateFromView = mapView)
+        val coordinate = mapView.convertPoint(tapPoint, toCoordinateFromView = mapView)
 
         coordinate.useContents {
             val tapLat = latitude
@@ -120,7 +120,7 @@ internal class MapDelegate(
                     return@useContents
                 }
             }
-            
+
             for ((_, mapPolygon) in polygonStyles) {
                 if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
                     onPolygonClick?.invoke(mapPolygon)
@@ -144,8 +144,7 @@ internal class MapDelegate(
         if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
             val mapView = gestureRecognizer.view as? MKMapView ?: return
             val longPressPoint = gestureRecognizer.locationInView(mapView)
-            val coordinate = mapView
-                .convertPoint(longPressPoint, toCoordinateFromView = mapView)
+            val coordinate = mapView.convertPoint(longPressPoint, toCoordinateFromView = mapView)
 
             coordinate.useContents {
                 val coordinates = Coordinates(latitude, longitude)

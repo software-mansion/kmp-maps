@@ -119,11 +119,8 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition(): CameraPosition {
         val latZoom = kotlin.math.ln(360.0 / span.latitudeDelta) / kotlin.math.ln(2.0)
         val lngZoom = kotlin.math.ln(360.0 / span.longitudeDelta) / kotlin.math.ln(2.0)
         val zoom = kotlin.math.min(latZoom, lngZoom).toFloat()
-        
-        CameraPosition(
-            coordinates = Coordinates(center.latitude, center.longitude),
-            zoom = zoom
-        )
+
+        CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
     }
 }
 
@@ -139,7 +136,9 @@ internal fun MKMapView.setupMapConstraints(parentView: UIView) {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun MKMapView.updateAppleMapsMarkers(markers: List<MapMarker>): MutableMap<MKPointAnnotation, MapMarker> {
+internal fun MKMapView.updateAppleMapsMarkers(
+    markers: List<MapMarker>
+): MutableMap<MKPointAnnotation, MapMarker> {
     removeAnnotations(this.annotations)
     val markerMapping = mutableMapOf<MKPointAnnotation, MapMarker>()
     markers.forEach { marker ->

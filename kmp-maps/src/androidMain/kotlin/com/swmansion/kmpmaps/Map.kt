@@ -104,8 +104,7 @@ public actual fun Map(
                     } else {
                         onMapClick?.invoke(circle.center)
                     }
-
-                }
+                },
             )
         }
 
@@ -129,7 +128,6 @@ public actual fun Map(
                     } else {
                         onMapClick?.invoke(polygon.coordinates[0])
                     }
-
                 },
             )
         }

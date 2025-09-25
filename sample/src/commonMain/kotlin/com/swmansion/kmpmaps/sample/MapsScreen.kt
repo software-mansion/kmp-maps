@@ -56,24 +56,12 @@ fun MapsScreen() {
                 currentCameraPosition = position
                 println("Camera moved: $position")
             },
-            onCircleClick = {
-                println("Circle clicked: ${it.center}")
-            },
-            onPolygonClick = {
-                println("Polygon clicked: ${it.coordinates}")
-            },
-            onPolylineClick = {
-                println("Polyline clicked: ${it.coordinates}")
-            },
-            onPOIClick = {
-                println("POI clicked: $it")
-            },
-            onMapLoaded = {
-                println("Map loaded")
-            },
-            onMapLongClick = {
-                println("Map long clicked: $it")
-            },
+            onCircleClick = { println("Circle clicked: ${it.center}") },
+            onPolygonClick = { println("Polygon clicked: ${it.coordinates}") },
+            onPolylineClick = { println("Polyline clicked: ${it.coordinates}") },
+            onPOIClick = { println("POI clicked: $it") },
+            onMapLoaded = { println("Map loaded") },
+            onMapLongClick = { println("Map long clicked: $it") },
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
         )
