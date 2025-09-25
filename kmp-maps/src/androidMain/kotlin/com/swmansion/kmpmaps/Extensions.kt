@@ -108,6 +108,6 @@ internal fun com.swmansion.kmpmaps.MapType?.toGoogleMapsMapType(): MapType =
     }
 
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions(): MapStyleOptions? =
-    this?.json?.let { MapStyleOptions(it) }
+    this?.json?.let(::MapStyleOptions)
 
 internal fun GoogleMapsAnchor?.toOffset(): Offset = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)

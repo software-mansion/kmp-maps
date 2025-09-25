@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -14,14 +13,10 @@ private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
 internal class LocationPermissionHandler(private val context: Context) {
 
-    private var hasLocationPermission by mutableStateOf(false)
+    private var hasLocationPermission = false
 
     init {
         checkPermission()
-    }
-
-    fun hasPermission(): Boolean {
-        return hasLocationPermission
     }
 
     fun requestPermission() {

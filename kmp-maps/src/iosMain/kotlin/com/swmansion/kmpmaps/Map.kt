@@ -52,10 +52,8 @@ public actual fun Map(
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, MapMarker>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
-        if (properties.isMyLocationEnabled) {
-            if (!locationPermissionHandler.checkPermission()) {
-                locationPermissionHandler.requestPermission()
-            }
+        if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
+            locationPermissionHandler.requestPermission()
         }
     }
 
@@ -71,7 +69,7 @@ public actual fun Map(
 
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
             mkMapView.showsUserLocation =
-                properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+                properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
             mkMapView.showsPointsOfInterest = properties.applePointsOfInterest != null
@@ -139,7 +137,7 @@ public actual fun Map(
             mapView?.let { mkMapView ->
                 mkMapView.mapType = properties.mapType.toAppleMapsMapType()
                 mkMapView.showsUserLocation =
-                    properties.isMyLocationEnabled && locationPermissionHandler.hasPermission()
+                    properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
                 mkMapView.showsTraffic = properties.isTrafficEnabled
                 mkMapView.showsBuildings = properties.isBuildingEnabled
 

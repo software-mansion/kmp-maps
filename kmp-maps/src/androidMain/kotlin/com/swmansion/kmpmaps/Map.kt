@@ -38,15 +38,13 @@ public actual fun Map(
     val locationPermissionHandler = remember { LocationPermissionHandler(context) }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
-        if (properties.isMyLocationEnabled) {
-            if (!locationPermissionHandler.checkPermission()) {
-                locationPermissionHandler.requestPermission()
-            }
+        if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
+            locationPermissionHandler.requestPermission()
         }
     }
 
     val cameraPositionState = rememberCameraPositionState {
-        cameraPosition?.let { pos -> position = pos.toGoogleCameraPosition() }
+        cameraPosition?.let { position = it.toGoogleCameraPosition() }
     }
 
     GoogleMap(
@@ -95,7 +93,7 @@ public actual fun Map(
                 clickable = true,
                 onClick = {
                     if (onCircleClick != null) {
-                        onCircleClick.invoke(circle)
+                        onCircleClick(circle)
                     } else {
                         onMapClick?.invoke(circle.center)
                     }
@@ -114,7 +112,7 @@ public actual fun Map(
                 clickable = true,
                 onClick = {
                     if (onPolygonClick != null) {
-                        onPolygonClick.invoke(polygon)
+                        onPolygonClick(polygon)
                     } else {
                         onMapClick?.invoke(polygon.coordinates[0])
                     }
@@ -130,7 +128,7 @@ public actual fun Map(
                 clickable = true,
                 onClick = {
                     if (onPolylineClick != null) {
-                        onPolylineClick.invoke(polyline)
+                        onPolylineClick(polyline)
                     } else {
                         onMapClick?.invoke(polyline.coordinates[0])
                     }

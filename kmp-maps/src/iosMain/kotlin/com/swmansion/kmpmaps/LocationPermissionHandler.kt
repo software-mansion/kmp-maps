@@ -15,20 +15,12 @@ internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegate
         locationManager.delegate = this
     }
 
-    fun checkPermission(): Boolean {
-        return when (locationManager.authorizationStatus) {
-            kCLAuthorizationStatusAuthorizedWhenInUse -> true
-            else -> false
-        }
-    }
+    fun checkPermission() =
+        locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse
 
     fun requestPermission() {
         if (locationManager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
             locationManager.requestWhenInUseAuthorization()
         }
-    }
-
-    fun hasPermission(): Boolean {
-        return checkPermission()
     }
 }
