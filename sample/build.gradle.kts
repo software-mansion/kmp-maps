@@ -15,6 +15,7 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "Sample"
             isStatic = true
+            binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
     }
 
