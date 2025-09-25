@@ -26,16 +26,16 @@ val exampleCircles =
         MapCircle(
             center = Coordinates(latitude = 50.0486, longitude = 19.9654),
             radius = 500.0f,
-            lineColor = Color(hexColor = "#FF0000", appleUIColor = AppleColors.DARK_GRAY),
-            lineWidth = 3f,
-            color = Color(hexColor = "#80FF0000", appleUIColor = AppleColors.LIGHT_GRAY),
+            lineColor = Color(hexColor = "#FF0000", appleColor = AppleColors.DARK_GRAY),
+            lineWidth = 1f,
+            color = Color(hexColor = "#10FF0000", appleColor = AppleColors.LIGHT_GRAY),
         ),
         MapCircle(
             center = Coordinates(latitude = 50.0647, longitude = 19.9450),
             radius = 300.0f,
-            lineColor = Color(hexColor = "#00FF00", appleUIColor = AppleColors.BROWN),
-            lineWidth = 2f,
-            color = Color(hexColor = "#8000FF11", appleUIColor = AppleColors.PURPLE),
+            lineColor = Color(hexColor = "#00FF00", appleColor = AppleColors.BROWN),
+            lineWidth = 1f,
+            color = Color(hexColor = "#5000FF00", appleColor = AppleColors.PURPLE),
         ),
     )
 
@@ -49,9 +49,9 @@ val examplePolygons =
                     Coordinates(latitude = 50.0650, longitude = 19.9400),
                     Coordinates(latitude = 50.0600, longitude = 19.9400),
                 ),
-            lineColor = Color(hexColor = "#FF00FF"),
-            lineWidth = 3f,
-            color = Color(hexColor = "#80FF00FF"),
+            lineColor = Color(hexColor = "#10FF0000"),
+            lineWidth = 1f,
+            color = Color(hexColor = "#10FF0000"),
         )
     )
 
@@ -64,7 +64,7 @@ val examplePolylines =
                     Coordinates(latitude = 50.0647, longitude = 19.9450),
                     Coordinates(latitude = 50.0596, longitude = 19.9316),
                 ),
-            lineColor = Color(hexColor = "#FFA500"),
-            width = 10f,
+            lineColor = Color(hexColor = "#60FF0000"),
+            width = 1f,
         )
     )

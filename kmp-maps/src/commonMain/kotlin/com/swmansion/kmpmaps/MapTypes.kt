@@ -66,7 +66,6 @@ public data class MapPolygon(
 public data class MapPolyline(
     val coordinates: List<Coordinates>,
     val width: Float,
-    val color: Color? = null,
     val lineColor: Color? = null,
     val appleContourStyle: AppleMapsContourStyle? = null,
 )
@@ -80,4 +79,8 @@ public data class CameraPosition(
     val androidTilt: Float? = null,
 )
 
-public data class Color(var hexColor: String? = null, var appleUIColor: AppleColors? = null)
+public data class Color(
+    var hexColor: String? = null,
+    var appleColor: AppleColors? = null,
+    val androidColor: AndroidColors? = null
+)

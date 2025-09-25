@@ -114,3 +114,18 @@ public enum class AppleColors {
     BLUE,
     ORANGE,
 }
+
+public enum class AndroidColors {
+    BLACK,
+    DARK_GRAY,
+    GRAY,
+    LIGHT_GRAY,
+    WHITE,
+    RED,
+    GREEN,
+    BLUE,
+    YELLOW,
+    CYAN,
+    MAGENTA,
+    TRANSPARENT,
+}

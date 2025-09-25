@@ -361,7 +361,7 @@ internal fun Color?.toUIColor(): UIColor? =
             }
         }
         else -> {
-            when (this.appleUIColor) {
+            when (this.appleColor) {
                 AppleColors.RED -> UIColor.redColor
                 AppleColors.DARK_GRAY -> UIColor.darkGrayColor
                 AppleColors.BLACK -> UIColor.blackColor

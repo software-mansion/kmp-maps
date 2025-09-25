@@ -89,12 +89,12 @@ public actual fun Map(
                 radius = circle.radius.toDouble(),
                 strokeColor =
                     Color(
-                        circle.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK
+                        circle.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK
                     ),
                 strokeWidth = circle.lineWidth ?: 10f,
                 fillColor =
                     Color(
-                        circle.color?.hexColor?.toGoogleColor()
+                        circle.color?.toAndroidColor()
                             ?: android.graphics.Color.TRANSPARENT
                     ),
                 clickable = true,
@@ -113,12 +113,12 @@ public actual fun Map(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
                 strokeColor =
                     Color(
-                        polygon.lineColor?.hexColor?.toGoogleColor() ?: android.graphics.Color.BLACK
+                        polygon.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK
                     ),
                 strokeWidth = polygon.lineWidth,
                 fillColor =
                     Color(
-                        polygon.color?.hexColor?.toGoogleColor()
+                        polygon.color?.toAndroidColor()
                             ?: android.graphics.Color.TRANSPARENT
                     ),
                 clickable = true,
@@ -137,7 +137,7 @@ public actual fun Map(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
                 color =
                     Color(
-                        polyline.lineColor?.hexColor?.toGoogleColor()
+                        polyline.lineColor?.toAndroidColor()
                             ?: android.graphics.Color.BLACK
                     ),
                 width = polyline.width,

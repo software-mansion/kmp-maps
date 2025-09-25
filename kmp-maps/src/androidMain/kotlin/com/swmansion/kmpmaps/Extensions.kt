@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps
 
 import androidx.compose.ui.geometry.Offset
-import androidx.core.graphics.toColorInt
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -31,7 +30,47 @@ internal fun MapMarker.toGoogleMapsMarkerState(): MarkerState =
 
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
-internal fun String.toGoogleColor(): Int = toColorInt()
+internal fun Color?.toAndroidColor(): Int =
+    when {
+        this == null -> android.graphics.Color.TRANSPARENT
+        this.hexColor != null && this.hexColor!!.startsWith("#") -> {
+            try {
+                val cleanHex = this.hexColor!!.removePrefix("#")
+                val colorValue =
+                    when (cleanHex.length) {
+                        6 -> cleanHex + "FF"
+                        8 -> cleanHex
+                        else -> "000000FF"
+                    }
+                val color = colorValue.toLong(16)
+                android.graphics.Color.argb(
+                    ((color shr 24) and 0xFF).toInt(),
+                    ((color shr 16) and 0xFF).toInt(),
+                    ((color shr 8) and 0xFF).toInt(),
+                    (color and 0xFF).toInt()
+                )
+            } catch (_: Exception) {
+                android.graphics.Color.RED
+            }
+        }
+        else -> {
+            when (this.androidColor) {
+                AndroidColors.BLACK -> android.graphics.Color.BLACK
+                AndroidColors.DARK_GRAY -> android.graphics.Color.DKGRAY
+                AndroidColors.GRAY -> android.graphics.Color.GRAY
+                AndroidColors.LIGHT_GRAY -> android.graphics.Color.LTGRAY
+                AndroidColors.WHITE -> android.graphics.Color.WHITE
+                AndroidColors.RED -> android.graphics.Color.RED
+                AndroidColors.GREEN -> android.graphics.Color.GREEN
+                AndroidColors.BLUE -> android.graphics.Color.BLUE
+                AndroidColors.YELLOW -> android.graphics.Color.YELLOW
+                AndroidColors.CYAN -> android.graphics.Color.CYAN
+                AndroidColors.MAGENTA -> android.graphics.Color.MAGENTA
+                AndroidColors.TRANSPARENT -> android.graphics.Color.TRANSPARENT
+                else -> android.graphics.Color.RED
+            }
+        }
+    }
 
 internal fun MapProperties.toGoogleMapsProperties(): GoogleMapProperties =
     GoogleMapProperties(
