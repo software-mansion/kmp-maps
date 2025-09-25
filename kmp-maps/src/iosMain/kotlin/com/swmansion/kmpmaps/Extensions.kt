@@ -147,6 +147,7 @@ internal fun MKMapView.updateAppleMapsMarkers(
                 marker.coordinates.let { coords ->
                     setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
                 }
+                setTintColor(marker.appleTintColor.toAppleColor())
                 setTitle(marker.title)
             }
         markerMapping[mkAnnotation] = marker
@@ -337,7 +338,7 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
     }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color?.toUIColor(): UIColor? =
+internal fun Color?.toAppleColor(): UIColor? =
     when {
         this == null -> null
         this.hexColor != null && this.hexColor!!.startsWith("#") -> {

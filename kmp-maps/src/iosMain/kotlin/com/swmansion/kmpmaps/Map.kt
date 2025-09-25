@@ -92,6 +92,7 @@ public actual fun Map(
 
             val delegate =
                 MapDelegate(
+                    properties = properties,
                     circleStyles = circleStyles,
                     polygonStyles = polygonStyles,
                     polylineStyles = polylineStyles,

@@ -1,15 +1,10 @@
 package com.swmansion.kmpmaps
 
-import androidx.compose.ui.graphics.ImageBitmap
-
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
-    val selectionEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
-    val appleElevation: AppleMapsMapStyleElevation? = AppleMapsMapStyleElevation.AUTOMATIC,
-    val appleEmphasis: AppleMapsMapStyleEmphasis? = AppleMapsMapStyleEmphasis.AUTOMATIC,
     val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val applePolylineTapThreshold: Float? = null,
     val androidIsIndoorEnabled: Boolean = true,
@@ -31,19 +26,15 @@ public data class MapUISettings(
     val androidRotationGesturesEnabled: Boolean = true,
     val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
     val androidTiltGesturesEnabled: Boolean = true,
-    val androidTogglePitchEnabled: Boolean = true,
     val androidZoomControlsEnabled: Boolean = true,
 )
 
 public data class MapMarker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
-    val subtitle: String? = "No subtitle was provided",
-    val appleSystemImage: String? = null,
     val appleTintColor: Color? = null,
     val androidAnchor: GoogleMapsAnchor? = null,
     val androidDraggable: Boolean = false,
-    val androidIcon: ImageBitmap? = null, // todo: not working
     val androidSnippet: String? = null,
     val androidZIndex: Float? = null,
 )
@@ -67,7 +58,6 @@ public data class MapPolyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,
-    val appleContourStyle: AppleMapsContourStyle? = null,
 )
 
 public data class Coordinates(val latitude: Double, val longitude: Double)

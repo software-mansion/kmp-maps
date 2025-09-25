@@ -9,7 +9,6 @@ actual fun createMapProperties(mapType: MapType, showUserLocation: Boolean): Map
         mapType = mapType,
         isMyLocationEnabled = showUserLocation,
         isTrafficEnabled = true,
-        selectionEnabled = true,
         isBuildingEnabled = true,
         androidIsIndoorEnabled = true,
         androidMinZoomPreference = 3f,

@@ -21,6 +21,7 @@ import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
+    private val properties: MapProperties,
     private val circleStyles: MutableMap<MKCircle, MapCircle>,
     private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
     private val polylineStyles: MutableMap<MKPolyline, MapPolyline>,
@@ -43,23 +44,23 @@ internal class MapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor?.toUIColor()
+                renderer.strokeColor = circleStyle?.lineColor?.toAppleColor()
                 renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = circleStyle?.color?.toUIColor()
+                renderer.fillColor = circleStyle?.color?.toAppleColor()
                 renderer
             }
             is MKPolygon -> {
                 val polygonStyle = polygonStyles[rendererForOverlay]
                 val renderer = MKPolygonRenderer(rendererForOverlay)
-                renderer.strokeColor = polygonStyle?.lineColor?.toUIColor()
+                renderer.strokeColor = polygonStyle?.lineColor?.toAppleColor()
                 renderer.lineWidth = (polygonStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = polygonStyle?.color?.toUIColor()
+                renderer.fillColor = polygonStyle?.color?.toAppleColor()
                 renderer
             }
             is MKPolyline -> {
                 val polylineStyle = polylineStyles[rendererForOverlay]
                 val renderer = MKPolylineRenderer(rendererForOverlay)
-                renderer.strokeColor = polylineStyle?.lineColor?.toUIColor()
+                renderer.strokeColor = polylineStyle?.lineColor?.toAppleColor()
                 renderer.lineWidth = (polylineStyle?.width ?: 1).toDouble()
                 renderer
             }
@@ -104,6 +105,7 @@ internal class MapDelegate(
     }
 
     @ObjCAction
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     fun handleMapTap(gestureRecognizer: UITapGestureRecognizer) {
         val mapView = gestureRecognizer.view as? MKMapView ?: return
         val tapPoint = gestureRecognizer.locationInView(mapView)
@@ -129,7 +131,14 @@ internal class MapDelegate(
             }
 
             for ((_, mapPolyline) in polylineStyles) {
-                if (isPointNearPolyline(tapLat, tapLon, mapPolyline)) {
+                if (
+                    isPointNearPolyline(
+                        tapLat,
+                        tapLon,
+                        properties.applePolylineTapThreshold,
+                        mapPolyline,
+                    )
+                ) {
                     onPolylineClick?.invoke(mapPolyline)
                     return@useContents
                 }
@@ -140,6 +149,7 @@ internal class MapDelegate(
     }
 
     @ObjCAction
+    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     fun handleMapLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
         if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
             val mapView = gestureRecognizer.view as? MKMapView ?: return

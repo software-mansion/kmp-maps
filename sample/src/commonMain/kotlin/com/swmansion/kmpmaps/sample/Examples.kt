@@ -35,7 +35,7 @@ val exampleCircles =
             radius = 300.0f,
             lineColor = Color(hexColor = "#00FF00", appleColor = AppleColors.BROWN),
             lineWidth = 1f,
-            color = Color(hexColor = "#5000FF00", appleColor = AppleColors.PURPLE),
+            color = Color(hexColor = "#3000FF00", appleColor = AppleColors.PURPLE),
         ),
     )
 

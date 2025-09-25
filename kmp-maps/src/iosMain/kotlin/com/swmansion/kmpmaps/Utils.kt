@@ -67,10 +67,11 @@ internal fun isPointInCircle(pointLat: Double, pointLon: Double, mapCircle: MapC
 internal fun isPointNearPolyline(
     pointLat: Double,
     pointLon: Double,
+    threshold: Float?,
     mapPolyline: MapPolyline,
 ): Boolean {
     val coordinates = mapPolyline.coordinates
-    val threshold = mapPolyline.width * 2.0
+    val localThreshold = threshold ?: (mapPolyline.width * 2.0f)
 
     for (i in 0 until coordinates.size - 1) {
         val start = coordinates[i]
@@ -86,7 +87,7 @@ internal fun isPointNearPolyline(
                 end.longitude,
             )
 
-        if (distanceToSegment <= threshold) {
+        if (distanceToSegment <= localThreshold) {
             return true
         }
     }
