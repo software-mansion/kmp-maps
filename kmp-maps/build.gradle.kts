@@ -53,3 +53,22 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        configureEach {
+            moduleName.set("KMP Maps")
+            includes.from("Module.md")
+            
+            // Link to external documentation
+            externalDocumentationLink {
+                url.set(uri("https://developer.android.com/reference/").toURL())
+                packageListUrl.set(uri("https://developer.android.com/reference/androidx/package-list").toURL())
+            }
+            
+            externalDocumentationLink {
+                url.set(uri("https://kotlinlang.org/api/kotlinx.coroutines/").toURL())
+            }
+        }
+    }
+}

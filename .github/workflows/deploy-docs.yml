@@ -3,6 +3,11 @@ name: Deploy Documentation
 on:
   push:
     branches: [main]
+    paths:
+      - 'kmp-maps/src/**'
+      - 'kmp-maps/build.gradle.kts'
+      - 'kmp-maps/Module.md'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -35,6 +40,19 @@ jobs:
 
       - name: Generate Dokka documentation
         run: ./gradlew :kmp-maps:dokkaGeneratePublicationHtml
+        
+      - name: Check documentation output
+        run: |
+          echo "Checking if Dokka documentation was generated..."
+          if [ -d "./kmp-maps/build/dokka/html" ]; then
+            echo "✅ Documentation directory exists"
+            ls -la ./kmp-maps/build/dokka/html/
+          else
+            echo "❌ Documentation directory not found"
+            echo "Available directories in build:"
+            find ./kmp-maps/build -type d -name "*dokka*" || echo "No dokka directories found"
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
