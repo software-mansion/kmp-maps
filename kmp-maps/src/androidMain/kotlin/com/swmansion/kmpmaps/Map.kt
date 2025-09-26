@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
@@ -86,11 +87,9 @@ public actual fun Map(
             Circle(
                 center = circle.center.toGoogleLatLng(),
                 radius = circle.radius.toDouble(),
-                strokeColor =
-                    Color(circle.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
+                strokeColor = Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = circle.lineWidth ?: 10f,
-                fillColor =
-                    Color(circle.color?.toAndroidColor() ?: android.graphics.Color.TRANSPARENT),
+                fillColor = Color(circle.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onCircleClick != null) {
@@ -105,11 +104,9 @@ public actual fun Map(
         polygons.forEach { polygon ->
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
-                strokeColor =
-                    Color(polygon.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
+                strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
-                fillColor =
-                    Color(polygon.color?.toAndroidColor() ?: android.graphics.Color.TRANSPARENT),
+                fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onPolygonClick != null) {
@@ -124,7 +121,7 @@ public actual fun Map(
         polylines.forEach { polyline ->
             Polyline(
                 points = polyline.coordinates.map { it.toGoogleLatLng() },
-                color = Color(polyline.lineColor?.toAndroidColor() ?: android.graphics.Color.BLACK),
+                color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 width = polyline.width,
                 clickable = true,
                 onClick = {
