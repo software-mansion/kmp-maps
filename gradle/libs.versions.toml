@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "8.6.0"
 android-compileSdk = "36"
 android-minSdk = "24"
 android-targetSdk = "36"
@@ -25,6 +25,7 @@ jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.r
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 jetBrains-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 jetBrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 jetBrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
