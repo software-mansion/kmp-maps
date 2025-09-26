@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps
 
+/** Categories of points of interest (POI) for Apple Maps. */
 public enum class AppleMapPointOfInterestCategory {
     AIRPORT,
     AMUSEMENT_PARK,
@@ -76,6 +77,7 @@ public enum class AppleMapPointOfInterestCategory {
     ZOO,
 }
 
+/** Types of map display modes. */
 public enum class MapType {
     HYBRID,
     NORMAL,
@@ -83,6 +85,7 @@ public enum class MapType {
     TERRAIN,
 }
 
+/** Predefined colors available for Apple Maps elements. */
 public enum class AppleColors {
     RED,
     DARK_GRAY,
@@ -99,6 +102,7 @@ public enum class AppleColors {
     ORANGE,
 }
 
+/** Predefined colors available for Google Maps elements. */
 public enum class AndroidColors {
     BLACK,
     DARK_GRAY,

@@ -18,6 +18,7 @@ import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 import platform.darwin.NSObject
 
+/** iOS map delegate for handling Apple Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
     private val properties: MapProperties,
@@ -35,6 +36,13 @@ internal class MapDelegate(
     private var onCameraMove: ((CameraPosition) -> Unit)?,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
+    /**
+     * Provides renderers for map overlays (circles, polygons, polylines).
+     *
+     * @param mapView The map view requesting the renderer
+     * @param rendererForOverlay The overlay that needs a renderer
+     * @return Appropriate renderer with styling applied
+     */
     override fun mapView(mapView: MKMapView, rendererForOverlay: MKOverlayProtocol) =
         when (rendererForOverlay) {
             is MKCircle -> {
@@ -63,6 +71,12 @@ internal class MapDelegate(
             else -> MKCircleRenderer(rendererForOverlay)
         }
 
+    /**
+     * Handles marker selection events when user taps on annotations.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didSelectAnnotationView The annotation view that was selected
+     */
     override fun mapView(
         mapView: MKMapView,
         didSelectAnnotationView: platform.MapKit.MKAnnotationView,
@@ -73,12 +87,30 @@ internal class MapDelegate(
         }
     }
 
+    /**
+     * Handles camera movement events when the map region changes.
+     *
+     * @param mapView The map view whose region changed
+     * @param regionDidChangeAnimated Whether the change was animated
+     */
     override fun mapView(mapView: MKMapView, regionDidChangeAnimated: Boolean) {
         val region = mapView.region
         val cameraPosition = region.toCameraPosition()
         onCameraMove?.invoke(cameraPosition)
     }
 
+    /**
+     * Updates callback functions for map interactions.
+     *
+     * @param onMarkerClick Callback for marker clicks
+     * @param onCircleClick Callback for circle clicks
+     * @param onPolygonClick Callback for polygon clicks
+     * @param onPolylineClick Callback for polyline clicks
+     * @param onMapClick Callback for map clicks
+     * @param onMapLongClick Callback for map long clicks
+     * @param onPOIClick Callback for POI clicks
+     * @param onCameraMove Callback for camera movement
+     */
     fun updateCallbacks(
         onMarkerClick: ((MapMarker) -> Unit)?,
         onCircleClick: ((MapCircle) -> Unit)?,
@@ -99,6 +131,11 @@ internal class MapDelegate(
         this.onCameraMove = onCameraMove
     }
 
+    /**
+     * Handles tap gestures on the map to detect clicks on overlays and map.
+     *
+     * @param gestureRecognizer The tap gesture recognizer
+     */
     @ObjCAction
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     fun handleMapTap(gestureRecognizer: UITapGestureRecognizer) {
@@ -143,6 +180,11 @@ internal class MapDelegate(
         }
     }
 
+    /**
+     * Handles long press gestures on the map.
+     *
+     * @param gestureRecognizer The long press gesture recognizer
+     */
     @ObjCAction
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     fun handleMapLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
