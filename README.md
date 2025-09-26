@@ -1,35 +1,215 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# KMP Maps
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+### Cross-platform map component for Kotlin Multiplatform Mobile using Google Maps on Android and Apple Maps on iOS
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-### Build and Run Android Application
+`kmp-maps` provides a unified map component for Kotlin Multiplatform Mobile applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## Features
 
-### Build and Run iOS Application
+- **Cross-platform compatibility** - Single API for both Android and iOS
+- **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
+- **Compose Multiplatform** - Built with Jetpack Compose for modern UI development
+- **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
+- **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
+- **Location services** - Built-in location permission handling and user location display
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## Installation
 
----
+Add the library to your `build.gradle.kts`:
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+```kotlin
+dependencies {
+    implementation("com.swmansion:kmp-maps:0.1.0")
+}
+```
+
+## Configuration
+
+### Android - Google Maps API Key
+
+To use Google Maps on Android, you need to configure your API key in `AndroidManifest.xml`:
+
+```xml
+<meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="${MAPS_API_KEY}" />
+```
+
+You can also set it directly:
+```xml
+<meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR_API_KEY_HERE" />
+```
+
+#### Google Cloud API Setup
+
+Before you can use Google Maps on Android, you need to register a Google Cloud API project and enable the Maps SDK for Android:
+
+1. **Register a Google Cloud API project and enable the Maps SDK for Android**
+   - Open your browser to the [Google API Manager](https://console.cloud.google.com/) and create a project
+   - Once it's created, go to the project and enable the Maps SDK for Android
+
+2. **Copy your app's SHA-1 certificate fingerprint**
+   
+   **For Google Play Store:**
+   - Upload your app binary to Google Play Console at least once
+   - Go to Google Play Console > (your app) > Release > Setup > App integrity > App signing
+   - Copy the value of SHA-1 certificate fingerprint
+   
+   **For development builds:**
+   - After the build is complete, go to your project's dashboard
+   - Under Project settings > click Credentials
+   - Under Application Identifiers, click your project's package name
+   - Under Android Keystore copy the value of SHA-1 Certificate Fingerprint
+
+3. **Create an API key**
+   - Go to [Google Cloud Credential manager](https://console.cloud.google.com/apis/credentials) and click Create Credentials, then API Key
+   - In the modal, click Edit API key
+   - Under Key restrictions > Application restrictions, choose Android apps
+   - Under Restrict usage to your Android apps, click Add an item
+   - Add your package name to the package name field
+   - Then, add the SHA-1 certificate fingerprint's value from step 2
+   - Click Done and then click Save
+
+4. **Add the API key to your project**
+   - Copy your API Key into your `AndroidManifest.xml` as shown above
+   - Create a new build, and you can now use the Google Maps API on Android
+
+### iOS - Apple Maps
+
+No additional configuration is required for Apple Maps on iOS.
+
+## Permissions
+
+To display the user's location on the map, you need to declare and request location permissions:
+
+### Android
+
+Add the following permissions to your `AndroidManifest.xml`:
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```
+
+### iOS
+
+Add the following key to your `Info.plist`:
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Allow this app to use your location</string>
+```
+
+## Usage
+
+```kotlin
+@Composable
+fun MyMapScreen() {
+    Map(
+        modifier = Modifier.fillMaxSize(),
+        properties = MapProperties(
+            isMyLocationEnabled = true,
+            mapType = MapType.NORMAL,
+        ),
+        uiSettings = MapUISettings(
+            myLocationButtonEnabled = true,
+            compassEnabled = true
+        ),
+        cameraPosition = CameraPosition(
+            coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
+            zoom = 13f
+        ),
+        markers = listOf(
+            MapMarker(
+                coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
+                title = "Software Mansion",
+                androidSnippet = "Software house"
+            )
+        ),
+        onMarkerClick = { marker ->
+            println("Marker clicked: ${marker.title}")
+        },
+        onMapClick = { coordinates ->
+            println("Map clicked at: ${coordinates.latitude}, ${coordinates.longitude}")
+        }
+    )
+}
+```
+
+## API Reference
+
+### Map Composable
+
+The main `Map` composable provides a unified interface for both platforms:
+
+```kotlin
+@Composable
+fun Map(
+    modifier: Modifier = Modifier,
+    cameraPosition: CameraPosition? = null,
+    properties: MapProperties,
+    uiSettings: MapUISettings,
+    markers: List<MapMarker> = emptyList(),
+    circles: List<MapCircle> = emptyList(),
+    polygons: List<MapPolygon> = emptyList(),
+    polylines: List<MapPolyline> = emptyList(),
+    onCameraMove: ((CameraPosition) -> Unit)? = null,
+    onMarkerClick: ((MapMarker) -> Unit)? = null,
+    onCircleClick: ((MapCircle) -> Unit)? = null,
+    onPolygonClick: ((MapPolygon) -> Unit)? = null,
+    onPolylineClick: ((MapPolyline) -> Unit)? = null,
+    onMapClick: ((Coordinates) -> Unit)? = null,
+    onMapLongClick: ((Coordinates) -> Unit)? = null,
+    onPOIClick: ((Coordinates) -> Unit)? = null,
+    onMapLoaded: (() -> Unit)? = null,
+)
+```
+
+### Data Types
+
+- **MapProperties** - Configuration for map behavior and appearance
+- **MapUISettings** - UI settings for interactive elements and gestures
+- **MapMarker** - Represents a marker on the map
+- **MapCircle** - Represents a circle overlay on the map
+- **MapPolygon** - Represents a polygon overlay on the map
+- **MapPolyline** - Represents a polyline overlay on the map
+- **Coordinates** - Geographical coordinates (latitude and longitude)
+- **CameraPosition** - Camera position and orientation
+- **Color** - Cross-platform color specification
+
+### Enums
+
+- **MapType** - Map display modes (NORMAL, SATELLITE, HYBRID, TERRAIN)
+- **AppleMapPointOfInterestCategory** - POI categories for iOS filtering
+- **AppleColors** - Predefined colors for iOS
+- **AndroidColors** - Predefined colors for Android
+
+## Platform Support
+
+- **Android**: Uses Google Maps SDK
+- **iOS**: Uses Apple Maps (MapKit)
+
+## Examples
+
+Check out the sample project in the `/sample` directory for complete usage examples.
+
+## Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request.
+
+## License
+
+KMP Maps library is licensed under [The MIT License](./LICENSE).
+
+## Credits
+
+This project has been built and is maintained thanks to the support from [Software Mansion](https://swmansion.com)
+
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
+
+## KMP Maps is created by Software Mansion
+
+Since 2012 [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are Core React Native Contributors and experts in dealing with all kinds of React Native and Kotlin Multiplatform issues. We can help you build your next dream product – [Hire us](https://swmansion.com/contact/projects?utm_source=kmpmaps&utm_medium=readme).
