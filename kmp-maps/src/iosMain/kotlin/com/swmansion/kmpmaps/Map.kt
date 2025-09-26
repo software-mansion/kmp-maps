@@ -19,6 +19,7 @@ import platform.MapKit.MKPolyline
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
+/** iOS implementation of the Map composable using Apple Maps (MapKit). */
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 public actual fun Map(

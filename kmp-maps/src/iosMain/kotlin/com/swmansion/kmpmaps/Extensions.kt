@@ -99,6 +99,11 @@ import platform.MapKit.addOverlay
 import platform.UIKit.UIColor
 import platform.posix.memcpy
 
+/**
+ * Converts a CameraPosition to Apple MapKit's MKCoordinateRegion.
+ *
+ * @return MKCoordinateRegion representing the camera's view area
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
@@ -110,6 +115,11 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     return MKCoordinateRegionMake(coordinate, span)
 }
 
+/**
+ * Converts Apple MapKit's MKCoordinateRegion back to CameraPosition.
+ *
+ * @return CameraPosition with calculated zoom level and coordinates
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
     val latZoom = kotlin.math.ln(360.0 / span.latitudeDelta) / kotlin.math.ln(2.0)
@@ -119,6 +129,12 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
     CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
 }
 
+/**
+ * Updates Apple Maps markers by removing existing annotations and adding new ones.
+ *
+ * @param markers List of MapMarker objects to display
+ * @return MutableMap mapping MKPointAnnotation to MapMarker for click handling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsMarkers(
     markers: List<MapMarker>
@@ -140,6 +156,11 @@ internal fun MKMapView.updateAppleMapsMarkers(
     return markerMapping
 }
 
+/**
+ * Converts AppleMapsPointOfInterestCategories to Apple MapKit's MKPointOfInterestFilter.
+ *
+ * @return MKPointOfInterestFilter for including/excluding POI categories, or null if no filtering
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
     MKPointOfInterestFilter? {
@@ -157,6 +178,12 @@ internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
     }
 }
 
+/**
+ * Updates Apple Maps circles by creating MKCircle overlays and storing style mappings.
+ *
+ * @param circles List of MapCircle objects to display
+ * @param circleStyles MutableMap to store MKCircle to MapCircle mappings for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsCircles(
     circles: List<MapCircle>,
@@ -171,6 +198,12 @@ internal fun MKMapView.updateAppleMapsCircles(
     }
 }
 
+/**
+ * Updates Apple Maps polygons by creating MKPolygon overlays and storing style mappings.
+ *
+ * @param polygons List of MapPolygon objects to display
+ * @param polygonStyles MutableMap to store MKPolygon to MapPolygon mappings for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolygons(
     polygons: List<MapPolygon>,
@@ -200,6 +233,12 @@ internal fun MKMapView.updateAppleMapsPolygons(
     }
 }
 
+/**
+ * Updates Apple Maps polylines by creating MKPolyline overlays and storing style mappings.
+ *
+ * @param polylines List of MapPolyline objects to display
+ * @param polylineStyles MutableMap to store MKPolyline to MapPolyline mappings for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolylines(
     polylines: List<MapPolyline>,
@@ -229,6 +268,11 @@ internal fun MKMapView.updateAppleMapsPolylines(
     }
 }
 
+/**
+ * Converts MapType enum to Apple MapKit's map type constant.
+ *
+ * @return MKMapType constant corresponding to the MapType enum value
+ */
 internal fun MapType?.toAppleMapsMapType() =
     when (this) {
         MapType.HYBRID -> MKMapTypeHybrid
@@ -237,6 +281,11 @@ internal fun MapType?.toAppleMapsMapType() =
         else -> MKMapTypeStandard
     }
 
+/**
+ * Converts AppleMapPointOfInterestCategory enum to Apple MapKit's MKPointOfInterestCategory.
+ *
+ * @return MKPointOfInterestCategory constant corresponding to the enum value
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
     MKPointOfInterestCategory =
@@ -319,6 +368,13 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
         AppleMapPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
     }
 
+/**
+ * Converts Color object to Apple UIKit's UIColor.
+ *
+ * Supports both hex color strings and predefined AppleColors enum values.
+ *
+ * @return UIColor corresponding to the Color object, or null if conversion fails
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun Color?.toAppleColor() =
     when {
