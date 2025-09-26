@@ -1,8 +1,6 @@
 package com.swmansion.kmpmaps
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -51,7 +49,6 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
  * @return LatLng with latitude and longitude
  */
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
-
 
 /**
  * Converts MapProperties to Google Maps Properties.

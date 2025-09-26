@@ -87,11 +87,9 @@ public actual fun Map(
             Circle(
                 center = circle.center.toGoogleLatLng(),
                 radius = circle.radius.toDouble(),
-                strokeColor =
-                    Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
+                strokeColor = Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = circle.lineWidth ?: 10f,
-                fillColor =
-                    Color(circle.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
+                fillColor = Color(circle.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onCircleClick != null) {
@@ -106,11 +104,9 @@ public actual fun Map(
         polygons.forEach { polygon ->
             Polygon(
                 points = polygon.coordinates.map { it.toGoogleLatLng() },
-                strokeColor =
-                    Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
+                strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
-                fillColor =
-                    Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
+                fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
                 clickable = true,
                 onClick = {
                     if (onPolygonClick != null) {

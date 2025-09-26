@@ -151,5 +151,3 @@ public data class CameraPosition(
     val androidBearing: Float? = null,
     val androidTilt: Float? = null,
 )
-
-

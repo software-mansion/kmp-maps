@@ -84,5 +84,3 @@ public enum class MapType {
     SATELLITE,
     TERRAIN,
 }
-
-
