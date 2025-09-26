@@ -139,54 +139,6 @@ fun MyMapScreen() {
 }
 ```
 
-## API Reference
-
-### Map Composable
-
-The main `Map` composable provides a unified interface for both platforms:
-
-```kotlin
-@Composable
-fun Map(
-    modifier: Modifier = Modifier,
-    cameraPosition: CameraPosition? = null,
-    properties: MapProperties,
-    uiSettings: MapUISettings,
-    markers: List<MapMarker> = emptyList(),
-    circles: List<MapCircle> = emptyList(),
-    polygons: List<MapPolygon> = emptyList(),
-    polylines: List<MapPolyline> = emptyList(),
-    onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onMarkerClick: ((MapMarker) -> Unit)? = null,
-    onCircleClick: ((MapCircle) -> Unit)? = null,
-    onPolygonClick: ((MapPolygon) -> Unit)? = null,
-    onPolylineClick: ((MapPolyline) -> Unit)? = null,
-    onMapClick: ((Coordinates) -> Unit)? = null,
-    onMapLongClick: ((Coordinates) -> Unit)? = null,
-    onPOIClick: ((Coordinates) -> Unit)? = null,
-    onMapLoaded: (() -> Unit)? = null,
-)
-```
-
-### Data Types
-
-- **MapProperties** - Configuration for map behavior and appearance
-- **MapUISettings** - UI settings for interactive elements and gestures
-- **MapMarker** - Represents a marker on the map
-- **MapCircle** - Represents a circle overlay on the map
-- **MapPolygon** - Represents a polygon overlay on the map
-- **MapPolyline** - Represents a polyline overlay on the map
-- **Coordinates** - Geographical coordinates (latitude and longitude)
-- **CameraPosition** - Camera position and orientation
-- **Color** - Cross-platform color specification
-
-### Enums
-
-- **MapType** - Map display modes (NORMAL, SATELLITE, HYBRID, TERRAIN)
-- **AppleMapPointOfInterestCategory** - POI categories for iOS filtering
-- **AppleColors** - Predefined colors for iOS
-- **AndroidColors** - Predefined colors for Android
-
 ## Platform Support
 
 - **Android**: Uses Google Maps SDK
