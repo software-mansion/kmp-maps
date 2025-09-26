@@ -139,8 +139,6 @@ fun MyMapScreen() {
 }
 ```
 
-
-
 ## Platform Support
 
 - **Android**: Uses Google Maps SDK
