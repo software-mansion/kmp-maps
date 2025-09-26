@@ -14,6 +14,7 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
+/** Android implementation of the Map composable using Google Maps. */
 @Composable
 public actual fun Map(
     modifier: Modifier,

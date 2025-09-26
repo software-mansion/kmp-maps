@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
+/** Android location permission handler for Google Maps. */
 internal class LocationPermissionHandler(private val context: Context) {
 
     private var hasLocationPermission = false
@@ -17,6 +18,12 @@ internal class LocationPermissionHandler(private val context: Context) {
         checkPermission()
     }
 
+    /**
+     * Requests location permission from the user if not already granted.
+     *
+     * Only requests permission if the context is an Activity and permission is not granted.
+     * Requests both FINE and COARSE location permissions.
+     */
     fun requestPermission() {
         val granted = checkPermission()
 
@@ -32,6 +39,13 @@ internal class LocationPermissionHandler(private val context: Context) {
         }
     }
 
+    /**
+     * Checks if location permission is currently granted.
+     *
+     * Checks for either FINE or COARSE location permission.
+     *
+     * @return true if either permission is granted, false otherwise
+     */
     fun checkPermission(): Boolean {
         hasLocationPermission =
             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) ==
