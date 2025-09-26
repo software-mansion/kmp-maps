@@ -178,14 +178,13 @@ fun Map(
 - **MapPolyline** - Represents a polyline overlay on the map
 - **Coordinates** - Geographical coordinates (latitude and longitude)
 - **CameraPosition** - Camera position and orientation
-- **Color** - Cross-platform color specification
+
+All color parameters use `androidx.compose.ui.graphics.Color` for cross-platform color support.
 
 ### Enums
 
 - **MapType** - Map display modes (NORMAL, SATELLITE, HYBRID, TERRAIN)
 - **AppleMapPointOfInterestCategory** - POI categories for iOS filtering
-- **AppleColors** - Predefined colors for iOS
-- **AndroidColors** - Predefined colors for Android
 
 ## Platform Support
 
