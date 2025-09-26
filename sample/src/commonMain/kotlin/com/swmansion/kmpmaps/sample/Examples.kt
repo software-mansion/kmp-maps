@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.swmansion.kmpmaps.*
 
@@ -22,46 +24,46 @@ val exampleMarkers =
         ),
     )
 
-val exampleCircles =
-    listOf(
-        MapCircle(
-            center = Coordinates(latitude = 50.0486, longitude = 19.9654),
-            radius = 500.0f,
-            lineColor = Color.Red,
-            lineWidth = 1f,
-            color = Color(0x10FF0000),
-        ),
-        MapCircle(
-            center = Coordinates(latitude = 50.0647, longitude = 19.9450),
-            radius = 300.0f,
-            lineColor = Color.Green,
-            lineWidth = 1f,
-            color = Color(0x3000FF00),
-        ),
-    )
+@Composable
+fun getExampleCircles() = listOf(
+    MapCircle(
+        center = Coordinates(latitude = 50.0486, longitude = 19.9654),
+        radius = 500.0f,
+        lineColor = MaterialTheme.colorScheme.primary,
+        lineWidth = 1f,
+        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+    ),
+    MapCircle(
+        center = Coordinates(latitude = 50.0647, longitude = 19.9450),
+        radius = 300.0f,
+        lineColor = MaterialTheme.colorScheme.secondary,
+        lineWidth = 1f,
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+    ),
+)
 
-val examplePolygons =
-    listOf(
-        MapPolygon(
-            coordinates =
-                listOf(
-                    Coordinates(latitude = 50.0550, longitude = 19.9400),
-                    Coordinates(latitude = 50.0550, longitude = 19.9500),
-                    Coordinates(latitude = 50.0480, longitude = 19.9500),
-                    Coordinates(latitude = 50.0480, longitude = 19.9400),
-                    Coordinates(latitude = 50.0550, longitude = 19.9400),
-                ),
-            lineColor = Color(0x10FF0000),
-            lineWidth = 1f,
-            color = Color(0x10FF0000),
-        )
+@Composable
+fun getExamplePolygons() = listOf(
+    MapPolygon(
+        coordinates =
+            listOf(
+                Coordinates(latitude = 50.0550, longitude = 19.9400),
+                Coordinates(latitude = 50.0550, longitude = 19.9500),
+                Coordinates(latitude = 50.0480, longitude = 19.9500),
+                Coordinates(latitude = 50.0480, longitude = 19.9400),
+                Coordinates(latitude = 50.0550, longitude = 19.9400),
+            ),
+        lineColor = MaterialTheme.colorScheme.tertiary,
+        lineWidth = 1f,
+        color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
     )
+)
 
-val examplePolylines =
-    listOf(
-        MapPolyline(
-            coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
-            lineColor = Color(0x60FF0000),
-            width = 1f,
-        )
+@Composable
+fun getExamplePolylines() = listOf(
+    MapPolyline(
+        coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
+        lineColor = MaterialTheme.colorScheme.error,
+        width = 1f,
     )
+)

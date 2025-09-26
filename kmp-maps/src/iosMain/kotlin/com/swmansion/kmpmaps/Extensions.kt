@@ -149,7 +149,7 @@ internal fun MKMapView.updateAppleMapsMarkers(
                 marker.coordinates.let { coords ->
                     setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
                 }
-                setTintColor(marker.appleTintColor.toAppleColor())
+                setTintColor(marker.appleTintColor?.toAppleColor())
                 setTitle(marker.title)
             }
         markerMapping[mkAnnotation] = marker
@@ -373,19 +373,15 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
 /**
  * Converts androidx Color to Apple UIKit's UIColor.
  *
- * @return UIColor corresponding to the androidx Color object, or null if conversion fails
+ * @return UIColor corresponding to the androidx Color object
  */
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color?.toAppleColor() =
-    when (this) {
-        null -> null
-        else -> {
-            val argb = this.toArgb()
-            UIColor.colorWithRed(
-                red = ((argb shr 16) and 0xFF) / 255.0,
-                green = ((argb shr 8) and 0xFF) / 255.0,
-                blue = (argb and 0xFF) / 255.0,
-                alpha = ((argb shr 24) and 0xFF) / 255.0,
-            )
-        }
-    }
+internal fun Color.toAppleColor(): UIColor {
+    val argb = this.toArgb()
+    return UIColor.colorWithRed(
+        red = ((argb shr 16) and 0xFF) / 255.0,
+        green = ((argb shr 8) and 0xFF) / 255.0,
+        blue = (argb and 0xFF) / 255.0,
+        alpha = ((argb shr 24) and 0xFF) / 255.0,
+    )
+}

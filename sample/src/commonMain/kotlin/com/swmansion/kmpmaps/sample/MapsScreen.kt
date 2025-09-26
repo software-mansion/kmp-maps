@@ -67,9 +67,9 @@ fun MapsScreen() {
                     scaleBarEnabled = true,
                 ),
             markers = if (showAllComponents) exampleMarkers else emptyList(),
-            circles = if (showAllComponents) exampleCircles else emptyList(),
-            polygons = if (showAllComponents) examplePolygons else emptyList(),
-            polylines = if (showAllComponents) examplePolylines else emptyList(),
+            circles = if (showAllComponents) getExampleCircles() else emptyList(),
+            polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
+            polylines = if (showAllComponents) getExamplePolylines() else emptyList(),
             onCameraMove = { position ->
                 currentCameraPosition = position
                 println("Camera moved: $position")

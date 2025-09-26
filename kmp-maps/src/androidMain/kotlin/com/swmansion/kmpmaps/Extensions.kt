@@ -52,16 +52,6 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
  */
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
-/**
- * Converts androidx Color to Android graphics Color.
- *
- * @return Android graphics Color corresponding to the androidx Color object
- */
-internal fun Color?.toAndroidColor() =
-    when (this) {
-        null -> android.graphics.Color.TRANSPARENT
-        else -> this.toArgb()
-    }
 
 /**
  * Converts MapProperties to Google Maps Properties.
