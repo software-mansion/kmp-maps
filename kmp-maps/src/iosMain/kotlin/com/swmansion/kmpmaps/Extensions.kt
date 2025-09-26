@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
@@ -369,52 +371,21 @@ internal fun AppleMapPointOfInterestCategory.toMKPointOfInterestCategory():
     }
 
 /**
- * Converts Color object to Apple UIKit's UIColor.
+ * Converts androidx Color to Apple UIKit's UIColor.
  *
- * Supports both hex color strings and predefined AppleColors enum values.
- *
- * @return UIColor corresponding to the Color object, or null if conversion fails
+ * @return UIColor corresponding to the androidx Color object, or null if conversion fails
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun Color?.toAppleColor() =
-    when {
-        this == null -> null
-        this.hexColor != null && this.hexColor.startsWith("#") -> {
-            try {
-                val cleanHex = this.hexColor.removePrefix("#")
-                val colorValue =
-                    when (cleanHex.length) {
-                        6 -> cleanHex + "FF"
-                        8 -> cleanHex
-                        else -> "000000FF"
-                    }
-                val color = colorValue.toLong(16)
-                UIColor.colorWithRed(
-                    red = ((color shr 16) and 0xFF) / 255.0,
-                    green = ((color shr 8) and 0xFF) / 255.0,
-                    blue = (color and 0xFF) / 255.0,
-                    alpha = ((color shr 24) and 0xFF) / 255.0,
-                )
-            } catch (_: Exception) {
-                UIColor.redColor
-            }
-        }
+    when (this) {
+        null -> null
         else -> {
-            when (this.appleColor) {
-                AppleColors.RED -> UIColor.redColor
-                AppleColors.DARK_GRAY -> UIColor.darkGrayColor
-                AppleColors.BLACK -> UIColor.blackColor
-                AppleColors.GREEN -> UIColor.greenColor
-                AppleColors.BROWN -> UIColor.brownColor
-                AppleColors.CYAN -> UIColor.cyanColor
-                AppleColors.MAGENTA -> UIColor.magentaColor
-                AppleColors.WHITE -> UIColor.whiteColor
-                AppleColors.YELLOW -> UIColor.yellowColor
-                AppleColors.PURPLE -> UIColor.purpleColor
-                AppleColors.LIGHT_GRAY -> UIColor.lightGrayColor
-                AppleColors.BLUE -> UIColor.blueColor
-                AppleColors.ORANGE -> UIColor.orangeColor
-                else -> UIColor.redColor
-            }
+            val argb = this.toArgb()
+            UIColor.colorWithRed(
+                red = ((argb shr 16) and 0xFF) / 255.0,
+                green = ((argb shr 8) and 0xFF) / 255.0,
+                blue = (argb and 0xFF) / 255.0,
+                alpha = ((argb shr 24) and 0xFF) / 255.0,
+            )
         }
     }

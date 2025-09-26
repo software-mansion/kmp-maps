@@ -85,35 +85,4 @@ public enum class MapType {
     TERRAIN,
 }
 
-/** Predefined colors available for Apple Maps elements. */
-public enum class AppleColors {
-    RED,
-    DARK_GRAY,
-    BLACK,
-    GREEN,
-    BROWN,
-    CYAN,
-    MAGENTA,
-    WHITE,
-    YELLOW,
-    PURPLE,
-    LIGHT_GRAY,
-    BLUE,
-    ORANGE,
-}
 
-/** Predefined colors available for Google Maps elements. */
-public enum class AndroidColors {
-    BLACK,
-    DARK_GRAY,
-    GRAY,
-    LIGHT_GRAY,
-    WHITE,
-    RED,
-    GREEN,
-    BLUE,
-    YELLOW,
-    CYAN,
-    MAGENTA,
-    TRANSPARENT,
-}
