@@ -5,10 +5,10 @@ version = "0.1.0"
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetBrains.compose)
+    alias(libs.plugins.jetBrains.dokka)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
-    alias(libs.plugins.jetBrains.dokka)
 }
 
 kotlin {
