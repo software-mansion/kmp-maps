@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
  * @param isTrafficEnabled Whether to display traffic information on the map
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
+ * @param appleShowPOI Whether to show points of interest (POIs) on the map (iOS only)
  * @param applePointsOfInterest POI categories to include/exclude (iOS only)
  * @param applePolylineTapThreshold Threshold for polyline tap detection (iOS only)
  * @param androidIsIndoorEnabled Whether indoor maps are enabled (Android only)
@@ -21,6 +22,7 @@ public data class MapProperties(
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
+    val appleShowPOI: Boolean = true,
     val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val applePolylineTapThreshold: Float? = null,
     val androidIsIndoorEnabled: Boolean = true,

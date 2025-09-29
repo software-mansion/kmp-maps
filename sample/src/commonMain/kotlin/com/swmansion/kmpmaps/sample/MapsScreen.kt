@@ -55,10 +55,6 @@ fun MapsScreen() {
                     androidIsIndoorEnabled = true,
                     androidMinZoomPreference = 3f,
                     androidMaxZoomPreference = 21f,
-                    applePointsOfInterest =
-                        AppleMapsPointOfInterestCategories(
-                            including = listOf(AppleMapPointOfInterestCategory.RESTAURANT)
-                        ),
                 ),
             uiSettings =
                 MapUISettings(

@@ -67,7 +67,7 @@ public actual fun Map(
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
-            mkMapView.showsPointsOfInterest = properties.applePointsOfInterest != null
+            mkMapView.showsPointsOfInterest = properties.appleShowPOI
             properties.applePointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
