@@ -2,7 +2,7 @@
 
 ### Cross-platform map component for Kotlin Multiplatform Mobile using Google Maps on Android and Apple Maps on iOS
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
 `kmp-maps` provides a unified map component for Kotlin Multiplatform Mobile applications, offering seamless integration with native map APIs on both Android and iOS platforms.
@@ -22,7 +22,7 @@ Add the library to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.swmansion:kmp-maps:0.1.0")
+    implementation("todo")
 }
 ```
 
@@ -36,13 +36,6 @@ To use Google Maps on Android, you need to configure your API key in `AndroidMan
 <meta-data
     android:name="com.google.android.geo.API_KEY"
     android:value="${MAPS_API_KEY}" />
-```
-
-You can also set it directly:
-```xml
-<meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_API_KEY_HERE" />
 ```
 
 #### Google Cloud API Setup
@@ -138,6 +131,14 @@ fun MyMapScreen() {
     )
 }
 ```
+
+## Screenshots
+
+| iOS (Apple Maps)                                               | Android (Google Maps)                                              |
+|----------------------------------------------------------------|--------------------------------------------------------------------|
+| <img src="docs/screenshots/ios_preview.png" height="600">      | <img src="docs/screenshots/android_preview.png" height="600">      |
+| *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
+
 
 ## Platform Support
 

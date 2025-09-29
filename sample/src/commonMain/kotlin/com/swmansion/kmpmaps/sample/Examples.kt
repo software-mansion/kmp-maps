@@ -56,7 +56,7 @@ fun getExamplePolygons() =
                 ),
             lineColor = MaterialTheme.colorScheme.tertiary,
             lineWidth = 1f,
-            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
+            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f),
         )
     )
 
