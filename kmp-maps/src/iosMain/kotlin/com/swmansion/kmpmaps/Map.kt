@@ -67,8 +67,8 @@ public actual fun Map(
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
-            mkMapView.showsPointsOfInterest = properties.appleShowPOI
-            properties.applePointsOfInterest?.let { poiCategories ->
+            mkMapView.showsPointsOfInterest = properties.iosShowPOI
+            properties.iosPointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
@@ -76,7 +76,7 @@ public actual fun Map(
             mkMapView.showsCompass = uiSettings.compassEnabled
             mkMapView.zoomEnabled = uiSettings.zoomEnabled
             mkMapView.scrollEnabled = uiSettings.scrollEnabled
-            mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
+            mkMapView.rotateEnabled = uiSettings.iosRotateGesturesEnabled
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
 
             cameraPosition?.let { pos ->
@@ -135,7 +135,7 @@ public actual fun Map(
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
 
-            properties.applePointsOfInterest?.let { poiCategories ->
+            properties.iosPointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
@@ -143,7 +143,7 @@ public actual fun Map(
             mkMapView.showsCompass = uiSettings.compassEnabled
             mkMapView.zoomEnabled = uiSettings.zoomEnabled
             mkMapView.scrollEnabled = uiSettings.scrollEnabled
-            mkMapView.rotateEnabled = uiSettings.appleRotateGesturesEnabled
+            mkMapView.rotateEnabled = uiSettings.iosRotateGesturesEnabled
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
 
             mapDelegate?.updateCallbacks(

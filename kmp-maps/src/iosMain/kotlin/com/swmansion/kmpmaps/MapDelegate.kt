@@ -167,7 +167,7 @@ internal class MapDelegate(
                     isPointNearPolyline(
                         tapLat,
                         tapLon,
-                        properties.applePolylineTapThreshold,
+                        properties.iosPolylineTapThreshold,
                         mapPolyline,
                     )
                 ) {

@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
  * @param isTrafficEnabled Whether to display traffic information on the map
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
- * @param appleShowPOI Whether to show points of interest (POIs) on the map (iOS only)
- * @param applePointsOfInterest POI categories to include/exclude (iOS only)
- * @param applePolylineTapThreshold Threshold for polyline tap detection (iOS only)
+ * @param iosShowPOI Whether to show points of interest (POIs) on the map (iOS only)
+ * @param iosPointsOfInterest POI categories to include/exclude (iOS only)
+ * @param iosPolylineTapThreshold Threshold for polyline tap detection (iOS only)
  * @param androidIsIndoorEnabled Whether indoor maps are enabled (Android only)
  * @param androidMaxZoomPreference Maximum zoom level preference (Android only)
  * @param androidMinZoomPreference Minimum zoom level preference (Android only)
@@ -22,9 +22,9 @@ public data class MapProperties(
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
-    val appleShowPOI: Boolean = true,
-    val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
-    val applePolylineTapThreshold: Float? = null,
+    val iosShowPOI: Boolean = true,
+    val iosPointsOfInterest: AppleMapsPointOfInterestCategories? = null,
+    val iosPolylineTapThreshold: Float? = null,
     val androidIsIndoorEnabled: Boolean = true,
     val androidMaxZoomPreference: Float? = null,
     val androidMinZoomPreference: Float? = null,
@@ -40,7 +40,7 @@ public data class MapProperties(
  * @param togglePitchEnabled Whether pitch gestures are enabled
  * @param scrollEnabled Whether scroll gestures are enabled
  * @param zoomEnabled Whether zoom gestures are enabled
- * @param appleRotateGesturesEnabled Whether rotation gestures are enabled (iOS only)
+ * @param iosRotateGesturesEnabled Whether rotation gestures are enabled (iOS only)
  * @param androidIndoorLevelPickerEnabled Whether indoor level picker is enabled (Android only)
  * @param androidMapToolbarEnabled Whether the map toolbar is enabled (Android only)
  * @param androidRotationGesturesEnabled Whether rotation gestures are enabled (Android only)
@@ -56,7 +56,7 @@ public data class MapUISettings(
     val togglePitchEnabled: Boolean = true,
     val scrollEnabled: Boolean = true,
     val zoomEnabled: Boolean = true,
-    val appleRotateGesturesEnabled: Boolean = true,
+    val iosRotateGesturesEnabled: Boolean = true,
     val androidIndoorLevelPickerEnabled: Boolean = true,
     val androidMapToolbarEnabled: Boolean = true,
     val androidRotationGesturesEnabled: Boolean = true,
@@ -70,7 +70,7 @@ public data class MapUISettings(
  *
  * @param coordinates The geographical coordinates where the marker should be placed
  * @param title The title text displayed when the marker is tapped
- * @param appleTintColor The tint color for the marker (iOS only)
+ * @param iosTintColor The tint color for the marker (iOS only)
  * @param androidAnchor The anchor point for the marker (Android only)
  * @param androidDraggable Whether the marker can be dragged by the user (Android only)
  * @param androidSnippet Additional text displayed below the title (Android only)
@@ -79,7 +79,7 @@ public data class MapUISettings(
 public data class MapMarker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
-    val appleTintColor: Color? = null,
+    val iosTintColor: Color? = null,
     val androidAnchor: GoogleMapsAnchor? = null,
     val androidDraggable: Boolean = false,
     val androidSnippet: String? = null,
