@@ -23,12 +23,14 @@ import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
 import com.swmansion.kmpmaps.MapProperties
+import com.swmansion.kmpmaps.MapTheme
 import com.swmansion.kmpmaps.MapType
 import com.swmansion.kmpmaps.MapUISettings
 
 @Composable
 fun MapsScreen() {
     var selectedMapType by remember { mutableStateOf(MapType.NORMAL) }
+    var selectedMapTheme by remember { mutableStateOf(MapTheme.SYSTEM) }
     var showUserLocation by remember { mutableStateOf(false) }
     var currentCameraPosition by remember {
         mutableStateOf(
@@ -47,6 +49,7 @@ fun MapsScreen() {
             properties =
                 MapProperties(
                     mapType = selectedMapType,
+                    mapTheme = selectedMapTheme,
                     isMyLocationEnabled = showUserLocation,
                     isTrafficEnabled = true,
                     isBuildingEnabled = true,
@@ -105,6 +108,26 @@ fun MapsScreen() {
                         onClick = { selectedMapType = MapType.HYBRID },
                         label = { Text("Hybrid") },
                         selected = selectedMapType == MapType.HYBRID,
+                    )
+                }
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    FilterChip(
+                        onClick = { selectedMapTheme = MapTheme.SYSTEM },
+                        label = { Text("System") },
+                        selected = selectedMapTheme == MapTheme.SYSTEM,
+                    )
+                    FilterChip(
+                        onClick = { selectedMapTheme = MapTheme.LIGHT },
+                        label = { Text("Light") },
+                        selected = selectedMapTheme == MapTheme.LIGHT,
+                    )
+                    FilterChip(
+                        onClick = { selectedMapTheme = MapTheme.DARK },
+                        label = { Text("Dark") },
+                        selected = selectedMapTheme == MapTheme.DARK,
                     )
                 }
                 Row(

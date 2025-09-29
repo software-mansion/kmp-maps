@@ -50,6 +50,7 @@ public actual fun Map(
     }
 
     GoogleMap(
+        mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = properties.toGoogleMapsProperties(),
