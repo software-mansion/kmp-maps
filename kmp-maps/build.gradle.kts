@@ -56,14 +56,8 @@ android {
 dokka {
     dokkaSourceSets {
         configureEach {
-            moduleName.set(project.name)
-
             // Link to external documentation
             externalDocumentationLinks {
-                register("androidX") {
-                    url("https://developer.android.com/reference")
-                    packageListUrl("https://developer.android.com/reference/androidx/package-list")
-                }
                 register("coroutines") { url("https://kotlinlang.org/api/kotlinx.coroutines") }
             }
         }
