@@ -52,7 +52,7 @@ public actual fun Map(
     GoogleMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = properties.toGoogleMapsProperties(),
+        properties = properties.toGoogleMapsProperties(context),
         uiSettings = uiSettings.toGoogleMapsUiSettings(),
         onMapClick =
             onMapClick?.let { callback ->

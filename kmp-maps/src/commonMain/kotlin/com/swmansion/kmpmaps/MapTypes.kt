@@ -3,12 +3,26 @@ package com.swmansion.kmpmaps
 import androidx.compose.ui.graphics.Color
 
 /**
+ * Theme options for map appearance.
+ *
+ * @param SYSTEM Follows the system's dark theme setting
+ * @param LIGHT Always uses light theme
+ * @param DARK Always uses dark theme
+ */
+public enum class MapTheme {
+    SYSTEM,
+    LIGHT,
+    DARK,
+}
+
+/**
  * Configuration properties for map behavior and appearance.
  *
  * @param isMyLocationEnabled Whether to show the user's current location on the map
  * @param isTrafficEnabled Whether to display traffic information on the map
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
+ * @param mapTheme The theme for the map appearance
  * @param appleShowPOI Whether to show points of interest (POIs) on the map (iOS only)
  * @param applePointsOfInterest POI categories to include/exclude (iOS only)
  * @param applePolylineTapThreshold Threshold for polyline tap detection (iOS only)
@@ -22,6 +36,7 @@ public data class MapProperties(
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
+    val mapTheme: MapTheme = MapTheme.SYSTEM,
     val appleShowPOI: Boolean = true,
     val applePointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val applePolylineTapThreshold: Float? = null,

@@ -55,7 +55,7 @@ internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
  *
  * @return GoogleMapProperties with map configuration
  */
-internal fun MapProperties.toGoogleMapsProperties() =
+internal fun MapProperties.toGoogleMapsProperties(context: android.content.Context) =
     GoogleMapProperties(
         mapType = mapType.toGoogleMapsMapType(),
         isMyLocationEnabled = isMyLocationEnabled,
@@ -64,7 +64,7 @@ internal fun MapProperties.toGoogleMapsProperties() =
         isIndoorEnabled = androidIsIndoorEnabled,
         minZoomPreference = androidMinZoomPreference ?: 0f,
         maxZoomPreference = androidMaxZoomPreference ?: 20f,
-        mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
+        mapStyleOptions = getMapStyleOptions(context),
     )
 
 /**
@@ -113,3 +113,28 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let
  * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null)
  */
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
+
+/**
+ * Determines the appropriate map style options based on theme settings.
+ *
+ * @param context Android context for theme detection
+ * @return MapStyleOptions based on mapTheme and system settings
+ */
+internal fun MapProperties.getMapStyleOptions(context: android.content.Context): MapStyleOptions? {
+    androidMapStyleOptions?.let { customStyle ->
+        return customStyle.toNativeStyleOptions()
+    }
+
+    val shouldUseDarkTheme =
+        when (mapTheme) {
+            MapTheme.DARK -> true
+            MapTheme.LIGHT -> false
+            MapTheme.SYSTEM -> isSystemDarkTheme(context)
+        }
+
+    return if (shouldUseDarkTheme) {
+        MapStyleOptions(MapStyles.DARK_THEME_STYLE)
+    } else {
+        null
+    }
+}
