@@ -19,8 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swmansion.kmpmaps.AppleMapPointOfInterestCategory
-import com.swmansion.kmpmaps.AppleMapsPointOfInterestCategories
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
@@ -55,10 +53,6 @@ fun MapsScreen() {
                     androidIsIndoorEnabled = true,
                     androidMinZoomPreference = 3f,
                     androidMaxZoomPreference = 21f,
-                    applePointsOfInterest =
-                        AppleMapsPointOfInterestCategories(
-                            including = listOf(AppleMapPointOfInterestCategory.RESTAURANT)
-                        ),
                 ),
             uiSettings =
                 MapUISettings(
