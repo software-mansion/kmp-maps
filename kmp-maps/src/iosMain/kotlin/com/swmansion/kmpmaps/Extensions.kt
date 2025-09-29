@@ -284,6 +284,19 @@ internal fun MapType?.toAppleMapsMapType() =
     }
 
 /**
+ * Determines if dark theme should be applied based on mapTheme setting.
+ *
+ * @return true if dark theme should be applied, false otherwise
+ */
+internal fun MapProperties.shouldUseDarkTheme(): Boolean {
+    return when (mapTheme) {
+        MapTheme.DARK -> true
+        MapTheme.LIGHT -> false
+        MapTheme.SYSTEM -> isSystemDarkTheme()
+    }
+}
+
+/**
  * Converts AppleMapPointOfInterestCategory enum to Apple MapKit's MKPointOfInterestCategory.
  *
  * @return MKPointOfInterestCategory constant corresponding to the enum value

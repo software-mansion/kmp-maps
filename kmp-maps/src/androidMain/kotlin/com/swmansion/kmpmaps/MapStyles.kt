@@ -52,30 +52,6 @@ internal object MapStyles {
             ]
           },
           {
-            "featureType": "poi",
-            "elementType": "labels.icon",
-            "stylers": [
-              {
-                "visibility": "on"
-              },
-              {
-                "color": "#d59563"
-              },
-              {
-                "weight": 1.5
-              },
-              {
-                "gamma": 1.5
-              },
-              {
-                "lightness": 50
-              },
-              {
-                "saturation": 100
-              }
-            ]
-          },
-          {
             "featureType": "poi.park",
             "elementType": "geometry",
             "stylers": [
