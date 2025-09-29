@@ -51,7 +51,12 @@ public actual fun Map(
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, MapPolyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, MapMarker>() }
-    val isDarkModeEnabled = isSystemInDarkTheme()
+    val isDarkModeEnabled =
+        if (properties.mapTheme == MapTheme.SYSTEM) {
+            isSystemInDarkTheme()
+        } else {
+            properties.mapTheme == MapTheme.DARK
+        }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
@@ -66,7 +71,7 @@ public actual fun Map(
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
-            mkMapView.switchTheme(properties.mapTheme, isDarkModeEnabled)
+            mkMapView.switchTheme(isDarkModeEnabled)
 
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
@@ -136,7 +141,7 @@ public actual fun Map(
         update = { mkMapView ->
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
-            mkMapView.switchTheme(properties.mapTheme, isDarkModeEnabled)
+            mkMapView.switchTheme(isDarkModeEnabled)
 
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()

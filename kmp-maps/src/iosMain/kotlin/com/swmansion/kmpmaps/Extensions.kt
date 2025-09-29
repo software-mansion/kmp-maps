@@ -397,11 +397,9 @@ internal fun Color.toAppleColor(): UIColor {
     )
 }
 
-internal fun MKMapView.switchTheme(theme: MapTheme, isSystemDarkMode: Boolean) {
-    val shouldUseDarkMode = theme == MapTheme.DARK || isSystemDarkMode
-
+internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
     overrideUserInterfaceStyle =
-        if (shouldUseDarkMode) {
+        if (isDarkModeEnabled) {
             UIUserInterfaceStyle.UIUserInterfaceStyleDark
         } else {
             UIUserInterfaceStyle.UIUserInterfaceStyleLight
