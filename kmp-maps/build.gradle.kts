@@ -52,3 +52,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+
+dokka {
+    dokkaSourceSets {
+        configureEach {
+            // Link to external documentation
+            externalDocumentationLinks {
+                register("coroutines") { url("https://kotlinlang.org/api/kotlinx.coroutines") }
+            }
+        }
+    }
+}
