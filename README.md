@@ -38,13 +38,6 @@ To use Google Maps on Android, you need to configure your API key in `AndroidMan
     android:value="${MAPS_API_KEY}" />
 ```
 
-You can also set it directly:
-```xml
-<meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_API_KEY_HERE" />
-```
-
 #### Google Cloud API Setup
 
 Before you can use Google Maps on Android, you need to register a Google Cloud API project and enable the Maps SDK for Android:
@@ -141,9 +134,9 @@ fun MyMapScreen() {
 
 ## Screenshots
 
- | iOS (Apple Maps) | Android (Google Maps) |
-|------------------|----------------------|
-| ![iOS Screenshot](docs/screenshots/ios_preview.png) | ![Android Screenshot](docs/screenshots/android_preview.png) |
+| iOS (Apple Maps)                                               | Android (Google Maps)                                              |
+|----------------------------------------------------------------|--------------------------------------------------------------------|
+| <img src="docs/screenshots/ios_preview.png" height="600">      | <img src="docs/screenshots/android_preview.png" height="600">      |
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
 
 
