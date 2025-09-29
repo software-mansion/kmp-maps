@@ -31,14 +31,14 @@ fun getExampleCircles() =
             radius = 500.0f,
             lineColor = MaterialTheme.colorScheme.primary,
             lineWidth = 1f,
-            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+            color = MaterialTheme.colorScheme.primaryContainer,
         ),
         MapCircle(
             center = Coordinates(latitude = 50.0647, longitude = 19.9450),
             radius = 300.0f,
             lineColor = MaterialTheme.colorScheme.secondary,
             lineWidth = 1f,
-            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
+            color = MaterialTheme.colorScheme.secondaryContainer,
         ),
     )
 
@@ -56,7 +56,7 @@ fun getExamplePolygons() =
                 ),
             lineColor = MaterialTheme.colorScheme.tertiary,
             lineWidth = 1f,
-            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
+            color = MaterialTheme.colorScheme.tertiaryContainer,
         )
     )
 
