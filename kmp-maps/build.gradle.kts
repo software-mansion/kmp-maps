@@ -53,7 +53,7 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+dokka {
     dokkaSourceSets {
         configureEach {
             moduleName.set(project.name)
