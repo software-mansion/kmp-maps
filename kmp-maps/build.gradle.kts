@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 kotlin {
@@ -57,8 +56,7 @@ android {
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
-            moduleName.set("KMP Maps")
-            includes.from("Module.md")
+            moduleName.set(project.name)
             
             // Link to external documentation
             externalDocumentationLink {
