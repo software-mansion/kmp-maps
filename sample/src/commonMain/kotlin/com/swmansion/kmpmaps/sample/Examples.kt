@@ -10,13 +10,13 @@ val jewishQuarterPin = Coordinates(latitude = 50.0515, longitude = 19.9449)
 
 val exampleMarkers =
     listOf(
-        MapMarker(
+        Marker(
             coordinates = softwareMansionPin,
             title = "Software Mansion",
             androidSnippet = "Software house",
         ),
-        MapMarker(coordinates = royalCastlePin, title = "Wawel", androidSnippet = "Royal castle"),
-        MapMarker(
+        Marker(coordinates = royalCastlePin, title = "Wawel", androidSnippet = "Royal castle"),
+        Marker(
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
             androidSnippet = "Jewish quarter",
@@ -26,14 +26,14 @@ val exampleMarkers =
 @Composable
 fun getExampleCircles() =
     listOf(
-        MapCircle(
+        Circle(
             center = Coordinates(latitude = 50.0486, longitude = 19.9654),
             radius = 500.0f,
             lineColor = MaterialTheme.colorScheme.primary,
             lineWidth = 1f,
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
         ),
-        MapCircle(
+        Circle(
             center = Coordinates(latitude = 50.0647, longitude = 19.9450),
             radius = 300.0f,
             lineColor = MaterialTheme.colorScheme.secondary,
@@ -45,7 +45,7 @@ fun getExampleCircles() =
 @Composable
 fun getExamplePolygons() =
     listOf(
-        MapPolygon(
+        Polygon(
             coordinates =
                 listOf(
                     Coordinates(latitude = 50.0550, longitude = 19.9400),
@@ -63,7 +63,7 @@ fun getExamplePolygons() =
 @Composable
 fun getExamplePolylines() =
     listOf(
-        MapPolyline(
+        Polyline(
             coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
             lineColor = MaterialTheme.colorScheme.error,
             width = 1f,

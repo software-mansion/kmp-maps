@@ -22,9 +22,12 @@ Add the library to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("todo")
+    implementation("com.swmansion.kmpmaps:kmp-maps:0.1.0")
 }
 ```
+
+## Documentation
+Check out our dedicated documentation page for info about this library, API reference and more: https://docs.swmansion.com/kmp-maps/
 
 ## Configuration
 

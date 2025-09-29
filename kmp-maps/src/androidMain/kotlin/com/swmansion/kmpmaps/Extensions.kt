@@ -14,7 +14,7 @@ import com.google.maps.android.compose.MarkerState
  *
  * @return GoogleCameraPosition with coordinates, zoom, bearing, and tilt
  */
-internal fun CameraPosition.toGoogleCameraPosition() =
+internal fun CameraPosition.toGoogleMapsCameraPosition() =
     GoogleCameraPosition.Builder()
         .target(LatLng(coordinates.latitude, coordinates.longitude))
         .zoom(zoom)
@@ -40,7 +40,7 @@ internal fun GoogleCameraPosition.toCameraPosition() =
  *
  * @return MarkerState with position coordinates
  */
-internal fun MapMarker.toGoogleMapsMarkerState() =
+internal fun Marker.toGoogleMapsMarkerState() =
     MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 
 /**
@@ -48,7 +48,7 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
  *
  * @return LatLng with latitude and longitude
  */
-internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
+internal fun Coordinates.toGoogleMapsLatLng(): LatLng = LatLng(latitude, longitude)
 
 /**
  * Converts MapProperties to Google Maps Properties.

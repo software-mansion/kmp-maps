@@ -22,15 +22,15 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
-    markers: List<MapMarker>,
-    circles: List<MapCircle>,
-    polygons: List<MapPolygon>,
-    polylines: List<MapPolyline>,
+    markers: List<Marker>,
+    circles: List<Circle>,
+    polygons: List<Polygon>,
+    polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
-    onMarkerClick: ((MapMarker) -> Unit)?,
-    onCircleClick: ((MapCircle) -> Unit)?,
-    onPolygonClick: ((MapPolygon) -> Unit)?,
-    onPolylineClick: ((MapPolyline) -> Unit)?,
+    onMarkerClick: ((Marker) -> Unit)?,
+    onCircleClick: ((Circle) -> Unit)?,
+    onPolygonClick: ((Polygon) -> Unit)?,
+    onPolylineClick: ((Polyline) -> Unit)?,
     onMapClick: ((Coordinates) -> Unit)?,
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
@@ -46,7 +46,7 @@ public actual fun Map(
     }
 
     val cameraPositionState = rememberCameraPositionState {
-        cameraPosition?.let { position = it.toGoogleCameraPosition() }
+        cameraPosition?.let { position = it.toGoogleMapsCameraPosition() }
     }
 
     GoogleMap(
@@ -85,7 +85,7 @@ public actual fun Map(
 
         circles.forEach { circle ->
             Circle(
-                center = circle.center.toGoogleLatLng(),
+                center = circle.center.toGoogleMapsLatLng(),
                 radius = circle.radius.toDouble(),
                 strokeColor = Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = circle.lineWidth ?: 10f,
@@ -103,7 +103,7 @@ public actual fun Map(
 
         polygons.forEach { polygon ->
             Polygon(
-                points = polygon.coordinates.map { it.toGoogleLatLng() },
+                points = polygon.coordinates.map { it.toGoogleMapsLatLng() },
                 strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
                 fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
@@ -120,7 +120,7 @@ public actual fun Map(
 
         polylines.forEach { polyline ->
             Polyline(
-                points = polyline.coordinates.map { it.toGoogleLatLng() },
+                points = polyline.coordinates.map { it.toGoogleMapsLatLng() },
                 color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 width = polyline.width,
                 clickable = true,

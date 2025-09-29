@@ -76,7 +76,7 @@ public data class MapUISettings(
  * @param androidSnippet Additional text displayed below the title (Android only)
  * @param androidZIndex The z-index for layering markers (Android only)
  */
-public data class MapMarker(
+public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val appleTintColor: Color? = null,
@@ -95,7 +95,7 @@ public data class MapMarker(
  * @param lineColor The color of the circle's border
  * @param lineWidth The width of the circle's border
  */
-public data class MapCircle(
+public data class Circle(
     val center: Coordinates,
     val radius: Float,
     val color: Color? = null,
@@ -111,7 +111,7 @@ public data class MapCircle(
  * @param color The fill color of the polygon
  * @param lineColor The color of the polygon's border
  */
-public data class MapPolygon(
+public data class Polygon(
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
     val color: Color? = null,
@@ -125,7 +125,7 @@ public data class MapPolygon(
  * @param width The width of the polyline
  * @param lineColor The color of the polyline
  */
-public data class MapPolyline(
+public data class Polyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,

@@ -27,15 +27,15 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
-    markers: List<MapMarker>,
-    circles: List<MapCircle>,
-    polygons: List<MapPolygon>,
-    polylines: List<MapPolyline>,
+    markers: List<Marker>,
+    circles: List<Circle>,
+    polygons: List<Polygon>,
+    polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
-    onMarkerClick: ((MapMarker) -> Unit)?,
-    onCircleClick: ((MapCircle) -> Unit)?,
-    onPolygonClick: ((MapPolygon) -> Unit)?,
-    onPolylineClick: ((MapPolyline) -> Unit)?,
+    onMarkerClick: ((Marker) -> Unit)?,
+    onCircleClick: ((Circle) -> Unit)?,
+    onPolygonClick: ((Polygon) -> Unit)?,
+    onPolylineClick: ((Polyline) -> Unit)?,
     onMapClick: ((Coordinates) -> Unit)?,
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
@@ -46,10 +46,10 @@ public actual fun Map(
     var tapGesture by remember { mutableStateOf<UITapGestureRecognizer?>(null) }
     var longPressGesture by remember { mutableStateOf<UILongPressGestureRecognizer?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
-    val circleStyles = remember { mutableMapOf<MKCircle, MapCircle>() }
-    val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
-    val polylineStyles = remember { mutableMapOf<MKPolyline, MapPolyline>() }
-    val markerMapping = remember { mutableMapOf<MKPointAnnotation, MapMarker>() }
+    val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
+    val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
+    val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
+    val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
