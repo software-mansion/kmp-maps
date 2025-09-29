@@ -107,7 +107,6 @@ fun MyMapScreen() {
         properties = MapProperties(
             isMyLocationEnabled = true,
             mapType = MapType.NORMAL,
-            mapTheme = MapTheme.SYSTEM,
         ),
         uiSettings = MapUISettings(
             myLocationButtonEnabled = true,
@@ -136,20 +135,10 @@ fun MyMapScreen() {
 
 ## Screenshots
 
-### Light Theme
-
 | iOS (Apple Maps)                                               | Android (Google Maps)                                              |
 |----------------------------------------------------------------|--------------------------------------------------------------------|
 | <img src="docs/screenshots/ios_preview.png" height="600">      | <img src="docs/screenshots/android_preview.png" height="600">      |
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
-
-### Dark Theme
-
-| iOS (Apple Maps)                                               | Android (Google Maps)                                              |
-|----------------------------------------------------------------|--------------------------------------------------------------------|
-| <img src="docs/screenshots/ios_dark_preview.png" height="600"> | <img src="docs/screenshots/android_dark_preview.png" height="600"> |
-| *Dark theme map view with circles, polygon, polylines and markers on iOS* | *Dark theme map view with circles, polygon, polylines and markers on Android* |
-
 
 ## Platform Support
 

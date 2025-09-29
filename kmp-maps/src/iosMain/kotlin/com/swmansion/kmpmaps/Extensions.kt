@@ -99,6 +99,7 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.MapKit.addOverlay
 import platform.UIKit.UIColor
+import platform.UIKit.UIUserInterfaceStyle
 import platform.posix.memcpy
 
 /**
@@ -284,19 +285,6 @@ internal fun MapType?.toAppleMapsMapType() =
     }
 
 /**
- * Determines if dark theme should be applied based on mapTheme setting.
- *
- * @return true if dark theme should be applied, false otherwise
- */
-internal fun MapProperties.shouldUseDarkTheme(): Boolean {
-    return when (mapTheme) {
-        MapTheme.DARK -> true
-        MapTheme.LIGHT -> false
-        MapTheme.SYSTEM -> isSystemDarkTheme()
-    }
-}
-
-/**
  * Converts AppleMapPointOfInterestCategory enum to Apple MapKit's MKPointOfInterestCategory.
  *
  * @return MKPointOfInterestCategory constant corresponding to the enum value
@@ -397,4 +385,20 @@ internal fun Color.toAppleColor(): UIColor {
         blue = (argb and 0xFF) / 255.0,
         alpha = ((argb shr 24) and 0xFF) / 255.0,
     )
+}
+
+internal fun MKMapView.switchTheme(theme: MapTheme, isSystemDarkMode: Boolean) {
+    val shouldUseDarkMode =
+        when (theme) {
+            MapTheme.SYSTEM -> isSystemDarkMode
+            MapTheme.DARK -> true
+            MapTheme.LIGHT -> false
+        }
+
+    overrideUserInterfaceStyle =
+        if (shouldUseDarkMode) {
+            UIUserInterfaceStyle.UIUserInterfaceStyleDark
+        } else {
+            UIUserInterfaceStyle.UIUserInterfaceStyleLight
+        }
 }

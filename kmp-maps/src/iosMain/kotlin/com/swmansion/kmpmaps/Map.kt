@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +19,6 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
-import platform.UIKit.UIUserInterfaceStyle
 
 /** iOS implementation of the Map composable using Apple Maps (MapKit). */
 @OptIn(ExperimentalForeignApi::class)
@@ -51,6 +51,7 @@ public actual fun Map(
     val polygonStyles = remember { mutableMapOf<MKPolygon, MapPolygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, MapPolyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, MapMarker>() }
+    val isDarkModeEnabled = isSystemInDarkTheme()
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
@@ -65,20 +66,7 @@ public actual fun Map(
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
-            when {
-                properties.shouldUseDarkTheme() -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleDark
-                }
-                properties.mapTheme == MapTheme.LIGHT -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleLight
-                }
-                else -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
-                }
-            }
+            mkMapView.switchTheme(properties.mapTheme, isDarkModeEnabled)
 
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
@@ -148,20 +136,7 @@ public actual fun Map(
         update = { mkMapView ->
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
-            when {
-                properties.shouldUseDarkTheme() -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleDark
-                }
-                properties.mapTheme == MapTheme.LIGHT -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleLight
-                }
-                else -> {
-                    mkMapView.overrideUserInterfaceStyle =
-                        UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
-                }
-            }
+            mkMapView.switchTheme(properties.mapTheme, isDarkModeEnabled)
 
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
