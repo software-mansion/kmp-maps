@@ -7,7 +7,7 @@ import platform.UIKit.currentTraitCollection
 
 /**
  * Detects the current system theme setting on iOS.
- * 
+ *
  * @return true if dark theme is enabled, false otherwise
  */
 @OptIn(ExperimentalForeignApi::class)

@@ -64,19 +64,22 @@ public actual fun Map(
 
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
-            
+
             when {
                 properties.shouldUseDarkTheme() -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleDark
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleDark
                 }
                 properties.mapTheme == MapTheme.LIGHT -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleLight
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleLight
                 }
                 else -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
                 }
             }
-            
+
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
@@ -144,19 +147,22 @@ public actual fun Map(
         modifier = modifier.fillMaxSize(),
         update = { mkMapView ->
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
-            
+
             when {
                 properties.shouldUseDarkTheme() -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleDark
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleDark
                 }
                 properties.mapTheme == MapTheme.LIGHT -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleLight
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleLight
                 }
                 else -> {
-                    mkMapView.overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
+                    mkMapView.overrideUserInterfaceStyle =
+                        UIUserInterfaceStyle.UIUserInterfaceStyleUnspecified
                 }
             }
-            
+
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
