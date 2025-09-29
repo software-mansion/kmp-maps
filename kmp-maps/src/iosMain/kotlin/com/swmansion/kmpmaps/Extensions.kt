@@ -98,6 +98,7 @@ import platform.MapKit.MKPointOfInterestFilter
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.MapKit.addOverlay
+import platform.MapKit.removeOverlays
 import platform.UIKit.UIColor
 import platform.UIKit.UIUserInterfaceStyle
 import platform.posix.memcpy
@@ -182,7 +183,7 @@ internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
 }
 
 /**
- * Updates Apple Maps circles by creating MKCircle overlays and storing style mappings.
+ * Updates Apple Maps circles by removing existing overlays and adding new ones.
  *
  * @param circles List of MapCircle objects to display
  * @param circleStyles MutableMap to store MKCircle to MapCircle mappings for styling
@@ -192,6 +193,9 @@ internal fun MKMapView.updateAppleMapsCircles(
     circles: List<MapCircle>,
     circleStyles: MutableMap<MKCircle, MapCircle>,
 ) {
+    removeOverlays(circleStyles.keys.toList())
+    circleStyles.clear()
+
     circles.forEach { circle ->
         val coordinate = CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
         val mkCircle =
@@ -202,7 +206,7 @@ internal fun MKMapView.updateAppleMapsCircles(
 }
 
 /**
- * Updates Apple Maps polygons by creating MKPolygon overlays and storing style mappings.
+ * Updates Apple Maps polygons by removing existing overlays and adding new ones.
  *
  * @param polygons List of MapPolygon objects to display
  * @param polygonStyles MutableMap to store MKPolygon to MapPolygon mappings for styling
@@ -212,6 +216,9 @@ internal fun MKMapView.updateAppleMapsPolygons(
     polygons: List<MapPolygon>,
     polygonStyles: MutableMap<MKPolygon, MapPolygon>,
 ) {
+    removeOverlays(polygonStyles.keys.toList())
+    polygonStyles.clear()
+
     polygons.forEach { polygon ->
         memScoped {
             val coordinates =
@@ -237,7 +244,7 @@ internal fun MKMapView.updateAppleMapsPolygons(
 }
 
 /**
- * Updates Apple Maps polylines by creating MKPolyline overlays and storing style mappings.
+ * Updates Apple Maps polylines by removing existing overlays and adding new ones.
  *
  * @param polylines List of MapPolyline objects to display
  * @param polylineStyles MutableMap to store MKPolyline to MapPolyline mappings for styling
@@ -247,6 +254,9 @@ internal fun MKMapView.updateAppleMapsPolylines(
     polylines: List<MapPolyline>,
     polylineStyles: MutableMap<MKPolyline, MapPolyline>,
 ) {
+    removeOverlays(polylineStyles.keys.toList())
+    polylineStyles.clear()
+
     polylines.forEach { polyline ->
         memScoped {
             val coordinates =
