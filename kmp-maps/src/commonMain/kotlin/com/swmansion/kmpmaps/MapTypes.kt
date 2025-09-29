@@ -29,7 +29,6 @@ public enum class MapTheme {
  * @param androidIsIndoorEnabled Whether indoor maps are enabled (Android only)
  * @param androidMaxZoomPreference Maximum zoom level preference (Android only)
  * @param androidMinZoomPreference Minimum zoom level preference (Android only)
- * @param androidMapStyleOptions Custom map styling options (Android only)
  */
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,

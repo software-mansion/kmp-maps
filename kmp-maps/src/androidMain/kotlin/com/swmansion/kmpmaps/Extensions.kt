@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
@@ -51,11 +52,23 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
 /**
+ * Converts GoogleMapsMapColorScheme to native ComposeMapColorScheme.
+ *
+ * @return ComposeMapColorScheme corresponding to the enum value
+ */
+internal fun MapTheme.toGoogleMapsTheme() =
+    when (this) {
+        MapTheme.LIGHT -> ComposeMapColorScheme.LIGHT
+        MapTheme.DARK -> ComposeMapColorScheme.DARK
+        MapTheme.SYSTEM -> ComposeMapColorScheme.FOLLOW_SYSTEM
+    }
+
+/**
  * Converts MapProperties to Google Maps Properties.
  *
  * @return GoogleMapProperties with map configuration
  */
-internal fun MapProperties.toGoogleMapsProperties(context: android.content.Context) =
+internal fun MapProperties.toGoogleMapsProperties() =
     GoogleMapProperties(
         mapType = mapType.toGoogleMapsMapType(),
         isMyLocationEnabled = isMyLocationEnabled,
@@ -64,7 +77,7 @@ internal fun MapProperties.toGoogleMapsProperties(context: android.content.Conte
         isIndoorEnabled = androidIsIndoorEnabled,
         minZoomPreference = androidMinZoomPreference ?: 0f,
         maxZoomPreference = androidMaxZoomPreference ?: 20f,
-        mapStyleOptions = getMapStyleOptions(context),
+        mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
     )
 
 /**
@@ -113,28 +126,3 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let
  * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null)
  */
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
-
-/**
- * Determines the appropriate map style options based on theme settings.
- *
- * @param context Android context for theme detection
- * @return MapStyleOptions based on mapTheme and system settings
- */
-internal fun MapProperties.getMapStyleOptions(context: android.content.Context): MapStyleOptions? {
-    androidMapStyleOptions?.let { customStyle ->
-        return customStyle.toNativeStyleOptions()
-    }
-
-    val shouldUseDarkTheme =
-        when (mapTheme) {
-            MapTheme.DARK -> true
-            MapTheme.LIGHT -> false
-            MapTheme.SYSTEM -> isSystemDarkTheme(context)
-        }
-
-    return if (shouldUseDarkTheme) {
-        MapStyleOptions(MapStyles.DARK_THEME_STYLE)
-    } else {
-        null
-    }
-}
