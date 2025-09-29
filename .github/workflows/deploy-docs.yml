@@ -39,7 +39,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dokka output directory
           path: './kmp-maps/build/dokka/html'
 
   deploy:
