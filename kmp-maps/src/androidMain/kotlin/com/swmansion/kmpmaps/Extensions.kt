@@ -52,7 +52,7 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
 internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
 
 /**
- * Converts GoogleMapsMapColorScheme to native ComposeMapColorScheme.
+ * Converts MapTheme to native ComposeMapColorScheme.
  *
  * @return ComposeMapColorScheme corresponding to the enum value
  */

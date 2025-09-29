@@ -15,7 +15,7 @@
 - **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
 - **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
 - **Location services** - Built-in location permission handling and user location display
-- **Dark theme support** - Automatic dark theme detection following system settings on Android
+- **Dark theme support** - Automatic dark theme detection following system settings
 
 ## Installation
 
