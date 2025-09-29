@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import com.swmansion.kmpmaps.*
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
@@ -21,25 +23,27 @@ val exampleMarkers =
         ),
     )
 
-val exampleCircles =
+@Composable
+fun getExampleCircles() =
     listOf(
         MapCircle(
             center = Coordinates(latitude = 50.0486, longitude = 19.9654),
             radius = 500.0f,
-            lineColor = Color(hexColor = "#FF0000", appleColor = AppleColors.DARK_GRAY),
+            lineColor = MaterialTheme.colorScheme.primary,
             lineWidth = 1f,
-            color = Color(hexColor = "#10FF0000", appleColor = AppleColors.LIGHT_GRAY),
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
         ),
         MapCircle(
             center = Coordinates(latitude = 50.0647, longitude = 19.9450),
             radius = 300.0f,
-            lineColor = Color(hexColor = "#00FF00", appleColor = AppleColors.BROWN),
+            lineColor = MaterialTheme.colorScheme.secondary,
             lineWidth = 1f,
-            color = Color(hexColor = "#3000FF00", appleColor = AppleColors.PURPLE),
+            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f),
         ),
     )
 
-val examplePolygons =
+@Composable
+fun getExamplePolygons() =
     listOf(
         MapPolygon(
             coordinates =
@@ -50,17 +54,18 @@ val examplePolygons =
                     Coordinates(latitude = 50.0480, longitude = 19.9400),
                     Coordinates(latitude = 50.0550, longitude = 19.9400),
                 ),
-            lineColor = Color(hexColor = "#10FF0000"),
+            lineColor = MaterialTheme.colorScheme.tertiary,
             lineWidth = 1f,
-            color = Color(hexColor = "#10FF0000"),
+            color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.3f),
         )
     )
 
-val examplePolylines =
+@Composable
+fun getExamplePolylines() =
     listOf(
         MapPolyline(
             coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
-            lineColor = Color(hexColor = "#60FF0000"),
+            lineColor = MaterialTheme.colorScheme.error,
             width = 1f,
         )
     )

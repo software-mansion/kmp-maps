@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps
 
+import androidx.compose.ui.graphics.Color
+
 /**
  * Configuration properties for map behavior and appearance.
  *
@@ -148,17 +150,4 @@ public data class CameraPosition(
     val zoom: Float,
     val androidBearing: Float? = null,
     val androidTilt: Float? = null,
-)
-
-/**
- * Represents a color that can be used for map elements.
- *
- * @param hexColor A hex color string in the format "#RRGGBB" or "#AARRGGBB"
- * @param appleColor A predefined Apple color (iOS only)
- * @param androidColor A predefined Android color (Android only)
- */
-public data class Color(
-    val hexColor: String? = null,
-    val appleColor: AppleColors? = null,
-    val androidColor: AndroidColors? = null,
 )
