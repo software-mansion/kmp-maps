@@ -8,9 +8,9 @@
 
 ## See It in Action
 
-| iOS (Apple Maps)                                               | Android (Google Maps)                                              |
-|----------------------------------------------------------------|--------------------------------------------------------------------|
-| <img src="docs/images/ios_preview.png" height="600">      | <img src="docs/images/android_preview.png" height="600">      |
+| iOS (Apple Maps) | Android (Google Maps) |
+|:---:|:---:|
+| <img src="docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> |
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
 
 
