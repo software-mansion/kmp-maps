@@ -1,11 +1,11 @@
-# KMP Maps
+<img src="docs/cover_image.png" alt="KMP Maps by Software Mansion" width="100%">
 
-### Cross-platform map component for Kotlin Multiplatform Mobile using Google Maps on Android and Apple Maps on iOS
+### Cross-platform map component for Compose Multiplatform using Google Maps on Android and Apple Maps on iOS
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-`kmp-maps` provides a unified map component for Kotlin Multiplatform Mobile applications, offering seamless integration with native map APIs on both Android and iOS platforms.
+`kmp-maps` provides a unified map component for Compose Multiplatform applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 
 ## Features
 
@@ -27,7 +27,7 @@ dependencies {
 ```
 
 ## API Reference
-Check out our dedicated documentation page for complete API reference: https://docs.swmansion.com/kmp-maps/
+Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
 
 ## Configuration
 
