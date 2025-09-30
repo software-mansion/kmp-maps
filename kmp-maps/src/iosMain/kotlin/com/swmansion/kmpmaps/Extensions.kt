@@ -100,6 +100,7 @@ import platform.MapKit.MKPolyline
 import platform.MapKit.addOverlay
 import platform.MapKit.removeOverlays
 import platform.UIKit.UIColor
+import platform.UIKit.UIUserInterfaceStyle
 import platform.posix.memcpy
 
 /**
@@ -395,4 +396,13 @@ internal fun Color.toAppleMapsColor(): UIColor {
         blue = (argb and 0xFF) / 255.0,
         alpha = ((argb shr 24) and 0xFF) / 255.0,
     )
+}
+
+internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
+    overrideUserInterfaceStyle =
+        if (isDarkModeEnabled) {
+            UIUserInterfaceStyle.UIUserInterfaceStyleDark
+        } else {
+            UIUserInterfaceStyle.UIUserInterfaceStyleLight
+        }
 }

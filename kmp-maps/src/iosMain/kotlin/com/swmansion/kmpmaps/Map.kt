@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +51,12 @@ public actual fun Map(
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
+    val isDarkModeEnabled =
+        if (properties.mapTheme == MapTheme.SYSTEM) {
+            isSystemInDarkTheme()
+        } else {
+            properties.mapTheme == MapTheme.DARK
+        }
 
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
@@ -63,6 +70,9 @@ public actual fun Map(
 
             mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
+
+            mkMapView.switchTheme(isDarkModeEnabled)
+
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
@@ -130,6 +140,9 @@ public actual fun Map(
         modifier = modifier.fillMaxSize(),
         update = { mkMapView ->
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
+
+            mkMapView.switchTheme(isDarkModeEnabled)
+
             mkMapView.showsUserLocation =
                 properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
             mkMapView.showsTraffic = properties.isTrafficEnabled
