@@ -51,14 +51,7 @@ import androidx.compose.ui.Modifier
  * ```xml
  * <meta-data
  *     android:name="com.google.android.geo.API_KEY"
- *     android:value="${MAPS_API_KEY}" />
- * ```
- *
- * You can also set it directly:
- * ```xml
- * <meta-data
- *     android:name="com.google.android.geo.API_KEY"
- *     android:value="YOUR_API_KEY_HERE" />
+ *     android:value="YOUR_API_KEY" />
  * ```
  *
  * ### iOS - Apple Maps
