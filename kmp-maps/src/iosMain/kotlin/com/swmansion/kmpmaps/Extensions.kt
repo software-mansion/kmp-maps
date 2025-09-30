@@ -398,6 +398,11 @@ internal fun Color.toAppleMapsColor(): UIColor {
     )
 }
 
+/**
+ * Switches between light and dark mode for the map.
+ *
+ * @param isDarkModeEnabled true for dark mode, false for light mode
+ */
 internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
     overrideUserInterfaceStyle =
         if (isDarkModeEnabled) {
