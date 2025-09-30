@@ -26,8 +26,8 @@ dependencies {
 }
 ```
 
-## Documentation
-Check out our dedicated documentation page for info about this library, API reference and more: https://docs.swmansion.com/kmp-maps/
+## API Reference
+Check out our dedicated documentation page for complete API reference: https://docs.swmansion.com/kmp-maps/
 
 ## Configuration
 
@@ -38,7 +38,7 @@ To use Google Maps on Android, you need to configure your API key in `AndroidMan
 ```xml
 <meta-data
     android:name="com.google.android.geo.API_KEY"
-    android:value="${MAPS_API_KEY}" />
+    android:value="YOUR_API_KEY" />
 ```
 
 #### Google Cloud API Setup
