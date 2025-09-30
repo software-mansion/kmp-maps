@@ -10,7 +10,7 @@
 
 - **Cross-platform compatibility** - Single API for both Android and iOS
 - **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
-- **Compose Multiplatform** - Built with Jetpack Compose for modern UI development
+- **Compose Multiplatform** - Built with Compose Multiplatform for modern UI development
 - **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
 - **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
 - **Location services** - Built-in location permission handling and user location display
@@ -48,6 +48,7 @@ dependencies {
 ```
 
 ## API Reference
+
 Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
 
 ## Configuration
@@ -79,9 +80,9 @@ Before you can use Google Maps on Android, you need to register a Google Cloud A
    
    **For development builds:**
    - After the build is complete, go to your project's dashboard
-   - Under Project settings > click Credentials
+   - Under Project settings, click Credentials
    - Under Application Identifiers, click your project's package name
-   - Under Android Keystore copy the value of SHA-1 Certificate Fingerprint
+   - Under Android Keystore, copy the value of SHA-1 Certificate Fingerprint
 
 3. **Create an API key**
    - Go to [Google Cloud Credential manager](https://console.cloud.google.com/apis/credentials) and click Create Credentials, then API Key
@@ -158,16 +159,16 @@ fun MyMapScreen() {
 
 ## Screenshots
 
-| iOS (Apple Maps)                                               | Android (Google Maps)                                              |
-|----------------------------------------------------------------|--------------------------------------------------------------------|
-| <img src="docs/screenshots/ios_preview.png" height="600">      | <img src="docs/screenshots/android_preview.png" height="600">      |
-| *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
+| iOS (Apple Maps)                                                | Android (Google Maps)                                               |
+|-----------------------------------------------------------------|---------------------------------------------------------------------|
+| <img src="docs/screenshots/ios_preview.png" height="600">       | <img src="docs/screenshots/android_preview.png" height="600">       |
+| *Map view with circles, polygon, polylines, and markers on iOS* | *Map view with circles, polygon, polylines, and markers on Android* |
 
 
 ## Platform Support
 
-- **Android**: Uses Google Maps SDK
-- **iOS**: Uses Apple Maps (MapKit)
+- **Android**: uses Google Maps SDK
+- **iOS**: uses Apple Maps (MapKit)
 
 ## Examples
 
@@ -183,7 +184,7 @@ KMP Maps library is licensed under [The MIT License](./LICENSE).
 
 ## Credits
 
-This project has been built and is maintained thanks to the support from [Software Mansion](https://swmansion.com)
+This project has been built and is maintained thanks to the support from [Software Mansion](https://swmansion.com).
 
 [![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
 
