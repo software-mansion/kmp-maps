@@ -8,8 +8,8 @@ package com.swmansion.kmpmaps
  *   shown)
  */
 public data class AppleMapsPointOfInterestCategories(
-    val excluding: List<AppleMapPointOfInterestCategory>? = emptyList(),
-    val including: List<AppleMapPointOfInterestCategory>? = emptyList(),
+    val excluding: List<AppleMapsPointOfInterestCategory>? = emptyList(),
+    val including: List<AppleMapsPointOfInterestCategory>? = emptyList(),
 )
 
 /**
