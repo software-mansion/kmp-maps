@@ -1,6 +1,4 @@
-<img src="docs/cover_image.png" alt="KMP Maps by Software Mansion" width="100%">
-
-### Cross-platform map component for Compose Multiplatform using Google Maps on Android and Apple Maps on iOS
+![KMP Maps by Software Mansion](/docs/cover_image.png)
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
@@ -18,7 +16,29 @@
 
 ## Installation
 
-Add the library to your `build.gradle.kts`:
+### Using Gradle Version Catalogs (Recommended)
+
+First, add the library to your `gradle/libs.versions.toml` file:
+
+```toml
+[versions]
+kmpMaps = "0.1.0"
+
+[libraries]
+swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
+```
+
+Then add it to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation(libs.swmansion.kmpMaps)
+}
+```
+
+### Alternative: Direct Dependency Declaration
+
+If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
@@ -119,7 +139,7 @@ fun MyMapScreen() {
             zoom = 13f
         ),
         markers = listOf(
-            MapMarker(
+            Marker(
                 coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
                 title = "Software Mansion",
                 androidSnippet = "Software house"
