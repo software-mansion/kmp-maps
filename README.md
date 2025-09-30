@@ -159,9 +159,9 @@ fun MyMapScreen() {
 
 ## Screenshots
 
-| iOS (Apple Maps)                                                 | Android (Google Maps)                                                |
-|------------------------------------------------------------------|----------------------------------------------------------------------|
-| <img src="docs/screenshots/ios_preview.png" height="600">        | <img src="docs/screenshots/android_preview.png" height="600">        |
+| iOS (Apple Maps)                                                | Android (Google Maps)                                               |
+|-----------------------------------------------------------------|---------------------------------------------------------------------|
+| <img src="docs/screenshots/ios_preview.png" height="600">       | <img src="docs/screenshots/android_preview.png" height="600">       |
 | *Map view with circles, polygon, polylines, and markers on iOS* | *Map view with circles, polygon, polylines, and markers on Android* |
 
 
