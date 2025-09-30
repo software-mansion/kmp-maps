@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
  *             zoom = 13f
  *         ),
  *         markers = listOf(
- *             MapMarker(
+ *             Marker(
  *                 coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
  *                 title = "Software Mansion",
  *                 androidSnippet = "Software house"
