@@ -18,7 +18,29 @@
 
 ## Installation
 
-Add the library to your `build.gradle.kts`:
+### Using Gradle Version Catalogs (Recommended)
+
+First, add the library to your `gradle/libs.versions.toml` file:
+
+```toml
+[versions]
+kmpMaps = "0.1.0"
+
+[libraries]
+swMansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
+```
+
+Then add it to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation(libs.swMansion.kmpMaps)
+}
+```
+
+### Alternative: Direct Dependency Declaration
+
+If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
