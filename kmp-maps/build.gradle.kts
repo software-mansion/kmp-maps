@@ -63,3 +63,41 @@ dokka {
         }
     }
 }
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    pom {
+        name = "KMP Maps"
+        description = "Universal map component for Compose Multiplatform."
+        url = "https://github.com/software-mansion/kmp-maps"
+        licenses {
+            license {
+                name = "The MIT License"
+                url = "http://www.opensource.org/licenses/mit-license.php"
+            }
+        }
+        scm {
+            connection = "scm:git:git://github.com/software-mansion/kmp-maps.git"
+            developerConnection = "scm:git:ssh://github.com/software-mansion/kmp-maps.git"
+            url = "https://github.com/software-mansion/kmp-maps"
+        }
+        developers {
+            developer {
+                id = "arturgesiarz"
+                name = "Artur Gęsiarz"
+                email = "artur.gesiarz@swmansion.com"
+            }
+            developer {
+                id = "marekkaput"
+                name = "Marek Kaput"
+                email = "marek.kaput@swmansion.com"
+            }
+            developer {
+                id = "patrickmichalik"
+                name = "Patrick Michalik"
+                email = "patrick.michalik@swmansion.com"
+            }
+        }
+    }
+}
