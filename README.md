@@ -10,11 +10,10 @@
 
 Check out the sample project in the `/sample` directory for complete usage examples.
 
-| iOS (Apple Maps) | Android (Google Maps) |
-|:---:|:---:|
+|                                                                       iOS (Apple Maps)                                                                       |                                                                      Android (Google Maps)                                                                       |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/ios_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/android_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> |
-| *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
-
+|                                                _Map view with circles, polygon, polylines and markers on iOS_                                                |                                                _Map view with circles, polygon, polylines and markers on Android_                                                |
 
 ## ✨ Features
 
@@ -65,15 +64,13 @@ fun MyMapScreen() {
 
 Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for info about this library, API reference and more.
 
-
 ## 🤝 Contributing
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
-
 ## KMP Maps is created by Software Mansion
 
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github "Software Mansion")](https://swmansion.com)
 
 Since 2012 [Software Mansion](https://swmansion.com) is a software agency with
 experience in building web and mobile apps. We are Core React Native

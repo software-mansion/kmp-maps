@@ -2,7 +2,6 @@
 
 KMP Maps provides a unified map component for Compose Multiplatform applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 
-
 ## 🎯 Usage
 
 ```kotlin
@@ -70,4 +69,3 @@ dependencies {
     implementation("com.swmansion.kmpmaps:kmp-maps:0.1.0")
 }
 ```
-
