@@ -8,11 +8,12 @@
 
 ## See It in Action
 
+Check out the sample project in the `/sample` directory for complete usage examples.
+
 | iOS (Apple Maps) | Android (Google Maps) |
 |:---:|:---:|
 | <img src="docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> |
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
-
 
 
 ## Features
@@ -134,29 +135,24 @@ Add the following key to your `Info.plist`:
 <string>Allow this app to use your location</string>
 ```
 
-## Platform Support
-
-- **Android**: uses Google Maps SDK
-- **iOS**: uses Apple Maps (MapKit)
-
-## Examples
-
-Check out the sample project in the `/sample` directory for complete usage examples.
-
 ## Contributing
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
-## License
-
-KMP Maps library is licensed under [The MIT License](./LICENSE).
-
-## Credits
-
-This project has been built and is maintained thanks to the support from [Software Mansion](https://swmansion.com).
-
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
 
 ## KMP Maps is created by Software Mansion
 
-Since 2012 [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are Core React Native Contributors and experts in dealing with all kinds of React Native and Kotlin Multiplatform issues. We can help you build your next dream product – [Hire us](https://swmansion.com/contact/projects?utm_source=kmpmaps&utm_medium=readme).
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
+
+Since 2012 [Software Mansion](https://swmansion.com) is a software agency with
+experience in building web and mobile apps. We are Core React Native
+Contributors and experts in dealing with all kinds of React Native issues. We
+can help you build your next dream product –
+[Hire us](https://swmansion.com/contact/projects?utm_source=typegpu&utm_medium=readme).
+
+Made by [@software-mansion](https://github.com/software-mansion) and
+[community](https://github.com/software-mansion/kmp-maps/graphs/contributors) 💛
+<br><br>
+<a href="https://github.com/software-mansion/kmp-maps/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=software-mansion/kmp-maps" />
+</a>
