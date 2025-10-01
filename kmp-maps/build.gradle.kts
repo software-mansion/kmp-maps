@@ -73,6 +73,7 @@ dokka {
             All trademarks and copyrights belong to their respective owners.
             """
                 .trimIndent()
+        customStyleSheets.from("$rootDir/logo-styles.css")
     }
 }
 
