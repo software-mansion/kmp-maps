@@ -1,4 +1,4 @@
-![KMP Maps by Software Mansion](/docs/cover_image.png)
+![KMP Maps by Software Mansion](/docs/images/cover_image.png)
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
@@ -6,7 +6,17 @@
 
 `kmp-maps` provides a unified map component for Compose Multiplatform applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 
-## Features
+## 🎯 See It in Action
+
+Check out the sample project in the `/sample` directory for complete usage examples.
+
+| iOS (Apple Maps) | Android (Google Maps) |
+|:---:|:---:|
+| <img src="docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> |
+| *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
+
+
+## ✨ Features
 
 - **Cross-platform compatibility** - Single API for both Android and iOS
 - **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
@@ -15,113 +25,7 @@
 - **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
 - **Location services** - Built-in location permission handling and user location display
 
-## Installation
-
-### Using Gradle Version Catalogs (Recommended)
-
-First, add the library to your `gradle/libs.versions.toml` file:
-
-```toml
-[versions]
-kmpMaps = "0.1.0"
-
-[libraries]
-swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
-```
-
-Then add it to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation(libs.swmansion.kmpMaps)
-}
-```
-
-### Alternative: Direct Dependency Declaration
-
-If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation("com.swmansion.kmpmaps:kmp-maps:0.1.0")
-}
-```
-
-## API Reference
-
-Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
-
-## Configuration
-
-### Android - Google Maps API Key
-
-To use Google Maps on Android, you need to configure your API key in `AndroidManifest.xml`:
-
-```xml
-<meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_API_KEY" />
-```
-
-#### Google Cloud API Setup
-
-Before you can use Google Maps on Android, you need to register a Google Cloud API project and enable the Maps SDK for Android:
-
-1. **Register a Google Cloud API project and enable the Maps SDK for Android**
-   - Open your browser to the [Google API Manager](https://console.cloud.google.com/) and create a project
-   - Once it's created, go to the project and enable the Maps SDK for Android
-
-2. **Copy your app's SHA-1 certificate fingerprint**
-   
-   **For Google Play Store:**
-   - Upload your app binary to Google Play Console at least once
-   - Go to Google Play Console > (your app) > Release > Setup > App integrity > App signing
-   - Copy the value of SHA-1 certificate fingerprint
-   
-   **For development builds:**
-   - After the build is complete, go to your project's dashboard
-   - Under Project settings, click Credentials
-   - Under Application Identifiers, click your project's package name
-   - Under Android Keystore, copy the value of SHA-1 Certificate Fingerprint
-
-3. **Create an API key**
-   - Go to [Google Cloud Credential manager](https://console.cloud.google.com/apis/credentials) and click Create Credentials, then API Key
-   - In the modal, click Edit API key
-   - Under Key restrictions > Application restrictions, choose Android apps
-   - Under Restrict usage to your Android apps, click Add an item
-   - Add your package name to the package name field
-   - Then, add the SHA-1 certificate fingerprint's value from step 2
-   - Click Done and then click Save
-
-4. **Add the API key to your project**
-   - Copy your API Key into your `AndroidManifest.xml` as shown above
-   - Create a new build, and you can now use the Google Maps API on Android
-
-### iOS - Apple Maps
-
-No additional configuration is required for Apple Maps on iOS.
-
-## Permissions
-
-To display the user's location on the map, you need to declare and request location permissions:
-
-### Android
-
-Add the following permissions to your `AndroidManifest.xml`:
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-```
-
-### iOS
-
-Add the following key to your `Info.plist`:
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Allow this app to use your location</string>
-```
-
-## Usage
+## 🚀 Usage
 
 ```kotlin
 @Composable
@@ -157,37 +61,98 @@ fun MyMapScreen() {
 }
 ```
 
-## Screenshots
+## 📦 Installation
 
-| iOS (Apple Maps)                                                | Android (Google Maps)                                               |
-|-----------------------------------------------------------------|---------------------------------------------------------------------|
-| <img src="docs/screenshots/ios_preview.png" height="600">       | <img src="docs/screenshots/android_preview.png" height="600">       |
-| *Map view with circles, polygon, polylines, and markers on iOS* | *Map view with circles, polygon, polylines, and markers on Android* |
+### ✅ Recommended: Using Gradle Version Catalogs
 
+First, add the library to your `gradle/libs.versions.toml` file:
 
-## Platform Support
+```toml
+[versions]
+kmpMaps = "0.1.0"
 
-- **Android**: uses Google Maps SDK
-- **iOS**: uses Apple Maps (MapKit)
+[libraries]
+swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
+```
 
-## Examples
+Then add it to your `build.gradle.kts`:
 
-Check out the sample project in the `/sample` directory for complete usage examples.
+```kotlin
+dependencies {
+    implementation(libs.swmansion.kmpMaps)
+}
+```
 
-## Contributing
+### 🔧 Alternative: Direct Dependency Declaration
+
+If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation("com.swmansion.kmpmaps:kmp-maps:0.1.0")
+}
+```
+
+## 📚 API Reference
+
+Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
+
+## ⚙️ Configuration
+
+### 🤖 Android - Google Maps API Key
+
+To use Google Maps on Android, you need to configure your API key in `AndroidManifest.xml`:
+
+```xml
+<meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR_API_KEY" />
+```
+
+For detailed setup instructions, see our [Google Cloud API Setup Guide](docs/GOOGLE_CLOUD_API_SETUP.md).
+
+### 🍎 iOS - Apple Maps
+
+No additional configuration is required for Apple Maps on iOS.
+
+## 🔐 Permissions
+
+To display the user's location on the map, you need to declare and request location permissions:
+
+### 🤖 Android
+
+Add the following permissions to your `AndroidManifest.xml`:
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```
+
+### 🍎 iOS
+
+Add the following key to your `Info.plist`:
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Allow this app to use your location</string>
+```
+
+## 🤝 Contributing
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
-## License
-
-KMP Maps library is licensed under [The MIT License](./LICENSE).
-
-## Credits
-
-This project has been built and is maintained thanks to the support from [Software Mansion](https://swmansion.com).
-
-[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
 
 ## KMP Maps is created by Software Mansion
 
-Since 2012 [Software Mansion](https://swmansion.com) is a software agency with experience in building web and mobile apps. We are Core React Native Contributors and experts in dealing with all kinds of React Native and Kotlin Multiplatform issues. We can help you build your next dream product – [Hire us](https://swmansion.com/contact/projects?utm_source=kmpmaps&utm_medium=readme).
+[![swm](https://logo.swmansion.com/logo?color=white&variant=desktop&width=150&tag=kmp-maps-github 'Software Mansion')](https://swmansion.com)
+
+Since 2012 [Software Mansion](https://swmansion.com) is a software agency with
+experience in building web and mobile apps. We are Core React Native
+Contributors and experts in dealing with all kinds of React Native issues. We
+can help you build your next dream product –
+[Hire us](https://swmansion.com/contact/projects?utm_source=typegpu&utm_medium=readme).
+
+Made by [@software-mansion](https://github.com/software-mansion) and
+[community](https://github.com/software-mansion/kmp-maps/graphs/contributors) 💛
+<br><br>
+<a href="https://github.com/software-mansion/kmp-maps/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=software-mansion/kmp-maps" />
+</a>
