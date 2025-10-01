@@ -1,4 +1,4 @@
-![KMP Maps by Software Mansion](/docs/images/cover_image.png)
+![KMP Maps by Software Mansion](https://github.com/software-mansion/kmp-maps/blob/main/docs/images/cover_image.png?raw=true)
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
@@ -12,7 +12,7 @@ Check out the sample project in the `/sample` directory for complete usage examp
 
 | iOS (Apple Maps) | Android (Google Maps) |
 |:---:|:---:|
-| <img src="docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> |
+| <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/ios_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/android_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> |
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
 
 
@@ -63,77 +63,8 @@ fun MyMapScreen() {
 
 ## 📦 Installation
 
-### ✅ Recommended: Using Gradle Version Catalogs
+Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for info about this library, API reference and more.
 
-First, add the library to your `gradle/libs.versions.toml` file:
-
-```toml
-[versions]
-kmpMaps = "0.1.0"
-
-[libraries]
-swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
-```
-
-Then add it to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation(libs.swmansion.kmpMaps)
-}
-```
-
-### 🔧 Alternative: Direct Dependency Declaration
-
-If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
-
-```kotlin
-dependencies {
-    implementation("com.swmansion.kmpmaps:kmp-maps:0.1.0")
-}
-```
-
-## 📚 API Reference
-
-Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
-
-## ⚙️ Configuration
-
-### 🤖 Android - Google Maps API Key
-
-To use Google Maps on Android, you need to configure your API key in `AndroidManifest.xml`:
-
-```xml
-<meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="YOUR_API_KEY" />
-```
-
-For detailed setup instructions, see our [Google Cloud API Setup Guide](docs/GOOGLE_CLOUD_API_SETUP.md).
-
-### 🍎 iOS - Apple Maps
-
-No additional configuration is required for Apple Maps on iOS.
-
-## 🔐 Permissions
-
-To display the user's location on the map, you need to declare and request location permissions:
-
-### 🤖 Android
-
-Add the following permissions to your `AndroidManifest.xml`:
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-```
-
-### 🍎 iOS
-
-Add the following key to your `Info.plist`:
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>Allow this app to use your location</string>
-```
 
 ## 🤝 Contributing
 

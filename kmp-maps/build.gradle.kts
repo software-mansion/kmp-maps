@@ -56,10 +56,13 @@ android {
 dokka {
     dokkaSourceSets {
         configureEach {
-            // Link to external documentation
+            moduleName = "KMP Maps"
             externalDocumentationLinks {
                 register("coroutines") { url("https://kotlinlang.org/api/kotlinx.coroutines") }
             }
+            includes.from("../docs/QUICK_START.md")
+            includes.from("../docs/ANDROID_SETUP.md")
+            includes.from("../docs/IOS_SETUP.md")
         }
     }
 }
