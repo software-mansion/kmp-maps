@@ -4,7 +4,7 @@
 
 No additional configuration is required for Apple Maps on iOS.
 
-## 🔐 Permissions
+### 🔐 Permissions
 
 To display the user's location on the map, you need to declare location permissions:
 

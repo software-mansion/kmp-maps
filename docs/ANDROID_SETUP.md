@@ -44,7 +44,7 @@ Before you can use Google Maps on Android, you need to register a Google Cloud A
 - Copy your API Key into your `AndroidManifest.xml` as shown above
 - Create a new build, and you can now use the Google Maps API on Android
 
-## 🔐 Permissions
+### 🔐 Permissions
 
 To display the user's location on the map, you need to declare and request location permissions:
 
