@@ -6,7 +6,7 @@
 
 `kmp-maps` provides a unified map component for Compose Multiplatform applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 
-## See It in Action
+## 🎯 See It in Action
 
 Check out the sample project in the `/sample` directory for complete usage examples.
 
@@ -16,7 +16,7 @@ Check out the sample project in the `/sample` directory for complete usage examp
 | *Map view with circles, polygon, polylines and markers on iOS* | *Map view with circles, polygon, polylines and markers on Android* |
 
 
-## Features
+## ✨ Features
 
 - **Cross-platform compatibility** - Single API for both Android and iOS
 - **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
@@ -25,7 +25,7 @@ Check out the sample project in the `/sample` directory for complete usage examp
 - **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
 - **Location services** - Built-in location permission handling and user location display
 
-## Usage
+## 🚀 Usage
 
 ```kotlin
 @Composable
@@ -61,9 +61,9 @@ fun MyMapScreen() {
 }
 ```
 
-## Installation
+## 📦 Installation
 
-### Recommended: Using Gradle Version Catalogs
+### ✅ Recommended: Using Gradle Version Catalogs
 
 First, add the library to your `gradle/libs.versions.toml` file:
 
@@ -83,7 +83,7 @@ dependencies {
 }
 ```
 
-### Alternative: Direct Dependency Declaration
+### 🔧 Alternative: Direct Dependency Declaration
 
 If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
 
@@ -93,13 +93,13 @@ dependencies {
 }
 ```
 
-## API Reference
+## 📚 API Reference
 
 Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for the complete API reference.
 
-## Configuration
+## ⚙️ Configuration
 
-### Android - Google Maps API Key
+### 🤖 Android - Google Maps API Key
 
 To use Google Maps on Android, you need to configure your API key in `AndroidManifest.xml`:
 
@@ -111,15 +111,15 @@ To use Google Maps on Android, you need to configure your API key in `AndroidMan
 
 For detailed setup instructions, see our [Google Cloud API Setup Guide](docs/GOOGLE_CLOUD_API_SETUP.md).
 
-### iOS - Apple Maps
+### 🍎 iOS - Apple Maps
 
 No additional configuration is required for Apple Maps on iOS.
 
-## Permissions
+## 🔐 Permissions
 
 To display the user's location on the map, you need to declare and request location permissions:
 
-### Android
+### 🤖 Android
 
 Add the following permissions to your `AndroidManifest.xml`:
 ```xml
@@ -127,7 +127,7 @@ Add the following permissions to your `AndroidManifest.xml`:
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 ```
 
-### iOS
+### 🍎 iOS
 
 Add the following key to your `Info.plist`:
 ```xml
@@ -135,7 +135,7 @@ Add the following key to your `Info.plist`:
 <string>Allow this app to use your location</string>
 ```
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions! Please feel free to submit a Pull Request.
 
