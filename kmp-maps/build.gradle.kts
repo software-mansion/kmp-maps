@@ -62,6 +62,13 @@ dokka {
             }
         }
     }
+
+    pluginsConfiguration.html {
+        footerMessage = """
+            © <a href="https://swmansion.com" rel="noopener noreferrer" target="_blank">Software Mansion</a> 2025. 
+            All trademarks and copyrights belong to their respective owners.
+            """.trimIndent()
+    }
 }
 
 mavenPublishing {
