@@ -60,9 +60,9 @@ dokka {
             externalDocumentationLinks {
                 register("coroutines") { url("https://kotlinlang.org/api/kotlinx.coroutines") }
             }
-            includes.from("../docs/QUICK_START.md")
-            includes.from("../docs/ANDROID_SETUP.md")
-            includes.from("../docs/IOS_SETUP.md")
+            includes.from("$rootDir/docs/QUICK_START.md")
+            includes.from("$rootDir/docs/ANDROID_SETUP.md")
+            includes.from("$rootDir/docs/IOS_SETUP.md")
         }
     }
 
