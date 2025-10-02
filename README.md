@@ -60,9 +60,9 @@ fun MyMapScreen() {
 }
 ```
 
-## 📦 Installation
+## 📚 Documentation
 
-Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for info about this library, API reference and more.
+Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for installation instructions, API reference and more.
 
 ## 🤝 Contributing
 
