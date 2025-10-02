@@ -15,6 +15,7 @@ kotlin {
     explicitApi()
     jvmToolchain(17)
     androidTarget { publishLibraryVariants("release") }
+    jvm()
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -38,6 +39,8 @@ kotlin {
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
         }
+
+        jvmMain.dependencies { implementation(compose.desktop.currentOs) }
     }
 }
 

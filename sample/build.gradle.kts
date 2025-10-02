@@ -10,6 +10,7 @@ plugins {
 
 kotlin {
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
+    jvm()
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
@@ -24,6 +25,8 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidX.activity.compose)
         }
+
+        jvmMain.dependencies { implementation(compose.desktop.currentOs) }
         commonMain.dependencies {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
