@@ -34,11 +34,11 @@ internal fun calculateLongitudeDelta(zoom: Float, latitude: Double): Double {
  *
  * @param pointLat The latitude of the point to test
  * @param pointLon The longitude of the point to test
- * @param mapPolygon The polygon to test against
+ * @param polygon The polygon to test against
  * @return true if the point is inside the polygon, false otherwise
  */
-internal fun isPointInPolygon(pointLat: Double, pointLon: Double, mapPolygon: MapPolygon): Boolean {
-    val coordinates = mapPolygon.coordinates
+internal fun isPointInPolygon(pointLat: Double, pointLon: Double, polygon: Polygon): Boolean {
+    val coordinates = polygon.coordinates
     var inside = false
 
     var j = coordinates.size - 1
@@ -68,13 +68,13 @@ internal fun isPointInPolygon(pointLat: Double, pointLon: Double, mapPolygon: Ma
  *
  * @param pointLat The latitude of the point to test
  * @param pointLon The longitude of the point to test
- * @param mapCircle The circle to test against
+ * @param circle The circle to test against
  * @return true if the point is inside the circle, false otherwise
  */
-internal fun isPointInCircle(pointLat: Double, pointLon: Double, mapCircle: MapCircle): Boolean {
-    val centerLat = mapCircle.center.latitude
-    val centerLon = mapCircle.center.longitude
-    val radius = mapCircle.radius
+internal fun isPointInCircle(pointLat: Double, pointLon: Double, circle: Circle): Boolean {
+    val centerLat = circle.center.latitude
+    val centerLon = circle.center.longitude
+    val radius = circle.radius
 
     val lat1Rad = centerLat * PI / 180.0
     val lat2Rad = pointLat * PI / 180.0
@@ -99,17 +99,17 @@ internal fun isPointInCircle(pointLat: Double, pointLon: Double, mapCircle: MapC
  * @param pointLat The latitude of the point to test
  * @param pointLon The longitude of the point to test
  * @param threshold The distance threshold in meters (if null, uses polyline width * 2)
- * @param mapPolyline The polyline to test against
+ * @param polyline The polyline to test against
  * @return true if the point is near the polyline, false otherwise
  */
 internal fun isPointNearPolyline(
     pointLat: Double,
     pointLon: Double,
     threshold: Float?,
-    mapPolyline: MapPolyline,
+    polyline: Polyline,
 ): Boolean {
-    val coordinates = mapPolyline.coordinates
-    val localThreshold = threshold ?: (mapPolyline.width * 2.0f)
+    val coordinates = polyline.coordinates
+    val localThreshold = threshold ?: (polyline.width * 2.0f)
 
     for (i in 0 until coordinates.size - 1) {
         val start = coordinates[i]

@@ -22,14 +22,14 @@ import platform.darwin.NSObject
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
     private val properties: MapProperties,
-    private val circleStyles: MutableMap<MKCircle, MapCircle>,
-    private val polygonStyles: MutableMap<MKPolygon, MapPolygon>,
-    private val polylineStyles: MutableMap<MKPolyline, MapPolyline>,
-    private val markerMapping: MutableMap<MKPointAnnotation, MapMarker>,
-    private var onMarkerClick: ((MapMarker) -> Unit)?,
-    private var onCircleClick: ((MapCircle) -> Unit)?,
-    private var onPolygonClick: ((MapPolygon) -> Unit)?,
-    private var onPolylineClick: ((MapPolyline) -> Unit)?,
+    private val circleStyles: MutableMap<MKCircle, Circle>,
+    private val polygonStyles: MutableMap<MKPolygon, Polygon>,
+    private val polylineStyles: MutableMap<MKPolyline, Polyline>,
+    private val markerMapping: MutableMap<MKPointAnnotation, Marker>,
+    private var onMarkerClick: ((Marker) -> Unit)?,
+    private var onCircleClick: ((Circle) -> Unit)?,
+    private var onPolygonClick: ((Polygon) -> Unit)?,
+    private var onPolylineClick: ((Polyline) -> Unit)?,
     private var onMapClick: ((Coordinates) -> Unit)?,
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
@@ -48,23 +48,23 @@ internal class MapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor?.toAppleColor()
+                renderer.strokeColor = circleStyle?.lineColor?.toAppleMapsColor()
                 renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = circleStyle?.color?.toAppleColor()
+                renderer.fillColor = circleStyle?.color?.toAppleMapsColor()
                 renderer
             }
             is MKPolygon -> {
                 val polygonStyle = polygonStyles[rendererForOverlay]
                 val renderer = MKPolygonRenderer(rendererForOverlay)
-                renderer.strokeColor = polygonStyle?.lineColor?.toAppleColor()
+                renderer.strokeColor = polygonStyle?.lineColor?.toAppleMapsColor()
                 renderer.lineWidth = (polygonStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = polygonStyle?.color?.toAppleColor()
+                renderer.fillColor = polygonStyle?.color?.toAppleMapsColor()
                 renderer
             }
             is MKPolyline -> {
                 val polylineStyle = polylineStyles[rendererForOverlay]
                 val renderer = MKPolylineRenderer(rendererForOverlay)
-                renderer.strokeColor = polylineStyle?.lineColor?.toAppleColor()
+                renderer.strokeColor = polylineStyle?.lineColor?.toAppleMapsColor()
                 renderer.lineWidth = (polylineStyle?.width ?: 1).toDouble()
                 renderer
             }
@@ -112,10 +112,10 @@ internal class MapDelegate(
      * @param onCameraMove Callback for camera movement
      */
     fun updateCallbacks(
-        onMarkerClick: ((MapMarker) -> Unit)?,
-        onCircleClick: ((MapCircle) -> Unit)?,
-        onPolygonClick: ((MapPolygon) -> Unit)?,
-        onPolylineClick: ((MapPolyline) -> Unit)?,
+        onMarkerClick: ((Marker) -> Unit)?,
+        onCircleClick: ((Circle) -> Unit)?,
+        onPolygonClick: ((Polygon) -> Unit)?,
+        onPolylineClick: ((Polyline) -> Unit)?,
         onMapClick: ((Coordinates) -> Unit)?,
         onMapLongClick: ((Coordinates) -> Unit)?,
         onPOIClick: ((Coordinates) -> Unit)?,

@@ -3,12 +3,26 @@ package com.swmansion.kmpmaps
 import androidx.compose.ui.graphics.Color
 
 /**
+ * Theme options for map appearance.
+ *
+ * @param SYSTEM Follows the system's dark theme setting
+ * @param LIGHT Always uses light theme
+ * @param DARK Always uses dark theme
+ */
+public enum class MapTheme {
+    SYSTEM,
+    LIGHT,
+    DARK,
+}
+
+/**
  * Configuration properties for map behavior and appearance.
  *
  * @param isMyLocationEnabled Whether to show the user's current location on the map
  * @param isTrafficEnabled Whether to display traffic information on the map
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
+ * @param mapTheme The theme for the map appearance
  * @param iosShowPOI Whether to show points of interest (POIs) on the map (iOS only)
  * @param iosPointsOfInterest POI categories to include/exclude (iOS only)
  * @param iosPolylineTapThreshold Threshold for polyline tap detection (iOS only)
@@ -22,6 +36,7 @@ public data class MapProperties(
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
+    val mapTheme: MapTheme = MapTheme.SYSTEM,
     val iosShowPOI: Boolean = true,
     val iosPointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val iosPolylineTapThreshold: Float? = null,
@@ -76,7 +91,7 @@ public data class MapUISettings(
  * @param androidSnippet Additional text displayed below the title (Android only)
  * @param androidZIndex The z-index for layering markers (Android only)
  */
-public data class MapMarker(
+public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val iosTintColor: Color? = null,
@@ -95,7 +110,7 @@ public data class MapMarker(
  * @param lineColor The color of the circle's border
  * @param lineWidth The width of the circle's border
  */
-public data class MapCircle(
+public data class Circle(
     val center: Coordinates,
     val radius: Float,
     val color: Color? = null,
@@ -111,7 +126,7 @@ public data class MapCircle(
  * @param color The fill color of the polygon
  * @param lineColor The color of the polygon's border
  */
-public data class MapPolygon(
+public data class Polygon(
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
     val color: Color? = null,
@@ -125,7 +140,7 @@ public data class MapPolygon(
  * @param width The width of the polyline
  * @param lineColor The color of the polyline
  */
-public data class MapPolyline(
+public data class Polyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,

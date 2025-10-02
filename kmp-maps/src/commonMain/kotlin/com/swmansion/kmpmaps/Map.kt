@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
  *             zoom = 13f
  *         ),
  *         markers = listOf(
- *             MapMarker(
+ *             Marker(
  *                 coordinates = Coordinates(latitude = 50.0486, longitude = 19.9654),
  *                 title = "Software Mansion",
  *                 androidSnippet = "Software house"
@@ -51,14 +51,7 @@ import androidx.compose.ui.Modifier
  * ```xml
  * <meta-data
  *     android:name="com.google.android.geo.API_KEY"
- *     android:value="${MAPS_API_KEY}" />
- * ```
- *
- * You can also set it directly:
- * ```xml
- * <meta-data
- *     android:name="com.google.android.geo.API_KEY"
- *     android:value="YOUR_API_KEY_HERE" />
+ *     android:value="YOUR_API_KEY" />
  * ```
  *
  * ### iOS - Apple Maps
@@ -108,15 +101,15 @@ public expect fun Map(
     cameraPosition: CameraPosition? = null,
     properties: MapProperties,
     uiSettings: MapUISettings,
-    markers: List<MapMarker> = emptyList(),
-    circles: List<MapCircle> = emptyList(),
-    polygons: List<MapPolygon> = emptyList(),
-    polylines: List<MapPolyline> = emptyList(),
+    markers: List<Marker> = emptyList(),
+    circles: List<Circle> = emptyList(),
+    polygons: List<Polygon> = emptyList(),
+    polylines: List<Polyline> = emptyList(),
     onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onMarkerClick: ((MapMarker) -> Unit)? = null,
-    onCircleClick: ((MapCircle) -> Unit)? = null,
-    onPolygonClick: ((MapPolygon) -> Unit)? = null,
-    onPolylineClick: ((MapPolyline) -> Unit)? = null,
+    onMarkerClick: ((Marker) -> Unit)? = null,
+    onCircleClick: ((Circle) -> Unit)? = null,
+    onPolygonClick: ((Polygon) -> Unit)? = null,
+    onPolylineClick: ((Polyline) -> Unit)? = null,
     onMapClick: ((Coordinates) -> Unit)? = null,
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,

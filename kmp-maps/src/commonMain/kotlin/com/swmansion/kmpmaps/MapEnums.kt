@@ -1,7 +1,7 @@
 package com.swmansion.kmpmaps
 
 /** Categories of points of interest (POI) for Apple Maps. */
-public enum class AppleMapPointOfInterestCategory {
+public enum class AppleMapsPointOfInterestCategory {
     AIRPORT,
     AMUSEMENT_PARK,
     ANIMAL_SERVICE,

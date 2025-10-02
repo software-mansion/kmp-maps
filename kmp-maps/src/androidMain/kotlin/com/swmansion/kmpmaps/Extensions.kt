@@ -4,6 +4,7 @@ import androidx.compose.ui.geometry.Offset
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
@@ -14,7 +15,7 @@ import com.google.maps.android.compose.MarkerState
  *
  * @return GoogleCameraPosition with coordinates, zoom, bearing, and tilt
  */
-internal fun CameraPosition.toGoogleCameraPosition() =
+internal fun CameraPosition.toGoogleMapsCameraPosition() =
     GoogleCameraPosition.Builder()
         .target(LatLng(coordinates.latitude, coordinates.longitude))
         .zoom(zoom)
@@ -40,7 +41,7 @@ internal fun GoogleCameraPosition.toCameraPosition() =
  *
  * @return MarkerState with position coordinates
  */
-internal fun MapMarker.toGoogleMapsMarkerState() =
+internal fun Marker.toGoogleMapsMarkerState() =
     MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
 
 /**
@@ -48,7 +49,19 @@ internal fun MapMarker.toGoogleMapsMarkerState() =
  *
  * @return LatLng with latitude and longitude
  */
-internal fun Coordinates.toGoogleLatLng(): LatLng = LatLng(latitude, longitude)
+internal fun Coordinates.toGoogleMapsLatLng(): LatLng = LatLng(latitude, longitude)
+
+/**
+ * Converts MapTheme to native ComposeMapColorScheme.
+ *
+ * @return ComposeMapColorScheme corresponding to the enum value
+ */
+internal fun MapTheme.toGoogleMapsTheme() =
+    when (this) {
+        MapTheme.LIGHT -> ComposeMapColorScheme.LIGHT
+        MapTheme.DARK -> ComposeMapColorScheme.DARK
+        MapTheme.SYSTEM -> ComposeMapColorScheme.FOLLOW_SYSTEM
+    }
 
 /**
  * Converts MapProperties to Google Maps Properties.
