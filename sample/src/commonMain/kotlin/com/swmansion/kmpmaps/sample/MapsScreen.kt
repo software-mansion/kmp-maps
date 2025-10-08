@@ -1,15 +1,22 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,9 +49,9 @@ fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.weight(1f),
             cameraPosition = currentCameraPosition,
             properties =
                 MapProperties(
@@ -62,6 +69,7 @@ fun MapsScreen() {
                     compassEnabled = true,
                     myLocationButtonEnabled = showUserLocation,
                     scaleBarEnabled = true,
+                    androidZoomControlsEnabled = false,
                 ),
             markers = if (showAllComponents) exampleMarkers else emptyList(),
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
@@ -80,20 +88,15 @@ fun MapsScreen() {
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
         )
-
-        Card(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        ) {
+        Surface {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                Modifier.fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))
+                    .padding(vertical = 16.dp),
+                Arrangement.spacedBy(8.dp),
+                Alignment.CenterHorizontally,
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(
                         onClick = { selectedMapType = MapType.NORMAL },
                         label = { Text("Normal") },
@@ -110,10 +113,7 @@ fun MapsScreen() {
                         selected = selectedMapType == MapType.HYBRID,
                     )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(
                         onClick = { selectedMapTheme = MapTheme.SYSTEM },
                         label = { Text("System") },
@@ -130,21 +130,28 @@ fun MapsScreen() {
                         selected = selectedMapTheme == MapTheme.DARK,
                     )
                 }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    FilterChip(
-                        onClick = { showAllComponents = !showAllComponents },
-                        label = { Text(if (showAllComponents) "Hide All" else "Show All") },
-                        selected = showAllComponents,
-                    )
-                    FilterChip(
-                        onClick = { showUserLocation = !showUserLocation },
-                        label = { Text("Show My Location") },
-                        selected = showUserLocation,
-                    )
-                }
+                ListItem(
+                    headlineContent = { Text("Show annotations") },
+                    modifier =
+                        Modifier.height(48.dp).clickable { showAllComponents = !showAllComponents },
+                    trailingContent = {
+                        Switch(
+                            checked = showAllComponents,
+                            onCheckedChange = { showAllComponents = it },
+                        )
+                    },
+                )
+                ListItem(
+                    headlineContent = { Text("Show my location") },
+                    modifier =
+                        Modifier.height(48.dp).clickable { showUserLocation = !showUserLocation },
+                    trailingContent = {
+                        Switch(
+                            checked = showUserLocation,
+                            onCheckedChange = { showUserLocation = it },
+                        )
+                    },
+                )
             }
         }
     }
