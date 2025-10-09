@@ -15,9 +15,9 @@ playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
 google-android-gms-playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 google-android-libraries-mapsPlatform-secretsGradlePlugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 google-maps-android-mapsCompose = { module = "com.google.maps.android:maps-compose", version.ref = "googleMapsCompose" }
 jetBrains-androidX-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidXLifecycle" }
