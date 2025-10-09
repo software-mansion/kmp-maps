@@ -37,6 +37,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
+            implementation(libs.accompanist.permissions)
         }
     }
 }

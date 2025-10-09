@@ -3,11 +3,12 @@ package com.swmansion.kmpmaps
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
@@ -16,6 +17,7 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
 /** Android implementation of the Map composable using Google Maps. */
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 public actual fun Map(
     modifier: Modifier,
@@ -36,12 +38,12 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
 ) {
-    val context = LocalContext.current
-    val locationPermissionHandler = remember { LocationPermissionHandler(context) }
+    val locationPermissionState =
+        rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
 
     LaunchedEffect(properties.isMyLocationEnabled) {
-        if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
-            locationPermissionHandler.requestPermission()
+        if (properties.isMyLocationEnabled && !locationPermissionState.status.isGranted) {
+            locationPermissionState.launchPermissionRequest()
         }
     }
 
@@ -53,7 +55,7 @@ public actual fun Map(
         mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
-        properties = properties.toGoogleMapsProperties(),
+        properties = properties.toGoogleMapsProperties(locationPermissionState),
         uiSettings = uiSettings.toGoogleMapsUiSettings(),
         onMapClick =
             onMapClick?.let { callback ->

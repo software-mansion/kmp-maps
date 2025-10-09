@@ -1,4 +1,5 @@
 [versions]
+accompanistPermissions = "0.37.3"
 agp = "8.12.0"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -14,6 +15,7 @@ playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
 google-android-gms-playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 google-android-libraries-mapsPlatform-secretsGradlePlugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
