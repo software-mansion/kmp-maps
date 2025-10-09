@@ -68,7 +68,6 @@ public actual fun Map(
         factory = {
             val mkMapView = MKMapView()
 
-            mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
             mkMapView.switchTheme(isDarkModeEnabled)
