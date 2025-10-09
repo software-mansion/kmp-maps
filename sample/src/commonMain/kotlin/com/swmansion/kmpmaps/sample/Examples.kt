@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import com.swmansion.kmpmaps.*
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
-val royalCastlePin = Coordinates(latitude = 50.0647, longitude = 19.9450)
+val cracowMainStationPin = Coordinates(latitude = 50.06839615782847, longitude = 19.947491884231567)
 val jewishQuarterPin = Coordinates(latitude = 50.0515, longitude = 19.9449)
 
 val exampleMarkers =
@@ -15,7 +15,11 @@ val exampleMarkers =
             title = "Software Mansion",
             androidSnippet = "Software house",
         ),
-        Marker(coordinates = royalCastlePin, title = "Wawel", androidSnippet = "Royal castle"),
+        Marker(
+            coordinates = cracowMainStationPin,
+            title = "Kraków Main",
+            androidSnippet = "Transit station",
+        ),
         Marker(
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
@@ -27,14 +31,14 @@ val exampleMarkers =
 fun getExampleCircles() =
     listOf(
         Circle(
-            center = Coordinates(latitude = 50.0486, longitude = 19.9654),
+            center = softwareMansionPin,
             radius = 500.0f,
             lineColor = MaterialTheme.colorScheme.primary,
             lineWidth = 1f,
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
         ),
         Circle(
-            center = Coordinates(latitude = 50.0647, longitude = 19.9450),
+            center = cracowMainStationPin,
             radius = 300.0f,
             lineColor = MaterialTheme.colorScheme.secondary,
             lineWidth = 1f,
@@ -64,7 +68,7 @@ fun getExamplePolygons() =
 fun getExamplePolylines() =
     listOf(
         Polyline(
-            coordinates = listOf(softwareMansionPin, royalCastlePin, jewishQuarterPin),
+            coordinates = listOf(softwareMansionPin, cracowMainStationPin, jewishQuarterPin),
             lineColor = MaterialTheme.colorScheme.error,
             width = 1f,
         )
