@@ -84,3 +84,8 @@ public enum class MapType {
     SATELLITE,
     TERRAIN,
 }
+
+public enum class MapPlatform {
+    GOOGLE_MAPS,
+    NATIVE,
+}

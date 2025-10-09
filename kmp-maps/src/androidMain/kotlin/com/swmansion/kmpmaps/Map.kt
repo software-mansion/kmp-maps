@@ -19,6 +19,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @Composable
 public actual fun Map(
     modifier: Modifier,
+    mapPlatform: MapPlatform,
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,

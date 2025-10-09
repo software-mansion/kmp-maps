@@ -98,6 +98,7 @@ import androidx.compose.ui.Modifier
 @Composable
 public expect fun Map(
     modifier: Modifier = Modifier,
+    mapPlatform: MapPlatform = MapPlatform.NATIVE,
     cameraPosition: CameraPosition? = null,
     properties: MapProperties,
     uiSettings: MapUISettings,
