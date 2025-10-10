@@ -1,6 +1,6 @@
 group = "com.swmansion.kmpmaps"
 
-version = "0.2.0"
+version = "0.2.1"
 
 plugins {
     alias(libs.plugins.android.library)
