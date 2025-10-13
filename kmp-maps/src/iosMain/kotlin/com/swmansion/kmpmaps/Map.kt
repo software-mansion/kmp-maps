@@ -1,9 +1,9 @@
 package com.swmansion.kmpmaps
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.swmansion.kmpmaps.apple.AppleMap
+import com.swmansion.kmpmaps.google.GoogleMap
 import kotlinx.cinterop.ExperimentalForeignApi
 
 /** iOS implementation of the Map composable using Apple Maps (MapKit). */
@@ -50,7 +50,7 @@ public actual fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
             )
-        MapPlatform.GOOGLE_MAPS ->
+        MapPlatform.GOOGLE_MAPS -> {
             GoogleMap(
                 modifier = modifier,
                 cameraPosition = cameraPosition,
@@ -70,5 +70,6 @@ public actual fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
             )
+        }
     }
 }

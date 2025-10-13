@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
+    kotlin("native.cocoapods")
 }
 
 kotlin {
@@ -21,6 +22,18 @@ kotlin {
             baseName = "kmp-maps"
             isStatic = true
         }
+    }
+
+    cocoapods {
+        summary = "Universal map component for Compose Multiplatform"
+        homepage = "https://github.com/software-mansion/kmp-maps"
+        version = "0.2.0"
+        ios.deploymentTarget = "14.0"
+        framework {
+            baseName = "kmp-maps"
+            isStatic = true
+        }
+        pod("GoogleMaps") { version = "8.2.0" }
     }
 
     sourceSets {

@@ -2,6 +2,17 @@ package com.swmansion.kmpmaps
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import cocoapods.GoogleMaps.GMSCircle
+import cocoapods.GoogleMaps.GMSMapView
+import cocoapods.GoogleMaps.GMSMarker
+import cocoapods.GoogleMaps.GMSMutablePath
+import cocoapods.GoogleMaps.GMSPolygon
+import cocoapods.GoogleMaps.GMSPolyline
+import cocoapods.GoogleMaps.kGMSTypeHybrid
+import cocoapods.GoogleMaps.kGMSTypeNormal
+import cocoapods.GoogleMaps.kGMSTypeSatellite
+import cocoapods.GoogleMaps.kGMSTypeTerrain
+import kotlin.collections.set
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.allocArray
@@ -160,6 +171,25 @@ internal fun MKMapView.updateAppleMapsMarkers(
     return markerMapping
 }
 
+@OptIn(ExperimentalForeignApi::class)
+internal fun updateGoogleMapsMarkers(
+    mapView: GMSMapView,
+    markers: List<Marker>,
+    markerMapping: MutableMap<GMSMarker, Marker>,
+) {
+    markerMapping.keys.forEach { marker -> marker.map = null }
+    markerMapping.clear()
+
+    markers.forEach { marker ->
+        val gmsMarker = GMSMarker()
+        gmsMarker.position =
+            CLLocationCoordinate2DMake(marker.coordinates.latitude, marker.coordinates.longitude)
+        gmsMarker.title = marker.title
+        gmsMarker.map = mapView
+        markerMapping[gmsMarker] = marker
+    }
+}
+
 /**
  * Converts AppleMapsPointOfInterestCategories to Apple MapKit's MKPointOfInterestFilter.
  *
@@ -205,6 +235,28 @@ internal fun MKMapView.updateAppleMapsCircles(
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
+internal fun updateGoogleMapsCircles(
+    mapView: GMSMapView,
+    circles: List<Circle>,
+    circleMapping: MutableMap<GMSCircle, Circle>,
+) {
+    circleMapping.keys.forEach { circle -> circle.map = null }
+    circleMapping.clear()
+
+    circles.forEach { circle ->
+        val gmsCircle = GMSCircle()
+        gmsCircle.position =
+            CLLocationCoordinate2DMake(circle.center.latitude, circle.center.longitude)
+        gmsCircle.radius = circle.radius.toDouble()
+        gmsCircle.fillColor = circle.color?.toAppleMapsColor()
+        gmsCircle.strokeColor = circle.lineColor?.toAppleMapsColor()
+        gmsCircle.strokeWidth = (circle.lineWidth ?: 1).toDouble()
+        gmsCircle.map = mapView
+        circleMapping[gmsCircle] = circle
+    }
+}
+
 /**
  * Updates Apple Maps polygons by removing existing overlays and adding new ones.
  *
@@ -240,6 +292,30 @@ internal fun MKMapView.updateAppleMapsPolygons(
             polygonStyles[mkPolygon] = polygon
             addOverlay(mkPolygon)
         }
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun updateGoogleMapsPolygons(
+    mapView: GMSMapView,
+    polygons: List<Polygon>,
+    polygonMapping: MutableMap<GMSPolygon, Polygon>,
+) {
+    polygonMapping.keys.forEach { polygon -> polygon.map = null }
+    polygonMapping.clear()
+
+    polygons.forEach { polygon ->
+        val gmsPolygon = GMSPolygon()
+        val path = GMSMutablePath()
+        polygon.coordinates.forEach { coord ->
+            path.addCoordinate(CLLocationCoordinate2DMake(coord.latitude, coord.longitude))
+        }
+        gmsPolygon.path = path
+        gmsPolygon.fillColor = polygon.color?.toAppleMapsColor()
+        gmsPolygon.strokeColor = polygon.lineColor?.toAppleMapsColor()
+        gmsPolygon.strokeWidth = polygon.lineWidth.toDouble()
+        gmsPolygon.map = mapView
+        polygonMapping[gmsPolygon] = polygon
     }
 }
 
@@ -281,6 +357,28 @@ internal fun MKMapView.updateAppleMapsPolylines(
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
+internal fun updateGoogleMapsPolylines(
+    mapView: GMSMapView,
+    polylines: List<Polyline>,
+    polylineMapping: MutableMap<GMSPolyline, Polyline>,
+) {
+    polylineMapping.keys.forEach { polyline -> polyline.map = null }
+    polylineMapping.clear()
+
+    polylines.forEach { polyline ->
+        val gmsPolyline = GMSPolyline()
+        val path = GMSMutablePath()
+        polyline.coordinates.forEach { coord ->
+            path.addCoordinate(CLLocationCoordinate2DMake(coord.latitude, coord.longitude))
+        }
+        gmsPolyline.path = path
+        gmsPolyline.strokeWidth = polyline.width.toDouble()
+        gmsPolyline.map = mapView
+        polylineMapping[gmsPolyline] = polyline
+    }
+}
+
 /**
  * Converts MapType enum to Apple MapKit's map type constant.
  *
@@ -292,6 +390,16 @@ internal fun MapType?.toAppleMapsMapType() =
         MapType.NORMAL -> MKMapTypeStandard
         MapType.SATELLITE -> MKMapTypeSatellite
         else -> MKMapTypeStandard
+    }
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun MapType?.toGoogleMapsMapType() =
+    when (this) {
+        MapType.HYBRID -> kGMSTypeHybrid
+        MapType.NORMAL -> kGMSTypeNormal
+        MapType.SATELLITE -> kGMSTypeSatellite
+        MapType.TERRAIN -> kGMSTypeTerrain
+        else -> kGMSTypeNormal
     }
 
 /**
@@ -404,6 +512,16 @@ internal fun Color.toAppleMapsColor(): UIColor {
  * @param isDarkModeEnabled true for dark mode, false for light mode
  */
 internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
+    overrideUserInterfaceStyle =
+        if (isDarkModeEnabled) {
+            UIUserInterfaceStyle.UIUserInterfaceStyleDark
+        } else {
+            UIUserInterfaceStyle.UIUserInterfaceStyleLight
+        }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
     overrideUserInterfaceStyle =
         if (isDarkModeEnabled) {
             UIUserInterfaceStyle.UIUserInterfaceStyleDark

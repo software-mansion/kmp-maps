@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
 import com.swmansion.kmpmaps.Map
+import com.swmansion.kmpmaps.MapPlatform
 import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapTheme
 import com.swmansion.kmpmaps.MapType
@@ -52,6 +53,7 @@ fun MapsScreen() {
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
             modifier = Modifier.weight(1f),
+            mapPlatform = MapPlatform.GOOGLE_MAPS,
             cameraPosition = currentCameraPosition,
             properties =
                 MapProperties(

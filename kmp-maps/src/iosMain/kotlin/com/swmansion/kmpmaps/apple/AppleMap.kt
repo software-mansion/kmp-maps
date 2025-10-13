@@ -1,4 +1,4 @@
-package com.swmansion.kmpmaps
+package com.swmansion.kmpmaps.apple
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +11,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
+import com.swmansion.kmpmaps.CameraPosition
+import com.swmansion.kmpmaps.Circle
+import com.swmansion.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.LocationPermissionHandler
+import com.swmansion.kmpmaps.MapProperties
+import com.swmansion.kmpmaps.MapTheme
+import com.swmansion.kmpmaps.MapUISettings
+import com.swmansion.kmpmaps.Marker
+import com.swmansion.kmpmaps.Polygon
+import com.swmansion.kmpmaps.Polyline
+import com.swmansion.kmpmaps.switchTheme
+import com.swmansion.kmpmaps.toAppleMapsMapType
+import com.swmansion.kmpmaps.toMKCoordinateRegion
+import com.swmansion.kmpmaps.toMKPointOfInterestFilter
+import com.swmansion.kmpmaps.updateAppleMapsCircles
+import com.swmansion.kmpmaps.updateAppleMapsMarkers
+import com.swmansion.kmpmaps.updateAppleMapsPolygons
+import com.swmansion.kmpmaps.updateAppleMapsPolylines
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.Foundation.NSSelectorFromString
 import platform.MapKit.MKCircle
 import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
@@ -42,7 +61,7 @@ internal fun AppleMap(
     onMapLoaded: (() -> Unit)?,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
-    var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
+    var mapDelegate by remember { mutableStateOf<AppleMapDelegate?>(null) }
     var tapGesture by remember { mutableStateOf<UITapGestureRecognizer?>(null) }
     var longPressGesture by remember { mutableStateOf<UILongPressGestureRecognizer?>(null) }
     val locationPermissionHandler = remember { LocationPermissionHandler() }
@@ -67,7 +86,6 @@ internal fun AppleMap(
         factory = {
             val mkMapView = MKMapView()
 
-            mkMapView.translatesAutoresizingMaskIntoConstraints = false
             mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
             mkMapView.switchTheme(isDarkModeEnabled)
@@ -93,7 +111,7 @@ internal fun AppleMap(
             }
 
             val delegate =
-                MapDelegate(
+                AppleMapDelegate(
                     properties = properties,
                     circleStyles = circleStyles,
                     polygonStyles = polygonStyles,
@@ -120,7 +138,7 @@ internal fun AppleMap(
             val tapGestureRecognizer = UITapGestureRecognizer()
             tapGestureRecognizer.addTarget(
                 target = delegate,
-                action = platform.Foundation.NSSelectorFromString("handleMapTap:"),
+                action = NSSelectorFromString("handleMapTap:"),
             )
             mkMapView.addGestureRecognizer(tapGestureRecognizer)
             tapGesture = tapGestureRecognizer
@@ -128,7 +146,7 @@ internal fun AppleMap(
             val longPressGestureRecognizer = UILongPressGestureRecognizer()
             longPressGestureRecognizer.addTarget(
                 target = delegate,
-                action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"),
+                action = NSSelectorFromString("handleMapLongPress:"),
             )
             mkMapView.addGestureRecognizer(longPressGestureRecognizer)
             longPressGesture = longPressGestureRecognizer
@@ -173,7 +191,7 @@ internal fun AppleMap(
                 mkMapView.removeGestureRecognizer(gesture)
                 gesture.addTarget(
                     mapDelegate as Any,
-                    action = platform.Foundation.NSSelectorFromString("handleMapTap:"),
+                    action = NSSelectorFromString("handleMapTap:"),
                 )
                 mkMapView.addGestureRecognizer(gesture)
             }
@@ -182,7 +200,7 @@ internal fun AppleMap(
                 mkMapView.removeGestureRecognizer(gesture)
                 gesture.addTarget(
                     mapDelegate as Any,
-                    action = platform.Foundation.NSSelectorFromString("handleMapLongPress:"),
+                    action = NSSelectorFromString("handleMapLongPress:"),
                 )
                 mkMapView.addGestureRecognizer(gesture)
             }

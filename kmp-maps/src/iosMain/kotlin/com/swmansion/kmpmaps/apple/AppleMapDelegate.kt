@@ -1,8 +1,22 @@
-package com.swmansion.kmpmaps
+package com.swmansion.kmpmaps.apple
 
+import com.swmansion.kmpmaps.CameraPosition
+import com.swmansion.kmpmaps.Circle
+import com.swmansion.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.MapProperties
+import com.swmansion.kmpmaps.Marker
+import com.swmansion.kmpmaps.Polygon
+import com.swmansion.kmpmaps.Polyline
+import com.swmansion.kmpmaps.isPointInCircle
+import com.swmansion.kmpmaps.isPointInPolygon
+import com.swmansion.kmpmaps.isPointNearPolyline
+import com.swmansion.kmpmaps.toAppleMapsColor
+import com.swmansion.kmpmaps.toCameraPosition
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
+import platform.MapKit.MKAnnotationView
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
@@ -20,7 +34,7 @@ import platform.darwin.NSObject
 
 /** iOS map delegate for handling Apple Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
-internal class MapDelegate(
+internal class AppleMapDelegate(
     private val properties: MapProperties,
     private val circleStyles: MutableMap<MKCircle, Circle>,
     private val polygonStyles: MutableMap<MKPolygon, Polygon>,
@@ -77,10 +91,7 @@ internal class MapDelegate(
      * @param mapView The map view containing the annotation
      * @param didSelectAnnotationView The annotation view that was selected
      */
-    override fun mapView(
-        mapView: MKMapView,
-        didSelectAnnotationView: platform.MapKit.MKAnnotationView,
-    ) {
+    override fun mapView(mapView: MKMapView, didSelectAnnotationView: MKAnnotationView) {
         val annotation = didSelectAnnotationView.annotation
         if (annotation is MKPointAnnotation) {
             markerMapping[annotation]?.let { marker -> onMarkerClick?.invoke(marker) }
@@ -137,7 +148,7 @@ internal class MapDelegate(
      * @param gestureRecognizer The tap gesture recognizer
      */
     @ObjCAction
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    @OptIn(BetaInteropApi::class)
     fun handleMapTap(gestureRecognizer: UITapGestureRecognizer) {
         val mapView = gestureRecognizer.view as? MKMapView ?: return
         val tapPoint = gestureRecognizer.locationInView(mapView)
@@ -186,7 +197,7 @@ internal class MapDelegate(
      * @param gestureRecognizer The long press gesture recognizer
      */
     @ObjCAction
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    @OptIn(BetaInteropApi::class)
     fun handleMapLongPress(gestureRecognizer: UILongPressGestureRecognizer) {
         if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
             val mapView = gestureRecognizer.view as? MKMapView ?: return
