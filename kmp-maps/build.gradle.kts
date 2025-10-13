@@ -1,6 +1,6 @@
 group = "com.swmansion.kmpmaps"
 
-version = "0.2.0"
+version = "0.2.1"
 
 plugins {
     alias(libs.plugins.android.library)
@@ -48,6 +48,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.google.accompanist.permissions)
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
         }

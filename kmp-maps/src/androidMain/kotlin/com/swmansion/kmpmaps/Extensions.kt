@@ -1,6 +1,9 @@
 package com.swmansion.kmpmaps
 
 import androidx.compose.ui.geometry.Offset
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -68,10 +71,11 @@ internal fun MapTheme.toGoogleMapsTheme() =
  *
  * @return GoogleMapProperties with map configuration
  */
-internal fun MapProperties.toGoogleMapsProperties() =
+@OptIn(ExperimentalPermissionsApi::class)
+internal fun MapProperties.toGoogleMapsProperties(locationPermissionState: PermissionState) =
     GoogleMapProperties(
         mapType = mapType.toGoogleMapsMapType(),
-        isMyLocationEnabled = isMyLocationEnabled,
+        isMyLocationEnabled = isMyLocationEnabled && locationPermissionState.status.isGranted,
         isTrafficEnabled = isTrafficEnabled,
         isBuildingEnabled = isBuildingEnabled,
         isIndoorEnabled = androidIsIndoorEnabled,
