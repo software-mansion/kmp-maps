@@ -57,6 +57,7 @@ internal fun GoogleMap(
     onMapLoaded: (() -> Unit)?,
 ) {
     var mapView by remember { mutableStateOf<GMSMapView?>(null) }
+    var mapDelegate by remember { mutableStateOf<GoogleMapDelegate?>(null) }
 
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     var hasLocationPermission by remember {
@@ -116,6 +117,11 @@ internal fun GoogleMap(
                 gmsMapView.camera = camera
             }
 
+            val delegate = GoogleMapDelegate(onCameraMove = onCameraMove)
+
+            gmsMapView.delegate = delegate
+            mapDelegate = delegate
+
             updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)
             updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(gmsMapView, polygons, polygonMapping)
@@ -140,16 +146,7 @@ internal fun GoogleMap(
             gmsMapView.settings.scrollGestures = uiSettings.scrollEnabled
             gmsMapView.settings.rotateGestures = uiSettings.iosRotateGesturesEnabled
             gmsMapView.settings.tiltGestures = uiSettings.togglePitchEnabled
-
-            cameraPosition?.let { pos ->
-                val camera =
-                    GMSCameraPosition.cameraWithLatitude(
-                        latitude = pos.coordinates.latitude,
-                        longitude = pos.coordinates.longitude,
-                        zoom = pos.zoom,
-                    )
-                gmsMapView.camera = camera
-            }
+            gmsMapView.delegate = mapDelegate
 
             updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)
             updateGoogleMapsCircles(gmsMapView, circles, circleMapping)

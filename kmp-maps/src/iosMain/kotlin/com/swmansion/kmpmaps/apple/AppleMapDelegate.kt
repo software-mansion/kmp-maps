@@ -111,38 +111,6 @@ internal class AppleMapDelegate(
     }
 
     /**
-     * Updates callback functions for map interactions.
-     *
-     * @param onMarkerClick Callback for marker clicks
-     * @param onCircleClick Callback for circle clicks
-     * @param onPolygonClick Callback for polygon clicks
-     * @param onPolylineClick Callback for polyline clicks
-     * @param onMapClick Callback for map clicks
-     * @param onMapLongClick Callback for map long clicks
-     * @param onPOIClick Callback for POI clicks
-     * @param onCameraMove Callback for camera movement
-     */
-    fun updateCallbacks(
-        onMarkerClick: ((Marker) -> Unit)?,
-        onCircleClick: ((Circle) -> Unit)?,
-        onPolygonClick: ((Polygon) -> Unit)?,
-        onPolylineClick: ((Polyline) -> Unit)?,
-        onMapClick: ((Coordinates) -> Unit)?,
-        onMapLongClick: ((Coordinates) -> Unit)?,
-        onPOIClick: ((Coordinates) -> Unit)?,
-        onCameraMove: ((CameraPosition) -> Unit)?,
-    ) {
-        this.onMarkerClick = onMarkerClick
-        this.onCircleClick = onCircleClick
-        this.onPolygonClick = onPolygonClick
-        this.onPolylineClick = onPolylineClick
-        this.onMapClick = onMapClick
-        this.onMapLongClick = onMapLongClick
-        this.onPOIClick = onPOIClick
-        this.onCameraMove = onCameraMove
-    }
-
-    /**
      * Handles tap gestures on the map to detect clicks on overlays and map.
      *
      * @param gestureRecognizer The tap gesture recognizer

@@ -186,17 +186,7 @@ internal fun AppleMap(
             mkMapView.scrollEnabled = uiSettings.scrollEnabled
             mkMapView.rotateEnabled = uiSettings.iosRotateGesturesEnabled
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-
-            mapDelegate?.updateCallbacks(
-                onMarkerClick = onMarkerClick,
-                onCircleClick = onCircleClick,
-                onPolygonClick = onPolygonClick,
-                onPolylineClick = onPolylineClick,
-                onMapClick = onMapClick,
-                onMapLongClick = onMapLongClick,
-                onPOIClick = onPOIClick,
-                onCameraMove = onCameraMove,
-            )
+            mkMapView.delegate = mapDelegate
 
             tapGesture?.let { gesture ->
                 mkMapView.removeGestureRecognizer(gesture)
