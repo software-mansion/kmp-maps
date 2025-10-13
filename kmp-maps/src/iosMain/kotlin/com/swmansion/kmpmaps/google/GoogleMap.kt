@@ -117,7 +117,21 @@ internal fun GoogleMap(
                 gmsMapView.camera = camera
             }
 
-            val delegate = GoogleMapDelegate(onCameraMove = onCameraMove)
+            val delegate =
+                GoogleMapDelegate(
+                    onCameraMove = onCameraMove,
+                    onMarkerClick = onMarkerClick,
+                    onCircleClick = onCircleClick,
+                    onPolygonClick = onPolygonClick,
+                    onPolylineClick = onPolylineClick,
+                    onMapClick = onMapClick,
+                    onMapLongClick = onMapLongClick,
+                    onPOIClick = onPOIClick,
+                    markerMapping = markerMapping,
+                    circleMapping = circleMapping,
+                    polygonMapping = polygonMapping,
+                    polylineMapping = polylineMapping,
+                )
 
             gmsMapView.delegate = delegate
             mapDelegate = delegate
