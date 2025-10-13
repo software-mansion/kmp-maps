@@ -11,9 +11,14 @@ import platform.darwin.NSObject
 @OptIn(ExperimentalForeignApi::class)
 internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegateProtocol {
     private val locationManager = CLLocationManager()
+    private var onPermissionChanged: (() -> Unit)? = null
 
     init {
         locationManager.delegate = this
+    }
+
+    fun setOnPermissionChanged(callback: () -> Unit) {
+        onPermissionChanged = callback
     }
 
     /**
@@ -34,5 +39,12 @@ internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegate
         if (locationManager.authorizationStatus == kCLAuthorizationStatusNotDetermined) {
             locationManager.requestWhenInUseAuthorization()
         }
+    }
+
+    override fun locationManager(
+        manager: CLLocationManager,
+        didChangeAuthorizationStatus: platform.CoreLocation.CLAuthorizationStatus,
+    ) {
+        onPermissionChanged?.invoke()
     }
 }

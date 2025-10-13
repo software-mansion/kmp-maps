@@ -20,6 +20,7 @@ import cocoapods.GoogleMaps.GMSPolyline
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Circle
 import com.swmansion.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.LocationPermissionHandler
 import com.swmansion.kmpmaps.MapProperties
 import com.swmansion.kmpmaps.MapTheme
 import com.swmansion.kmpmaps.MapUISettings
@@ -56,16 +57,35 @@ internal fun GoogleMap(
     onMapLoaded: (() -> Unit)?,
 ) {
     var mapView by remember { mutableStateOf<GMSMapView?>(null) }
+
+    val locationPermissionHandler = remember { LocationPermissionHandler() }
+    var hasLocationPermission by remember {
+        mutableStateOf(locationPermissionHandler.checkPermission())
+    }
+
     val circleMapping = remember { mutableMapOf<GMSCircle, Circle>() }
     val polygonMapping = remember { mutableMapOf<GMSPolygon, Polygon>() }
     val polylineMapping = remember { mutableMapOf<GMSPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
+
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
             isSystemInDarkTheme()
         } else {
             properties.mapTheme == MapTheme.DARK
         }
+
+    LaunchedEffect(Unit) {
+        locationPermissionHandler.setOnPermissionChanged {
+            hasLocationPermission = locationPermissionHandler.checkPermission()
+        }
+    }
+
+    LaunchedEffect(properties.isMyLocationEnabled) {
+        if (properties.isMyLocationEnabled && !hasLocationPermission) {
+            locationPermissionHandler.requestPermission()
+        }
+    }
 
     UIKitView(
         factory = {
@@ -75,6 +95,7 @@ internal fun GoogleMap(
 
             gmsMapView.switchTheme(isDarkModeEnabled)
 
+            gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
 
@@ -109,6 +130,7 @@ internal fun GoogleMap(
 
             gmsMapView.switchTheme(isDarkModeEnabled)
 
+            gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
 

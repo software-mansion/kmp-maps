@@ -62,13 +62,20 @@ internal fun AppleMap(
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<AppleMapDelegate?>(null) }
+
     var tapGesture by remember { mutableStateOf<UITapGestureRecognizer?>(null) }
     var longPressGesture by remember { mutableStateOf<UILongPressGestureRecognizer?>(null) }
+
     val locationPermissionHandler = remember { LocationPermissionHandler() }
+    var hasLocationPermission by remember {
+        mutableStateOf(locationPermissionHandler.checkPermission())
+    }
+
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
+
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
             isSystemInDarkTheme()
@@ -76,8 +83,14 @@ internal fun AppleMap(
             properties.mapTheme == MapTheme.DARK
         }
 
+    LaunchedEffect(Unit) {
+        locationPermissionHandler.setOnPermissionChanged {
+            hasLocationPermission = locationPermissionHandler.checkPermission()
+        }
+    }
+
     LaunchedEffect(properties.isMyLocationEnabled) {
-        if (properties.isMyLocationEnabled && !locationPermissionHandler.checkPermission()) {
+        if (properties.isMyLocationEnabled && !hasLocationPermission) {
             locationPermissionHandler.requestPermission()
         }
     }
@@ -90,8 +103,7 @@ internal fun AppleMap(
 
             mkMapView.switchTheme(isDarkModeEnabled)
 
-            mkMapView.showsUserLocation =
-                properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
+            mkMapView.showsUserLocation = properties.isMyLocationEnabled && hasLocationPermission
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
             mkMapView.showsPointsOfInterest = properties.iosShowPOI
@@ -160,8 +172,7 @@ internal fun AppleMap(
 
             mkMapView.switchTheme(isDarkModeEnabled)
 
-            mkMapView.showsUserLocation =
-                properties.isMyLocationEnabled && locationPermissionHandler.checkPermission()
+            mkMapView.showsUserLocation = properties.isMyLocationEnabled && hasLocationPermission
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
 
