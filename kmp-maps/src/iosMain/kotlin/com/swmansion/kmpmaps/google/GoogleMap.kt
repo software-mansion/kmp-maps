@@ -94,6 +94,14 @@ internal fun GoogleMap(
 
     UIKitView(
         factory = {
+            val initialized = GoogleMapsInitializer.initializeIfNeeded()
+            if (!initialized) {
+                println(
+                    "KMP Maps Warning: GoogleMaps not initialized. " +
+                        "Please add GoogleMapsAPIKey to Info.plist."
+                )
+            }
+
             val gmsMapView = GMSMapView()
 
             gmsMapView.mapType = properties.mapType.toGoogleMapsMapType()
