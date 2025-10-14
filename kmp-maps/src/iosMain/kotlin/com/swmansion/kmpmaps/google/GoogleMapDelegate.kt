@@ -49,6 +49,7 @@ internal class GoogleMapDelegate(
     override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
         val marker = markerMapping[didTapMarker]
         return if (marker != null) {
+            mapView.selectedMarker = didTapMarker
             onMarkerClick?.invoke(marker)
             true
         } else {

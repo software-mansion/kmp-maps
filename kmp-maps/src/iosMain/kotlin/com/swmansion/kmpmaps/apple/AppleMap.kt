@@ -115,7 +115,7 @@ internal fun AppleMap(
             mkMapView.showsCompass = uiSettings.compassEnabled
             mkMapView.zoomEnabled = uiSettings.zoomEnabled
             mkMapView.scrollEnabled = uiSettings.scrollEnabled
-            mkMapView.rotateEnabled = uiSettings.iosRotateGesturesEnabled
+            mkMapView.rotateEnabled = uiSettings.rotateEnabled
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
 
             cameraPosition?.let { pos ->
@@ -184,7 +184,7 @@ internal fun AppleMap(
             mkMapView.showsCompass = uiSettings.compassEnabled
             mkMapView.zoomEnabled = uiSettings.zoomEnabled
             mkMapView.scrollEnabled = uiSettings.scrollEnabled
-            mkMapView.rotateEnabled = uiSettings.iosRotateGesturesEnabled
+            mkMapView.rotateEnabled = uiSettings.rotateEnabled
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
             mkMapView.delegate = mapDelegate
 

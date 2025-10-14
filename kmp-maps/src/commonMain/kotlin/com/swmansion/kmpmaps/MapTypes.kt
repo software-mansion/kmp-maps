@@ -40,6 +40,10 @@ public data class MapProperties(
     val iosShowPOI: Boolean = true,
     val iosPointsOfInterest: AppleMapsPointOfInterestCategories? = null,
     val iosPolylineTapThreshold: Float? = null,
+    val iosGmsMaxZoomPreference: Float? = null,
+    val iosGmsMinZoomPreference: Float? = null,
+    val iosGmsIsIndoorEnabled: Boolean = true,
+    val iosGmsMapStyleOptions: GoogleMapsMapStyleOptions? = null,
     val androidIsIndoorEnabled: Boolean = true,
     val androidMaxZoomPreference: Float? = null,
     val androidMinZoomPreference: Float? = null,
@@ -55,10 +59,9 @@ public data class MapProperties(
  * @param togglePitchEnabled Whether pitch gestures are enabled
  * @param scrollEnabled Whether scroll gestures are enabled
  * @param zoomEnabled Whether zoom gestures are enabled
- * @param iosRotateGesturesEnabled Whether rotation gestures are enabled (iOS only)
+ * @param rotateEnabled Whether rotation gestures are enabled
  * @param androidIndoorLevelPickerEnabled Whether indoor level picker is enabled (Android only)
  * @param androidMapToolbarEnabled Whether the map toolbar is enabled (Android only)
- * @param androidRotationGesturesEnabled Whether rotation gestures are enabled (Android only)
  * @param androidScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
  *   rotate/zoom (Android only)
  * @param androidTiltGesturesEnabled Whether tilt gestures are enabled (Android only)
@@ -71,10 +74,13 @@ public data class MapUISettings(
     val togglePitchEnabled: Boolean = true,
     val scrollEnabled: Boolean = true,
     val zoomEnabled: Boolean = true,
-    val iosRotateGesturesEnabled: Boolean = true,
+    val rotateEnabled: Boolean = true,
+    val iosGmsIndoorPicker: Boolean = true,
+    val iosGmsScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
+    val iosGmsTiltGesturesEnabled: Boolean = true,
+    val iosGmsConsumesGesturesInView: Boolean = true,
     val androidIndoorLevelPickerEnabled: Boolean = true,
     val androidMapToolbarEnabled: Boolean = true,
-    val androidRotationGesturesEnabled: Boolean = true,
     val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
     val androidTiltGesturesEnabled: Boolean = true,
     val androidZoomControlsEnabled: Boolean = true,
@@ -165,6 +171,8 @@ public data class Coordinates(val latitude: Double, val longitude: Double)
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
+    val iosGmsBearing: Float? = null,
+    val iosGmsViewingAngle: Float? = null,
     val androidBearing: Float? = null,
     val androidTilt: Float? = null,
 )

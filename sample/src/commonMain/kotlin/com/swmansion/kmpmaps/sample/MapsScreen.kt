@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.GoogleMapsMapStyleOptions
 import com.swmansion.kmpmaps.Map
 import com.swmansion.kmpmaps.MapPlatform
 import com.swmansion.kmpmaps.MapProperties
@@ -62,6 +63,8 @@ fun MapsScreen() {
                     isMyLocationEnabled = showUserLocation,
                     isTrafficEnabled = true,
                     isBuildingEnabled = true,
+                    iosGmsMapStyleOptions = GoogleMapsMapStyleOptions(json = jsonMapStyle),
+                    androidMapStyleOptions = GoogleMapsMapStyleOptions(json = jsonMapStyle),
                     androidIsIndoorEnabled = true,
                     androidMinZoomPreference = 3f,
                     androidMaxZoomPreference = 21f,

@@ -29,11 +29,14 @@ import com.swmansion.kmpmaps.Polygon
 import com.swmansion.kmpmaps.Polyline
 import com.swmansion.kmpmaps.switchTheme
 import com.swmansion.kmpmaps.toGoogleMapsMapType
+import com.swmansion.kmpmaps.toGoogleMapsSettings
+import com.swmansion.kmpmaps.toNativeStyleOptions
 import com.swmansion.kmpmaps.updateGoogleMapsCircles
 import com.swmansion.kmpmaps.updateGoogleMapsMarkers
 import com.swmansion.kmpmaps.updateGoogleMapsPolygons
 import com.swmansion.kmpmaps.updateGoogleMapsPolylines
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.CoreLocation.CLLocationCoordinate2DMake
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -99,20 +102,26 @@ internal fun GoogleMap(
             gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
+            gmsMapView.indoorEnabled = properties.iosGmsIsIndoorEnabled
+            gmsMapView.mapStyle = properties.iosGmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.setMinZoom(
+                properties.iosGmsMinZoomPreference ?: 0f,
+                properties.iosGmsMaxZoomPreference ?: 20f,
+            )
 
-            gmsMapView.settings.compassButton = uiSettings.compassEnabled
-            gmsMapView.settings.myLocationButton = uiSettings.myLocationButtonEnabled
-            gmsMapView.settings.zoomGestures = uiSettings.zoomEnabled
-            gmsMapView.settings.scrollGestures = uiSettings.scrollEnabled
-            gmsMapView.settings.rotateGestures = uiSettings.iosRotateGesturesEnabled
-            gmsMapView.settings.tiltGestures = uiSettings.togglePitchEnabled
+            uiSettings.toGoogleMapsSettings(gmsMapView)
 
             cameraPosition?.let { pos ->
                 val camera =
-                    GMSCameraPosition.cameraWithLatitude(
-                        latitude = pos.coordinates.latitude,
-                        longitude = pos.coordinates.longitude,
+                    GMSCameraPosition.cameraWithTarget(
+                        target =
+                            CLLocationCoordinate2DMake(
+                                pos.coordinates.latitude,
+                                pos.coordinates.longitude,
+                            ),
                         zoom = pos.zoom,
+                        bearing = (pos.iosGmsBearing ?: 0f).toDouble(),
+                        viewingAngle = (pos.iosGmsViewingAngle ?: 0f).toDouble(),
                     )
                 gmsMapView.camera = camera
             }
@@ -153,13 +162,14 @@ internal fun GoogleMap(
             gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
+            gmsMapView.indoorEnabled = properties.iosGmsIsIndoorEnabled
+            gmsMapView.mapStyle = properties.iosGmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.setMinZoom(
+                properties.iosGmsMinZoomPreference ?: 0f,
+                properties.iosGmsMaxZoomPreference ?: 20f,
+            )
 
-            gmsMapView.settings.compassButton = uiSettings.compassEnabled
-            gmsMapView.settings.myLocationButton = uiSettings.myLocationButtonEnabled
-            gmsMapView.settings.zoomGestures = uiSettings.zoomEnabled
-            gmsMapView.settings.scrollGestures = uiSettings.scrollEnabled
-            gmsMapView.settings.rotateGestures = uiSettings.iosRotateGesturesEnabled
-            gmsMapView.settings.tiltGestures = uiSettings.togglePitchEnabled
+            uiSettings.toGoogleMapsSettings(gmsMapView)
             gmsMapView.delegate = mapDelegate
 
             updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)

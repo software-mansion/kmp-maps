@@ -3,6 +3,7 @@ package com.swmansion.kmpmaps
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import cocoapods.GoogleMaps.GMSCircle
+import cocoapods.GoogleMaps.GMSMapStyle
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSMutablePath
@@ -529,3 +530,21 @@ internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
             UIUserInterfaceStyle.UIUserInterfaceStyleLight
         }
 }
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
+    mapView.settings.scrollGestures = scrollEnabled
+    mapView.settings.zoomGestures = zoomEnabled
+    mapView.settings.tiltGestures = iosGmsTiltGesturesEnabled
+    mapView.settings.rotateGestures = rotateEnabled
+    mapView.settings.compassButton = compassEnabled
+    mapView.settings.myLocationButton = myLocationButtonEnabled
+    mapView.settings.indoorPicker = iosGmsIndoorPicker
+    mapView.settings.allowScrollGesturesDuringRotateOrZoom =
+        iosGmsScrollGesturesEnabledDuringRotateOrZoom
+    mapView.settings.consumesGesturesInView = iosGmsConsumesGesturesInView
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
+    this?.json?.let { GMSMapStyle.styleWithJSONString(it, error = null) }
