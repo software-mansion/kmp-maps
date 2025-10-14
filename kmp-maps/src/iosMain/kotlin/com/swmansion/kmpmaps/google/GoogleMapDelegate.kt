@@ -5,6 +5,7 @@ import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSMarker
+import cocoapods.GoogleMaps.GMSOverlay
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
 import com.swmansion.kmpmaps.CameraPosition
@@ -85,6 +86,14 @@ internal class GoogleMapDelegate(
         location.useContents {
             val coordinates = Coordinates(latitude = latitude, longitude = longitude)
             onPOIClick?.invoke(coordinates)
+        }
+    }
+
+    override fun mapView(mapView: GMSMapView, didTapOverlay: GMSOverlay) {
+        when (didTapOverlay) {
+            is GMSCircle -> circleMapping[didTapOverlay]?.let { onCircleClick?.invoke(it) }
+            is GMSPolygon -> polygonMapping[didTapOverlay]?.let { onPolygonClick?.invoke(it) }
+            is GMSPolyline -> polylineMapping[didTapOverlay]?.let { onPolylineClick?.invoke(it) }
         }
     }
 }

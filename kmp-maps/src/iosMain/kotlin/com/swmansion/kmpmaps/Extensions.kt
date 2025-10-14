@@ -254,6 +254,7 @@ internal fun updateGoogleMapsCircles(
         gmsCircle.strokeColor = circle.lineColor?.toAppleMapsColor()
         gmsCircle.strokeWidth = (circle.lineWidth ?: 1).toDouble()
         gmsCircle.map = mapView
+        gmsCircle.tappable = true
         circleMapping[gmsCircle] = circle
     }
 }
@@ -316,6 +317,7 @@ internal fun updateGoogleMapsPolygons(
         gmsPolygon.strokeColor = polygon.lineColor?.toAppleMapsColor()
         gmsPolygon.strokeWidth = polygon.lineWidth.toDouble()
         gmsPolygon.map = mapView
+        gmsPolygon.tappable = true
         polygonMapping[gmsPolygon] = polygon
     }
 }
@@ -376,6 +378,7 @@ internal fun updateGoogleMapsPolylines(
         gmsPolyline.path = path
         gmsPolyline.strokeWidth = polyline.width.toDouble()
         gmsPolyline.map = mapView
+        gmsPolyline.tappable = true
         polylineMapping[gmsPolyline] = polyline
     }
 }
