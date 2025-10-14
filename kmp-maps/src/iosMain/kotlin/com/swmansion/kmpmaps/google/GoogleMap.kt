@@ -38,6 +38,7 @@ import com.swmansion.kmpmaps.updateGoogleMapsPolylines
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
 
+/** iOS implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 internal fun GoogleMap(

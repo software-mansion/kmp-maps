@@ -23,9 +23,13 @@ public enum class MapTheme {
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
  * @param mapTheme The theme for the map appearance
- * @param iosShowPOI Whether to show points of interest (POIs) on the map (iOS only)
- * @param iosPointsOfInterest POI categories to include/exclude (iOS only)
- * @param iosPolylineTapThreshold Threshold for polyline tap detection (iOS only)
+ * @param iosShowPOI Whether to show points of interest (POIs) on the map (iOS Apple Maps only)
+ * @param iosPointsOfInterest POI categories to include/exclude (iOS Apple Maps only)
+ * @param iosPolylineTapThreshold Threshold for polyline tap detection (iOS Apple Maps only)
+ * @param iosGmsMaxZoomPreference Maximum zoom level preference (iOS Google Maps only)
+ * @param iosGmsMinZoomPreference Minimum zoom level preference (iOS Google Maps only)
+ * @param iosGmsIsIndoorEnabled Whether indoor maps are enabled (iOS Google Maps only)
+ * @param iosGmsMapStyleOptions Custom map styling options (iOS Google Maps only)
  * @param androidIsIndoorEnabled Whether indoor maps are enabled (Android only)
  * @param androidMaxZoomPreference Maximum zoom level preference (Android only)
  * @param androidMinZoomPreference Minimum zoom level preference (Android only)
@@ -60,6 +64,12 @@ public data class MapProperties(
  * @param scrollEnabled Whether scroll gestures are enabled
  * @param zoomEnabled Whether zoom gestures are enabled
  * @param rotateEnabled Whether rotation gestures are enabled
+ * @param iosGmsIndoorPicker Whether indoor level picker is enabled (iOS Google Maps only)
+ * @param iosGmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
+ *   rotate/zoom (iOS only)
+ * @param iosGmsTiltGesturesEnabled Whether tilt gestures are enabled (iOS Google Maps only)
+ * @param iosGmsConsumesGesturesInView Whether the map consumes gestures in view (iOS Google Maps
+ *   only)
  * @param androidIndoorLevelPickerEnabled Whether indoor level picker is enabled (Android only)
  * @param androidMapToolbarEnabled Whether the map toolbar is enabled (Android only)
  * @param androidScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
@@ -91,7 +101,7 @@ public data class MapUISettings(
  *
  * @param coordinates The geographical coordinates where the marker should be placed
  * @param title The title text displayed when the marker is tapped
- * @param iosTintColor The tint color for the marker (iOS only)
+ * @param iosTintColor The tint color for the marker (iOS Apple Maps only)
  * @param androidAnchor The anchor point for the marker (Android only)
  * @param androidDraggable Whether the marker can be dragged by the user (Android only)
  * @param androidSnippet Additional text displayed below the title (Android only)

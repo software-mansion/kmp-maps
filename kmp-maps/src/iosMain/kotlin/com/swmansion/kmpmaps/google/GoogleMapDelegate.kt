@@ -21,6 +21,7 @@ import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.darwin.NSObject
 
+/** iOS map delegate for handling Google Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class GoogleMapDelegate(
     private var onCameraMove: ((CameraPosition) -> Unit)?,
@@ -37,6 +38,12 @@ internal class GoogleMapDelegate(
     private val polylineMapping: MutableMap<GMSPolyline, Polyline>,
 ) : NSObject(), GMSMapViewDelegateProtocol {
 
+    /**
+     * Handles camera movement events when the map region changes.
+     *
+     * @param mapView The map view whose region changed
+     * @param didChangeCameraPosition The new camera position
+     */
     override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition): Unit =
         didChangeCameraPosition.target.useContents {
             val cameraPosition =
@@ -47,6 +54,13 @@ internal class GoogleMapDelegate(
             onCameraMove?.invoke(cameraPosition)
         }
 
+    /**
+     * Handles marker selection events when user taps on annotations.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didTapMarker The annotation that was selected
+     * @return Whether the event was handled
+     */
     override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
         val marker = markerMapping[didTapMarker]
         return if (marker != null) {
@@ -58,6 +72,12 @@ internal class GoogleMapDelegate(
         }
     }
 
+    /**
+     * Handles tap gestures on the map to detect clicks on overlays and map.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didTapAtCoordinate The coordinate that was tapped
+     */
     @ObjCSignatureOverride
     override fun mapView(mapView: GMSMapView, didTapAtCoordinate: CValue<CLLocationCoordinate2D>) {
         didTapAtCoordinate.useContents {
@@ -66,6 +86,12 @@ internal class GoogleMapDelegate(
         }
     }
 
+    /**
+     * Handles long press gestures on the map.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didLongPressAtCoordinate The coordinate that was long pressed
+     */
     @ObjCSignatureOverride
     override fun mapView(
         mapView: GMSMapView,
@@ -77,6 +103,14 @@ internal class GoogleMapDelegate(
         }
     }
 
+    /**
+     * Handles POI tap events on the map.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didTapPOIWithPlaceID The place ID of the POI that was tapped
+     * @param name The name of the POI
+     * @param location The location of the POI
+     */
     override fun mapView(
         mapView: GMSMapView,
         didTapPOIWithPlaceID: String,
@@ -89,6 +123,12 @@ internal class GoogleMapDelegate(
         }
     }
 
+    /**
+     * Handles overlay tap events on the map.
+     *
+     * @param mapView The map view containing the annotation
+     * @param didTapOverlay The overlay that was tapped
+     */
     override fun mapView(mapView: GMSMapView, didTapOverlay: GMSOverlay) {
         when (didTapOverlay) {
             is GMSCircle -> circleMapping[didTapOverlay]?.let { onCircleClick?.invoke(it) }

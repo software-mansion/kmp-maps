@@ -17,6 +17,11 @@ internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegate
         locationManager.delegate = this
     }
 
+    /**
+     * Sets a callback to be invoked when the location permission changes.
+     *
+     * @param callback The callback function to be called when the permission changes
+     */
     fun setOnPermissionChanged(callback: () -> Unit) {
         onPermissionChanged = callback
     }
@@ -41,6 +46,12 @@ internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegate
         }
     }
 
+    /**
+     * Handles changes in location permission status.
+     *
+     * @param manager The location manager that generated the event
+     * @param didChangeAuthorizationStatus The new authorization status
+     */
     override fun locationManager(
         manager: CLLocationManager,
         didChangeAuthorizationStatus: platform.CoreLocation.CLAuthorizationStatus,

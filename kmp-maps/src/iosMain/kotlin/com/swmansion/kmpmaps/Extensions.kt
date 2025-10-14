@@ -172,6 +172,13 @@ internal fun MKMapView.updateAppleMapsMarkers(
     return markerMapping
 }
 
+/**
+ * Updates Google Maps markers by removing existing markers and adding new ones.
+ *
+ * @param mapView Google Maps map view
+ * @param markers List of MapMarker objects to display
+ * @param markerMapping MutableMap mapping GMSMarker to MapMarker for click handling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsMarkers(
     mapView: GMSMapView,
@@ -236,6 +243,13 @@ internal fun MKMapView.updateAppleMapsCircles(
     }
 }
 
+/**
+ * Updates Google Maps circles by removing existing circles and adding new ones.
+ *
+ * @param mapView Google Maps map view
+ * @param circles List of MapCircle objects to display
+ * @param circleMapping MutableMap mapping GMSCircle to MapCircle for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsCircles(
     mapView: GMSMapView,
@@ -297,6 +311,13 @@ internal fun MKMapView.updateAppleMapsPolygons(
     }
 }
 
+/**
+ * Updates Google Maps polygons by removing existing polygons and adding new ones.
+ *
+ * @param mapView Google Maps map view
+ * @param polygons List of MapPolygon objects to display
+ * @param polygonMapping MutableMap mapping GMSPolygon to MapPolygon for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolygons(
     mapView: GMSMapView,
@@ -360,6 +381,13 @@ internal fun MKMapView.updateAppleMapsPolylines(
     }
 }
 
+/**
+ * Updates Google Maps polylines by removing existing polylines and adding new ones.
+ *
+ * @param mapView Google Maps map view
+ * @param polylines List of MapPolyline objects to display
+ * @param polylineMapping MutableMap mapping GMSPolyline to MapPolyline for styling
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolylines(
     mapView: GMSMapView,
@@ -524,6 +552,11 @@ internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
         }
 }
 
+/**
+ * Switches between light and dark mode for the map.
+ *
+ * @param isDarkModeEnabled true for dark mode, false for light mode
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
     overrideUserInterfaceStyle =
@@ -534,6 +567,11 @@ internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
         }
 }
 
+/**
+ * Updates Google Maps settings based on MapUISettings.
+ *
+ * @param mapView Google Maps map view
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
     mapView.settings.scrollGestures = scrollEnabled
@@ -548,6 +586,11 @@ internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
     mapView.settings.consumesGesturesInView = iosGmsConsumesGesturesInView
 }
 
+/**
+ * Converts GoogleMapsMapStyleOptions to native GMSMapStyle.
+ *
+ * @return GMSMapStyle from JSON string, or null if no JSON provided
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
     this?.json?.let { GMSMapStyle.styleWithJSONString(it, error = null) }

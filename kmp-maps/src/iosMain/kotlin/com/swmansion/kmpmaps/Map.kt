@@ -6,7 +6,7 @@ import com.swmansion.kmpmaps.apple.AppleMap
 import com.swmansion.kmpmaps.google.GoogleMap
 import kotlinx.cinterop.ExperimentalForeignApi
 
-/** iOS implementation of the Map composable using Apple Maps (MapKit). */
+/** iOS implementation of the Map composable using Apple Maps or Google Maps. */
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 public actual fun Map(
