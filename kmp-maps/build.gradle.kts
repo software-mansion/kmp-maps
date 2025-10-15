@@ -27,7 +27,7 @@ kotlin {
     cocoapods {
         summary = "Universal map component for Compose Multiplatform"
         homepage = "https://github.com/software-mansion/kmp-maps"
-        version = "0.2.1"
+        version = "0.2.2"
         ios.deploymentTarget = "16.0"
         framework {
             baseName = "kmp-maps"
