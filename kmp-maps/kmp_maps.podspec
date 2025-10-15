@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'kmp_maps'
-    spec.version                  = '0.2.0'
+    spec.version                  = '0.2.1'
     spec.homepage                 = 'https://github.com/software-mansion/kmp-maps'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
@@ -8,8 +8,8 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Universal map component for Compose Multiplatform'
     spec.vendored_frameworks      = 'build/cocoapods/framework/kmp_maps.framework'
     spec.libraries                = 'c++'
-    spec.ios.deployment_target    = '14.0'
-    spec.dependency 'GoogleMaps', '8.2.0'
+    spec.ios.deployment_target    = '16.0'
+    spec.dependency 'GoogleMaps', '10.4.0'
                 
     if !Dir.exist?('build/cocoapods/framework/kmp_maps.framework') || Dir.empty?('build/cocoapods/framework/kmp_maps.framework')
         raise "

@@ -27,13 +27,13 @@ kotlin {
     cocoapods {
         summary = "Universal map component for Compose Multiplatform"
         homepage = "https://github.com/software-mansion/kmp-maps"
-        version = "0.2.0"
-        ios.deploymentTarget = "14.0"
+        version = "0.2.1"
+        ios.deploymentTarget = "16.0"
         framework {
             baseName = "kmp-maps"
             isStatic = true
         }
-        pod("GoogleMaps") { version = "8.2.0" }
+        pod("GoogleMaps") { version = "10.4.0" }
     }
 
     sourceSets {
