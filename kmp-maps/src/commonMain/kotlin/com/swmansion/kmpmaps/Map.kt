@@ -99,8 +99,8 @@ import androidx.compose.ui.Modifier
 public expect fun Map(
     modifier: Modifier = Modifier,
     cameraPosition: CameraPosition? = null,
-    properties: MapProperties,
-    uiSettings: MapUISettings,
+    properties: MapProperties = MapProperties(),
+    uiSettings: MapUISettings = MapUISettings(),
     markers: List<Marker> = emptyList(),
     circles: List<Circle> = emptyList(),
     polygons: List<Polygon> = emptyList(),
