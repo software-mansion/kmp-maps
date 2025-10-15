@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'kmp_maps'
-    spec.version                  = '0.2.1'
+    spec.version                  = '0.2.2'
     spec.homepage                 = 'https://github.com/software-mansion/kmp-maps'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
