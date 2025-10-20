@@ -1,23 +1,23 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'kmp_maps'
+    spec.name                     = 'sample'
     spec.version                  = '0.3.0'
-    spec.homepage                 = 'https://github.com/software-mansion/kmp-maps'
+    spec.homepage                 = ''
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Universal map component for Compose Multiplatform.'
-    spec.vendored_frameworks      = 'build/cocoapods/framework/kmp_maps.framework'
+    spec.summary                  = ''
+    spec.vendored_frameworks      = 'build/cocoapods/framework/Sample.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '16.0'
     spec.dependency 'GoogleMaps', '10.4.0'
                 
-    if !Dir.exist?('build/cocoapods/framework/kmp_maps.framework') || Dir.empty?('build/cocoapods/framework/kmp_maps.framework')
+    if !Dir.exist?('build/cocoapods/framework/Sample.framework') || Dir.empty?('build/cocoapods/framework/Sample.framework')
         raise "
 
-        Kotlin framework 'kmp_maps' doesn't exist yet, so a proper Xcode project can't be generated.
+        Kotlin framework 'Sample' doesn't exist yet, so a proper Xcode project can't be generated.
         'pod install' should be executed after running ':generateDummyFramework' Gradle task:
 
-            ./gradlew :kmp-maps:generateDummyFramework
+            ./gradlew :sample:generateDummyFramework
 
         Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
     end
@@ -27,13 +27,13 @@ Pod::Spec.new do |spec|
     }
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':kmp-maps',
-        'PRODUCT_MODULE_NAME' => 'kmp_maps',
+        'KOTLIN_PROJECT_PATH' => ':sample',
+        'PRODUCT_MODULE_NAME' => 'Sample',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build kmp_maps',
+            :name => 'Build sample',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

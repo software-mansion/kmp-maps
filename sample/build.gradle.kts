@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+version = "0.3.0"
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetBrains.compose)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("native.cocoapods")
 }
 
 kotlin {
@@ -17,6 +20,17 @@ kotlin {
             isStatic = true
             binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
+    }
+
+    cocoapods {
+        version = "0.3.0"
+        ios.deploymentTarget = "16.0"
+        framework {
+            baseName = "Sample"
+            isStatic = true
+            binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
+        }
+        pod("GoogleMaps") { version = "10.4.0" }
     }
 
     sourceSets {
