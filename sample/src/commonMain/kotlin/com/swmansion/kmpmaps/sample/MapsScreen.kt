@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.CameraPosition
 import com.swmansion.kmpmaps.Coordinates
-import com.swmansion.kmpmaps.GoogleMapsMapStyleOptions
 import com.swmansion.kmpmaps.Map
 import com.swmansion.kmpmaps.MapPlatform
 import com.swmansion.kmpmaps.MapProperties
@@ -50,11 +49,12 @@ fun MapsScreen() {
         )
     }
     var showAllComponents by remember { mutableStateOf(true) }
+    var useGoogleMapsMapView by remember { mutableStateOf(true) }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
             modifier = Modifier.weight(1f),
-            mapPlatform = MapPlatform.GOOGLE_MAPS,
+            mapPlatform = if (useGoogleMapsMapView) MapPlatform.GOOGLE_MAPS else MapPlatform.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
                 MapProperties(
@@ -63,8 +63,6 @@ fun MapsScreen() {
                     isMyLocationEnabled = showUserLocation,
                     isTrafficEnabled = true,
                     isBuildingEnabled = true,
-                    iosGmsMapStyleOptions = GoogleMapsMapStyleOptions(json = jsonMapStyle),
-                    androidMapStyleOptions = GoogleMapsMapStyleOptions(json = jsonMapStyle),
                     androidIsIndoorEnabled = true,
                     androidMinZoomPreference = 3f,
                     androidMaxZoomPreference = 21f,
@@ -80,10 +78,7 @@ fun MapsScreen() {
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
             polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
             polylines = if (showAllComponents) getExamplePolylines() else emptyList(),
-            onCameraMove = { position ->
-                currentCameraPosition = position
-                println("Camera moved: $position")
-            },
+            onCameraMove = { position -> println("Camera moved: $position") },
             onCircleClick = { println("Circle clicked: ${it.center}") },
             onPolygonClick = { println("Polygon clicked: ${it.coordinates}") },
             onPolylineClick = { println("Polyline clicked: ${it.coordinates}") },
@@ -133,6 +128,21 @@ fun MapsScreen() {
                         onClick = { selectedMapTheme = MapTheme.DARK },
                         label = { Text("Dark") },
                         selected = selectedMapTheme == MapTheme.DARK,
+                    )
+                }
+                if (isIOS()) {
+                    ListItem(
+                        headlineContent = { Text("Use Google Maps") },
+                        modifier =
+                            Modifier.height(48.dp).clickable {
+                                useGoogleMapsMapView = !useGoogleMapsMapView
+                            },
+                        trailingContent = {
+                            Switch(
+                                checked = useGoogleMapsMapView,
+                                onCheckedChange = { useGoogleMapsMapView = it },
+                            )
+                        },
                     )
                 }
                 ListItem(

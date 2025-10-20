@@ -85,7 +85,10 @@ public enum class MapType {
     TERRAIN,
 }
 
+/** Types of map platforms. */
 public enum class MapPlatform {
+    /** The Google Maps map view */
     GOOGLE_MAPS,
+    /** The native map view. It means Apple Maps for iOS and Google Maps for Android */
     NATIVE,
 }

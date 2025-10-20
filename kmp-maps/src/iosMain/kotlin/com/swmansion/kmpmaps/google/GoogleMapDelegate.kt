@@ -44,7 +44,7 @@ internal class GoogleMapDelegate(
      * @param mapView The map view whose region changed
      * @param didChangeCameraPosition The new camera position
      */
-    override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition): Unit =
+    override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition) {
         didChangeCameraPosition.target.useContents {
             val cameraPosition =
                 CameraPosition(
@@ -53,6 +53,7 @@ internal class GoogleMapDelegate(
                 )
             onCameraMove?.invoke(cameraPosition)
         }
+    }
 
     /**
      * Handles marker selection events when user taps on annotations.

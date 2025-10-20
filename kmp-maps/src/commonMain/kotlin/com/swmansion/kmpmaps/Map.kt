@@ -77,6 +77,7 @@ import androidx.compose.ui.Modifier
  * ```
  *
  * @param modifier The modifier to be applied to the map component
+ * @param mapPlatform The platform to use for rendering the map. Defaults to [MapPlatform.NATIVE].
  * @param cameraPosition The initial camera position of the map. If null, the map will use default
  *   position
  * @param properties Configuration properties for the map behavior and appearance

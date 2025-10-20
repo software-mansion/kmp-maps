@@ -5,7 +5,7 @@ Pod::Spec.new do |spec|
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Universal map component for Compose Multiplatform'
+    spec.summary                  = 'Universal map component for Compose Multiplatform.'
     spec.vendored_frameworks      = 'build/cocoapods/framework/kmp_maps.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '16.0'
