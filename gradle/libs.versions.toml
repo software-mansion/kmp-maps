@@ -13,6 +13,7 @@ kotlin = "2.2.20"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
+jetbrainsKotlinJvm = "2.2.20"
 
 [libraries]
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
@@ -32,3 +33,4 @@ jetBrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 jetBrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 jetBrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

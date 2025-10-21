@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-version = "0.3.0"
+version = "0.2.2"
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,13 +23,15 @@ kotlin {
     }
 
     cocoapods {
-        version = "0.3.0"
+        summary = "Universal map component for Compose Multiplatform."
+        homepage = "https://github.com/software-mansion/kmp-maps"
+        version = "0.2.2"
         ios.deploymentTarget = "16.0"
         framework {
             baseName = "Sample"
             isStatic = true
-            binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
+
         pod("GoogleMaps") { version = "10.4.0" }
     }
 
@@ -47,7 +49,8 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(project(":kmp-maps"))
+            implementation(project(":kmp-maps:kmp-maps"))
+            implementation(project(":kmp-maps:kmp-gmaps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
     }

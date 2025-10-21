@@ -1,23 +1,23 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'sample'
+    spec.name                     = 'kmp_gmaps'
     spec.version                  = '0.2.2'
     spec.homepage                 = 'https://github.com/software-mansion/kmp-maps'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
     spec.summary                  = 'Universal map component for Compose Multiplatform.'
-    spec.vendored_frameworks      = 'build/cocoapods/framework/Sample.framework'
+    spec.vendored_frameworks      = 'build/cocoapods/framework/kmp_gmaps.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '16.0'
     spec.dependency 'GoogleMaps', '10.4.0'
                 
-    if !Dir.exist?('build/cocoapods/framework/Sample.framework') || Dir.empty?('build/cocoapods/framework/Sample.framework')
+    if !Dir.exist?('build/cocoapods/framework/kmp_gmaps.framework') || Dir.empty?('build/cocoapods/framework/kmp_gmaps.framework')
         raise "
 
-        Kotlin framework 'Sample' doesn't exist yet, so a proper Xcode project can't be generated.
+        Kotlin framework 'kmp_gmaps' doesn't exist yet, so a proper Xcode project can't be generated.
         'pod install' should be executed after running ':generateDummyFramework' Gradle task:
 
-            ./gradlew :sample:generateDummyFramework
+            ./gradlew :kmp-maps:kmp-gmaps:generateDummyFramework
 
         Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
     end
@@ -27,13 +27,13 @@ Pod::Spec.new do |spec|
     }
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':sample',
-        'PRODUCT_MODULE_NAME' => 'Sample',
+        'KOTLIN_PROJECT_PATH' => ':kmp-maps:kmp-gmaps',
+        'PRODUCT_MODULE_NAME' => 'kmp_gmaps',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build sample',
+            :name => 'Build kmp_gmaps',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT
@@ -43,7 +43,7 @@ Pod::Spec.new do |spec|
                 fi
                 set -ev
                 REPO_ROOT="$PODS_TARGET_SRCROOT"
-                "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
+                "$REPO_ROOT/../../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
                     -Pkotlin.native.cocoapods.archs="$ARCHS" \
                     -Pkotlin.native.cocoapods.configuration="$CONFIGURATION"

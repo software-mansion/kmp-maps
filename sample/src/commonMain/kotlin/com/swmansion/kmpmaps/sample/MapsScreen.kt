@@ -26,14 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swmansion.kmpmaps.CameraPosition
-import com.swmansion.kmpmaps.Coordinates
-import com.swmansion.kmpmaps.Map
-import com.swmansion.kmpmaps.MapPlatform
-import com.swmansion.kmpmaps.MapProperties
-import com.swmansion.kmpmaps.MapTheme
-import com.swmansion.kmpmaps.MapType
-import com.swmansion.kmpmaps.MapUISettings
+import com.swmansion.kmpmaps.kmpgmaps.GMap
+import com.swmansion.kmpmaps.kmpmaps.CameraPosition
+import com.swmansion.kmpmaps.kmpmaps.Coordinates
+import com.swmansion.kmpmaps.kmpmaps.MapProperties
+import com.swmansion.kmpmaps.kmpmaps.MapTheme
+import com.swmansion.kmpmaps.kmpmaps.MapType
+import com.swmansion.kmpmaps.kmpmaps.MapUISettings
 
 @Composable
 fun MapsScreen() {
@@ -49,12 +48,10 @@ fun MapsScreen() {
         )
     }
     var showAllComponents by remember { mutableStateOf(true) }
-    var useGoogleMapsMapView by remember { mutableStateOf(true) }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
-        Map(
+        GMap(
             modifier = Modifier.weight(1f),
-            mapPlatform = if (useGoogleMapsMapView) MapPlatform.GOOGLE_MAPS else MapPlatform.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
                 MapProperties(
@@ -128,21 +125,6 @@ fun MapsScreen() {
                         onClick = { selectedMapTheme = MapTheme.DARK },
                         label = { Text("Dark") },
                         selected = selectedMapTheme == MapTheme.DARK,
-                    )
-                }
-                if (isIOS()) {
-                    ListItem(
-                        headlineContent = { Text("Use Google Maps") },
-                        modifier =
-                            Modifier.height(48.dp).clickable {
-                                useGoogleMapsMapView = !useGoogleMapsMapView
-                            },
-                        trailingContent = {
-                            Switch(
-                                checked = useGoogleMapsMapView,
-                                onCheckedChange = { useGoogleMapsMapView = it },
-                            )
-                        },
                     )
                 }
                 ListItem(
