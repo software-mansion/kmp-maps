@@ -49,8 +49,8 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(project(":kmp-maps:kmp-maps"))
-            implementation(project(":kmp-maps:kmp-gmaps"))
+            implementation(project(":kmp-maps:core"))
+            implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
     }

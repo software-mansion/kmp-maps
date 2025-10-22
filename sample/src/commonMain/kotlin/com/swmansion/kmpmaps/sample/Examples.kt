@@ -2,11 +2,11 @@ package com.swmansion.kmpmaps.sample
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import com.swmansion.kmpmaps.kmpmaps.Circle
-import com.swmansion.kmpmaps.kmpmaps.Coordinates
-import com.swmansion.kmpmaps.kmpmaps.Marker
-import com.swmansion.kmpmaps.kmpmaps.Polygon
-import com.swmansion.kmpmaps.kmpmaps.Polyline
+import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.Polygon
+import com.swmansion.kmpmaps.core.Polyline
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
 val cracowMainStationPin = Coordinates(latitude = 50.06839615782847, longitude = 19.947491884231567)

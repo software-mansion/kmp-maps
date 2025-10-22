@@ -26,13 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swmansion.kmpmaps.kmpgmaps.GMap
-import com.swmansion.kmpmaps.kmpmaps.CameraPosition
-import com.swmansion.kmpmaps.kmpmaps.Coordinates
-import com.swmansion.kmpmaps.kmpmaps.MapProperties
-import com.swmansion.kmpmaps.kmpmaps.MapTheme
-import com.swmansion.kmpmaps.kmpmaps.MapType
-import com.swmansion.kmpmaps.kmpmaps.MapUISettings
+import com.swmansion.kmpmaps.core.CameraPosition
+import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.MapProperties
+import com.swmansion.kmpmaps.core.MapTheme
+import com.swmansion.kmpmaps.core.MapType
+import com.swmansion.kmpmaps.core.MapUISettings
+import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 
 @Composable
 fun MapsScreen() {
@@ -50,7 +50,7 @@ fun MapsScreen() {
     var showAllComponents by remember { mutableStateOf(true) }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
-        GMap(
+        GoogleMap(
             modifier = Modifier.weight(1f),
             cameraPosition = currentCameraPosition,
             properties =
