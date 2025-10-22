@@ -62,12 +62,12 @@ fun MyMapScreen() {
 
 ## 📦 Instalation
 
-For installation instructions, platform setup, and configuration details, visit our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/).
+For installation instructions, platform setup, and configuration details, visit our [dedicated document]().
 
 
 ## 📚 Documentation
 
-Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for API reference and more.
+Check out our [dedicated documentation page](https://docs.swmansion.com/kmp-maps/) for API reference.
 
 ## 🤝 Contributing
 
