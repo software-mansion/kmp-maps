@@ -45,13 +45,15 @@ internal class MapDelegate(
      * @param didChangeCameraPosition The new camera position
      */
     override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition) {
-        didChangeCameraPosition.target.useContents {
-            val cameraPosition =
-                CameraPosition(
-                    coordinates = Coordinates(latitude = latitude, longitude = longitude),
-                    zoom = didChangeCameraPosition.zoom,
-                )
-            onCameraMove?.invoke(cameraPosition)
+        onCameraMove?.let {
+            didChangeCameraPosition.target.useContents {
+                val cameraPosition =
+                    CameraPosition(
+                        coordinates = Coordinates(latitude = latitude, longitude = longitude),
+                        zoom = didChangeCameraPosition.zoom,
+                    )
+                it(cameraPosition)
+            }
         }
     }
 
@@ -63,14 +65,16 @@ internal class MapDelegate(
      * @return Whether the event was handled
      */
     override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
-        val marker = markerMapping[didTapMarker]
-        return if (marker != null) {
-            mapView.selectedMarker = didTapMarker
-            onMarkerClick?.invoke(marker)
-            true
-        } else {
-            false
-        }
+        return onMarkerClick?.let {
+            val marker = markerMapping[didTapMarker]
+            if (marker != null) {
+                mapView.selectedMarker = didTapMarker
+                it(marker)
+                true
+            } else {
+                false
+            }
+        } ?: false
     }
 
     /**
@@ -81,9 +85,11 @@ internal class MapDelegate(
      */
     @ObjCSignatureOverride
     override fun mapView(mapView: GMSMapView, didTapAtCoordinate: CValue<CLLocationCoordinate2D>) {
-        didTapAtCoordinate.useContents {
-            val coordinates = Coordinates(latitude = latitude, longitude = longitude)
-            onMapClick?.invoke(coordinates)
+        onMapClick?.let {
+            didTapAtCoordinate.useContents {
+                val coordinates = Coordinates(latitude = latitude, longitude = longitude)
+                it(coordinates)
+            }
         }
     }
 
@@ -98,9 +104,11 @@ internal class MapDelegate(
         mapView: GMSMapView,
         didLongPressAtCoordinate: CValue<CLLocationCoordinate2D>,
     ) {
-        didLongPressAtCoordinate.useContents {
-            val coordinates = Coordinates(latitude = latitude, longitude = longitude)
-            onMapLongClick?.invoke(coordinates)
+        onMapLongClick?.let {
+            didLongPressAtCoordinate.useContents {
+                val coordinates = Coordinates(latitude = latitude, longitude = longitude)
+                it(coordinates)
+            }
         }
     }
 
@@ -118,9 +126,11 @@ internal class MapDelegate(
         name: String,
         location: CValue<CLLocationCoordinate2D>,
     ) {
-        location.useContents {
-            val coordinates = Coordinates(latitude = latitude, longitude = longitude)
-            onPOIClick?.invoke(coordinates)
+        onPOIClick?.let {
+            location.useContents {
+                val coordinates = Coordinates(latitude = latitude, longitude = longitude)
+                it(coordinates)
+            }
         }
     }
 
