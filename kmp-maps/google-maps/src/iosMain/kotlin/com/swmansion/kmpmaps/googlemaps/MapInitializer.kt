@@ -26,9 +26,11 @@ internal object GoogleMapsInitializer {
     /**
      * Initializes Google Maps if not already initialized.
      *
-     * @return true if initialization was successful or already completed, false if failed
+     * @return true if initialization was successful or already completed, throw error if failed
      */
-    fun initializeIfNeeded(): Boolean = initializationResult
+    internal fun ensureInitialized(): Boolean {
+        return initializationResult.takeIf { it } ?: throw Exception("Initialization failed")
+    }
 
     /**
      * Attempts to find the Google Maps API key from Info.plist.
@@ -38,7 +40,4 @@ internal object GoogleMapsInitializer {
     private fun findApiKey() =
         (NSBundle.mainBundle.objectForInfoDictionaryKey("GoogleMapsAPIKey") as? String)
             .takeUnless { key -> key.isNullOrEmpty() }
-
-    /** Checks if Google Maps has been successfully initialized. */
-    fun isInitialized(): Boolean = initializationResult
 }

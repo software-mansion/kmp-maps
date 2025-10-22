@@ -26,6 +26,7 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
 
@@ -84,13 +85,7 @@ public actual fun Map(
 
     UIKitView(
         factory = {
-            val initialized = GoogleMapsInitializer.initializeIfNeeded()
-            if (!initialized) {
-                println(
-                    "KMP Maps Warning: GoogleMaps not initialized! " +
-                        "Please add GoogleMapsAPIKey to Info.plist."
-                )
-            }
+            ensureInitialized()
 
             val gmsMapView = GMSMapView()
 
