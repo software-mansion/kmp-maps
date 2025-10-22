@@ -17,12 +17,12 @@ Check out the sample project in the `/sample` directory for complete usage examp
 
 ## ✨ Features
 
-- **Cross-platform compatibility** - Single API for both Android and iOS
-- **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
-- **Compose Multiplatform** - Built with Compose Multiplatform for modern UI development
-- **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
-- **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
-- **Location services** - Built-in location permission handling and user location display
+-   **Cross-platform compatibility** - Single API for both Android and iOS
+-   **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
+-   **Compose Multiplatform** - Built with Compose Multiplatform for modern UI development
+-   **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
+-   **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
+-   **Location services** - Built-in location permission handling and user location display
 
 ## 🚀 Usage
 
@@ -62,8 +62,7 @@ fun MyMapScreen() {
 
 ## 📦 Instalation
 
-For installation instructions, platform setup, and configuration details, visit our [dedicated document]().
-
+For installation instructions, platform setup, and configuration details, visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/INSTALLATION_SETUP.md).
 
 ## 📚 Documentation
 
