@@ -33,7 +33,7 @@ dependencies {
 ## ☁️ Google Cloud API Setup
 
 For using Google Maps you have to generate your API Key and setup Google Cloud API.
-Visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_CLOUD_API_SETUP.md) for more info
+Visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_CLOUD_API_SETUP.md) for more info.
 
 ## 🤖 Android Setup
 
@@ -47,7 +47,7 @@ To use Google Maps on Android, you need to configure your API key in `AndroidMan
 
 ### 🔐 Permissions
 
-To display the user's location on the map, you need to declare and request location permissions:
+To display the user's location on the map, you need to declare and request location permissions.
 Add the following permissions to your `AndroidManifest.xml`:
 
 ```xml
@@ -63,7 +63,7 @@ No additional configuration is required for Apple Maps on iOS.
 
 ### Google Maps
 
-For Google Maps setup visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
+For Google Maps setup, visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
 
 ### 🔐 Permissions
 

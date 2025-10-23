@@ -16,7 +16,7 @@
 **For development builds:**
 
 -   After the build is complete, go to your project's dashboard
--   Under Project settings > click Credentials
+-   Under Project settings, click Credentials
 -   Under Application Identifiers, click your project's package name
 -   Under Android Keystore copy the value of SHA-1 Certificate Fingerprint
 
