@@ -30,4 +30,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":kmp-maps", ":sample")
+include("kmp-maps:core", "kmp-maps:google-maps", ":sample")

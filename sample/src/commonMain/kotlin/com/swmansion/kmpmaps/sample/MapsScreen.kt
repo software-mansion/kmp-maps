@@ -26,16 +26,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swmansion.kmpmaps.CameraPosition
-import com.swmansion.kmpmaps.Coordinates
-import com.swmansion.kmpmaps.Map
-import com.swmansion.kmpmaps.MapProperties
-import com.swmansion.kmpmaps.MapTheme
-import com.swmansion.kmpmaps.MapType
-import com.swmansion.kmpmaps.MapUISettings
+import com.swmansion.kmpmaps.core.CameraPosition
+import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.Map as CoreMap
+import com.swmansion.kmpmaps.core.MapProperties
+import com.swmansion.kmpmaps.core.MapTheme
+import com.swmansion.kmpmaps.core.MapType
+import com.swmansion.kmpmaps.core.MapUISettings
+import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.Polygon
+import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 
 @Composable
-fun MapsScreen() {
+internal fun MapsScreen() {
     var selectedMapType by remember { mutableStateOf(MapType.NORMAL) }
     var selectedMapTheme by remember { mutableStateOf(MapTheme.SYSTEM) }
     var showUserLocation by remember { mutableStateOf(false) }
@@ -48,10 +53,12 @@ fun MapsScreen() {
         )
     }
     var showAllComponents by remember { mutableStateOf(true) }
+    var useGoogleMapsMapView by remember { mutableStateOf(true) }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
             modifier = Modifier.weight(1f),
+            mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
                 MapProperties(
@@ -75,10 +82,7 @@ fun MapsScreen() {
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
             polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
             polylines = if (showAllComponents) getExamplePolylines() else emptyList(),
-            onCameraMove = { position ->
-                currentCameraPosition = position
-                println("Camera moved: $position")
-            },
+            onCameraMove = { position -> println("Camera moved: $position") },
             onCircleClick = { println("Circle clicked: ${it.center}") },
             onPolygonClick = { println("Polygon clicked: ${it.coordinates}") },
             onPolylineClick = { println("Polyline clicked: ${it.coordinates}") },
@@ -130,6 +134,21 @@ fun MapsScreen() {
                         selected = selectedMapTheme == MapTheme.DARK,
                     )
                 }
+                if (isIOS()) {
+                    ListItem(
+                        headlineContent = { Text("Use Google Maps") },
+                        modifier =
+                            Modifier.height(48.dp).clickable {
+                                useGoogleMapsMapView = !useGoogleMapsMapView
+                            },
+                        trailingContent = {
+                            Switch(
+                                checked = useGoogleMapsMapView,
+                                onCheckedChange = { useGoogleMapsMapView = it },
+                            )
+                        },
+                    )
+                }
                 ListItem(
                     headlineContent = { Text("Show annotations") },
                     modifier =
@@ -154,5 +173,75 @@ fun MapsScreen() {
                 )
             }
         }
+    }
+}
+
+private enum class MapProvider {
+    NATIVE,
+    GOOGLE_MAPS,
+}
+
+@Composable
+private fun Map(
+    modifier: Modifier = Modifier,
+    mapProvider: MapProvider,
+    cameraPosition: CameraPosition? = null,
+    properties: MapProperties = MapProperties(),
+    uiSettings: MapUISettings = MapUISettings(),
+    markers: List<Marker> = emptyList(),
+    circles: List<Circle> = emptyList(),
+    polygons: List<Polygon> = emptyList(),
+    polylines: List<Polyline> = emptyList(),
+    onCameraMove: ((CameraPosition) -> Unit)? = null,
+    onMarkerClick: ((Marker) -> Unit)? = null,
+    onCircleClick: ((Circle) -> Unit)? = null,
+    onPolygonClick: ((Polygon) -> Unit)? = null,
+    onPolylineClick: ((Polyline) -> Unit)? = null,
+    onMapClick: ((Coordinates) -> Unit)? = null,
+    onMapLongClick: ((Coordinates) -> Unit)? = null,
+    onPOIClick: ((Coordinates) -> Unit)? = null,
+    onMapLoaded: (() -> Unit)? = null,
+) {
+    when (mapProvider) {
+        MapProvider.NATIVE ->
+            CoreMap(
+                modifier = modifier,
+                cameraPosition = cameraPosition,
+                properties = properties,
+                uiSettings = uiSettings,
+                markers = markers,
+                circles = circles,
+                polygons = polygons,
+                polylines = polylines,
+                onCameraMove = onCameraMove,
+                onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
+                onMapClick = onMapClick,
+                onMapLongClick = onMapLongClick,
+                onPOIClick = onPOIClick,
+                onMapLoaded = onMapLoaded,
+            )
+        MapProvider.GOOGLE_MAPS ->
+            GoogleMap(
+                modifier = modifier,
+                cameraPosition = cameraPosition,
+                properties = properties,
+                uiSettings = uiSettings,
+                markers = markers,
+                circles = circles,
+                polygons = polygons,
+                polylines = polylines,
+                onCameraMove = onCameraMove,
+                onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
+                onMapClick = onMapClick,
+                onMapLongClick = onMapLongClick,
+                onPOIClick = onPOIClick,
+                onMapLoaded = onMapLoaded,
+            )
     }
 }

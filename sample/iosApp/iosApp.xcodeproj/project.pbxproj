@@ -6,8 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2862C2E22E98034600E0803B /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 2862C2E12E98034600E0803B /* GoogleMaps */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		57FB49521989F9A6CD121D8A /* KMPMaps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KMPMaps.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		57FB49521989F9A6CD121D8A /* KMP Maps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KMP Maps.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -41,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2862C2E22E98034600E0803B /* GoogleMaps in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +64,7 @@
 		9613DF5A160F79A569053B3E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				57FB49521989F9A6CD121D8A /* KMPMaps.app */,
+				57FB49521989F9A6CD121D8A /* KMP Maps.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,9 +90,10 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
+				2862C2E12E98034600E0803B /* GoogleMaps */,
 			);
 			productName = iosApp;
-			productReference = 57FB49521989F9A6CD121D8A /* KMPMaps.app */;
+			productReference = 57FB49521989F9A6CD121D8A /* KMP Maps.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -114,6 +120,9 @@
 			);
 			mainGroup = 014F6197DC0D99E0CEC81171;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9613DF5A160F79A569053B3E /* Products */;
 			projectDirPath = "";
@@ -368,6 +377,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2862C2E12E98034600E0803B /* GoogleMaps */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
+			productName = GoogleMaps;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6F5FFF98C738978990FC4594 /* Project object */;
 }

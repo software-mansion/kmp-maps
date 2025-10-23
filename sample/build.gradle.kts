@@ -1,11 +1,14 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+version = "0.2.2"
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetBrains.compose)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("native.cocoapods")
 }
 
 kotlin {
@@ -17,6 +20,19 @@ kotlin {
             isStatic = true
             binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
+    }
+
+    cocoapods {
+        summary = "Universal map component for Compose Multiplatform."
+        homepage = "https://github.com/software-mansion/kmp-maps"
+        version = "0.2.2"
+        ios.deploymentTarget = "16.0"
+        framework {
+            baseName = "Sample"
+            isStatic = true
+        }
+
+        pod("GoogleMaps") { version = "10.4.0" }
     }
 
     sourceSets {
@@ -33,7 +49,8 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(project(":kmp-maps"))
+            implementation(project(":kmp-maps:core"))
+            implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
     }
