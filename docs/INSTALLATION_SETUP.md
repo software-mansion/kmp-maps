@@ -6,7 +6,7 @@ First, add the library to your `gradle/libs.versions.toml` file:
 
 ```toml
 [versions]
-kmpMaps = "0.2.2"
+kmpMaps = "0.3.0"
 
 [libraries]
 swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
@@ -26,7 +26,7 @@ If you're not using Gradle version catalogs, you can add the library directly to
 
 ```kotlin
 dependencies {
-    implementation("com.swmansion.kmpmaps:kmp-maps:0.2.2")
+    implementation("com.swmansion.kmpmaps:kmp-maps:0.3.0")
 }
 ```
 
