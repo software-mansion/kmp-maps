@@ -154,7 +154,7 @@ internal fun MKMapView.updateAppleMapsMarkers(
                 marker.coordinates.let { coords ->
                     setCoordinate(CLLocationCoordinate2DMake(coords.latitude, coords.longitude))
                 }
-                setTintColor(marker.iosTintColor?.toAppleMapsColor())
+                setTintColor(marker.iosMarkerOptions?.tintColor?.toAppleMapsColor())
                 setTitle(marker.title)
             }
         markerMapping[mkAnnotation] = marker

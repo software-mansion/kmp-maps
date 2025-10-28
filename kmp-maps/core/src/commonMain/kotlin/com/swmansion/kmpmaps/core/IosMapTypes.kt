@@ -43,10 +43,10 @@ public data class IosUISettings(
 /**
  * iOS-specific options for customizing a marker.
  *
- * @param iosTintColor The tint color for the marker (Apple Maps only)
+ * @param tintColor The tint color for the marker (Apple Maps only)
  */
 public data class IosMarkerOptions(
-    val iosTintColor: Color? = null,
+    val tintColor: Color? = null,
 )
 
 /**

@@ -89,8 +89,8 @@ public actual fun Map(
             mkMapView.showsUserLocation = properties.isMyLocationEnabled && hasLocationPermission
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
-            mkMapView.showsPointsOfInterest = properties.iosShowPOI
-            properties.iosPointsOfInterest?.let { poiCategories ->
+            mkMapView.showsPointsOfInterest = properties.iosMapProperties.showPOI
+            properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
@@ -159,7 +159,7 @@ public actual fun Map(
             mkMapView.showsTraffic = properties.isTrafficEnabled
             mkMapView.showsBuildings = properties.isBuildingEnabled
 
-            properties.iosPointsOfInterest?.let { poiCategories ->
+            properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
                 val poiFilter = poiCategories.toMKPointOfInterestFilter()
                 mkMapView.pointOfInterestFilter = poiFilter
             }
