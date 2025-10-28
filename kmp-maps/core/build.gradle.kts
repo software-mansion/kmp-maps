@@ -86,6 +86,11 @@ mavenPublishing {
                 name = "Patrick Michalik"
                 email = "patrick.michalik@swmansion.com"
             }
+            developer {
+                id = "justynagreda"
+                name = "Justyna Gręda"
+                email = "justyna.greda@swmansion.com"
+            }
         }
     }
 }
