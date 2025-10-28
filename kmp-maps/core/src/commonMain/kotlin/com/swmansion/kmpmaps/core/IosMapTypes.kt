@@ -53,9 +53,9 @@ public data class IosMarkerOptions(
  * iOS-specific options for the camera position and orientation of the map.
  *
  * @param gmsBearing The bearing (rotation) of the camera in degrees (Google Maps only)
- * @param viewingAngle The viewing angle of the camera in degrees (Google Maps only)
+ * @param gmsViewingAngle The viewing angle of the camera in degrees (Google Maps only)
  */
 public data class IosCameraPosition(
     val gmsBearing: Float? = null,
-    val viewingAngle: Float? = null,
+    val gmsViewingAngle: Float? = null,
 )

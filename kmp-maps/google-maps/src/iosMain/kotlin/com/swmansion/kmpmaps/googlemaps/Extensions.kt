@@ -194,14 +194,14 @@ internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
 internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
     mapView.settings.scrollGestures = scrollEnabled
     mapView.settings.zoomGestures = zoomEnabled
-    mapView.settings.tiltGestures = iosGmsTiltGesturesEnabled
+    mapView.settings.tiltGestures = iosUISettings.gmsTiltGesturesEnabled
     mapView.settings.rotateGestures = rotateEnabled
     mapView.settings.compassButton = compassEnabled
     mapView.settings.myLocationButton = myLocationButtonEnabled
-    mapView.settings.indoorPicker = iosGmsIndoorPicker
+    mapView.settings.indoorPicker = iosUISettings.gmsIndoorPicker
     mapView.settings.allowScrollGesturesDuringRotateOrZoom =
-        iosGmsScrollGesturesEnabledDuringRotateOrZoom
-    mapView.settings.consumesGesturesInView = iosGmsConsumesGesturesInView
+        iosUISettings.gmsScrollGesturesEnabledDuringRotateOrZoom
+    mapView.settings.consumesGesturesInView = iosUISettings.gmsConsumesGesturesInView
 }
 
 /**
