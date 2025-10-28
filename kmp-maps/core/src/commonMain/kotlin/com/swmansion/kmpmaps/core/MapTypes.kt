@@ -24,7 +24,7 @@ public enum class MapTheme {
  * @param mapType The type of map to display
  * @param mapTheme The theme for the map appearance
  * @param androidMapProperties Android-specific map behavior and appearance configuration options
- * @param iosMapProperties iOS-specific map behavior and appearance configuration options.
+ * @param iosMapProperties iOS-specific map behavior and appearance configuration options
  */
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
@@ -46,8 +46,8 @@ public data class MapProperties(
  * @param scrollEnabled Whether scroll gestures are enabled
  * @param zoomEnabled Whether zoom gestures are enabled
  * @param rotateEnabled Whether rotation gestures are enabled
- * @param androidUISettings Android-specific settings
- * @param iosUISettings iOS-specific settings
+ * @param androidUISettings Android-specific UI settings
+ * @param iosUISettings iOS-specific UI settings
  */
 public data class MapUISettings(
     val compassEnabled: Boolean = false,
@@ -72,7 +72,7 @@ public data class MapUISettings(
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
-    val androidMarkerOptions: AndroidMarkerOptions,
+    val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
 )
 
