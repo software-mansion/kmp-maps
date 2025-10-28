@@ -22,8 +22,8 @@ internal fun CameraPosition.toGoogleMapsCameraPosition() =
     GoogleCameraPosition.Builder()
         .target(LatLng(coordinates.latitude, coordinates.longitude))
         .zoom(zoom)
-        .bearing(androidBearing ?: 0f)
-        .tilt(androidTilt ?: 0f)
+        .bearing(androidCameraPosition?.bearing ?: 0f)
+        .tilt(androidCameraPosition?.tilt ?: 0f)
         .build()
 
 /**
@@ -35,8 +35,7 @@ internal fun GoogleCameraPosition.toCameraPosition() =
     CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
-        androidBearing = bearing,
-        androidTilt = tilt,
+        androidCameraPosition = AndroidCameraPosition(bearing = bearing, tilt = tilt),
     )
 
 /**
@@ -78,10 +77,10 @@ internal fun MapProperties.toGoogleMapsProperties(locationPermissionState: Permi
         isMyLocationEnabled = isMyLocationEnabled && locationPermissionState.status.isGranted,
         isTrafficEnabled = isTrafficEnabled,
         isBuildingEnabled = isBuildingEnabled,
-        isIndoorEnabled = androidIsIndoorEnabled,
-        minZoomPreference = androidMinZoomPreference ?: 0f,
-        maxZoomPreference = androidMaxZoomPreference ?: 20f,
-        mapStyleOptions = androidMapStyleOptions.toNativeStyleOptions(),
+        isIndoorEnabled = androidMapProperties.isIndoorEnabled,
+        minZoomPreference = androidMapProperties.minZoomPreference ?: 0f,
+        maxZoomPreference = androidMapProperties.maxZoomPreference ?: 20f,
+        mapStyleOptions = androidMapProperties.mapStyleOptions.toNativeStyleOptions(),
     )
 
 /**
@@ -93,13 +92,13 @@ internal fun MapUISettings.toGoogleMapsUiSettings() =
     GoogleMapUiSettings(
         compassEnabled = compassEnabled,
         myLocationButtonEnabled = myLocationButtonEnabled,
-        indoorLevelPickerEnabled = androidIndoorLevelPickerEnabled,
-        mapToolbarEnabled = androidMapToolbarEnabled,
+        indoorLevelPickerEnabled = androidUISettings.indoorLevelPickerEnabled,
+        mapToolbarEnabled = androidUISettings.mapToolbarEnabled,
         rotationGesturesEnabled = rotateEnabled,
         scrollGesturesEnabled = scrollEnabled,
-        scrollGesturesEnabledDuringRotateOrZoom = androidScrollGesturesEnabledDuringRotateOrZoom,
-        tiltGesturesEnabled = androidTiltGesturesEnabled,
-        zoomControlsEnabled = androidZoomControlsEnabled,
+        scrollGesturesEnabledDuringRotateOrZoom = androidUISettings.scrollGesturesEnabledDuringRotateOrZoom,
+        tiltGesturesEnabled = androidUISettings.tiltGesturesEnabled,
+        zoomControlsEnabled = androidUISettings.zoomControlsEnabled,
         zoomGesturesEnabled = zoomEnabled,
     )
 
