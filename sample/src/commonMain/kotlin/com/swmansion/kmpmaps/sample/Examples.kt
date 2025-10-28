@@ -2,6 +2,7 @@ package com.swmansion.kmpmaps.sample
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import com.swmansion.kmpmaps.core.AndroidMarkerOptions
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.Marker
@@ -17,17 +18,17 @@ val exampleMarkers =
         Marker(
             coordinates = softwareMansionPin,
             title = "Software Mansion",
-            androidSnippet = "Software house",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Software house"),
         ),
         Marker(
             coordinates = cracowMainStationPin,
             title = "Kraków Main",
-            androidSnippet = "Transit station",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Transit station"),
         ),
         Marker(
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
-            androidSnippet = "Jewish quarter",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
         ),
     )
 
