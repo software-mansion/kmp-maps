@@ -162,7 +162,7 @@ public actual fun Map(
                 properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
             gmsMapView.setMinZoom(
                 properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
-                properties.iosMapProperties.gmsMinZoomPreference ?: 20f,
+                properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
             )
 
             uiSettings.toGoogleMapsSettings(gmsMapView)
