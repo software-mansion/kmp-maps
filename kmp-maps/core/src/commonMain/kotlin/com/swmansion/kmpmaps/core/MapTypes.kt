@@ -32,8 +32,8 @@ public data class MapProperties(
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
     val mapTheme: MapTheme = MapTheme.SYSTEM,
-    val androidMapProperties: AndroidMapProperties,
-    val iosMapProperties: IosMapProperties,
+    val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
+    val iosMapProperties: IosMapProperties = IosMapProperties(),
 )
 
 /**
@@ -57,8 +57,8 @@ public data class MapUISettings(
     val scrollEnabled: Boolean = true,
     val zoomEnabled: Boolean = true,
     val rotateEnabled: Boolean = true,
-    val androidUISettings: AndroidUISettings,
-    val iosUISettings: IosUISettings,
+    val androidUISettings: AndroidUISettings = AndroidUISettings(),
+    val iosUISettings: IosUISettings = IosUISettings(),
 )
 
 /**
