@@ -31,7 +31,6 @@ import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
-import com.swmansion.kmpmaps.core.IosMapProperties
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
@@ -70,7 +69,12 @@ internal fun MapsScreen() {
                     isMyLocationEnabled = showUserLocation,
                     isTrafficEnabled = true,
                     isBuildingEnabled = true,
-                    androidMapProperties = AndroidMapProperties(isIndoorEnabled = true, minZoomPreference = 3f, maxZoomPreference = 21f),
+                    androidMapProperties =
+                        AndroidMapProperties(
+                            isIndoorEnabled = true,
+                            minZoomPreference = 3f,
+                            maxZoomPreference = 21f,
+                        ),
                 ),
             uiSettings =
                 MapUISettings(

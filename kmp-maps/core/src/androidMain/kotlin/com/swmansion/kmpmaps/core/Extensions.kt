@@ -96,7 +96,8 @@ internal fun MapUISettings.toGoogleMapsUiSettings() =
         mapToolbarEnabled = androidUISettings.mapToolbarEnabled,
         rotationGesturesEnabled = rotateEnabled,
         scrollGesturesEnabled = scrollEnabled,
-        scrollGesturesEnabledDuringRotateOrZoom = androidUISettings.scrollGesturesEnabledDuringRotateOrZoom,
+        scrollGesturesEnabledDuringRotateOrZoom =
+            androidUISettings.scrollGesturesEnabledDuringRotateOrZoom,
         tiltGesturesEnabled = androidUISettings.tiltGesturesEnabled,
         zoomControlsEnabled = androidUISettings.zoomControlsEnabled,
         zoomGesturesEnabled = zoomEnabled,

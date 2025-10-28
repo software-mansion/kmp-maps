@@ -2,13 +2,9 @@ package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.swmansion.kmpmaps.core.AndroidMapProperties
-import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
-import com.swmansion.kmpmaps.core.IosMapProperties
-import com.swmansion.kmpmaps.core.IosUISettings
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker

@@ -97,7 +97,8 @@ public actual fun Map(
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
             gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
-            gmsMapView.mapStyle = properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.mapStyle =
+                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
             gmsMapView.setMinZoom(
                 properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
                 properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
@@ -157,7 +158,8 @@ public actual fun Map(
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
             gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
-            gmsMapView.mapStyle = properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.mapStyle =
+                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
             gmsMapView.setMinZoom(
                 properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
                 properties.iosMapProperties.gmsMinZoomPreference ?: 20f,

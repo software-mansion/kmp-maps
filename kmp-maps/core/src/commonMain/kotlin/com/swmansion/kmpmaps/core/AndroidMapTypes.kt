@@ -20,12 +20,11 @@ public data class AndroidMapProperties(
  *
  * @param indoorLevelPickerEnabled Whether indoor level picker is enabled
  * @param mapToolbarEnabled Whether the map toolbar is enabled
- * @param scrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
- *   rotate/zoom
+ * @param scrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom
  * @param tiltGesturesEnabled Whether tilt gestures are enabled
  * @param zoomControlsEnabled Whether zoom controls are enabled
  */
-public data class AndroidUISettings (
+public data class AndroidUISettings(
     val indoorLevelPickerEnabled: Boolean = true,
     val mapToolbarEnabled: Boolean = true,
     val scrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
@@ -41,7 +40,7 @@ public data class AndroidUISettings (
  * @param snippet Additional text displayed below the title
  * @param zIndex The z-index for layering markers
  */
-public data class AndroidMarkerOptions (
+public data class AndroidMarkerOptions(
     val anchor: GoogleMapsAnchor? = null,
     val draggable: Boolean = false,
     val snippet: String? = null,
@@ -54,7 +53,4 @@ public data class AndroidMarkerOptions (
  * @param bearing The bearing (rotation) of the camera in degrees
  * @param tilt The tilt angle of the camera in degrees
  */
-public data class AndroidCameraPosition (
-    val bearing: Float? = null,
-    val tilt: Float? = null,
-)
+public data class AndroidCameraPosition(val bearing: Float? = null, val tilt: Float? = null)
