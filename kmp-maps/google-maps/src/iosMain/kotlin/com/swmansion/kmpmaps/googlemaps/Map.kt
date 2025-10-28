@@ -96,11 +96,12 @@ public actual fun Map(
             gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
-            gmsMapView.indoorEnabled = properties.iosGmsIsIndoorEnabled
-            gmsMapView.mapStyle = properties.iosGmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
+            gmsMapView.mapStyle =
+                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
             gmsMapView.setMinZoom(
-                properties.iosGmsMinZoomPreference ?: 0f,
-                properties.iosGmsMaxZoomPreference ?: 20f,
+                properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
+                properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
             )
 
             uiSettings.toGoogleMapsSettings(gmsMapView)
@@ -114,8 +115,8 @@ public actual fun Map(
                                 pos.coordinates.longitude,
                             ),
                         zoom = pos.zoom,
-                        bearing = (pos.iosGmsBearing ?: 0f).toDouble(),
-                        viewingAngle = (pos.iosGmsViewingAngle ?: 0f).toDouble(),
+                        bearing = (pos.iosCameraPosition?.gmsBearing ?: 0f).toDouble(),
+                        viewingAngle = (pos.iosCameraPosition?.gmsViewingAngle ?: 0f).toDouble(),
                     )
                 gmsMapView.camera = camera
             }
@@ -156,11 +157,12 @@ public actual fun Map(
             gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
             gmsMapView.trafficEnabled = properties.isTrafficEnabled
             gmsMapView.buildingsEnabled = properties.isBuildingEnabled
-            gmsMapView.indoorEnabled = properties.iosGmsIsIndoorEnabled
-            gmsMapView.mapStyle = properties.iosGmsMapStyleOptions.toNativeStyleOptions()
+            gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
+            gmsMapView.mapStyle =
+                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
             gmsMapView.setMinZoom(
-                properties.iosGmsMinZoomPreference ?: 0f,
-                properties.iosGmsMaxZoomPreference ?: 20f,
+                properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
+                properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
             )
 
             uiSettings.toGoogleMapsSettings(gmsMapView)

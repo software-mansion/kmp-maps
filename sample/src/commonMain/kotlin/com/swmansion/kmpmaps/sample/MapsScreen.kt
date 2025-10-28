@@ -26,6 +26,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.swmansion.kmpmaps.core.AndroidMapProperties
+import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -67,16 +69,19 @@ internal fun MapsScreen() {
                     isMyLocationEnabled = showUserLocation,
                     isTrafficEnabled = true,
                     isBuildingEnabled = true,
-                    androidIsIndoorEnabled = true,
-                    androidMinZoomPreference = 3f,
-                    androidMaxZoomPreference = 21f,
+                    androidMapProperties =
+                        AndroidMapProperties(
+                            isIndoorEnabled = true,
+                            minZoomPreference = 3f,
+                            maxZoomPreference = 21f,
+                        ),
                 ),
             uiSettings =
                 MapUISettings(
                     compassEnabled = true,
                     myLocationButtonEnabled = showUserLocation,
                     scaleBarEnabled = true,
-                    androidZoomControlsEnabled = false,
+                    androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
                 ),
             markers = if (showAllComponents) exampleMarkers else emptyList(),
             circles = if (showAllComponents) getExampleCircles() else emptyList(),

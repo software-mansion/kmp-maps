@@ -23,17 +23,8 @@ public enum class MapTheme {
  * @param isBuildingEnabled Whether to show 3D buildings on the map
  * @param mapType The type of map to display
  * @param mapTheme The theme for the map appearance
- * @param iosShowPOI Whether to show points of interest (POIs) on the map (iOS Apple Maps only)
- * @param iosPointsOfInterest POI categories to include/exclude (iOS Apple Maps only)
- * @param iosPolylineTapThreshold Threshold for polyline tap detection (iOS Apple Maps only)
- * @param iosGmsMaxZoomPreference Maximum zoom level preference (iOS Google Maps only)
- * @param iosGmsMinZoomPreference Minimum zoom level preference (iOS Google Maps only)
- * @param iosGmsIsIndoorEnabled Whether indoor maps are enabled (iOS Google Maps only)
- * @param iosGmsMapStyleOptions Custom map styling options (iOS Google Maps only)
- * @param androidIsIndoorEnabled Whether indoor maps are enabled (Android only)
- * @param androidMaxZoomPreference Maximum zoom level preference (Android only)
- * @param androidMinZoomPreference Minimum zoom level preference (Android only)
- * @param androidMapStyleOptions Custom map styling options (Android only)
+ * @param androidMapProperties Android-specific map behavior and appearance configuration options
+ * @param iosMapProperties iOS-specific map behavior and appearance configuration options
  */
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
@@ -41,17 +32,8 @@ public data class MapProperties(
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType? = MapType.NORMAL,
     val mapTheme: MapTheme = MapTheme.SYSTEM,
-    val iosShowPOI: Boolean = true,
-    val iosPointsOfInterest: AppleMapsPointOfInterestCategories? = null,
-    val iosPolylineTapThreshold: Float? = null,
-    val iosGmsMaxZoomPreference: Float? = null,
-    val iosGmsMinZoomPreference: Float? = null,
-    val iosGmsIsIndoorEnabled: Boolean = true,
-    val iosGmsMapStyleOptions: GoogleMapsMapStyleOptions? = null,
-    val androidIsIndoorEnabled: Boolean = true,
-    val androidMaxZoomPreference: Float? = null,
-    val androidMinZoomPreference: Float? = null,
-    val androidMapStyleOptions: GoogleMapsMapStyleOptions? = null,
+    val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
+    val iosMapProperties: IosMapProperties = IosMapProperties(),
 )
 
 /**
@@ -64,18 +46,8 @@ public data class MapProperties(
  * @param scrollEnabled Whether scroll gestures are enabled
  * @param zoomEnabled Whether zoom gestures are enabled
  * @param rotateEnabled Whether rotation gestures are enabled
- * @param iosGmsIndoorPicker Whether indoor level picker is enabled (iOS Google Maps only)
- * @param iosGmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
- *   rotate/zoom (iOS only)
- * @param iosGmsTiltGesturesEnabled Whether tilt gestures are enabled (iOS Google Maps only)
- * @param iosGmsConsumesGesturesInView Whether the map consumes gestures in view (iOS Google Maps
- *   only)
- * @param androidIndoorLevelPickerEnabled Whether indoor level picker is enabled (Android only)
- * @param androidMapToolbarEnabled Whether the map toolbar is enabled (Android only)
- * @param androidScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
- *   rotate/zoom (Android only)
- * @param androidTiltGesturesEnabled Whether tilt gestures are enabled (Android only)
- * @param androidZoomControlsEnabled Whether zoom controls are enabled (Android only)
+ * @param androidUISettings Android-specific UI settings
+ * @param iosUISettings iOS-specific UI settings
  */
 public data class MapUISettings(
     val compassEnabled: Boolean = false,
@@ -85,15 +57,8 @@ public data class MapUISettings(
     val scrollEnabled: Boolean = true,
     val zoomEnabled: Boolean = true,
     val rotateEnabled: Boolean = true,
-    val iosGmsIndoorPicker: Boolean = true,
-    val iosGmsScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
-    val iosGmsTiltGesturesEnabled: Boolean = true,
-    val iosGmsConsumesGesturesInView: Boolean = true,
-    val androidIndoorLevelPickerEnabled: Boolean = true,
-    val androidMapToolbarEnabled: Boolean = true,
-    val androidScrollGesturesEnabledDuringRotateOrZoom: Boolean = true,
-    val androidTiltGesturesEnabled: Boolean = true,
-    val androidZoomControlsEnabled: Boolean = true,
+    val androidUISettings: AndroidUISettings = AndroidUISettings(),
+    val iosUISettings: IosUISettings = IosUISettings(),
 )
 
 /**
@@ -101,20 +66,14 @@ public data class MapUISettings(
  *
  * @param coordinates The geographical coordinates where the marker should be placed
  * @param title The title text displayed when the marker is tapped
- * @param iosTintColor The tint color for the marker (iOS Apple Maps only)
- * @param androidAnchor The anchor point for the marker (Android only)
- * @param androidDraggable Whether the marker can be dragged by the user (Android only)
- * @param androidSnippet Additional text displayed below the title (Android only)
- * @param androidZIndex The z-index for layering markers (Android only)
+ * @param androidMarkerOptions Android-specific options for customizing a marker
+ * @param iosMarkerOptions iOS-specific options for customizing a marker
  */
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
-    val iosTintColor: Color? = null,
-    val androidAnchor: GoogleMapsAnchor? = null,
-    val androidDraggable: Boolean = false,
-    val androidSnippet: String? = null,
-    val androidZIndex: Float? = null,
+    val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
+    val iosMarkerOptions: IosMarkerOptions? = null,
 )
 
 /**
@@ -175,14 +134,12 @@ public data class Coordinates(val latitude: Double, val longitude: Double)
  *
  * @param coordinates The center coordinates of the camera view
  * @param zoom The zoom level of the map (typically 0-20)
- * @param androidBearing The bearing (rotation) of the camera in degrees (Android only)
- * @param androidTilt The tilt angle of the camera in degrees (Android only)
+ * @param androidCameraPosition Android-specific options for the camera position and orientation
+ * @param iosCameraPosition iOS-specific options for the camera position and orientation
  */
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
-    val iosGmsBearing: Float? = null,
-    val iosGmsViewingAngle: Float? = null,
-    val androidBearing: Float? = null,
-    val androidTilt: Float? = null,
+    val androidCameraPosition: AndroidCameraPosition? = null,
+    val iosCameraPosition: IosCameraPosition? = null,
 )

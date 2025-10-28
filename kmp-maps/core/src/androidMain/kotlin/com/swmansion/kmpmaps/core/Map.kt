@@ -75,10 +75,10 @@ public actual fun Map(
             Marker(
                 state = marker.toGoogleMapsMarkerState(),
                 title = marker.title,
-                anchor = marker.androidAnchor.toOffset(),
-                draggable = marker.androidDraggable,
-                snippet = marker.androidSnippet,
-                zIndex = marker.androidZIndex ?: 0.0f,
+                anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                draggable = marker.androidMarkerOptions.draggable,
+                snippet = marker.androidMarkerOptions.snippet,
+                zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
                 onClick = {
                     onMarkerClick?.invoke(marker)
                     onMarkerClick == null
