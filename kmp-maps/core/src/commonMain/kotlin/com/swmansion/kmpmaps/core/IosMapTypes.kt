@@ -27,7 +27,7 @@ public data class IosMapProperties(
  * iOS-specific UI settings that control interactive elements and gestures on the map.
  *
  * @param gmsIndoorPicker Whether indoor level picker is enabled (Google Maps only)
- * @param gmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom
+ * @param gmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom (Google Maps only)
  * @param gmsTiltGesturesEnabled Whether tilt gestures are enabled (Google Maps only)
  * @param gmsConsumesGesturesInView Whether the map consumes gestures in view (Google Maps only)
  */
