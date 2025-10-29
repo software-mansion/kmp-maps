@@ -30,6 +30,8 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1FEF7AAAD05CB0B7A932ECFB /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -112,8 +114,6 @@
 				ECE20445A8F2DAB2E15D119A /* iosApp */,
 			);
 			name = iosApp;
-			packageProductDependencies = (
-			);
 			productName = iosApp;
 			productReference = 57FB49521989F9A6CD121D8A /* KMP Maps.app */;
 			productType = "com.apple.product-type.application";
@@ -142,8 +142,6 @@
 			);
 			mainGroup = 014F6197DC0D99E0CEC81171;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9613DF5A160F79A569053B3E /* Products */;
 			projectDirPath = "";
@@ -173,13 +171,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
