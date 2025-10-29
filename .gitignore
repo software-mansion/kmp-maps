@@ -17,3 +17,4 @@ captures
 local.properties
 secrets.properties
 xcuserdata
+**/Pods/
