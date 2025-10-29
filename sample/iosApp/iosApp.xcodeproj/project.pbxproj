@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2862C2E22E98034600E0803B /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 2862C2E12E98034600E0803B /* GoogleMaps */; };
+		2E2F7CD6D033A89BB4C9FEA8 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D612AEFB427DB5FB6EACA66E /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		57FB49521989F9A6CD121D8A /* KMP Maps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "KMP Maps.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		88857834A6507A06AE41DE0D /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
+		D612AEFB427DB5FB6EACA66E /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8E3307F614F107F9E6E1D33 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,7 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2862C2E22E98034600E0803B /* GoogleMaps in Frameworks */,
+				2E2F7CD6D033A89BB4C9FEA8 /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +61,8 @@
 				1FEF7AAAD05CB0B7A932ECFB /* Configuration */,
 				ECE20445A8F2DAB2E15D119A /* iosApp */,
 				9613DF5A160F79A569053B3E /* Products */,
+				97EBCE07D3623CC0C6C122E3 /* Pods */,
+				D0EA342A5585730D4481BC07 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,6 +74,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		97EBCE07D3623CC0C6C122E3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D8E3307F614F107F9E6E1D33 /* Pods-iosApp.debug.xcconfig */,
+				88857834A6507A06AE41DE0D /* Pods-iosApp.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D0EA342A5585730D4481BC07 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D612AEFB427DB5FB6EACA66E /* Pods_iosApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -76,10 +98,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 139116E0031478E803BBBB38 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				C31FCCFF74CAD53724287DEE /* Compile Kotlin Framework */,
+				738ADA4CA61E7B10476E7E15 /* [CP] Check Pods Manifest.lock */,
 				6E236468E59C4D26C2BC289B /* Sources */,
 				604AF5E6DB91A40EF736A5CB /* Frameworks */,
 				C2975A75DDB1A6BCD6397565 /* Resources */,
+				1B6523D1A411623DA0550C16 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -90,7 +113,6 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
-				2862C2E12E98034600E0803B /* GoogleMaps */,
 			);
 			productName = iosApp;
 			productReference = 57FB49521989F9A6CD121D8A /* KMP Maps.app */;
@@ -121,7 +143,6 @@
 			mainGroup = 014F6197DC0D99E0CEC81171;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9613DF5A160F79A569053B3E /* Products */;
@@ -144,24 +165,48 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		C31FCCFF74CAD53724287DEE /* Compile Kotlin Framework */ = {
+		1B6523D1A411623DA0550C16 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iosApp/Pods-iosApp-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		738ADA4CA61E7B10476E7E15 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
-			name = "Compile Kotlin Framework";
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-iosApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :sample:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -178,6 +223,7 @@
 /* Begin XCBuildConfiguration section */
 		207EA90D3BC0670839877AB7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 88857834A6507A06AE41DE0D /* Pods-iosApp.release.xcconfig */;
 			buildSettings = {
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -271,6 +317,7 @@
 		};
 		F700DA122F17E2B20363502D /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8E3307F614F107F9E6E1D33 /* Pods-iosApp.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -377,25 +424,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googlemaps/ios-maps-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.4.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		2862C2E12E98034600E0803B /* GoogleMaps */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2862C2E02E98034600E0803B /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
-			productName = GoogleMaps;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6F5FFF98C738978990FC4594 /* Project object */;
 }

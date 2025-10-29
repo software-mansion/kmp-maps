@@ -1,0 +1,25 @@
+PODS:
+  - GoogleMaps (10.4.0):
+    - GoogleMaps/Maps (= 10.4.0)
+  - GoogleMaps/Maps (10.4.0)
+  - sample (0.3.0):
+    - GoogleMaps (= 10.4.0)
+
+DEPENDENCIES:
+  - sample (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - GoogleMaps
+
+EXTERNAL SOURCES:
+  sample:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  GoogleMaps: a40d3b1f511f0fa2036e7b08c920c33279b1d5fd
+  sample: 9197fd761d018b2ee390e80750352f0cdd9b121a
+
+PODFILE CHECKSUM: ef1794efa2625223ed0c787ec947838bcb41412b
+
+COCOAPODS: 1.16.2
