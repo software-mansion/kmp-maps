@@ -58,13 +58,12 @@ internal fun MapsScreen() {
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
     var showGeoJson by remember { mutableStateOf(false) }
-    val geoJsonLayer = remember(showGeoJson) {
-        if (showGeoJson) GeoJsonLayer(geoJson = EXAMPLE_GEOJSON) else null
-    }
+    val geoJsonLayer =
+        remember(showGeoJson) { if (showGeoJson) GeoJsonLayer(geoJson = FOOD_GEO_JSON) else null }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.55f),
             mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
@@ -103,7 +102,7 @@ internal fun MapsScreen() {
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayer = geoJsonLayer,
         )
-        Surface {
+        Surface(modifier = Modifier.weight(0.45f)) {
             Column(
                 Modifier.fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))
@@ -171,18 +170,17 @@ internal fun MapsScreen() {
                         )
                     },
                 )
-                //                ListItem(
-                //                    headlineContent = { Text("Show my location") },
-                //                    modifier =
-                //                        Modifier.height(48.dp).clickable { showUserLocation =
-                // !showUserLocation },
-                //                    trailingContent = {
-                //                        Switch(
-                //                            checked = showUserLocation,
-                //                            onCheckedChange = { showUserLocation = it },
-                //                        )
-                //                    },
-                //                )
+                ListItem(
+                    headlineContent = { Text("Show my location") },
+                    modifier =
+                        Modifier.height(48.dp).clickable { showUserLocation = !showUserLocation },
+                    trailingContent = {
+                        Switch(
+                            checked = showUserLocation,
+                            onCheckedChange = { showUserLocation = it },
+                        )
+                    },
+                )
                 ListItem(
                     headlineContent = { Text("Show GeoJSON Layer") },
                     modifier = Modifier.height(48.dp).clickable { showGeoJson = !showGeoJson },
@@ -199,24 +197,6 @@ private enum class MapProvider {
     NATIVE,
     GOOGLE_MAPS,
 }
-
-private const val EXAMPLE_GEOJSON =
-    """
-  {
-    "type": "Feature",
-    "geometry": {
-      "type": "LineString",
-      "coordinates": [
-        [19.9370, 50.0600],
-        [19.9400, 50.0640],
-        [19.9430, 50.0620]
-      ]
-    },
-    "properties": {
-      "name": "Example Line"
-    }
-  }
-"""
 
 @Composable
 private fun Map(
@@ -285,3 +265,118 @@ private fun Map(
             )
     }
 }
+
+private const val EXAMPLE_GEOJSON =
+    """
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [19.9370, 50.0600],
+        [19.9400, 50.0640],
+        [19.9430, 50.0620]
+      ]
+    },
+    "properties": {
+      "name": "Example Line"
+    }
+  }
+"""
+
+private const val FOOD_GEO_JSON =
+    """
+        {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.95948931821505,
+          50.05038942777688
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.960003698811732,
+          50.04742820536811
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.96248330639625,
+          50.047431323021385
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.962415157734426,
+          50.04733706656535
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.96429710922257,
+          50.04890237300748
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.959083406925373,
+          50.04978124578909
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.96405060818745,
+          50.04874731432909
+        ],
+        "type": "Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          19.966124483792726,
+          50.04619662329256
+        ],
+        "type": "Point"
+      }
+    }
+  ]
+}
+    """
