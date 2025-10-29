@@ -31,6 +31,7 @@ import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
@@ -56,6 +57,10 @@ internal fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
+    var showGeoJson by remember { mutableStateOf(false) }
+    val geoJsonLayer = remember(showGeoJson) {
+        if (showGeoJson) GeoJsonLayer(geoJson = EXAMPLE_GEOJSON) else null
+    }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
@@ -96,6 +101,7 @@ internal fun MapsScreen() {
             onMapLongClick = { println("Map long clicked: $it") },
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
+            geoJsonLayer = geoJsonLayer,
         )
         Surface {
             Column(
@@ -165,15 +171,23 @@ internal fun MapsScreen() {
                         )
                     },
                 )
+                //                ListItem(
+                //                    headlineContent = { Text("Show my location") },
+                //                    modifier =
+                //                        Modifier.height(48.dp).clickable { showUserLocation =
+                // !showUserLocation },
+                //                    trailingContent = {
+                //                        Switch(
+                //                            checked = showUserLocation,
+                //                            onCheckedChange = { showUserLocation = it },
+                //                        )
+                //                    },
+                //                )
                 ListItem(
-                    headlineContent = { Text("Show my location") },
-                    modifier =
-                        Modifier.height(48.dp).clickable { showUserLocation = !showUserLocation },
+                    headlineContent = { Text("Show GeoJSON Layer") },
+                    modifier = Modifier.height(48.dp).clickable { showGeoJson = !showGeoJson },
                     trailingContent = {
-                        Switch(
-                            checked = showUserLocation,
-                            onCheckedChange = { showUserLocation = it },
-                        )
+                        Switch(checked = showGeoJson, onCheckedChange = { showGeoJson = it })
                     },
                 )
             }
@@ -185,6 +199,24 @@ private enum class MapProvider {
     NATIVE,
     GOOGLE_MAPS,
 }
+
+private const val EXAMPLE_GEOJSON =
+    """
+  {
+    "type": "Feature",
+    "geometry": {
+      "type": "LineString",
+      "coordinates": [
+        [19.9370, 50.0600],
+        [19.9400, 50.0640],
+        [19.9430, 50.0620]
+      ]
+    },
+    "properties": {
+      "name": "Example Line"
+    }
+  }
+"""
 
 @Composable
 private fun Map(
@@ -206,6 +238,7 @@ private fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
+    geoJsonLayer: GeoJsonLayer? = null,
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -227,6 +260,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayer = geoJsonLayer,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -247,6 +281,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayer = geoJsonLayer,
             )
     }
 }

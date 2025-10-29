@@ -143,3 +143,16 @@ public data class CameraPosition(
     val androidCameraPosition: AndroidCameraPosition? = null,
     val iosCameraPosition: IosCameraPosition? = null,
 )
+
+/**
+ * Represents a layer of GeoJSON data to be displayed on the map.
+ *
+ * @param geoJson A string containing the GeoJSON data
+ * @param lineWidth The width of the lines in the GeoJSON layer
+ * @param lineColor The color of the lines in the GeoJSON layer
+ */
+public data class GeoJsonLayer(
+    val geoJson: String,
+    val lineWidth: Float? = null,
+    val lineColor: Color? = null,
+)

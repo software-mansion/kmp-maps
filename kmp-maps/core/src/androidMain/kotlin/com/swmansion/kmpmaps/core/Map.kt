@@ -12,10 +12,12 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapEffect
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 
 /** Android implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalPermissionsApi::class)
@@ -38,6 +40,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    geoJsonLayer: GeoJsonLayer?,
 ) {
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -71,6 +74,16 @@ public actual fun Map(
             },
         onMapLoaded = onMapLoaded,
     ) {
+        geoJsonLayer?.let { geoJson ->
+            MapEffect(geoJson) { map ->
+                val layer = GoogleGeoJsonLayer(map, org.json.JSONObject(geoJson.geoJson))
+                layer.defaultLineStringStyle.color =
+                    geoJson.lineColor?.toArgb() ?: Color.Magenta.toArgb()
+                layer.defaultLineStringStyle.width = geoJson.lineWidth ?: 5f
+                layer.addLayerToMap()
+            }
+        }
+
         markers.forEach { marker ->
             Marker(
                 state = marker.toGoogleMapsMarkerState(),
