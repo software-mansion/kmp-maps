@@ -29,6 +29,10 @@ kotlin {
             isStatic = true
         }
         pod("GoogleMaps") { version = "10.4.0" }
+        pod("Google-Maps-iOS-Utils") {
+            version = "6.1.3"
+            moduleName = "GoogleMapsUtils"
+        }
     }
 
     sourceSets {

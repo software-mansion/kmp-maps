@@ -13,6 +13,9 @@ import cocoapods.GoogleMaps.kGMSTypeHybrid
 import cocoapods.GoogleMaps.kGMSTypeNormal
 import cocoapods.GoogleMaps.kGMSTypeSatellite
 import cocoapods.GoogleMaps.kGMSTypeTerrain
+import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
+import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.GoogleMapsMapStyleOptions
 import com.swmansion.kmpmaps.core.MapType
@@ -23,6 +26,9 @@ import com.swmansion.kmpmaps.core.Polyline
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.Foundation.NSString
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIColor
 import platform.UIKit.UIUserInterfaceStyle
 
@@ -212,3 +218,22 @@ internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
 @OptIn(ExperimentalForeignApi::class)
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
     this?.json?.let { GMSMapStyle.styleWithJSONString(it, error = null) }
+
+/**
+ * Renders a GeoJSON layer on an iOS Google Map using Google Maps Utils.
+ *
+ * @param geoJson A UTF‑8 encoded GeoJSON document.
+ * @return The created GMUGeometryRenderer, or null if encoding, parsing, or casting fails.
+ */
+@OptIn(ExperimentalForeignApi::class)
+public fun GMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
+    val dataString: NSString = geoJson as NSString
+    val data = dataString.dataUsingEncoding(NSUTF8StringEncoding) ?: return null
+    val parser = GMUGeoJSONParser(data = data)
+    parser.parse()
+
+    val utilsMapView = (this as? UtilsGMSMapView) ?: return null
+    val renderer = GMUGeometryRenderer(map = utilsMapView, geometries = parser.features)
+    renderer.render()
+    return renderer
+}

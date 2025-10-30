@@ -17,6 +17,7 @@ import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
+import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -65,6 +66,7 @@ public actual fun Map(
     val polygonMapping = remember { mutableMapOf<GMSPolygon, Polygon>() }
     val polylineMapping = remember { mutableMapOf<GMSPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
+    var geoJsonRenderer by remember { mutableStateOf<GMUGeometryRenderer?>(null) }
 
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
@@ -83,6 +85,15 @@ public actual fun Map(
         if (properties.isMyLocationEnabled && !hasLocationPermission) {
             locationPermissionHandler.requestPermission()
         }
+    }
+
+    LaunchedEffect(mapView, geoJsonLayer) {
+        geoJsonRenderer?.clear()
+        geoJsonRenderer = null
+
+        val view = mapView ?: return@LaunchedEffect
+        val layer = geoJsonLayer ?: return@LaunchedEffect
+        geoJsonRenderer = view.renderGeoJson(layer.geoJson)
     }
 
     UIKitView(
