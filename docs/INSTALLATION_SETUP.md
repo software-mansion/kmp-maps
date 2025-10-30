@@ -12,7 +12,7 @@ kmpMaps = "0.3.0"
 # For native map (Apple Maps on iOS, Google Maps on Android)
 swmansion-kmpMaps-core = { module = "com.swmansion.kmpmaps:core", version.ref = "kmpMaps" }
 
-# For Google Maps (Google Maps on both platform)
+# For Google Maps (Google Maps on both platforms)
 swmansion-kmpMaps-googleMaps = { module = "com.swmansion.kmpmaps:google-maps", version.ref = "kmpMaps" }
 ```
 
