@@ -26,7 +26,7 @@ dependencies {
 }
 ```
 
-Option B — Google Maps (Google Maps on both platform):
+Option B — Google Maps (Google Maps on both platforms):
 
 ```kotlin
 dependencies {
