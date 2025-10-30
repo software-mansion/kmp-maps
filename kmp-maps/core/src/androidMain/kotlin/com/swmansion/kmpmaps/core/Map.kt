@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -83,18 +84,40 @@ public actual fun Map(
     ) {
         var androidGeoJsonLayer by remember { mutableStateOf<GoogleGeoJsonLayer?>(null) }
 
-        MapEffect(geoJsonLayer) { map ->
-            androidGeoJsonLayer?.removeLayerFromMap()
-            androidGeoJsonLayer = null
+        MapEffect(geoJsonLayer?.geoJson) { map ->
+            runCatching {
+                    androidGeoJsonLayer?.removeLayerFromMap()
+                    androidGeoJsonLayer = null
 
-            geoJsonLayer?.let { geo ->
-                val layer = GoogleGeoJsonLayer(map, JSONObject(geo.geoJson))
-                layer.defaultLineStringStyle.color =
-                    geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
-                layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
-                layer.addLayerToMap()
-                androidGeoJsonLayer = layer
-            }
+                    val geo = geoJsonLayer ?: return@MapEffect
+                    if (!geo.visible) return@MapEffect
+
+                    val json =
+                        runCatching { JSONObject(geo.geoJson) }
+                            .getOrElse {
+                                Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
+                                return@MapEffect
+                            }
+
+                    val layer = GoogleGeoJsonLayer(map, json)
+
+                    layer.defaultLineStringStyle.color =
+                        geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
+                    layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
+                    layer.defaultLineStringStyle.zIndex = geo.zIndex
+
+                    layer.defaultPolygonStyle.fillColor =
+                        geo.fillColor?.toArgb() ?: Color.Transparent.toArgb()
+                    layer.defaultPolygonStyle.strokeColor =
+                        geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
+                    layer.defaultPolygonStyle.strokeWidth = geo.lineWidth ?: 5f
+                    layer.defaultPolygonStyle.zIndex = geo.zIndex
+                    layer
+
+                    layer.addLayerToMap()
+                    androidGeoJsonLayer = layer
+                }
+                .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layer", t) }
         }
 
         DisposableEffect(Unit) {

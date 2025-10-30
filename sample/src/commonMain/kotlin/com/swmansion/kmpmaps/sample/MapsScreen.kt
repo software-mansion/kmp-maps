@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
@@ -32,6 +33,7 @@ import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
+import com.swmansion.kmpmaps.core.LineJoin
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
@@ -59,7 +61,19 @@ internal fun MapsScreen() {
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
     var showGeoJson by remember { mutableStateOf(false) }
     val geoJsonLayer =
-        remember(showGeoJson) { if (showGeoJson) GeoJsonLayer(geoJson = FOOD_GEO_JSON) else null }
+        remember(showGeoJson) {
+            if (showGeoJson)
+                GeoJsonLayer(
+                    geoJson = OFFICE_GEO_JSON,
+                    opacity = 0.1f,
+                    pointColor = Color.Magenta,
+                    lineColor = Color.Blue,
+                    lineJoin = LineJoin.Bevel,
+                    lineWidth = 10f,
+                    fillColor = Color.Blue,
+                )
+            else null
+        }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
@@ -380,3 +394,82 @@ private const val FOOD_GEO_JSON =
   ]
 }
     """
+
+private const val OFFICE_GEO_JSON =
+    """
+    {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              19.96499693844865,
+              50.048781853657715
+            ],
+            [
+              19.964950203807007,
+              50.048641806985216
+            ],
+            [
+              19.96617049725603,
+              50.04850509436312
+            ],
+            [
+              19.966321086660287,
+              50.04870182703783
+            ],
+            [
+              19.965204647972712,
+              50.04883853909956
+            ],
+            [
+              19.965163106067905,
+              50.04876518145625
+            ],
+            [
+              19.96499693844865,
+              50.048781853657715
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              19.965568139637867,
+              50.04929202022299
+            ],
+            [
+              19.965521404995116,
+              50.04903860482935
+            ],
+            [
+              19.966419748683762,
+              50.04893190321056
+            ],
+            [
+              19.966471676064486,
+              50.049115296471314
+            ],
+            [
+              19.965568139637867,
+              50.04929202022299
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
+}
+"""

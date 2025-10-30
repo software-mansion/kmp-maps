@@ -130,3 +130,17 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let
  * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null)
  */
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
+
+private fun LineCap.toGoogleCap(): com.google.android.gms.maps.model.Cap =
+    when (this) {
+        LineCap.Butt -> com.google.android.gms.maps.model.ButtCap()
+        LineCap.Round -> com.google.android.gms.maps.model.RoundCap()
+        LineCap.Square -> com.google.android.gms.maps.model.SquareCap()
+    }
+
+private fun LineJoin.toGoogleJointType(): Int =
+    when (this) {
+        LineJoin.Miter -> com.google.android.gms.maps.model.JointType.DEFAULT // miter
+        LineJoin.Round -> com.google.android.gms.maps.model.JointType.ROUND
+        LineJoin.Bevel -> com.google.android.gms.maps.model.JointType.BEVEL
+    }
