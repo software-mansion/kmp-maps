@@ -20,7 +20,7 @@ end
 In your shared module `build.gradle.kts` (e.g. `:shared`), ensure:
 
 ```kotlin
-// At top level of the module's build.gradle.kts
+// At top level of the module's `build.gradle.kts`
 version = "1.0.0" // required by CocoaPods plugin
 
 kotlin {
