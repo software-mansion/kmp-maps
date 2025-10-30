@@ -30,7 +30,6 @@ Option B — Google Maps (Google Maps on both platform):
 
 ```kotlin
 dependencies {
-    implementation(libs.swmansion.kmpMaps.core)
     implementation(libs.swmansion.kmpMaps.googleMaps)
 }
 ```
