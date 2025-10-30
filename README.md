@@ -2,7 +2,7 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
-[![Maven Central](https://img.shields.io/maven-central/v/com.swmansion.kmpmaps/kmp-maps)](https://central.sonatype.com/artifact/com.swmansion.kmpmaps/kmp-maps)
+![Maven Central](https://img.shields.io/maven-central/v/com.swmansion.kmpmaps/core)
 
 `kmp-maps` provides a unified map component for Compose Multiplatform applications, offering seamless integration with native map APIs on both Android and iOS platforms.
 

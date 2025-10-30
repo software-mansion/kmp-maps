@@ -9,14 +9,19 @@ First, add the library to your `gradle/libs.versions.toml` file:
 kmpMaps = "0.3.0"
 
 [libraries]
-swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
+# For core map abstractions.
+swmansion-kmpMaps-core = { module = "com.swmansion.kmpmaps:core", version.ref = "kmpMaps" }
+
+# For Google Maps support on iOS.
+swmansion-kmpMaps-googleMaps = { module = "com.swmansion.kmpmaps:google-maps", version.ref = "kmpMaps" }
 ```
 
 Then add it to your `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation(libs.swmansion.kmpMaps)
+    implementation(libs.swmansion.kmpMaps.core)
+    implementation(libs.swmansion.kmpMaps.googleMaps)
 }
 ```
 
@@ -26,7 +31,8 @@ If you're not using Gradle version catalogs, you can add the library directly to
 
 ```kotlin
 dependencies {
-    implementation("com.swmansion.kmpmaps:kmp-maps:0.3.0")
+    implementation("com.swmansion.kmpmaps:core:0.3.0")
+    implementation("com.swmansion.kmpmaps:google-maps:0.3.0")
 }
 ```
 

@@ -48,23 +48,31 @@ Replace `YOUR_API_KEY_HERE` with your actual Google Maps API key.
 
 ### Step 5: ⚙️ Configure Gradle with Cocoapods
 
-1. Add to the `[plugins]` section:
+1. Add version above `[plugins]` section:
+    ```kotlin
+   version = "Your.app-version"
+   ```
+
+2. Add to the `[plugins]` section:
 
     ```kotlin
     kotlin("native.cocoapods")
     ```
 
-2. Add to the `[kotlin]` section:
+
+3. Add to the `[kotlin]` section:
 
     ```kotlin
-    cocoapods {
+     cocoapods {
+        summary = "Your summary"
+        homepage = "Link to your homepage/repository"
+        version = "Your.app-version"
         ios.deploymentTarget = "16.0"
+   
         framework {
-            baseName = "YOUR_APP_NAME"
+            baseName = "Your app name"
         }
-
-        pod("GoogleMaps") { version = "10.4.0" }
-    }
+   
+        pod("GoogleMaps") { version = "10.4.0" } 
+     }
     ```
-
-Replace `YOUR_APP_NAME` with your actual app name.
