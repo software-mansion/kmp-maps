@@ -1,32 +1,36 @@
-## 📦 Installation
+## ⚙️ Installation
 
-### ✅ Recommended: Using Gradle Version Catalogs
+### 📦 Dependency configuration (with Gradle Version Catalogs)
 
-First, add the library to your `gradle/libs.versions.toml` file:
+Add libraries to `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
 kmpMaps = "0.3.0"
 
 [libraries]
-swmansion-kmpMaps = { module = "com.swmansion.kmpmaps:kmp-maps", version.ref = "kmpMaps" }
+# For native map (Apple Maps on iOS, Google Maps on Android)
+swmansion-kmpMaps-core = { module = "com.swmansion.kmpmaps:core", version.ref = "kmpMaps" }
+
+# For Google Maps (Google Maps on both platforms)
+swmansion-kmpMaps-googleMaps = { module = "com.swmansion.kmpmaps:google-maps", version.ref = "kmpMaps" }
 ```
 
-Then add it to your `build.gradle.kts`:
+Then, in your shared module `build.gradle.kts`, pick one of the following:
+
+Option A — Core (Apple Maps on iOS, Google Maps on Android):
 
 ```kotlin
 dependencies {
-    implementation(libs.swmansion.kmpMaps)
+    implementation(libs.swmansion.kmpMaps.core)
 }
 ```
 
-### 🔧 Alternative: Direct Dependency Declaration
-
-If you're not using Gradle version catalogs, you can add the library directly to your `build.gradle.kts`:
+Option B — Google Maps (Google Maps on both platforms):
 
 ```kotlin
 dependencies {
-    implementation("com.swmansion.kmpmaps:kmp-maps:0.3.0")
+    implementation(libs.swmansion.kmpMaps.googleMaps)
 }
 ```
 
@@ -57,13 +61,13 @@ Add the following permissions to your `AndroidManifest.xml`:
 
 ## 🍎 iOS Setup
 
-### Apple Maps
+### Apple Maps (Core)
 
-No additional configuration is required for Apple Maps on iOS.
+No extra iOS setup is required beyond location permission (if you need user location).
 
-### Google Maps
+### Google Maps (Add-on)
 
-For Google Maps setup, visit our [dedicated document](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
+Follow the dedicated guide for CocoaPods setup and API key configuration: [Google Maps iOS Setup](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
 
 ### 🔐 Permissions
 
