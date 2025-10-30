@@ -54,6 +54,7 @@ public actual fun Map(
     var hasLocationPermission by remember {
         mutableStateOf(locationPermissionHandler.checkPermission())
     }
+    var geoJson by remember { mutableStateOf<MKGeoJsonRenderedLayer?>(null) }
 
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
@@ -77,6 +78,15 @@ public actual fun Map(
         if (properties.isMyLocationEnabled && !hasLocationPermission) {
             locationPermissionHandler.requestPermission()
         }
+    }
+
+    LaunchedEffect(mapView, geoJsonLayer) {
+        val view = mapView ?: return@LaunchedEffect
+        geoJson?.clear(view)
+        geoJson = null
+
+        val layer = geoJsonLayer ?: return@LaunchedEffect
+        geoJson = view.renderGeoJson(layer.geoJson)
     }
 
     UIKitView(
