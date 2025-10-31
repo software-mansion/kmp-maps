@@ -119,10 +119,9 @@ public data class AndroidGeoJsonOptions(
  */
 public data class IosGeoJsonOptions(val overlayLevel: Int? = null, val lineDashPhase: Float? = null)
 
-
 /**
- * Cross‑platform description of a stroke pattern used to render dashed or dotted
- * outlines for lines and polygon borders.
+ * Cross‑platform description of a stroke pattern used to render dashed or dotted outlines for lines
+ * and polygon borders.
  */
 public sealed interface StrokePatternItem {
     public data object Dot : StrokePatternItem

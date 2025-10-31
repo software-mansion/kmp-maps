@@ -51,7 +51,7 @@ private fun collectAndAdd(
 ) {
     when (obj) {
         is MKGeoJSONFeature ->
-            obj.geometry?.forEach { g -> collectAndAdd(g, mapView, overlays, annotations) }
+            obj.geometry.forEach { g -> collectAndAdd(g, mapView, overlays, annotations) }
         is MKPolygon -> {
             mapView.addOverlay(obj)
             overlays += obj
@@ -73,7 +73,7 @@ private fun collectAndAdd(
             annotations += obj
         }
         is NSArray -> {
-            val arr = obj as NSArray
+            val arr = obj
             val n = arr.count.toInt()
             for (i in 0 until n) {
                 val any = arr.objectAtIndex(i.toULong())

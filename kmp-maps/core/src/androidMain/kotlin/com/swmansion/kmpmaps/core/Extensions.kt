@@ -136,8 +136,8 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
 
 /**
- * Converts the multiplatform stroke pattern description into a list of
- * Google Maps Android [PatternItem]s.
+ * Converts the multiplatform stroke pattern description into a list of Google Maps Android
+ * [PatternItem]s.
  *
  * @return List of [PatternItem] suitable for Google Maps styling.
  */
