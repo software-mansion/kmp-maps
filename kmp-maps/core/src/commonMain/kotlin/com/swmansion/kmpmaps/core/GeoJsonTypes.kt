@@ -27,26 +27,50 @@ import androidx.compose.ui.graphics.Color
  * @param iosOptions iOS-specific options.
  */
 public data class GeoJsonLayer(
+    // General properties
     val geoJson: String,
-    val visible: Boolean = true,
+    val visible: Boolean? = true,
     val zIndex: Float = 0f,
-    val opacity: Float? = null,
+    val isClickable: Boolean? = false,
+    val isGeodesic: Boolean? = false,
+
+    // LineString style
     val lineWidth: Float? = null,
     val lineColor: Color? = null,
+    val pattern: List<StrokePatternItem>? = null,
+
+    // Polygon style
     val fillColor: Color? = null,
-    val lineCap: LineCap? = null,
-    val lineJoin: LineJoin? = null,
-    val lineDashPattern: List<Float>? = null,
-    val geometryTypes: Set<GeoJsonGeometryType>? = null,
-    val minZoom: Float? = null,
-    val maxZoom: Float? = null,
-    val fitToLayerBounds: Boolean = false,
+    val strokeColor: Color? = null,
+    val strokeWidth: Float? = null,
+
+    // Point style
+    val alpha: Float = 1f,
     val pointIconName: String? = null,
-    val pointColor: Color? = null,
-    val pointScale: Float? = null,
-    val labelPropertyKey: String? = null,
-    val androidOptions: AndroidGeoJsonOptions = AndroidGeoJsonOptions(),
-    val iosOptions: IosGeoJsonOptions = IosGeoJsonOptions(),
+    val isDraggable: Boolean = false,
+    val isFlat: Boolean = false,
+    val pointTitle: String? = null,
+    val snippet: String? = null,
+    val rotation: Float = 0f,
+    val infoWindowAnchorU: Float = 0f,
+    val infoWindowAnchorV: Float = 0f,
+    val anchorU: Float = 0f,
+    val anchorV: Float = 0f,
+
+    // Not yet supported (to be removed?)
+    //    val lineCap: LineCap? = null,
+    //    val lineJoin: LineJoin? = null,
+    //    val lineDashPattern: List<Float>? = null,
+    //    val geometryTypes: Set<GeoJsonGeometryType>? = null,
+    //    val minZoom: Float? = null,
+    //    val maxZoom: Float? = null,
+    //    val fitToLayerBounds: Boolean = false,
+    //    val pointColor: Color? = null,
+    //    val pointScale: Float? = null,
+    //    val labelPropertyKey: String? = null,
+    //    val androidOptions: AndroidGeoJsonOptions = AndroidGeoJsonOptions(),
+    //    val iosOptions: IosGeoJsonOptions = IosGeoJsonOptions(),
+    //    val opacity: Float? = null,
 )
 
 /** Geometry types present in GeoJSON. */
@@ -94,3 +118,16 @@ public data class AndroidGeoJsonOptions(
  * @param lineDashPhase Starting offset for dashed lines.
  */
 public data class IosGeoJsonOptions(val overlayLevel: Int? = null, val lineDashPhase: Float? = null)
+
+
+/**
+ * Cross‑platform description of a stroke pattern used to render dashed or dotted
+ * outlines for lines and polygon borders.
+ */
+public sealed interface StrokePatternItem {
+    public data object Dot : StrokePatternItem
+
+    public data class Dash(val lengthPx: Float) : StrokePatternItem
+
+    public data class Gap(val lengthPx: Float) : StrokePatternItem
+}

@@ -33,7 +33,6 @@ import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
-import com.swmansion.kmpmaps.core.LineJoin
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
@@ -42,6 +41,7 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.StrokePatternItem
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 
 @Composable
@@ -64,13 +64,25 @@ internal fun MapsScreen() {
         remember(showGeoJson) {
             if (showGeoJson)
                 GeoJsonLayer(
-                    geoJson = OFFICE_GEO_JSON,
-                    opacity = 0.1f,
-                    pointColor = Color.Magenta,
-                    lineColor = Color.Blue,
-                    lineJoin = LineJoin.Bevel,
+                    geoJson = FOOD_GEO_JSON,
+                    lineColor = Color.Red,
+                    pattern = listOf(StrokePatternItem.Dash(10f), StrokePatternItem.Gap(10f)),
                     lineWidth = 10f,
                     fillColor = Color.Blue,
+                    strokeColor = Color.Black,
+                    strokeWidth = 10f,
+                    isClickable = true,
+                    visible = true,
+                    isGeodesic = true,
+                    snippet = "Jedzonko",
+                    pointTitle = "Test jedzonka",
+                    infoWindowAnchorU = 0.1f,
+                    infoWindowAnchorV = 0.7f,
+                    alpha = 0.5f,
+                    isFlat = true,
+                    rotation = 45f,
+                    anchorU = 0.0f,
+                    anchorV = 0.0f,
                 )
             else null
         }
@@ -280,7 +292,7 @@ private fun Map(
     }
 }
 
-private const val EXAMPLE_GEOJSON =
+private const val EXAMPLE_GEO_JSON =
     """
   {
     "type": "Feature",
@@ -464,6 +476,68 @@ private const val OFFICE_GEO_JSON =
             [
               19.965568139637867,
               50.04929202022299
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+    }
+  ]
+}
+"""
+
+private const val GEODESIC_GEO_JSON =
+    """
+    {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            20.852080282983223,
+            50.205911504071736
+          ],
+          [
+            87.83487650715654,
+            43.62231707075489
+          ]
+        ],
+        "type": "LineString"
+      }
+    }
+  ]
+}
+"""
+
+private const val GEODESIC_GEO_JSON_2 =
+    """
+    {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              19.972269694425364,
+              50.04575749874263
+            ],
+            [
+              28.32222954751066,
+              37.05245386914106
+            ],
+            [
+              72.78371456421613,
+              44.68681711642583
+            ],
+            [
+              19.972269694425364,
+              50.04575749874263
             ]
           ]
         ],

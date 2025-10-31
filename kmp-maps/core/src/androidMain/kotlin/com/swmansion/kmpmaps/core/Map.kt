@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -90,7 +91,7 @@ public actual fun Map(
                     androidGeoJsonLayer = null
 
                     val geo = geoJsonLayer ?: return@MapEffect
-                    if (!geo.visible) return@MapEffect
+                    geo.visible?.let { if (!it) return@MapEffect }
 
                     val json =
                         runCatching { JSONObject(geo.geoJson) }
@@ -101,18 +102,41 @@ public actual fun Map(
 
                     val layer = GoogleGeoJsonLayer(map, json)
 
+                    // LineString style
+                    layer.defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
+                    layer.defaultLineStringStyle.isClickable = geo.isClickable == true
                     layer.defaultLineStringStyle.color =
                         geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
                     layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
                     layer.defaultLineStringStyle.zIndex = geo.zIndex
+                    layer.defaultLineStringStyle.isVisible = geo.visible == true
+                    layer.defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
 
+                    // Polygon style
                     layer.defaultPolygonStyle.fillColor =
                         geo.fillColor?.toArgb() ?: Color.Transparent.toArgb()
                     layer.defaultPolygonStyle.strokeColor =
-                        geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
-                    layer.defaultPolygonStyle.strokeWidth = geo.lineWidth ?: 5f
+                        geo.strokeColor?.toArgb() ?: Color.Magenta.toArgb()
+                    layer.defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: 5f
                     layer.defaultPolygonStyle.zIndex = geo.zIndex
-                    layer
+                    layer.defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
+                    layer.defaultPolygonStyle.isClickable = geo.isClickable == true
+                    layer.defaultPolygonStyle.isVisible = geo.visible == true
+
+                    // Point style
+                    layer.defaultPointStyle.alpha = geo.alpha
+                    layer.defaultPointStyle.isDraggable = geo.isDraggable
+                    layer.defaultPointStyle.isFlat = geo.isFlat
+                    layer.defaultPointStyle.rotation = geo.rotation
+                    layer.defaultPointStyle.title = geo.pointTitle
+                    layer.defaultPointStyle.snippet = geo.snippet
+                    layer.defaultPointStyle.isVisible = geo.visible == true
+                    layer.defaultPointStyle.zIndex = geo.zIndex
+                    layer.defaultPointStyle.setInfoWindowAnchor(
+                        geo.infoWindowAnchorU,
+                        geo.infoWindowAnchorV,
+                    )
+                    layer.defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
 
                     layer.addLayerToMap()
                     androidGeoJsonLayer = layer
