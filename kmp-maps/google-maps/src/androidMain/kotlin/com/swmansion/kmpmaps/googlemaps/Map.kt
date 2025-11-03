@@ -32,7 +32,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
-    geoJsonLayer: GeoJsonLayer?,
+    geoJsonLayers: List<GeoJsonLayer>,
 ) {
     CoreMap(
         modifier,
@@ -52,6 +52,6 @@ public actual fun Map(
         onMapLongClick,
         onPOIClick,
         onMapLoaded,
-        geoJsonLayer,
+        geoJsonLayers,
     )
 }

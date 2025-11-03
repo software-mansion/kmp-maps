@@ -49,7 +49,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
-    geoJsonLayer: GeoJsonLayer?,
+    geoJsonLayers: List<GeoJsonLayer>,
 ) {
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
@@ -83,71 +83,82 @@ public actual fun Map(
             },
         onMapLoaded = onMapLoaded,
     ) {
-        var androidGeoJsonLayer by remember { mutableStateOf<GoogleGeoJsonLayer?>(null) }
+        var androidGeoJsonLayers by remember {
+            mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
+        }
 
-        MapEffect(geoJsonLayer?.geoJson) { map ->
+        MapEffect(geoJsonLayers) { map ->
             runCatching {
-                    androidGeoJsonLayer?.removeLayerFromMap()
-                    androidGeoJsonLayer = null
+                    val desiredKeys = geoJsonLayers.indices.toSet()
+                    val keysToRemove = androidGeoJsonLayers.keys - desiredKeys
+                    keysToRemove.forEach { k -> androidGeoJsonLayers[k]?.removeLayerFromMap() }
+                    androidGeoJsonLayers = androidGeoJsonLayers.filterKeys { it in desiredKeys }
 
-                    val geo = geoJsonLayer ?: return@MapEffect
-                    geo.visible?.let { if (!it) return@MapEffect }
+                    geoJsonLayers.forEachIndexed { index, geo ->
+                        if (geo.visible == false) {
+                            androidGeoJsonLayers[index]?.removeLayerFromMap()
+                            androidGeoJsonLayers = androidGeoJsonLayers - index
+                            return@forEachIndexed
+                        }
 
-                    val json =
-                        runCatching { JSONObject(geo.geoJson) }
-                            .getOrElse {
-                                Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
-                                return@MapEffect
-                            }
+                        androidGeoJsonLayers[index]?.removeLayerFromMap()
 
-                    val layer = GoogleGeoJsonLayer(map, json)
+                        val json =
+                            runCatching { JSONObject(geo.geoJson) }
+                                .getOrElse {
+                                    Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
+                                    return@forEachIndexed
+                                }
 
-                    // LineString style
-                    layer.defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
-                    layer.defaultLineStringStyle.isClickable = geo.isClickable == true
-                    layer.defaultLineStringStyle.color =
-                        geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
-                    layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
-                    layer.defaultLineStringStyle.zIndex = geo.zIndex
-                    layer.defaultLineStringStyle.isVisible = geo.visible == true
-                    layer.defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
+                        val layer = GoogleGeoJsonLayer(map, json)
 
-                    // Polygon style
-                    layer.defaultPolygonStyle.fillColor =
-                        geo.fillColor?.toArgb() ?: Color.Transparent.toArgb()
-                    layer.defaultPolygonStyle.strokeColor =
-                        geo.strokeColor?.toArgb() ?: Color.Magenta.toArgb()
-                    layer.defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: 5f
-                    layer.defaultPolygonStyle.zIndex = geo.zIndex
-                    layer.defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
-                    layer.defaultPolygonStyle.isClickable = geo.isClickable == true
-                    layer.defaultPolygonStyle.isVisible = geo.visible == true
+                        // LineString style
+                        layer.defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
+                        layer.defaultLineStringStyle.isClickable = geo.isClickable == true
+                        layer.defaultLineStringStyle.color =
+                            geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
+                        layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
+                        layer.defaultLineStringStyle.zIndex = geo.zIndex
+                        layer.defaultLineStringStyle.isVisible = geo.visible == true
+                        layer.defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
 
-                    // Point style
-                    layer.defaultPointStyle.alpha = geo.alpha
-                    layer.defaultPointStyle.isDraggable = geo.isDraggable
-                    layer.defaultPointStyle.isFlat = geo.isFlat
-                    layer.defaultPointStyle.rotation = geo.rotation
-                    layer.defaultPointStyle.title = geo.pointTitle
-                    layer.defaultPointStyle.snippet = geo.snippet
-                    layer.defaultPointStyle.isVisible = geo.visible == true
-                    layer.defaultPointStyle.zIndex = geo.zIndex
-                    layer.defaultPointStyle.setInfoWindowAnchor(
-                        geo.infoWindowAnchorU,
-                        geo.infoWindowAnchorV,
-                    )
-                    layer.defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
+                        // Polygon style
+                        layer.defaultPolygonStyle.fillColor =
+                            geo.fillColor?.toArgb() ?: Color.Transparent.toArgb()
+                        layer.defaultPolygonStyle.strokeColor =
+                            geo.strokeColor?.toArgb() ?: Color.Magenta.toArgb()
+                        layer.defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: 5f
+                        layer.defaultPolygonStyle.zIndex = geo.zIndex
+                        layer.defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
+                        layer.defaultPolygonStyle.isClickable = geo.isClickable == true
+                        layer.defaultPolygonStyle.isVisible = geo.visible == true
 
-                    layer.addLayerToMap()
-                    androidGeoJsonLayer = layer
+                        // Point style
+                        layer.defaultPointStyle.alpha = geo.alpha
+                        layer.defaultPointStyle.isDraggable = geo.isDraggable
+                        layer.defaultPointStyle.isFlat = geo.isFlat
+                        layer.defaultPointStyle.rotation = geo.rotation
+                        layer.defaultPointStyle.title = geo.pointTitle
+                        layer.defaultPointStyle.snippet = geo.snippet
+                        layer.defaultPointStyle.isVisible = geo.visible == true
+                        layer.defaultPointStyle.zIndex = geo.zIndex
+                        layer.defaultPointStyle.setInfoWindowAnchor(
+                            geo.infoWindowAnchorU,
+                            geo.infoWindowAnchorV,
+                        )
+                        layer.defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
+
+                        layer.addLayerToMap()
+                        androidGeoJsonLayers = androidGeoJsonLayers + (index to layer)
+                    }
                 }
-                .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layer", t) }
+                .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layers", t) }
         }
 
         DisposableEffect(Unit) {
             onDispose {
-                androidGeoJsonLayer?.removeLayerFromMap()
-                androidGeoJsonLayer = null
+                androidGeoJsonLayers.values.forEach { it.removeLayerFromMap() }
+                androidGeoJsonLayers = emptyMap()
             }
         }
 

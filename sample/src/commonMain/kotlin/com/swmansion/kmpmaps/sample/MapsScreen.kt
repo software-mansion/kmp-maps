@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Surface
@@ -59,32 +60,54 @@ internal fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
-    var showGeoJson by remember { mutableStateOf(false) }
-    val geoJsonLayer =
-        remember(showGeoJson) {
-            if (showGeoJson)
-                GeoJsonLayer(
-                    geoJson = FOOD_GEO_JSON,
-                    lineColor = Color.Red,
-                    pattern = listOf(StrokePatternItem.Dash(10f), StrokePatternItem.Gap(10f)),
-                    lineWidth = 10f,
-                    fillColor = Color.Blue,
-                    strokeColor = Color.Black,
-                    strokeWidth = 10f,
-                    isClickable = true,
-                    visible = true,
-                    isGeodesic = true,
-                    snippet = "Jedzonko",
-                    pointTitle = "Test jedzonka",
-                    infoWindowAnchorU = 0.1f,
-                    infoWindowAnchorV = 0.7f,
-                    alpha = 0.5f,
-                    isFlat = true,
-                    rotation = 45f,
-                    anchorU = 0.0f,
-                    anchorV = 0.0f,
-                )
-            else null
+    var showFoodGeoJson by remember { mutableStateOf(false) }
+    var showOfficeGeoJson by remember { mutableStateOf(false) }
+    val geoJsonLayers =
+        remember(showFoodGeoJson, showOfficeGeoJson) {
+            buildList {
+                if (showFoodGeoJson) {
+                    add(
+                        GeoJsonLayer(
+                            geoJson = FOOD_GEO_JSON,
+                            lineColor = Color.Red,
+                            pattern =
+                                listOf(StrokePatternItem.Dash(10f), StrokePatternItem.Gap(10f)),
+                            lineWidth = 10f,
+                            fillColor = Color.Blue,
+                            strokeColor = Color.Black,
+                            strokeWidth = 10f,
+                            isClickable = true,
+                            visible = true,
+                            isGeodesic = true,
+                            snippet = "Jedzonko",
+                            pointTitle = "Food points",
+                            infoWindowAnchorU = 0.1f,
+                            infoWindowAnchorV = 0.7f,
+                            alpha = 0.5f,
+                            isFlat = true,
+                            rotation = 45f,
+                            anchorU = 0.0f,
+                            anchorV = 0.0f,
+                        )
+                    )
+                }
+                if (showOfficeGeoJson) {
+                    add(
+                        GeoJsonLayer(
+                            geoJson = OFFICE_GEO_JSON,
+                            lineColor = Color(0xFF009688),
+                            lineWidth = 6f,
+                            fillColor = Color(0x33009688),
+                            strokeColor = Color(0xFF00695C),
+                            strokeWidth = 6f,
+                            isClickable = true,
+                            visible = true,
+                            isGeodesic = true,
+                            pointTitle = "Office areas",
+                        )
+                    )
+                }
+            }
         }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
@@ -126,7 +149,7 @@ internal fun MapsScreen() {
             onMapLongClick = { println("Map long clicked: $it") },
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
-            geoJsonLayer = geoJsonLayer,
+            geoJsonLayers = geoJsonLayers,
         )
         Surface(modifier = Modifier.weight(0.45f)) {
             Column(
@@ -207,13 +230,32 @@ internal fun MapsScreen() {
                         )
                     },
                 )
-                ListItem(
-                    headlineContent = { Text("Show GeoJSON Layer") },
-                    modifier = Modifier.height(48.dp).clickable { showGeoJson = !showGeoJson },
-                    trailingContent = {
-                        Switch(checked = showGeoJson, onCheckedChange = { showGeoJson = it })
-                    },
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showFoodGeoJson = !showFoodGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showFoodGeoJson,
+                            onCheckedChange = { showFoodGeoJson = it },
+                        )
+                        Text("Food GeoJSON")
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showOfficeGeoJson = !showOfficeGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showOfficeGeoJson,
+                            onCheckedChange = { showOfficeGeoJson = it },
+                        )
+                        Text("Office GeoJSON")
+                    }
+                }
             }
         }
     }
@@ -244,7 +286,7 @@ private fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
-    geoJsonLayer: GeoJsonLayer? = null,
+    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -266,7 +308,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
-                geoJsonLayer = geoJsonLayer,
+                geoJsonLayers = geoJsonLayers,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -287,7 +329,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
-                geoJsonLayer = geoJsonLayer,
+                geoJsonLayers = geoJsonLayers,
             )
     }
 }

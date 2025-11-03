@@ -42,7 +42,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
-    geoJsonLayer: GeoJsonLayer?,
+    geoJsonLayers: List<GeoJsonLayer>,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
@@ -54,7 +54,9 @@ public actual fun Map(
     var hasLocationPermission by remember {
         mutableStateOf(locationPermissionHandler.checkPermission())
     }
-    var geoJson by remember { mutableStateOf<MKGeoJsonRenderedLayer?>(null) }
+    var renderedGeoJsonLayers by remember {
+        mutableStateOf<Map<Int, MKGeoJsonRenderedLayer>>(emptyMap())
+    }
 
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
@@ -80,13 +82,28 @@ public actual fun Map(
         }
     }
 
-    LaunchedEffect(mapView, geoJsonLayer) {
+    LaunchedEffect(mapView, geoJsonLayers) {
         val view = mapView ?: return@LaunchedEffect
-        geoJson?.clear(view)
-        geoJson = null
+        val desiredKeys = geoJsonLayers.indices.toSet()
+        val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
+        keysToRemove.forEach { idx -> renderedGeoJsonLayers[idx]?.clear(view) }
+        renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
 
-        val layer = geoJsonLayer ?: return@LaunchedEffect
-        geoJson = view.renderGeoJson(layer.geoJson)
+        geoJsonLayers.forEachIndexed { index, layer ->
+            renderedGeoJsonLayers[index]?.clear(view)
+
+            if (layer.visible == false) {
+                renderedGeoJsonLayers = renderedGeoJsonLayers - index
+                return@forEachIndexed
+            }
+
+            val rendered = view.renderGeoJson(layer.geoJson)
+            if (rendered != null) {
+                renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
+            } else {
+                renderedGeoJsonLayers = renderedGeoJsonLayers - index
+            }
+        }
     }
 
     UIKitView(

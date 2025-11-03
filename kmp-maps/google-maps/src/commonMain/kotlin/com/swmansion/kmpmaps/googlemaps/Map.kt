@@ -56,5 +56,5 @@ public expect fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
-    geoJsonLayer: GeoJsonLayer? = null,
+    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
 )
