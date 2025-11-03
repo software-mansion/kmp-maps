@@ -26,6 +26,8 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
+import com.google.maps.android.data.geojson.GeoJsonPoint
+import com.google.maps.android.data.geojson.GeoJsonPointStyle
 import org.json.JSONObject
 
 /** Android implementation of the Map composable using Google Maps. */
@@ -147,6 +149,37 @@ public actual fun Map(
                             geo.infoWindowAnchorV,
                         )
                         layer.defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
+
+                        layer.features.forEach { feature ->
+                            if (feature.geometry is GeoJsonPoint) {
+                                val titleFromJson =
+                                    feature.getProperty("title")
+                                        ?: feature.getProperty("name")
+                                        ?: geo.pointTitle
+                                val snippetFromJson =
+                                    feature.getProperty("snippet")
+                                        ?: feature.getProperty("description")
+                                        ?: geo.snippet
+
+                                val pointStyle =
+                                    GeoJsonPointStyle().apply {
+                                        alpha = geo.alpha
+                                        isDraggable = geo.isDraggable
+                                        isFlat = geo.isFlat
+                                        rotation = geo.rotation
+                                        title = titleFromJson
+                                        snippet = snippetFromJson
+                                        isVisible = geo.visible == true
+                                        zIndex = geo.zIndex
+                                        setInfoWindowAnchor(
+                                            geo.infoWindowAnchorU,
+                                            geo.infoWindowAnchorV,
+                                        )
+                                        setAnchor(geo.anchorU, geo.anchorV)
+                                    }
+                                feature.setPointStyle(pointStyle)
+                            }
+                        }
 
                         layer.addLayerToMap()
                         androidGeoJsonLayers = androidGeoJsonLayers + (index to layer)

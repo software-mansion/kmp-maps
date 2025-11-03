@@ -359,91 +359,115 @@ private const val FOOD_GEO_JSON =
   "features": [
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Talerz"
+      },
       "geometry": {
         "coordinates": [
           19.95948931821505,
           50.05038942777688
         ],
         "type": "Point"
-      }
+      },
+      "id": 0
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Orzo"
+      },
       "geometry": {
         "coordinates": [
           19.960003698811732,
           50.04742820536811
         ],
         "type": "Point"
-      }
+      },
+      "id": 1
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Yoko"
+      },
       "geometry": {
         "coordinates": [
           19.96248330639625,
           50.047431323021385
         ],
         "type": "Point"
-      }
+      },
+      "id": 2
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Hindus"
+      },
       "geometry": {
         "coordinates": [
           19.962415157734426,
           50.04733706656535
         ],
         "type": "Point"
-      }
+      },
+      "id": 3
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Cyber Ramen"
+      },
       "geometry": {
         "coordinates": [
           19.96429710922257,
           50.04890237300748
         ],
         "type": "Point"
-      }
+      },
+      "id": 4
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Hankki"
+      },
       "geometry": {
         "coordinates": [
           19.959083406925373,
           50.04978124578909
         ],
         "type": "Point"
-      }
+      },
+      "id": 5
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Emalia"
+      },
       "geometry": {
         "coordinates": [
           19.96405060818745,
           50.04874731432909
         ],
         "type": "Point"
-      }
+      },
+      "id": 6
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "title": "Mateo"
+      },
       "geometry": {
         "coordinates": [
           19.966124483792726,
           50.04619662329256
         ],
         "type": "Point"
-      }
+      },
+      "id": 7
     }
   ]
 }

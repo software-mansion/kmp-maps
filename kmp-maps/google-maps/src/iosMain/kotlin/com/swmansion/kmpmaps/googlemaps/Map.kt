@@ -39,10 +39,12 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreGraphics.CGPointMake
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.Foundation.NSData
+import platform.Foundation.NSDictionary
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
+import platform.Foundation.valueForKey
 import platform.UIKit.UIColor
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -187,12 +189,36 @@ public actual fun Map(
                     hasStroke = false,
                 )
 
+            var featureIdx = 0
             parser.features.forEach { feature ->
                 val f = feature as? GMUFeature ?: return@forEach
-                when (val geom = f.geometry) {
+                when (f.geometry) {
                     is cocoapods.Google_Maps_iOS_Utils.GMULineString -> f.style = lineStyle
                     is cocoapods.Google_Maps_iOS_Utils.GMUPolygon -> f.style = polygonStyle
-                    is cocoapods.Google_Maps_iOS_Utils.GMUPoint -> f.style = pointStyle
+                    is cocoapods.Google_Maps_iOS_Utils.GMUPoint -> {
+                        val dict = f.properties as? NSDictionary
+                        val titleFromJson =
+                            (dict?.valueForKey("title") as? String)
+                                ?: (dict?.valueForKey("name") as? String)
+                                ?: pointTitle
+
+                        val featurePointStyle =
+                            GMUStyle(
+                                styleID = "point_${index}_$featureIdx",
+                                strokeColor = UIColor.clearColor,
+                                fillColor = UIColor.clearColor,
+                                width = 1.0,
+                                scale = 1.0,
+                                heading = rotation,
+                                anchor = CGPointMake(anchorU, anchorV),
+                                iconUrl = null,
+                                title = titleFromJson,
+                                hasFill = false,
+                                hasStroke = false,
+                            )
+                        f.style = featurePointStyle
+                        featureIdx += 1
+                    }
                     else -> f.style = polygonStyle
                 }
             }
