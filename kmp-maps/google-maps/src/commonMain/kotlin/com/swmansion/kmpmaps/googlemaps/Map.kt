@@ -36,6 +36,7 @@ import com.swmansion.kmpmaps.core.Polyline
  * @param onMapLongClick Callback invoked when the user long-clicks on the map
  * @param onPOIClick Callback invoked when the user clicks on a Point of Interest
  * @param onMapLoaded Callback invoked when the map has finished loading
+ * @param geoJsonLayers List of GeoJSON layers to display on the map
  */
 @Composable
 public expect fun Map(

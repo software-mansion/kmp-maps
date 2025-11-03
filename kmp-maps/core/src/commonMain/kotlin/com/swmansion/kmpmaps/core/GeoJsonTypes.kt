@@ -5,26 +5,28 @@ import androidx.compose.ui.graphics.Color
 /**
  * Represents a layer of GeoJSON data to be displayed on the map.
  *
- * @param geoJson Raw GeoJSON document (UTF-8).
- * @param visible Whether the layer is visible.
- * @param zIndex Drawing order relative to other layers (higher draws on top).
- * @param opacity Global opacity multiplier (0f..1f) applied to shapes.
- * @param lineWidth Stroke width for line/polygon features.
- * @param lineColor Stroke color for line/polygon features.
- * @param fillColor Fill color for polygon features.
- * @param lineCap Stroke cap style for lines.
- * @param lineJoin Stroke join style for lines/polygons.
- * @param lineDashPattern Dash pattern for stroke (sequence of on/off lengths in px).
- * @param geometryTypes If set, only geometries of these types will be rendered.
- * @param minZoom Minimum zoom at which the layer is visible.
- * @param maxZoom Maximum zoom at which the layer is visible.
- * @param fitToLayerBounds If true, camera will be adjusted to fit the layer on first render.
- * @param pointIconName Optional asset name for point features (markers).
- * @param pointColor Marker color for point features.
- * @param pointScale Scale for marker icon/symbol for point features (1.0 = original).
- * @param labelPropertyKey GeoJSON property key used as title/label for points.
- * @param androidOptions Android-specific options.
- * @param iosOptions iOS-specific options.
+ * @param geoJson Raw GeoJSON document (UTF-8). Supports Geometry, Feature, and FeatureCollection
+ * @param visible Whether the layer is visible. Default: true
+ * @param zIndex Drawing order relative to other layers (higher draws on top)
+ * @param isClickable: If true, features from this layer can emit click events when supported
+ * @param isGeodesic: If true, lines/polygon edges are rendered as geodesics when supported
+ * @param lineWidth: Stroke width for LineString
+ * @param lineColor: Stroke color for LineString features
+ * @param pattern: Dash pattern for strokes. See StrokePatternItem for available pattern items
+ * @param fillColor: Fill color for polygon interiors
+ * @param strokeColor: Stroke color for polygon outlines
+ * @param strokeWidth: Stroke width for polygon outlines
+ * @param alpha: Opacity for point symbols/markers in the range [0f, 1f]
+ * @param pointIconName: Optional asset name for a custom marker icon (platform support may vary)
+ * @param isDraggable: Whether point markers are draggable (when supported)
+ * @param isFlat: Whether the marker icon is flat against the map surface (when supported)
+ * @param pointTitle: Title used for marker info windows where supported
+ * @param snippet: Subtitle/description used for marker info windows
+ * @param rotation: Marker/icon rotation in degrees
+ * @param infoWindowAnchorU Horizontal info window anchor relative to the marker (0..1)
+ * @param infoWindowAnchorV Vertical info window anchor relative to the marker (0..1)
+ * @param anchorU Horizontal marker icon anchor relative to the icon (0..1)
+ * @param anchorV Vertical marker icon anchor relative to the icon (0..1)
  */
 public data class GeoJsonLayer(
     // General properties
@@ -56,68 +58,7 @@ public data class GeoJsonLayer(
     val infoWindowAnchorV: Float = 0f,
     val anchorU: Float = 0f,
     val anchorV: Float = 0f,
-
-    // Not yet supported (to be removed?)
-    //    val lineCap: LineCap? = null,
-    //    val lineJoin: LineJoin? = null,
-    //    val lineDashPattern: List<Float>? = null,
-    //    val geometryTypes: Set<GeoJsonGeometryType>? = null,
-    //    val minZoom: Float? = null,
-    //    val maxZoom: Float? = null,
-    //    val fitToLayerBounds: Boolean = false,
-    //    val pointColor: Color? = null,
-    //    val pointScale: Float? = null,
-    //    val labelPropertyKey: String? = null,
-    //    val androidOptions: AndroidGeoJsonOptions = AndroidGeoJsonOptions(),
-    //    val iosOptions: IosGeoJsonOptions = IosGeoJsonOptions(),
-    //    val opacity: Float? = null,
 )
-
-/** Geometry types present in GeoJSON. */
-public enum class GeoJsonGeometryType {
-    Point,
-    MultiPoint,
-    LineString,
-    MultiLineString,
-    Polygon,
-    MultiPolygon,
-    GeometryCollection,
-    Feature,
-    FeatureCollection,
-}
-
-/** Line cap style for strokes. */
-public enum class LineCap {
-    Butt,
-    Round,
-    Square,
-}
-
-/** Line join style for strokes. */
-public enum class LineJoin {
-    Miter,
-    Round,
-    Bevel,
-}
-
-/**
- * Android-specific options for GeoJSON layer styling/behavior.
- *
- * @param pointMarkerHue Marker hue for default Google marker (0..360).
- * @param clustering Enable clustering for point features (if supported by integration).
- */
-public data class AndroidGeoJsonOptions(
-    val pointMarkerHue: Float? = null,
-    val clustering: Boolean = false,
-)
-
-/**
- * iOS-specific options for GeoJSON layer styling/behavior.
- *
- * @param overlayLevel Target overlay level (e.g., above roads) if supported.
- * @param lineDashPhase Starting offset for dashed lines.
- */
-public data class IosGeoJsonOptions(val overlayLevel: Int? = null, val lineDashPhase: Float? = null)
 
 /**
  * Cross‑platform description of a stroke pattern used to render dashed or dotted outlines for lines
