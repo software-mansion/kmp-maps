@@ -136,8 +136,8 @@ public actual fun Map(
             val polygonStrokeColor = uiColor(layer.strokeColor, UIColor.magentaColor)
             val fillColor = uiColor(layer.fillColor, UIColor.clearColor)
 
-            val lineWidth = (layer.lineWidth ?: 5f).toDouble()
-            val strokeWidth = (layer.strokeWidth ?: 5f).toDouble()
+            val lineWidth = (layer.lineWidth ?: 2f).toDouble()
+            val strokeWidth = (layer.strokeWidth ?: 2f).toDouble()
 
             val anchorU = layer.anchorU.toDouble()
             val anchorV = layer.anchorV.toDouble()

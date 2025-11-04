@@ -15,6 +15,7 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
+import platform.UIKit.UIColor
 import platform.UIKit.UIGestureRecognizerStateBegan
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
@@ -50,24 +51,27 @@ internal class MapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
+                renderer.strokeColor =
+                    circleStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                renderer.lineWidth = (circleStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH).toDouble()
                 renderer.fillColor = circleStyle?.color?.toAppleMapsColor()
                 renderer
             }
             is MKPolygon -> {
                 val polygonStyle = polygonStyles[rendererForOverlay]
                 val renderer = MKPolygonRenderer(rendererForOverlay)
-                renderer.strokeColor = polygonStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (polygonStyle?.lineWidth ?: 1).toDouble()
+                renderer.strokeColor =
+                    polygonStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                renderer.lineWidth = (polygonStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH).toDouble()
                 renderer.fillColor = polygonStyle?.color?.toAppleMapsColor()
                 renderer
             }
             is MKPolyline -> {
                 val polylineStyle = polylineStyles[rendererForOverlay]
                 val renderer = MKPolylineRenderer(rendererForOverlay)
-                renderer.strokeColor = polylineStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (polylineStyle?.width ?: 1).toDouble()
+                renderer.strokeColor =
+                    polylineStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                renderer.lineWidth = (polylineStyle?.width ?: DEFAULT_STROKE_WIDTH).toDouble()
                 renderer
             }
             else -> MKCircleRenderer(rendererForOverlay)
