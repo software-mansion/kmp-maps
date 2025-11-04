@@ -3,13 +3,13 @@ package com.swmansion.kmpmaps.googlemaps
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.GoogleMaps.GMSCameraPosition
@@ -18,11 +18,6 @@ import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMUFeature
-import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
-import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
-import cocoapods.Google_Maps_iOS_Utils.GMUStyle
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -36,16 +31,7 @@ import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.CoreGraphics.CGPointMake
 import platform.CoreLocation.CLLocationCoordinate2DMake
-import platform.Foundation.NSData
-import platform.Foundation.NSDictionary
-import platform.Foundation.NSString
-import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.create
-import platform.Foundation.dataUsingEncoding
-import platform.Foundation.valueForKey
-import platform.UIKit.UIColor
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
@@ -71,6 +57,7 @@ public actual fun Map(
 ) {
     var mapView by remember { mutableStateOf<GMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
+    val geoJsonManager = remember { GeoJsonRendererManager() }
 
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     var hasLocationPermission by remember {
@@ -81,7 +68,6 @@ public actual fun Map(
     val polygonMapping = remember { mutableMapOf<GMSPolygon, Polygon>() }
     val polylineMapping = remember { mutableMapOf<GMSPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
-    var geoJsonRenderers by remember { mutableStateOf<Map<Int, GMUGeometryRenderer>>(emptyMap()) }
 
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
@@ -102,137 +88,14 @@ public actual fun Map(
         }
     }
 
+    DisposableEffect(mapView) {
+        mapView?.let { geoJsonManager.attach(it) }
+        onDispose { geoJsonManager.clear() }
+    }
+
     LaunchedEffect(mapView, geoJsonLayers) {
-        val view: GMSMapView = mapView ?: return@LaunchedEffect
-
-        val desired = geoJsonLayers.indices.toSet()
-        val toRemove = geoJsonRenderers.keys - desired
-        toRemove.forEach { idx -> geoJsonRenderers[idx]?.clear() }
-        geoJsonRenderers = geoJsonRenderers.filterKeys { it in desired }
-
-        geoJsonLayers.forEachIndexed { index, layer ->
-            geoJsonRenderers[index]?.clear()
-            if (layer.visible != true) {
-                geoJsonRenderers = geoJsonRenderers - index
-                return@forEachIndexed
-            }
-
-            val data: NSData =
-                NSString.create(string = layer.geoJson).dataUsingEncoding(NSUTF8StringEncoding)!!
-            val parser = GMUGeoJSONParser(data = data)
-            parser.parse()
-
-            fun uiColor(c: Color?, fallback: UIColor): UIColor =
-                if (c == null) fallback
-                else
-                    UIColor(
-                        red = c.red.toDouble(),
-                        green = c.green.toDouble(),
-                        blue = c.blue.toDouble(),
-                        alpha = c.alpha.toDouble(),
-                    )
-
-            val lineStrokeColor = uiColor(layer.lineColor, UIColor.magentaColor)
-            val polygonStrokeColor = uiColor(layer.strokeColor, UIColor.magentaColor)
-            val fillColor = uiColor(layer.fillColor, UIColor.clearColor)
-
-            val lineWidth = (layer.lineWidth ?: 2f).toDouble()
-            val strokeWidth = (layer.strokeWidth ?: 2f).toDouble()
-
-            val anchorU = layer.anchorU.toDouble()
-            val anchorV = layer.anchorV.toDouble()
-            val rotation = layer.rotation.toDouble()
-            val pointTitle = layer.pointTitle
-
-            val lineStyle =
-                GMUStyle(
-                    styleID = "line_$index",
-                    strokeColor = lineStrokeColor,
-                    fillColor = UIColor.clearColor,
-                    width = lineWidth,
-                    scale = 1.0,
-                    heading = 0.0,
-                    anchor = CGPointMake(0.5, 1.0),
-                    iconUrl = null,
-                    title = null,
-                    hasFill = false,
-                    hasStroke = true,
-                )
-
-            val polygonStyle =
-                GMUStyle(
-                    styleID = "polygon_$index",
-                    strokeColor = polygonStrokeColor,
-                    fillColor = fillColor,
-                    width = strokeWidth,
-                    scale = 1.0,
-                    heading = 0.0,
-                    anchor = CGPointMake(0.5, 1.0),
-                    iconUrl = null,
-                    title = null,
-                    hasFill = layer.fillColor != null,
-                    hasStroke = true,
-                )
-
-            val pointStyle =
-                GMUStyle(
-                    styleID = "point_$index",
-                    strokeColor = UIColor.clearColor,
-                    fillColor = UIColor.clearColor,
-                    width = 1.0,
-                    scale = 1.0,
-                    heading = rotation,
-                    anchor = CGPointMake(anchorU, anchorV),
-                    iconUrl = null,
-                    title = pointTitle,
-                    hasFill = false,
-                    hasStroke = false,
-                )
-
-            var featureIdx = 0
-            parser.features.forEach { feature ->
-                val f = feature as? GMUFeature ?: return@forEach
-                when (f.geometry) {
-                    is cocoapods.Google_Maps_iOS_Utils.GMULineString -> f.style = lineStyle
-                    is cocoapods.Google_Maps_iOS_Utils.GMUPolygon -> f.style = polygonStyle
-                    is cocoapods.Google_Maps_iOS_Utils.GMUPoint -> {
-                        val dict = f.properties as? NSDictionary
-                        val titleFromJson =
-                            (dict?.valueForKey("title") as? String)
-                                ?: (dict?.valueForKey("name") as? String)
-                                ?: pointTitle
-
-                        val featurePointStyle =
-                            GMUStyle(
-                                styleID = "point_${index}_$featureIdx",
-                                strokeColor = UIColor.clearColor,
-                                fillColor = UIColor.clearColor,
-                                width = 1.0,
-                                scale = 1.0,
-                                heading = rotation,
-                                anchor = CGPointMake(anchorU, anchorV),
-                                iconUrl = null,
-                                title = titleFromJson,
-                                hasFill = false,
-                                hasStroke = false,
-                            )
-                        f.style = featurePointStyle
-                        featureIdx += 1
-                    }
-                    else -> f.style = polygonStyle
-                }
-            }
-
-            val renderer =
-                GMUGeometryRenderer(
-                    map = view as UtilsGMSMapView,
-                    geometries = parser.features,
-                    styles = listOf(lineStyle, polygonStyle, pointStyle),
-                )
-            renderer.render()
-
-            geoJsonRenderers = geoJsonRenderers + (index to renderer)
-        }
+        mapView ?: return@LaunchedEffect
+        geoJsonManager.render(geoJsonLayers)
     }
 
     UIKitView(
