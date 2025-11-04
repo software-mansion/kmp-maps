@@ -26,6 +26,8 @@ import com.swmansion.kmpmaps.core.Polyline
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.Foundation.NSDictionary
+import platform.Foundation.NSNumber
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.dataUsingEncoding
@@ -236,4 +238,81 @@ public fun GMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
     val renderer = GMUGeometryRenderer(map = utilsMapView, geometries = parser.features)
     renderer.render()
     return renderer
+}
+
+/**
+ * Converts an optional Compose Color to a UIColor, using the provided fallback when null.
+ *
+ * @param fallback Color to use when this Color is null.
+ * @return UIColor created from this Color or the fallback.
+ */
+internal fun Color?.toUIColor(fallback: UIColor): UIColor =
+    if (this == null) fallback
+    else
+        UIColor(
+            red = this.red.toDouble(),
+            green = this.green.toDouble(),
+            blue = this.blue.toDouble(),
+            alpha = this.alpha.toDouble(),
+        )
+
+/**
+ * Safely reads a String value from an NSDictionary by key.
+ *
+ * @param dict Source NSDictionary (e.g., GeoJSON feature.properties).
+ * @param key Key to read.
+ * @return String value or null.
+ */
+internal fun getString(dict: NSDictionary?, key: String): String? {
+    val v = dict?.objectForKey(key)
+    return when (v) {
+        is String -> v
+        is NSString -> v.toString()
+        else -> null
+    }
+}
+
+/**
+ * Safely reads a Double value from an NSDictionary by key.
+ *
+ * @param dict Source NSDictionary (e.g., GeoJSON feature.properties).
+ * @param key Key to read.
+ * @return Double value or null.
+ */
+internal fun getDouble(dict: NSDictionary?, key: String): Double? {
+    val v = dict?.objectForKey(key)
+    return when (v) {
+        is Number -> v.toDouble()
+        is NSNumber -> v.doubleValue
+        is String -> v.toDoubleOrNull()
+        is NSString -> v.toString().toDoubleOrNull()
+        else -> null
+    }
+}
+
+/**
+ * Parses a hex color string into a UIColor.
+ *
+ * @param hexInput Hex color string with or without the leading '#'.
+ * @return Parsed UIColor or null.
+ */
+internal fun parseHexToUIColor(hexInput: String?): UIColor? {
+    if (hexInput == null) return null
+    val hex = hexInput.trim().removePrefix("#")
+    return when (hex.length) {
+        6 -> {
+            val r = hex.substring(0, 2).toIntOrNull(16) ?: return null
+            val g = hex.substring(2, 4).toIntOrNull(16) ?: return null
+            val b = hex.substring(4, 6).toIntOrNull(16) ?: return null
+            UIColor(red = r / 255.0, green = g / 255.0, blue = b / 255.0, alpha = 1.0)
+        }
+        +8 -> {
+            val a = hex.substring(0, 2).toIntOrNull(16) ?: return null
+            val r = hex.substring(2, 4).toIntOrNull(16) ?: return null
+            val g = hex.substring(4, 6).toIntOrNull(16) ?: return null
+            val b = hex.substring(6, 8).toIntOrNull(16) ?: return null
+            UIColor(red = r / 255.0, green = g / 255.0, blue = b / 255.0, alpha = a / 255.0)
+        }
+        else -> null
+    }
 }

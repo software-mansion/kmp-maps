@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
@@ -42,7 +41,6 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
-import com.swmansion.kmpmaps.core.StrokePatternItem
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 
 @Composable
@@ -60,52 +58,23 @@ internal fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
-    var showFoodGeoJson by remember { mutableStateOf(false) }
-    var showOfficeGeoJson by remember { mutableStateOf(false) }
+    var showPointGeoJson by remember { mutableStateOf(false) }
+    var showPolygonGeoJson by remember { mutableStateOf(false) }
     val geoJsonLayers =
-        remember(showFoodGeoJson, showOfficeGeoJson) {
+        remember(showPointGeoJson, showPolygonGeoJson) {
             buildList {
-                if (showFoodGeoJson) {
+                if (showPointGeoJson) {
                     add(
                         GeoJsonLayer(
                             geoJson = EXAMPLE_POINT_GEO_JSON,
-                            lineColor = Color.Red,
-                            pattern =
-                                listOf(StrokePatternItem.Dash(10f), StrokePatternItem.Gap(10f)),
-                            lineWidth = 10f,
-                            fillColor = Color.Blue,
-                            strokeColor = Color.Black,
-                            strokeWidth = 10f,
-                            isClickable = true,
-                            visible = true,
-                            isGeodesic = true,
-                            snippet = "Jedzonko",
-                            pointTitle = "Food points",
+                            snippet = "Recommended food places",
                             infoWindowAnchorU = 0.1f,
                             infoWindowAnchorV = 0.7f,
-                            alpha = 0.5f,
-                            isFlat = true,
-                            rotation = 45f,
-                            anchorU = 0.0f,
-                            anchorV = 0.0f,
                         )
                     )
                 }
-                if (showOfficeGeoJson) {
-                    add(
-                        GeoJsonLayer(
-                            geoJson = EXAMPLE_POLYGON_GEO_JSON,
-                            lineColor = Color(0xFF009688),
-                            lineWidth = 6f,
-                            fillColor = Color(0x33009688),
-                            strokeColor = Color(0xFF00695C),
-                            strokeWidth = 6f,
-                            isClickable = true,
-                            visible = true,
-                            isGeodesic = true,
-                            pointTitle = "Office areas",
-                        )
-                    )
+                if (showPolygonGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
                 }
             }
         }
@@ -237,21 +206,21 @@ internal fun MapsScreen() {
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showFoodGeoJson = !showFoodGeoJson },
+                        modifier = Modifier.clickable { showPointGeoJson = !showPointGeoJson },
                     ) {
                         Checkbox(
-                            checked = showFoodGeoJson,
-                            onCheckedChange = { showFoodGeoJson = it },
+                            checked = showPointGeoJson,
+                            onCheckedChange = { showPointGeoJson = it },
                         )
                         Text("Food GeoJSON")
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showOfficeGeoJson = !showOfficeGeoJson },
+                        modifier = Modifier.clickable { showPolygonGeoJson = !showPolygonGeoJson },
                     ) {
                         Checkbox(
-                            checked = showOfficeGeoJson,
-                            onCheckedChange = { showOfficeGeoJson = it },
+                            checked = showPolygonGeoJson,
+                            onCheckedChange = { showPolygonGeoJson = it },
                         )
                         Text("Office GeoJSON")
                     }

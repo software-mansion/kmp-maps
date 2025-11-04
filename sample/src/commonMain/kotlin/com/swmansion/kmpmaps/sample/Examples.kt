@@ -207,7 +207,13 @@ const val EXAMPLE_POLYGON_GEO_JSON =
   "features": [
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+      "name": "Office area",
+      "stroke": "#0000FF",
+      "stroke-width": 6,
+      "fill": "#0000FF",
+      "fill-opacity": 0.25
+      },
       "geometry": {
         "coordinates": [
           [
@@ -246,7 +252,13 @@ const val EXAMPLE_POLYGON_GEO_JSON =
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "name": "Office area",
+        "stroke": "#0000FF",
+        "stroke-width": 6,
+        "fill": "#0000FF",
+        "fill-opacity": 0.25
+      },
       "geometry": {
         "coordinates": [
           [

@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -26,8 +28,12 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
+import com.google.maps.android.data.geojson.GeoJsonLineString
+import com.google.maps.android.data.geojson.GeoJsonLineStringStyle
 import com.google.maps.android.data.geojson.GeoJsonPoint
 import com.google.maps.android.data.geojson.GeoJsonPointStyle
+import com.google.maps.android.data.geojson.GeoJsonPolygon
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle
 import org.json.JSONObject
 
 /** Android implementation of the Map composable using Google Maps. */
@@ -229,26 +235,78 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
 
     features.forEach { feature ->
-        if (feature.geometry is GeoJsonPoint) {
-            val titleFromJson =
-                feature.getProperty("title") ?: feature.getProperty("name") ?: geo.pointTitle
-            val snippetFromJson =
-                feature.getProperty("snippet") ?: feature.getProperty("description") ?: geo.snippet
+        val strokeHex = feature.getProperty("stroke")
+        val strokeWidthJson = feature.getProperty("stroke-width")?.toFloatOrNull()
 
-            val pointStyle =
-                GeoJsonPointStyle().apply {
-                    alpha = geo.alpha
-                    isDraggable = geo.isDraggable
-                    isFlat = geo.isFlat
-                    rotation = geo.rotation
-                    title = titleFromJson
-                    snippet = snippetFromJson
-                    isVisible = geo.visible == true
-                    zIndex = geo.zIndex
-                    setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
-                    setAnchor(geo.anchorU, geo.anchorV)
-                }
-            feature.setPointStyle(pointStyle)
+        val fillHex = feature.getProperty("fill")
+        val fillOpacity = feature.getProperty("fill-opacity")?.toFloatOrNull()
+
+        fun applyAlpha(color: Int, opacity: Float?): Int =
+            if (opacity != null)
+                ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
+            else color
+
+        when (feature.geometry) {
+            is GeoJsonLineString -> {
+                val strokeColor = strokeHex.toColorInt()
+                val width = strokeWidthJson ?: DEFAULT_STROKE_WIDTH
+
+                feature.setLineStringStyle(
+                    GeoJsonLineStringStyle().apply {
+                        color = strokeColor
+                        this.width = width
+                        isClickable = geo.isClickable == true
+                        isVisible = geo.visible == true
+                        zIndex = geo.zIndex
+                        isGeodesic = geo.isGeodesic == true
+                        pattern = geo.pattern?.toGooglePattern()
+                    }
+                )
+            }
+            is GeoJsonPolygon -> {
+                val strokeColor = strokeHex.toColorInt()
+                val strokeWidth = strokeWidthJson ?: DEFAULT_STROKE_WIDTH
+                val fillColor =
+                    fillHex.toColorInt().let { c ->
+                        if (fillOpacity != null) applyAlpha(c, fillOpacity) else c
+                    }
+
+                feature.setPolygonStyle(
+                    GeoJsonPolygonStyle().apply {
+                        this.strokeColor = strokeColor
+                        this.strokeWidth = strokeWidth
+                        this.fillColor = fillColor
+                        isClickable = geo.isClickable == true
+                        isVisible = geo.visible == true
+                        zIndex = geo.zIndex
+                        isGeodesic = geo.isGeodesic == true
+                    }
+                )
+            }
+            is GeoJsonPoint -> {
+                val titleFromJson =
+                    feature.getProperty("title") ?: feature.getProperty("name") ?: geo.pointTitle
+                val snippetFromJson =
+                    feature.getProperty("snippet")
+                        ?: feature.getProperty("description")
+                        ?: geo.snippet
+
+                feature.setPointStyle(
+                    GeoJsonPointStyle().apply {
+                        alpha = geo.alpha
+                        isDraggable = geo.isDraggable
+                        isFlat = geo.isFlat
+                        rotation = geo.rotation
+                        title = titleFromJson
+                        snippet = snippetFromJson
+                        isVisible = geo.visible == true
+                        zIndex = geo.zIndex
+                        setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
+                        setAnchor(geo.anchorU, geo.anchorV)
+                    }
+                )
+            }
+            else -> Unit
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.swmansion.kmpmaps.googlemaps
 
-import androidx.compose.ui.graphics.Color
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMUFeature
@@ -20,7 +19,6 @@ import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
-import platform.Foundation.valueForKey
 import platform.UIKit.UIColor
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -117,15 +115,74 @@ internal class GeoJsonRendererManager {
             var featureIdx = 0
             parser.features.forEach { feature ->
                 val f = feature as? GMUFeature ?: return@forEach
+                val dict = f.properties as? NSDictionary
+                val strokeHex = getString(dict, "stroke")
+                val strokeOpacity = getDouble(dict, "stroke-opacity")?.coerceIn(0.0, 1.0)
+                val strokeWidthJson = getDouble(dict, "stroke-width")
+
+                val fillHex = getString(dict, "fill")
+                val fillOpacity = getDouble(dict, "fill-opacity")?.coerceIn(0.0, 1.0)
+
                 when (f.geometry) {
-                    is GMULineString -> f.style = lineStyle
-                    is GMUPolygon -> f.style = polygonStyle
+                    is GMULineString -> {
+                        val strokeUIColor =
+                            (parseHexToUIColor(strokeHex) ?: lineStrokeColor).let { c ->
+                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
+                                else c
+                            }
+                        val width = strokeWidthJson ?: lineWidth
+
+                        val featureLineStyle =
+                            GMUStyle(
+                                styleID = "line_${index}_$featureIdx",
+                                strokeColor = strokeUIColor,
+                                fillColor = UIColor.clearColor,
+                                width = width,
+                                scale = 1.0,
+                                heading = 0.0,
+                                anchor = CGPointMake(0.5, 1.0),
+                                iconUrl = null,
+                                title = null,
+                                hasFill = false,
+                                hasStroke = true,
+                            )
+                        f.style = featureLineStyle
+                        featureIdx += 1
+                    }
+                    is GMUPolygon -> {
+                        val strokeUIColor =
+                            (parseHexToUIColor(strokeHex) ?: polygonStrokeColor).let { c ->
+                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
+                                else c
+                            }
+                        val width = strokeWidthJson ?: strokeWidth
+
+                        val finalFill =
+                            (parseHexToUIColor(fillHex) ?: fillColor).let { c ->
+                                if (fillOpacity != null) c.colorWithAlphaComponent(fillOpacity)
+                                else c
+                            }
+                        val hasFill = (fillHex != null) || (layer.fillColor != null)
+
+                        val featurePolygonStyle =
+                            GMUStyle(
+                                styleID = "polygon_${index}_$featureIdx",
+                                strokeColor = strokeUIColor,
+                                fillColor = finalFill,
+                                width = width,
+                                scale = 1.0,
+                                heading = 0.0,
+                                anchor = CGPointMake(0.5, 1.0),
+                                iconUrl = null,
+                                title = null,
+                                hasFill = hasFill,
+                                hasStroke = true,
+                            )
+                        f.style = featurePolygonStyle
+                        featureIdx += 1
+                    }
                     is GMUPoint -> {
-                        val dict = f.properties as? NSDictionary
-                        val titleFromJson =
-                            (dict?.valueForKey("title") as? String)
-                                ?: (dict?.valueForKey("name") as? String)
-                                ?: pointTitle
+                        val titleFromJson = getString(dict, "title") ?: getString(dict, "name")
 
                         val featurePointStyle =
                             GMUStyle(
@@ -144,7 +201,9 @@ internal class GeoJsonRendererManager {
                         f.style = featurePointStyle
                         featureIdx += 1
                     }
-                    else -> f.style = polygonStyle
+                    else -> {
+                        f.style = polygonStyle
+                    }
                 }
             }
 
@@ -159,14 +218,4 @@ internal class GeoJsonRendererManager {
             renderers = renderers + (index to renderer)
         }
     }
-
-    private fun Color?.toUIColor(fallback: UIColor): UIColor =
-        if (this == null) fallback
-        else
-            UIColor(
-                red = this.red.toDouble(),
-                green = this.green.toDouble(),
-                blue = this.blue.toDouble(),
-                alpha = this.alpha.toDouble(),
-            )
 }
