@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
  * @param strokeColor: Stroke color for polygon outlines
  * @param strokeWidth: Stroke width for polygon outlines
  * @param alpha: Opacity for point symbols/markers in the range [0f, 1f]
- * @param pointIconName: Optional asset name for a custom marker icon (platform support may vary)
  * @param isDraggable: Whether point markers are draggable (when supported)
  * @param isFlat: Whether the marker icon is flat against the map surface (when supported)
  * @param pointTitle: Title used for marker info windows where supported
@@ -48,7 +47,6 @@ public data class GeoJsonLayer(
 
     // Point style
     val alpha: Float = 1f,
-    val pointIconName: String? = null,
     val isDraggable: Boolean = false,
     val isFlat: Boolean = false,
     val pointTitle: String? = null,
