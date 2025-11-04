@@ -112,74 +112,7 @@ public actual fun Map(
                                     return@forEachIndexed
                                 }
 
-                        val layer = GoogleGeoJsonLayer(map, json)
-
-                        // LineString style
-                        layer.defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
-                        layer.defaultLineStringStyle.isClickable = geo.isClickable == true
-                        layer.defaultLineStringStyle.color =
-                            geo.lineColor?.toArgb() ?: Color.Magenta.toArgb()
-                        layer.defaultLineStringStyle.width = geo.lineWidth ?: 5f
-                        layer.defaultLineStringStyle.zIndex = geo.zIndex
-                        layer.defaultLineStringStyle.isVisible = geo.visible == true
-                        layer.defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
-
-                        // Polygon style
-                        layer.defaultPolygonStyle.fillColor =
-                            geo.fillColor?.toArgb() ?: Color.Transparent.toArgb()
-                        layer.defaultPolygonStyle.strokeColor =
-                            geo.strokeColor?.toArgb() ?: Color.Magenta.toArgb()
-                        layer.defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: 5f
-                        layer.defaultPolygonStyle.zIndex = geo.zIndex
-                        layer.defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
-                        layer.defaultPolygonStyle.isClickable = geo.isClickable == true
-                        layer.defaultPolygonStyle.isVisible = geo.visible == true
-
-                        // Point style
-                        layer.defaultPointStyle.alpha = geo.alpha
-                        layer.defaultPointStyle.isDraggable = geo.isDraggable
-                        layer.defaultPointStyle.isFlat = geo.isFlat
-                        layer.defaultPointStyle.rotation = geo.rotation
-                        layer.defaultPointStyle.title = geo.pointTitle
-                        layer.defaultPointStyle.snippet = geo.snippet
-                        layer.defaultPointStyle.isVisible = geo.visible == true
-                        layer.defaultPointStyle.zIndex = geo.zIndex
-                        layer.defaultPointStyle.setInfoWindowAnchor(
-                            geo.infoWindowAnchorU,
-                            geo.infoWindowAnchorV,
-                        )
-                        layer.defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
-
-                        layer.features.forEach { feature ->
-                            if (feature.geometry is GeoJsonPoint) {
-                                val titleFromJson =
-                                    feature.getProperty("title")
-                                        ?: feature.getProperty("name")
-                                        ?: geo.pointTitle
-                                val snippetFromJson =
-                                    feature.getProperty("snippet")
-                                        ?: feature.getProperty("description")
-                                        ?: geo.snippet
-
-                                val pointStyle =
-                                    GeoJsonPointStyle().apply {
-                                        alpha = geo.alpha
-                                        isDraggable = geo.isDraggable
-                                        isFlat = geo.isFlat
-                                        rotation = geo.rotation
-                                        title = titleFromJson
-                                        snippet = snippetFromJson
-                                        isVisible = geo.visible == true
-                                        zIndex = geo.zIndex
-                                        setInfoWindowAnchor(
-                                            geo.infoWindowAnchorU,
-                                            geo.infoWindowAnchorV,
-                                        )
-                                        setAnchor(geo.anchorU, geo.anchorV)
-                                    }
-                                feature.setPointStyle(pointStyle)
-                            }
-                        }
+                        val layer = GoogleGeoJsonLayer(map, json).apply { applyStylesFrom(geo) }
 
                         layer.addLayerToMap()
                         androidGeoJsonLayers = androidGeoJsonLayers + (index to layer)
@@ -264,5 +197,58 @@ public actual fun Map(
 
     LaunchedEffect(cameraPositionState.position) {
         onCameraMove?.invoke(cameraPositionState.position.toCameraPosition())
+    }
+}
+
+private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
+    defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
+    defaultLineStringStyle.isClickable = geo.isClickable == true
+    defaultLineStringStyle.color = geo.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+    defaultLineStringStyle.width = geo.lineWidth ?: DEFAULT_STROKE_WIDTH
+    defaultLineStringStyle.zIndex = geo.zIndex
+    defaultLineStringStyle.isVisible = geo.visible == true
+    defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
+
+    defaultPolygonStyle.fillColor = geo.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toArgb()
+    defaultPolygonStyle.strokeColor = geo.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+    defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: DEFAULT_STROKE_WIDTH
+    defaultPolygonStyle.zIndex = geo.zIndex
+    defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
+    defaultPolygonStyle.isClickable = geo.isClickable == true
+    defaultPolygonStyle.isVisible = geo.visible == true
+
+    defaultPointStyle.alpha = geo.alpha
+    defaultPointStyle.isDraggable = geo.isDraggable
+    defaultPointStyle.isFlat = geo.isFlat
+    defaultPointStyle.rotation = geo.rotation
+    defaultPointStyle.title = geo.pointTitle
+    defaultPointStyle.snippet = geo.snippet
+    defaultPointStyle.isVisible = geo.visible == true
+    defaultPointStyle.zIndex = geo.zIndex
+    defaultPointStyle.setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
+    defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
+
+    features.forEach { feature ->
+        if (feature.geometry is GeoJsonPoint) {
+            val titleFromJson =
+                feature.getProperty("title") ?: feature.getProperty("name") ?: geo.pointTitle
+            val snippetFromJson =
+                feature.getProperty("snippet") ?: feature.getProperty("description") ?: geo.snippet
+
+            val pointStyle =
+                GeoJsonPointStyle().apply {
+                    alpha = geo.alpha
+                    isDraggable = geo.isDraggable
+                    isFlat = geo.isFlat
+                    rotation = geo.rotation
+                    title = titleFromJson
+                    snippet = snippetFromJson
+                    isVisible = geo.visible == true
+                    zIndex = geo.zIndex
+                    setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
+                    setAnchor(geo.anchorU, geo.anchorV)
+                }
+            feature.setPointStyle(pointStyle)
+        }
     }
 }

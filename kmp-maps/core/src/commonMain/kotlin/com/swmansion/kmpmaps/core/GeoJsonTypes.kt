@@ -60,6 +60,10 @@ public data class GeoJsonLayer(
     val anchorV: Float = 0f,
 )
 
+internal val DEFAULT_STROKE_COLOR = Color.Black
+internal val DEFAULT_FILL_COLOR = Color.Transparent
+internal const val DEFAULT_STROKE_WIDTH = 5f
+
 /**
  * Cross‑platform description of a stroke pattern used to render dashed or dotted outlines for lines
  * and polygon borders.
