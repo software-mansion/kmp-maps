@@ -146,6 +146,7 @@ internal fun updateGoogleMapsPolylines(
         }
         gmsPolyline.path = path
         gmsPolyline.strokeWidth = polyline.width.toDouble()
+        gmsPolyline.strokeColor = polyline.lineColor?.toAppleMapsColor() ?: UIColor.blackColor()
         gmsPolyline.map = mapView
         gmsPolyline.tappable = true
         polylineMapping[gmsPolyline] = polyline
