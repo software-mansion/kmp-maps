@@ -100,8 +100,11 @@ import platform.MapKit.MKPointOfInterestCategoryZoo
 import platform.MapKit.MKPointOfInterestFilter
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.MapKit.MKPolylineRenderer
 import platform.MapKit.addOverlay
+import platform.MapKit.overlays
 import platform.MapKit.removeOverlays
+import platform.MapKit.rendererForOverlay
 import platform.UIKit.UIColor
 import platform.UIKit.UIUserInterfaceStyle
 import platform.posix.memcpy
@@ -413,4 +416,15 @@ internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
         } else {
             UIUserInterfaceStyle.UIUserInterfaceStyleLight
         }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun MKMapView.reapplyCorePolylineStyles(polylineStyles: Map<MKPolyline, Polyline>) {
+    overlays.forEach { overlay ->
+        val polyline = overlay as? MKPolyline ?: return@forEach
+        val style = polylineStyles[polyline] ?: return@forEach
+        val r = rendererForOverlay(polyline) as? MKPolylineRenderer ?: return@forEach
+        r.strokeColor = style.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+        r.lineWidth = style.width.toDouble()
+    }
 }

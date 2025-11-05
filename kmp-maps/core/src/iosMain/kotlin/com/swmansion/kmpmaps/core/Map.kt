@@ -18,6 +18,9 @@ import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.MapKit.MKPolylineRenderer
+import platform.MapKit.addOverlay
+import platform.UIKit.UIColor
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
@@ -63,6 +66,10 @@ public actual fun Map(
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
 
+    val geoJsonPolygonStyles = remember { mutableMapOf<MKPolygon, AppleGeoJsonPolygonStyle>() }
+    val geoJsonPolylineStyles = remember { mutableMapOf<MKPolyline, AppleGeoJsonLineStyle>() }
+    val geoJsonPointStyles = remember { mutableMapOf<MKPointAnnotation, AppleGeoJsonPointStyle>() }
+
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
             isSystemInDarkTheme()
@@ -86,11 +93,23 @@ public actual fun Map(
         val view = mapView ?: return@LaunchedEffect
         val desiredKeys = geoJsonLayers.indices.toSet()
         val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
-        keysToRemove.forEach { idx -> renderedGeoJsonLayers[idx]?.clear(view) }
+        keysToRemove.forEach { idx ->
+            renderedGeoJsonLayers[idx]?.let { rendered ->
+                rendered.clear(view)
+                rendered.polygonStyles.keys.forEach { geoJsonPolygonStyles.remove(it) }
+                rendered.polylineStyles.keys.forEach { geoJsonPolylineStyles.remove(it) }
+                rendered.pointStyles.keys.forEach { geoJsonPointStyles.remove(it) }
+            }
+        }
         renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
 
         geoJsonLayers.forEachIndexed { index, layer ->
-            renderedGeoJsonLayers[index]?.clear(view)
+            renderedGeoJsonLayers[index]?.let { prev ->
+                prev.clear(view)
+                prev.polygonStyles.keys.forEach { geoJsonPolygonStyles.remove(it) }
+                prev.polylineStyles.keys.forEach { geoJsonPolylineStyles.remove(it) }
+                prev.pointStyles.keys.forEach { geoJsonPointStyles.remove(it) }
+            }
 
             if (layer.visible == false) {
                 renderedGeoJsonLayers = renderedGeoJsonLayers - index
@@ -99,6 +118,16 @@ public actual fun Map(
 
             val rendered = view.renderGeoJson(layer.geoJson)
             if (rendered != null) {
+                rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
+                rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
+                rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
+
+                rendered.overlays.forEach { overlay -> view.addOverlay(overlay) }
+                rendered.annotations.forEach { ann -> view.addAnnotation(ann) }
+
+                view.reapplyCorePolylineStyles(polylineStyles)
+
+
                 renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
             } else {
                 renderedGeoJsonLayers = renderedGeoJsonLayers - index
@@ -148,6 +177,9 @@ public actual fun Map(
                     onMapLongClick = onMapLongClick,
                     onPOIClick = onPOIClick,
                     onCameraMove = onCameraMove,
+                    geoJsonPolygonStyles = geoJsonPolygonStyles,
+                    geoJsonPolylineStyles = geoJsonPolylineStyles,
+                    geoJsonPointStyles = geoJsonPointStyles,
                 )
             mkMapView.delegate = delegate
             mapDelegate = delegate
