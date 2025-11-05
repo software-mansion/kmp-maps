@@ -88,8 +88,7 @@ internal class MapDelegate(
                 val core = polylineStyles[rendererForOverlay]
                 val renderer = MKPolylineRenderer(rendererForOverlay)
                 if (core != null) {
-                    renderer.strokeColor =
-                        core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                    renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
                     renderer.lineWidth = core.width.toDouble()
                 } else {
                     val gj = geoJsonPolylineStyles[rendererForOverlay]
@@ -119,15 +118,19 @@ internal class MapDelegate(
         }
     }
 
-    override fun mapView(mapView: MKMapView, viewForAnnotation: MKAnnotationProtocol): MKAnnotationView? {
+    override fun mapView(
+        mapView: MKMapView,
+        viewForAnnotation: MKAnnotationProtocol,
+    ): MKAnnotationView? {
         if (viewForAnnotation is MKUserLocation) return null
         val point = viewForAnnotation as? MKPointAnnotation ?: return null
 
         val style = geoJsonPointStyles[point] ?: return null
         val reuseId = "kmp_geojson_marker"
 
-        val view = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKMarkerAnnotationView
-            ?: MKMarkerAnnotationView(annotation = viewForAnnotation, reuseIdentifier = reuseId)
+        val view =
+            mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKMarkerAnnotationView
+                ?: MKMarkerAnnotationView(annotation = viewForAnnotation, reuseIdentifier = reuseId)
 
         view.annotation = viewForAnnotation
         view.canShowCallout = true

@@ -12,10 +12,7 @@ import platform.Foundation.enumerateKeysAndObjectsUsingBlock
 import platform.MapKit.*
 import platform.UIKit.UIColor
 
-public data class AppleGeoJsonLineStyle(
-    val color: UIColor,
-    val width: Double,
-)
+public data class AppleGeoJsonLineStyle(val color: UIColor, val width: Double)
 
 public data class AppleGeoJsonPolygonStyle(
     val strokeColor: UIColor,
@@ -23,9 +20,7 @@ public data class AppleGeoJsonPolygonStyle(
     val fillColor: UIColor?,
 )
 
-public data class AppleGeoJsonPointStyle(
-    val visible: Boolean = true,
-)
+public data class AppleGeoJsonPointStyle(val visible: Boolean = true)
 
 /**
  * Handle for a rendered GeoJSON layer on MKMapView. Keep this instance and call clear(from:) to
@@ -130,9 +125,14 @@ private fun collectAndAdd(
             overlays += obj
         }
         is MKPointAnnotation -> {
-            val title = featureProps?.string("title") ?: featureProps?.string("name") ?: defaults?.pointTitle
+            val title =
+                featureProps?.string("title")
+                    ?: featureProps?.string("name")
+                    ?: defaults?.pointTitle
             val subtitle =
-                featureProps?.string("snippet") ?: featureProps?.string("description") ?: defaults?.snippet
+                featureProps?.string("snippet")
+                    ?: featureProps?.string("description")
+                    ?: defaults?.snippet
             if (title != null) obj.setTitle(title)
             if (subtitle != null) obj.setSubtitle(subtitle)
 
@@ -173,17 +173,21 @@ private fun MKGeoJSONFeature.readProperties(): Map<String, Any?> {
 private fun NSDictionary.toKotlinStringAnyMap(): Map<String, Any?> {
     val out = mutableMapOf<String, Any?>()
     this.enumerateKeysAndObjectsUsingBlock { k, v, _ ->
-        val key: String = when (k) {
-            is String -> k
-            is NSString -> k.toString()
-            else -> return@enumerateKeysAndObjectsUsingBlock
-        }
+        val key: String =
+            when (k) {
+                is String -> k
+                is NSString -> k.toString()
+                else -> return@enumerateKeysAndObjectsUsingBlock
+            }
         out[key] = v
     }
     return out
 }
 
-private fun buildLineStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?): AppleGeoJsonLineStyle {
+private fun buildLineStyle(
+    defaults: GeoJsonLayer?,
+    props: Map<String, Any?>?,
+): AppleGeoJsonLineStyle {
     val defaultColor = defaults?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
     val defaultWidth = (defaults?.lineWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
 
@@ -195,7 +199,10 @@ private fun buildLineStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?): 
     return AppleGeoJsonLineStyle(color = color, width = width)
 }
 
-private fun buildPolygonStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?): AppleGeoJsonPolygonStyle {
+private fun buildPolygonStyle(
+    defaults: GeoJsonLayer?,
+    props: Map<String, Any?>?,
+): AppleGeoJsonPolygonStyle {
     val defaultStroke = defaults?.strokeColor?.toAppleMapsColor() ?: UIColor.blackColor
     val defaultStrokeWidth = (defaults?.strokeWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
     val defaultFill = defaults?.fillColor?.toAppleMapsColor()
@@ -207,7 +214,9 @@ private fun buildPolygonStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?
 
     val strokeColor = strokeHex?.toUIColor() ?: defaultStroke
     val fillBase = fillHex?.toUIColor() ?: defaultFill
-    val fillColor = if (fillOpacity != null && fillBase != null) fillBase.colorWithAlphaComponent(fillOpacity) else fillBase
+    val fillColor =
+        if (fillOpacity != null && fillBase != null) fillBase.colorWithAlphaComponent(fillOpacity)
+        else fillBase
 
     return AppleGeoJsonPolygonStyle(
         strokeColor = strokeColor,
@@ -216,12 +225,13 @@ private fun buildPolygonStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?
     )
 }
 
-private fun buildPointStyle(defaults: GeoJsonLayer?, props: Map<String, Any?>?): AppleGeoJsonPointStyle {
+private fun buildPointStyle(
+    defaults: GeoJsonLayer?,
+    props: Map<String, Any?>?,
+): AppleGeoJsonPointStyle {
     val visible = props?.bool("visible") ?: (defaults?.visible ?: true)
 
-    return AppleGeoJsonPointStyle(
-        visible = visible,
-    )
+    return AppleGeoJsonPointStyle(visible = visible)
 }
 
 private fun Map<String, Any?>.string(key: String): String? =
@@ -272,6 +282,5 @@ private fun String.toUIColor(): UIColor {
         else -> UIColor.blackColor
     }
 }
-
 
 private const val DEFAULT_STROKE_WIDTH_FALLBACK = 10.0

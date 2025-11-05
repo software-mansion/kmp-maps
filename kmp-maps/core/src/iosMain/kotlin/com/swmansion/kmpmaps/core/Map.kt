@@ -18,9 +18,7 @@ import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
-import platform.MapKit.MKPolylineRenderer
 import platform.MapKit.addOverlay
-import platform.UIKit.UIColor
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
@@ -126,7 +124,6 @@ public actual fun Map(
                 rendered.annotations.forEach { ann -> view.addAnnotation(ann) }
 
                 view.reapplyCorePolylineStyles(polylineStyles)
-
 
                 renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
             } else {
