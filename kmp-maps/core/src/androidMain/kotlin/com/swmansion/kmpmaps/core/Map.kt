@@ -212,7 +212,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultLineStringStyle.color = geo.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
     defaultLineStringStyle.width = geo.lineWidth ?: DEFAULT_STROKE_WIDTH
     defaultLineStringStyle.zIndex = geo.zIndex
-    defaultLineStringStyle.isVisible = geo.visible == true
+    defaultLineStringStyle.isVisible = geo.visible != false
     defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
 
     defaultPolygonStyle.fillColor = geo.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toArgb()
@@ -221,7 +221,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultPolygonStyle.zIndex = geo.zIndex
     defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
     defaultPolygonStyle.isClickable = geo.isClickable == true
-    defaultPolygonStyle.isVisible = geo.visible == true
+    defaultPolygonStyle.isVisible = geo.visible != false
 
     defaultPointStyle.alpha = geo.alpha
     defaultPointStyle.isDraggable = geo.isDraggable
@@ -229,7 +229,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultPointStyle.rotation = geo.rotation
     defaultPointStyle.title = geo.pointTitle
     defaultPointStyle.snippet = geo.snippet
-    defaultPointStyle.isVisible = geo.visible == true
+    defaultPointStyle.isVisible = geo.visible != false
     defaultPointStyle.zIndex = geo.zIndex
     defaultPointStyle.setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
     defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
@@ -256,7 +256,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         color = strokeColor
                         this.width = width
                         isClickable = geo.isClickable == true
-                        isVisible = geo.visible == true
+                        isVisible = geo.visible != false
                         zIndex = geo.zIndex
                         isGeodesic = geo.isGeodesic == true
                         pattern = geo.pattern?.toGooglePattern()
@@ -277,7 +277,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         this.strokeWidth = strokeWidth
                         this.fillColor = fillColor
                         isClickable = geo.isClickable == true
-                        isVisible = geo.visible == true
+                        isVisible = geo.visible != false
                         zIndex = geo.zIndex
                         isGeodesic = geo.isGeodesic == true
                     }
@@ -299,7 +299,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         rotation = geo.rotation
                         title = titleFromJson
                         snippet = snippetFromJson
-                        isVisible = geo.visible == true
+                        isVisible = geo.visible != false
                         zIndex = geo.zIndex
                         setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
                         setAnchor(geo.anchorU, geo.anchorV)

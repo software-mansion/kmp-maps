@@ -143,20 +143,6 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Cyber Ramen"
-      },
-      "geometry": {
-        "coordinates": [
-          19.96429710922257,
-          50.04890237300748
-        ],
-        "type": "Point"
-      },
-      "id": 4
-    },
-    {
-      "type": "Feature",
-      "properties": {
         "title": "Hankki"
       },
       "geometry": {
@@ -166,7 +152,7 @@ const val EXAMPLE_POINT_GEO_JSON =
         ],
         "type": "Point"
       },
-      "id": 5
+      "id": 4
     },
     {
       "type": "Feature",
@@ -180,7 +166,7 @@ const val EXAMPLE_POINT_GEO_JSON =
         ],
         "type": "Point"
       },
-      "id": 6
+      "id": 5
     },
     {
       "type": "Feature",
@@ -194,7 +180,7 @@ const val EXAMPLE_POINT_GEO_JSON =
         ],
         "type": "Point"
       },
-      "id": 7
+      "id": 6
     }
   ]
 }
@@ -286,6 +272,45 @@ const val EXAMPLE_POLYGON_GEO_JSON =
         ],
         "type": "Polygon"
       }
+    }
+  ]
+}
+"""
+
+const val EXAMPLE_LINE_GEO_JSON =
+    """
+    {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "stroke-width": 10,
+        "stroke": "#FF0000",
+        "name": "Route to the office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            19.964725868477615,
+            50.04984119906527
+          ],
+          [
+            19.964562032014555,
+            50.04962734365236
+          ],
+          [
+            19.96552893573039,
+            50.049382443541276
+          ],
+          [
+            19.9653812143288,
+            50.04890471226287
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": 0
     }
   ]
 }

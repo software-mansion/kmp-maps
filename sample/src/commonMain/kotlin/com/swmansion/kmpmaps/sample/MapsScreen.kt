@@ -60,8 +60,10 @@ internal fun MapsScreen() {
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
     var showPointGeoJson by remember { mutableStateOf(false) }
     var showPolygonGeoJson by remember { mutableStateOf(false) }
+    var showLineGeoJson by remember { mutableStateOf(false) }
+
     val geoJsonLayers =
-        remember(showPointGeoJson, showPolygonGeoJson) {
+        remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
             buildList {
                 if (showPointGeoJson) {
                     add(
@@ -75,6 +77,9 @@ internal fun MapsScreen() {
                 }
                 if (showPolygonGeoJson) {
                     add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
+                }
+                if (showLineGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
                 }
             }
         }
@@ -200,10 +205,11 @@ internal fun MapsScreen() {
                     },
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Text("GeoJSON")
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.clickable { showPointGeoJson = !showPointGeoJson },
@@ -212,7 +218,7 @@ internal fun MapsScreen() {
                             checked = showPointGeoJson,
                             onCheckedChange = { showPointGeoJson = it },
                         )
-                        Text("Food GeoJSON")
+                        Text("Point")
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -222,7 +228,17 @@ internal fun MapsScreen() {
                             checked = showPolygonGeoJson,
                             onCheckedChange = { showPolygonGeoJson = it },
                         )
-                        Text("Office GeoJSON")
+                        Text("Area")
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showLineGeoJson = !showLineGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showLineGeoJson,
+                            onCheckedChange = { showLineGeoJson = it },
+                        )
+                        Text("Line")
                     }
                 }
             }
