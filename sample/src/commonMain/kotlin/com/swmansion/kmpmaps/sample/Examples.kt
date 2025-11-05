@@ -81,7 +81,7 @@ fun getExamplePolylines() =
 
 const val EXAMPLE_POINT_GEO_JSON =
     """
-        {
+{
   "type": "FeatureCollection",
   "features": [
     {
@@ -189,17 +189,17 @@ const val EXAMPLE_POINT_GEO_JSON =
 
 const val EXAMPLE_POLYGON_GEO_JSON =
     """
-    {
+{
   "type": "FeatureCollection",
   "features": [
     {
       "type": "Feature",
       "properties": {
-      "name": "Office area",
-      "stroke": "#0000FF",
-      "stroke-width": 6,
-      "fill": "#0000FF",
-      "fill-opacity": 0.25
+        "name": "Office area",
+        "stroke": "#0000FF",
+        "stroke-width": 6,
+        "fill": "#0000FF",
+        "fill-opacity": 0.25
       },
       "geometry": {
         "coordinates": [
@@ -280,7 +280,7 @@ const val EXAMPLE_POLYGON_GEO_JSON =
 
 const val EXAMPLE_LINE_GEO_JSON =
     """
-    {
+{
   "type": "FeatureCollection",
   "features": [
     {
