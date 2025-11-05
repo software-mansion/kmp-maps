@@ -171,7 +171,8 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Mateo"
+        "title": "Mateo",
+        "description": "Bar"
       },
       "geometry": {
         "coordinates": [

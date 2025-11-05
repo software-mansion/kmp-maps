@@ -39,6 +39,7 @@ import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.PointStyle
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
@@ -69,9 +70,12 @@ internal fun MapsScreen() {
                     add(
                         GeoJsonLayer(
                             geoJson = EXAMPLE_POINT_GEO_JSON,
-                            snippet = "Recommended food places",
-                            infoWindowAnchorU = 0.1f,
-                            infoWindowAnchorV = 0.7f,
+                            pointStyle =
+                                PointStyle(
+                                    snippet = "Recommended food places",
+                                    infoWindowAnchorU = 0.1f,
+                                    infoWindowAnchorV = 0.7f,
+                                ),
                         )
                     )
                 }

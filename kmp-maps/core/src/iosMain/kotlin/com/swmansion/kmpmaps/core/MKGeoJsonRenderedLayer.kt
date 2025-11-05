@@ -128,11 +128,11 @@ private fun collectAndAdd(
             val title =
                 featureProps?.string("title")
                     ?: featureProps?.string("name")
-                    ?: defaults?.pointTitle
+                    ?: defaults?.pointStyle?.pointTitle
             val subtitle =
                 featureProps?.string("snippet")
                     ?: featureProps?.string("description")
-                    ?: defaults?.snippet
+                    ?: defaults?.pointStyle?.snippet
             if (title != null) obj.setTitle(title)
             if (subtitle != null) obj.setSubtitle(subtitle)
 
@@ -188,8 +188,10 @@ private fun buildLineStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
 ): AppleGeoJsonLineStyle {
-    val defaultColor = defaults?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
-    val defaultWidth = (defaults?.lineWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
+    val defaultColor =
+        defaults?.lineStringStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+    val defaultWidth =
+        (defaults?.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
 
     val strokeHex = props?.string("stroke")
     val strokeWidth = props?.double("stroke-width")
@@ -203,9 +205,11 @@ private fun buildPolygonStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
 ): AppleGeoJsonPolygonStyle {
-    val defaultStroke = defaults?.strokeColor?.toAppleMapsColor() ?: UIColor.blackColor
-    val defaultStrokeWidth = (defaults?.strokeWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
-    val defaultFill = defaults?.fillColor?.toAppleMapsColor()
+    val defaultStroke =
+        defaults?.polygonStyle?.strokeColor?.toAppleMapsColor() ?: UIColor.blackColor
+    val defaultStrokeWidth =
+        (defaults?.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
+    val defaultFill = defaults?.polygonStyle?.fillColor?.toAppleMapsColor()
 
     val strokeHex = props?.string("stroke")
     val strokeWidth = props?.double("stroke-width")

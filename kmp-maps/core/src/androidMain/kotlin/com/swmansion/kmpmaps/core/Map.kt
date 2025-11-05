@@ -207,32 +207,38 @@ public actual fun Map(
 }
 
 private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
-    defaultLineStringStyle.pattern = geo.pattern?.toGooglePattern()
+    defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
     defaultLineStringStyle.isClickable = geo.isClickable == true
-    defaultLineStringStyle.color = geo.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
-    defaultLineStringStyle.width = geo.lineWidth ?: DEFAULT_STROKE_WIDTH
+    defaultLineStringStyle.color =
+        geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+    defaultLineStringStyle.width = geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH
     defaultLineStringStyle.zIndex = geo.zIndex
     defaultLineStringStyle.isVisible = geo.visible != false
     defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
 
-    defaultPolygonStyle.fillColor = geo.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toArgb()
-    defaultPolygonStyle.strokeColor = geo.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
-    defaultPolygonStyle.strokeWidth = geo.strokeWidth ?: DEFAULT_STROKE_WIDTH
+    defaultPolygonStyle.fillColor =
+        geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toArgb()
+    defaultPolygonStyle.strokeColor =
+        geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+    defaultPolygonStyle.strokeWidth = geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH
     defaultPolygonStyle.zIndex = geo.zIndex
     defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
     defaultPolygonStyle.isClickable = geo.isClickable == true
     defaultPolygonStyle.isVisible = geo.visible != false
 
-    defaultPointStyle.alpha = geo.alpha
-    defaultPointStyle.isDraggable = geo.isDraggable
-    defaultPointStyle.isFlat = geo.isFlat
-    defaultPointStyle.rotation = geo.rotation
-    defaultPointStyle.title = geo.pointTitle
-    defaultPointStyle.snippet = geo.snippet
+    defaultPointStyle.alpha = geo.pointStyle?.alpha ?: 1f
+    defaultPointStyle.isDraggable = geo.pointStyle?.isDraggable ?: true
+    defaultPointStyle.isFlat = geo.pointStyle?.isFlat ?: false
+    defaultPointStyle.rotation = geo.pointStyle?.rotation ?: 0f
+    defaultPointStyle.title = geo.pointStyle?.pointTitle
+    defaultPointStyle.snippet = geo.pointStyle?.snippet
     defaultPointStyle.isVisible = geo.visible != false
     defaultPointStyle.zIndex = geo.zIndex
-    defaultPointStyle.setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
-    defaultPointStyle.setAnchor(geo.anchorU, geo.anchorV)
+    defaultPointStyle.setInfoWindowAnchor(
+        geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
+        geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
+    )
+    defaultPointStyle.setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
 
     features.forEach { feature ->
         val strokeHex = feature.getProperty("stroke")
@@ -259,7 +265,7 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         isVisible = geo.visible != false
                         zIndex = geo.zIndex
                         isGeodesic = geo.isGeodesic == true
-                        pattern = geo.pattern?.toGooglePattern()
+                        pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
                     }
                 )
             }
@@ -285,24 +291,29 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
             }
             is GeoJsonPoint -> {
                 val titleFromJson =
-                    feature.getProperty("title") ?: feature.getProperty("name") ?: geo.pointTitle
+                    feature.getProperty("title")
+                        ?: feature.getProperty("name")
+                        ?: geo.pointStyle?.pointTitle
                 val snippetFromJson =
                     feature.getProperty("snippet")
                         ?: feature.getProperty("description")
-                        ?: geo.snippet
+                        ?: geo.pointStyle?.snippet
 
                 feature.setPointStyle(
                     GeoJsonPointStyle().apply {
-                        alpha = geo.alpha
-                        isDraggable = geo.isDraggable
-                        isFlat = geo.isFlat
-                        rotation = geo.rotation
+                        alpha = geo.pointStyle?.alpha ?: 1f
+                        isDraggable = geo.pointStyle?.isDraggable ?: true
+                        isFlat = geo.pointStyle?.isFlat ?: false
+                        rotation = geo.pointStyle?.rotation ?: 0f
                         title = titleFromJson
                         snippet = snippetFromJson
                         isVisible = geo.visible != false
                         zIndex = geo.zIndex
-                        setInfoWindowAnchor(geo.infoWindowAnchorU, geo.infoWindowAnchorV)
-                        setAnchor(geo.anchorU, geo.anchorV)
+                        setInfoWindowAnchor(
+                            geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
+                            geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
+                        )
+                        setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
                     }
                 )
             }

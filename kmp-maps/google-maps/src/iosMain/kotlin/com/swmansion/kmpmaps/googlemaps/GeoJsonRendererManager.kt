@@ -55,17 +55,17 @@ internal class GeoJsonRendererManager {
             val parser = GMUGeoJSONParser(data = data)
             parser.parse()
 
-            val lineStrokeColor = layer.lineColor.toUIColor(UIColor.blackColor)
-            val polygonStrokeColor = layer.strokeColor.toUIColor(UIColor.blackColor)
-            val fillColor = layer.fillColor.toUIColor(UIColor.clearColor)
+            val lineStrokeColor = layer.lineStringStyle?.lineColor.toUIColor(UIColor.blackColor)
+            val polygonStrokeColor = layer.polygonStyle?.strokeColor.toUIColor(UIColor.blackColor)
+            val fillColor = layer.polygonStyle?.fillColor.toUIColor(UIColor.clearColor)
 
-            val lineWidth = (layer.lineWidth ?: 2f).toDouble()
-            val strokeWidth = (layer.strokeWidth ?: 2f).toDouble()
+            val lineWidth = (layer.lineStringStyle?.lineWidth ?: 2f).toDouble()
+            val strokeWidth = (layer.polygonStyle?.strokeWidth ?: 2f).toDouble()
 
-            val anchorU = layer.anchorU.toDouble()
-            val anchorV = layer.anchorV.toDouble()
-            val rotation = layer.rotation.toDouble()
-            val pointTitle = layer.pointTitle
+            val anchorU = layer.pointStyle?.anchorU?.toDouble()
+            val anchorV = layer.pointStyle?.anchorV?.toDouble()
+            val rotation = layer.pointStyle?.rotation?.toDouble()
+            val pointTitle = layer.pointStyle?.pointTitle
 
             val lineStyle =
                 GMUStyle(
@@ -93,7 +93,7 @@ internal class GeoJsonRendererManager {
                     anchor = CGPointMake(0.5, 1.0),
                     iconUrl = null,
                     title = null,
-                    hasFill = layer.fillColor != null,
+                    hasFill = layer.polygonStyle?.fillColor != null,
                     hasStroke = true,
                 )
 
@@ -104,8 +104,8 @@ internal class GeoJsonRendererManager {
                     fillColor = UIColor.clearColor,
                     width = 1.0,
                     scale = 1.0,
-                    heading = rotation,
-                    anchor = CGPointMake(anchorU, anchorV),
+                    heading = rotation ?: 0.0,
+                    anchor = CGPointMake(anchorU ?: 0.5, anchorV ?: 0.5),
                     iconUrl = null,
                     title = pointTitle,
                     hasFill = false,
@@ -162,7 +162,7 @@ internal class GeoJsonRendererManager {
                                 if (fillOpacity != null) c.colorWithAlphaComponent(fillOpacity)
                                 else c
                             }
-                        val hasFill = (fillHex != null) || (layer.fillColor != null)
+                        val hasFill = (fillHex != null) || (layer.polygonStyle?.fillColor != null)
 
                         val featurePolygonStyle =
                             GMUStyle(
@@ -191,8 +191,8 @@ internal class GeoJsonRendererManager {
                                 fillColor = UIColor.clearColor,
                                 width = 1.0,
                                 scale = 1.0,
-                                heading = rotation,
-                                anchor = CGPointMake(anchorU, anchorV),
+                                heading = rotation ?: 0.0,
+                                anchor = CGPointMake(anchorU ?: 0.5, anchorV ?: 0.5),
                                 iconUrl = null,
                                 title = titleFromJson,
                                 hasFill = false,
