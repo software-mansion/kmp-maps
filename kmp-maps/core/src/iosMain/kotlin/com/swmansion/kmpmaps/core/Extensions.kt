@@ -419,8 +419,8 @@ internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
 }
 
 /**
- * Reapplies stroke color and width to existing MKPolyline renderers
- * based on the provided Polyline styles map.
+ * Reapplies stroke color and width to existing MKPolyline renderers based on the provided Polyline
+ * styles map.
  *
  * @param polylineStyles Mapping between MKPolyline overlays and their Polyline style models
  */

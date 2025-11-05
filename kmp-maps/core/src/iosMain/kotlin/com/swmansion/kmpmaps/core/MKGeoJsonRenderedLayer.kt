@@ -209,10 +209,10 @@ private fun MKGeoJSONFeature.readProperties(): Map<String, Any?> {
 /**
  * Converts an NSDictionary into Map<String, Any?> using only String/NSString keys.
  *
- * @receiver NSDictionary to convert.
  * @return Kotlin Map with string keys.
+ * @receiver NSDictionary to convert.
  */
- @OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class)
 private fun NSDictionary.toKotlinStringAnyMap(): Map<String, Any?> {
     val out = mutableMapOf<String, Any?>()
     this.enumerateKeysAndObjectsUsingBlock { k, v, _ ->
@@ -293,7 +293,7 @@ private fun buildPolygonStyle(
  * @param props Optional per‑feature properties.
  * @return Resolved [AppleGeoJsonPointStyle].
  */
- private fun buildPointStyle(
+private fun buildPointStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
 ): AppleGeoJsonPointStyle {
@@ -305,11 +305,11 @@ private fun buildPolygonStyle(
 /**
  * Returns a non‑blank String value for [key], supporting Kotlin String and NSString.
  *
- * @receiver Source properties map.
  * @param key Property name.
  * @return Trimmed non‑blank string or null.
+ * @receiver Source properties map.
  */
- private fun Map<String, Any?>.string(key: String): String? =
+private fun Map<String, Any?>.string(key: String): String? =
     when (val v = this[key]) {
         is String -> v.takeIf { it.isNotBlank() }
         is NSString -> v.toString().takeIf { it.isNotBlank() }
@@ -319,11 +319,11 @@ private fun buildPolygonStyle(
 /**
  * Returns a Double value for [key] if it can be parsed from common types.
  *
- * @receiver Source properties map.
  * @param key Property name.
  * @return Parsed Double or null.
+ * @receiver Source properties map.
  */
- private fun Map<String, Any?>.double(key: String): Double? =
+private fun Map<String, Any?>.double(key: String): Double? =
     when (val v = this[key]) {
         is NSNumber -> v.doubleValue
         is String -> v.toDoubleOrNull()
@@ -338,11 +338,11 @@ private fun buildPolygonStyle(
 /**
  * Returns a Boolean value for [key] if it can be parsed from common types.
  *
- * @receiver Source properties map.
  * @param key Property name.
  * @return Parsed Boolean or null.
+ * @receiver Source properties map.
  */
- private fun Map<String, Any?>.bool(key: String): Boolean? =
+private fun Map<String, Any?>.bool(key: String): Boolean? =
     when (val v = this[key]) {
         is NSNumber -> v.boolValue
         is String -> v.equals("true", ignoreCase = true)
@@ -354,8 +354,8 @@ private fun buildPolygonStyle(
 /**
  * Parses a hex color string into a UIColor.
  *
- * @receiver Hex string to parse.
  * @return Parsed [UIColor] or [UIColor.blackColor] on error.
+ * @receiver Hex string to parse.
  */
 private fun String.toUIColor(): UIColor {
     val hex = trim().removePrefix("#")
