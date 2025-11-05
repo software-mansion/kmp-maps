@@ -12,14 +12,32 @@ import platform.Foundation.enumerateKeysAndObjectsUsingBlock
 import platform.MapKit.*
 import platform.UIKit.UIColor
 
+/**
+ * Style for a GeoJSON LineString/Polyline rendered on Apple Maps (MapKit).
+ *
+ * @param color Stroke color (UIKit UIColor).
+ * @param width Stroke width in screen points.
+ */
 public data class AppleGeoJsonLineStyle(val color: UIColor, val width: Double)
 
+/**
+ * Style for a GeoJSON Polygon rendered on Apple Maps (MapKit).
+ *
+ * @param strokeColor Outline color (UIKit UIColor).
+ * @param strokeWidth Outline width in screen points.
+ * @param fillColor Optional fill color (UIKit UIColor). Use null to disable fill.
+ */
 public data class AppleGeoJsonPolygonStyle(
     val strokeColor: UIColor,
     val strokeWidth: Double,
     val fillColor: UIColor?,
 )
 
+/**
+ * Style for a GeoJSON Point rendered on Apple Maps (MapKit).
+ *
+ * @param visible Controls marker visibility.
+ */
 public data class AppleGeoJsonPointStyle(val visible: Boolean = true)
 
 /**
@@ -81,6 +99,20 @@ public fun MKMapView.renderGeoJson(geoJson: String): MKGeoJsonRenderedLayer? {
     )
 }
 
+/**
+ * Recursively collects MapKit objects produced from a GeoJSON object and adds them to the provided
+ * lists/maps, applying defaults and per‑feature overrides.
+ *
+ * @param obj GeoJSON object (feature, geometry, or array of geometries).
+ * @param mapView Target map view (passed for API parity if needed).
+ * @param overlays Destination list for overlays.
+ * @param annotations Destination list for annotations.
+ * @param polylineStyles Destination map for polyline styles.
+ * @param polygonStyles Destination map for polygon styles.
+ * @param pointStyles Destination map for point styles.
+ * @param defaults Optional layer-wide default styling.
+ * @param featureProps Decoded properties of a GeoJSON feature.
+ */
 @OptIn(ExperimentalForeignApi::class)
 private fun collectAndAdd(
     obj: Any?,
@@ -162,6 +194,11 @@ private fun collectAndAdd(
     }
 }
 
+/**
+ * Decodes the feature's properties JSON into a Kotlin Map.
+ *
+ * @return Properties map or empty map when absent or invalid.
+ */
 @OptIn(ExperimentalForeignApi::class)
 private fun MKGeoJSONFeature.readProperties(): Map<String, Any?> {
     val data = properties ?: return emptyMap()
@@ -169,7 +206,13 @@ private fun MKGeoJSONFeature.readProperties(): Map<String, Any?> {
     return if (json is NSDictionary) json.toKotlinStringAnyMap() else emptyMap()
 }
 
-@OptIn(ExperimentalForeignApi::class)
+/**
+ * Converts an NSDictionary into Map<String, Any?> using only String/NSString keys.
+ *
+ * @receiver NSDictionary to convert.
+ * @return Kotlin Map with string keys.
+ */
+ @OptIn(ExperimentalForeignApi::class)
 private fun NSDictionary.toKotlinStringAnyMap(): Map<String, Any?> {
     val out = mutableMapOf<String, Any?>()
     this.enumerateKeysAndObjectsUsingBlock { k, v, _ ->
@@ -184,6 +227,13 @@ private fun NSDictionary.toKotlinStringAnyMap(): Map<String, Any?> {
     return out
 }
 
+/**
+ * Builds a line style from layer defaults and feature properties.
+ *
+ * @param defaults Optional layer‑wide defaults.
+ * @param props Optional per‑feature properties.
+ * @return Resolved [AppleGeoJsonLineStyle].
+ */
 private fun buildLineStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
@@ -201,6 +251,13 @@ private fun buildLineStyle(
     return AppleGeoJsonLineStyle(color = color, width = width)
 }
 
+/**
+ * Builds a polygon style from layer defaults and feature properties.
+ *
+ * @param defaults Optional layer‑wide defaults.
+ * @param props Optional per‑feature properties.
+ * @return Resolved [AppleGeoJsonPolygonStyle].
+ */
 private fun buildPolygonStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
@@ -229,7 +286,14 @@ private fun buildPolygonStyle(
     )
 }
 
-private fun buildPointStyle(
+/**
+ * Builds a point style from layer defaults and feature properties.
+ *
+ * @param defaults Optional layer‑wide defaults.
+ * @param props Optional per‑feature properties.
+ * @return Resolved [AppleGeoJsonPointStyle].
+ */
+ private fun buildPointStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
 ): AppleGeoJsonPointStyle {
@@ -238,14 +302,28 @@ private fun buildPointStyle(
     return AppleGeoJsonPointStyle(visible = visible)
 }
 
-private fun Map<String, Any?>.string(key: String): String? =
+/**
+ * Returns a non‑blank String value for [key], supporting Kotlin String and NSString.
+ *
+ * @receiver Source properties map.
+ * @param key Property name.
+ * @return Trimmed non‑blank string or null.
+ */
+ private fun Map<String, Any?>.string(key: String): String? =
     when (val v = this[key]) {
         is String -> v.takeIf { it.isNotBlank() }
         is NSString -> v.toString().takeIf { it.isNotBlank() }
         else -> null
     }
 
-private fun Map<String, Any?>.double(key: String): Double? =
+/**
+ * Returns a Double value for [key] if it can be parsed from common types.
+ *
+ * @receiver Source properties map.
+ * @param key Property name.
+ * @return Parsed Double or null.
+ */
+ private fun Map<String, Any?>.double(key: String): Double? =
     when (val v = this[key]) {
         is NSNumber -> v.doubleValue
         is String -> v.toDoubleOrNull()
@@ -257,7 +335,14 @@ private fun Map<String, Any?>.double(key: String): Double? =
         else -> null
     }
 
-private fun Map<String, Any?>.bool(key: String): Boolean? =
+/**
+ * Returns a Boolean value for [key] if it can be parsed from common types.
+ *
+ * @receiver Source properties map.
+ * @param key Property name.
+ * @return Parsed Boolean or null.
+ */
+ private fun Map<String, Any?>.bool(key: String): Boolean? =
     when (val v = this[key]) {
         is NSNumber -> v.boolValue
         is String -> v.equals("true", ignoreCase = true)
@@ -266,6 +351,12 @@ private fun Map<String, Any?>.bool(key: String): Boolean? =
         else -> null
     }
 
+/**
+ * Parses a hex color string into a UIColor.
+ *
+ * @receiver Hex string to parse.
+ * @return Parsed [UIColor] or [UIColor.blackColor] on error.
+ */
 private fun String.toUIColor(): UIColor {
     val hex = trim().removePrefix("#")
     val value = hex.toLongOrNull(16) ?: return UIColor.blackColor
@@ -287,4 +378,4 @@ private fun String.toUIColor(): UIColor {
     }
 }
 
-private const val DEFAULT_STROKE_WIDTH_FALLBACK = 10.0
+private const val DEFAULT_STROKE_WIDTH_FALLBACK = 2.0
