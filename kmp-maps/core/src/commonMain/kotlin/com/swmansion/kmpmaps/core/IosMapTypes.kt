@@ -5,13 +5,13 @@ import androidx.compose.ui.graphics.Color
 /**
  * iOS-specific map behavior and appearance configuration options.
  *
- * @param showPOI Whether to show points of interest (POIs) on the map (Apple Maps only)
- * @param pointsOfInterest POI categories to include/exclude (Apple Maps only)
- * @param polylineTapThreshold Threshold for polyline tap detection (Apple Maps only)
- * @param gmsMaxZoomPreference Maximum zoom level preference (Google Maps only)
- * @param gmsMinZoomPreference Minimum zoom level preference (Google Maps only)
- * @param gmsIsIndoorEnabled Whether indoor maps are enabled (Google Maps only)
- * @param gmsMapStyleOptions Custom map styling options (Google Maps only)
+ * @property showPOI Whether to show points of interest (POIs) on the map (Apple Maps only)
+ * @property pointsOfInterest POI categories to include/exclude (Apple Maps only)
+ * @property polylineTapThreshold Threshold for polyline tap detection (Apple Maps only)
+ * @property gmsMaxZoomPreference Maximum zoom level preference (Google Maps only)
+ * @property gmsMinZoomPreference Minimum zoom level preference (Google Maps only)
+ * @property gmsIsIndoorEnabled Whether indoor maps are enabled (Google Maps only)
+ * @property gmsMapStyleOptions Custom map styling options (Google Maps only)
  */
 public data class IosMapProperties(
     val showPOI: Boolean = true,
@@ -26,11 +26,11 @@ public data class IosMapProperties(
 /**
  * iOS-specific UI settings that control interactive elements and gestures on the map.
  *
- * @param gmsIndoorPicker Whether indoor level picker is enabled (Google Maps only)
- * @param gmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom
- *   (Google Maps only)
- * @param gmsTiltGesturesEnabled Whether tilt gestures are enabled (Google Maps only)
- * @param gmsConsumesGesturesInView Whether the map consumes gestures in view (Google Maps only)
+ * @property gmsIndoorPicker Whether indoor level picker is enabled (Google Maps only)
+ * @property gmsScrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during
+ *   rotate/zoom (Google Maps only)
+ * @property gmsTiltGesturesEnabled Whether tilt gestures are enabled (Google Maps only)
+ * @property gmsConsumesGesturesInView Whether the map consumes gestures in view (Google Maps only)
  */
 public data class IosUISettings(
     val gmsIndoorPicker: Boolean = true,
@@ -42,15 +42,15 @@ public data class IosUISettings(
 /**
  * iOS-specific options for customizing a marker.
  *
- * @param tintColor The tint color for the marker (Apple Maps only)
+ * @property tintColor The tint color for the marker (Apple Maps only)
  */
 public data class IosMarkerOptions(val tintColor: Color? = null)
 
 /**
  * iOS-specific options for the camera position and orientation of the map.
  *
- * @param gmsBearing The bearing (rotation) of the camera in degrees (Google Maps only)
- * @param gmsViewingAngle The viewing angle of the camera in degrees (Google Maps only)
+ * @property gmsBearing The bearing (rotation) of the camera in degrees (Google Maps only)
+ * @property gmsViewingAngle The viewing angle of the camera in degrees (Google Maps only)
  */
 public data class IosCameraPosition(
     val gmsBearing: Float? = null,

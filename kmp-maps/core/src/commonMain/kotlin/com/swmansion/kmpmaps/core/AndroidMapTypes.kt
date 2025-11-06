@@ -3,10 +3,10 @@ package com.swmansion.kmpmaps.core
 /**
  * Android-specific map behavior and appearance configuration options.
  *
- * @param isIndoorEnabled Whether indoor maps are enabled
- * @param maxZoomPreference Maximum zoom level preference
- * @param minZoomPreference Minimum zoom level preference
- * @param mapStyleOptions Custom map styling options
+ * @property isIndoorEnabled Whether indoor maps are enabled
+ * @property maxZoomPreference Maximum zoom level preference
+ * @property minZoomPreference Minimum zoom level preference
+ * @property mapStyleOptions Custom map styling options
  */
 public data class AndroidMapProperties(
     val isIndoorEnabled: Boolean = true,
@@ -18,11 +18,11 @@ public data class AndroidMapProperties(
 /**
  * Android-specific UI settings that control interactive elements and gestures on the map.
  *
- * @param indoorLevelPickerEnabled Whether indoor level picker is enabled
- * @param mapToolbarEnabled Whether the map toolbar is enabled
- * @param scrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom
- * @param tiltGesturesEnabled Whether tilt gestures are enabled
- * @param zoomControlsEnabled Whether zoom controls are enabled
+ * @property indoorLevelPickerEnabled Whether indoor level picker is enabled
+ * @property mapToolbarEnabled Whether the map toolbar is enabled
+ * @property scrollGesturesEnabledDuringRotateOrZoom Whether scroll gestures work during rotate/zoom
+ * @property tiltGesturesEnabled Whether tilt gestures are enabled
+ * @property zoomControlsEnabled Whether zoom controls are enabled
  */
 public data class AndroidUISettings(
     val indoorLevelPickerEnabled: Boolean = true,
@@ -35,10 +35,10 @@ public data class AndroidUISettings(
 /**
  * Android-specific options for customizing a marker.
  *
- * @param anchor The anchor point for the marker
- * @param draggable Whether the marker can be dragged by the user
- * @param snippet Additional text displayed below the title
- * @param zIndex The z-index for layering markers
+ * @property anchor The anchor point for the marker
+ * @property draggable Whether the marker can be dragged by the user
+ * @property snippet Additional text displayed below the title
+ * @property zIndex The z-index for layering markers
  */
 public data class AndroidMarkerOptions(
     val anchor: GoogleMapsAnchor? = null,
@@ -50,7 +50,7 @@ public data class AndroidMarkerOptions(
 /**
  * Android-specific options for the camera position and orientation of the map.
  *
- * @param bearing The bearing (rotation) of the camera in degrees
- * @param tilt The tilt angle of the camera in degrees
+ * @property bearing The bearing (rotation) of the camera in degrees
+ * @property tilt The tilt angle of the camera in degrees
  */
 public data class AndroidCameraPosition(val bearing: Float? = null, val tilt: Float? = null)
