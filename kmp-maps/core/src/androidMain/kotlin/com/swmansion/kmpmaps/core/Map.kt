@@ -38,6 +38,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    geoJsonLayers: List<GeoJsonLayer>,
 ) {
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
