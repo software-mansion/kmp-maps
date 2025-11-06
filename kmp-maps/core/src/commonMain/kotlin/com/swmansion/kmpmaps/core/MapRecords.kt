@@ -4,8 +4,8 @@ package com.swmansion.kmpmaps.core
  * Configuration for Apple Maps points of interest categories.
  *
  * @property excluding List of POI categories to exclude from the map
- * @property including List of POI categories to include on the map (if specified, only these will be
- *   shown)
+ * @property including List of POI categories to include on the map (if specified, only these will
+ *   be shown)
  */
 public data class AppleMapsPointOfInterestCategories(
     val excluding: List<AppleMapsPointOfInterestCategory>? = emptyList(),
