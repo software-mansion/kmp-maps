@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Surface
@@ -31,12 +32,14 @@ import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.PointStyle
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
@@ -56,10 +59,38 @@ internal fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
+    var showPointGeoJson by remember { mutableStateOf(false) }
+    var showPolygonGeoJson by remember { mutableStateOf(false) }
+    var showLineGeoJson by remember { mutableStateOf(false) }
+
+    val geoJsonLayers =
+        remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
+            buildList {
+                if (showPointGeoJson) {
+                    add(
+                        GeoJsonLayer(
+                            geoJson = EXAMPLE_POINT_GEO_JSON,
+                            pointStyle =
+                                PointStyle(
+                                    snippet = "Recommended food places",
+                                    infoWindowAnchorU = 0.1f,
+                                    infoWindowAnchorV = 0.7f,
+                                ),
+                        )
+                    )
+                }
+                if (showPolygonGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
+                }
+                if (showLineGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+                }
+            }
+        }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.55f),
             mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
@@ -96,8 +127,9 @@ internal fun MapsScreen() {
             onMapLongClick = { println("Map long clicked: $it") },
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
+            geoJsonLayers = geoJsonLayers,
         )
-        Surface {
+        Surface(modifier = Modifier.weight(0.45f)) {
             Column(
                 Modifier.fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))
@@ -176,6 +208,43 @@ internal fun MapsScreen() {
                         )
                     },
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("GeoJSON")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showPointGeoJson = !showPointGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showPointGeoJson,
+                            onCheckedChange = { showPointGeoJson = it },
+                        )
+                        Text("Point")
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showPolygonGeoJson = !showPolygonGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showPolygonGeoJson,
+                            onCheckedChange = { showPolygonGeoJson = it },
+                        )
+                        Text("Area")
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { showLineGeoJson = !showLineGeoJson },
+                    ) {
+                        Checkbox(
+                            checked = showLineGeoJson,
+                            onCheckedChange = { showLineGeoJson = it },
+                        )
+                        Text("Line")
+                    }
+                }
             }
         }
     }
@@ -206,6 +275,7 @@ private fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
+    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -227,6 +297,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayers = geoJsonLayers,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -247,6 +318,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayers = geoJsonLayers,
             )
     }
 }
