@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.Color
 /**
  * Theme options for map appearance.
  *
- * @param SYSTEM Follows the system's dark theme setting
- * @param LIGHT Always uses light theme
- * @param DARK Always uses dark theme
+ * @property SYSTEM Follows the system's dark theme setting
+ * @property LIGHT Always uses light theme
+ * @property DARK Always uses dark theme
  */
 public enum class MapTheme {
     SYSTEM,
@@ -18,13 +18,13 @@ public enum class MapTheme {
 /**
  * Configuration properties for map behavior and appearance.
  *
- * @param isMyLocationEnabled Whether to show the user's current location on the map
- * @param isTrafficEnabled Whether to display traffic information on the map
- * @param isBuildingEnabled Whether to show 3D buildings on the map
- * @param mapType The type of map to display
- * @param mapTheme The theme for the map appearance
- * @param androidMapProperties Android-specific map behavior and appearance configuration options
- * @param iosMapProperties iOS-specific map behavior and appearance configuration options
+ * @property isMyLocationEnabled Whether to show the user's current location on the map
+ * @property isTrafficEnabled Whether to display traffic information on the map
+ * @property isBuildingEnabled Whether to show 3D buildings on the map
+ * @property mapType The type of map to display
+ * @property mapTheme The theme for the map appearance
+ * @property androidMapProperties Android-specific map behavior and appearance configuration options
+ * @property iosMapProperties iOS-specific map behavior and appearance configuration options
  */
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
@@ -39,15 +39,15 @@ public data class MapProperties(
 /**
  * UI settings that control interactive elements and gestures on the map.
  *
- * @param compassEnabled Whether to show the compass control
- * @param myLocationButtonEnabled Whether to show the "My Location" button
- * @param scaleBarEnabled Whether to show the scale bar
- * @param togglePitchEnabled Whether pitch gestures are enabled
- * @param scrollEnabled Whether scroll gestures are enabled
- * @param zoomEnabled Whether zoom gestures are enabled
- * @param rotateEnabled Whether rotation gestures are enabled
- * @param androidUISettings Android-specific UI settings
- * @param iosUISettings iOS-specific UI settings
+ * @property compassEnabled Whether to show the compass control
+ * @property myLocationButtonEnabled Whether to show the "My Location" button
+ * @property scaleBarEnabled Whether to show the scale bar
+ * @property togglePitchEnabled Whether pitch gestures are enabled
+ * @property scrollEnabled Whether scroll gestures are enabled
+ * @property zoomEnabled Whether zoom gestures are enabled
+ * @property rotateEnabled Whether rotation gestures are enabled
+ * @property androidUISettings Android-specific UI settings
+ * @property iosUISettings iOS-specific UI settings
  */
 public data class MapUISettings(
     val compassEnabled: Boolean = false,
@@ -64,10 +64,10 @@ public data class MapUISettings(
 /**
  * Represents a marker on the map.
  *
- * @param coordinates The geographical coordinates where the marker should be placed
- * @param title The title text displayed when the marker is tapped
- * @param androidMarkerOptions Android-specific options for customizing a marker
- * @param iosMarkerOptions iOS-specific options for customizing a marker
+ * @property coordinates The geographical coordinates where the marker should be placed
+ * @property title The title text displayed when the marker is tapped
+ * @property androidMarkerOptions Android-specific options for customizing a marker
+ * @property iosMarkerOptions iOS-specific options for customizing a marker
  */
 public data class Marker(
     val coordinates: Coordinates,
@@ -79,11 +79,11 @@ public data class Marker(
 /**
  * Represents a circle overlay on the map.
  *
- * @param center The center coordinates of the circle
- * @param radius The radius of the circle in meters
- * @param color The fill color of the circle
- * @param lineColor The color of the circle's border
- * @param lineWidth The width of the circle's border
+ * @property center The center coordinates of the circle
+ * @property radius The radius of the circle in meters
+ * @property color The fill color of the circle
+ * @property lineColor The color of the circle's border
+ * @property lineWidth The width of the circle's border
  */
 public data class Circle(
     val center: Coordinates,
@@ -96,10 +96,10 @@ public data class Circle(
 /**
  * Represents a polygon overlay on the map.
  *
- * @param coordinates List of coordinates that define the polygon's vertices
- * @param lineWidth The width of the polygon's border
- * @param color The fill color of the polygon
- * @param lineColor The color of the polygon's border
+ * @property coordinates List of coordinates that define the polygon's vertices
+ * @property lineWidth The width of the polygon's border
+ * @property color The fill color of the polygon
+ * @property lineColor The color of the polygon's border
  */
 public data class Polygon(
     val coordinates: List<Coordinates>,
@@ -111,9 +111,9 @@ public data class Polygon(
 /**
  * Represents a polyline overlay on the map.
  *
- * @param coordinates List of coordinates that define the polyline's path
- * @param width The width of the polyline
- * @param lineColor The color of the polyline
+ * @property coordinates List of coordinates that define the polyline's path
+ * @property width The width of the polyline
+ * @property lineColor The color of the polyline
  */
 public data class Polyline(
     val coordinates: List<Coordinates>,
@@ -124,18 +124,18 @@ public data class Polyline(
 /**
  * Represents geographical coordinates (latitude and longitude).
  *
- * @param latitude The latitude coordinate in decimal degrees (-90 to 90)
- * @param longitude The longitude coordinate in decimal degrees (-180 to 180)
+ * @property latitude The latitude coordinate in decimal degrees (-90 to 90)
+ * @property longitude The longitude coordinate in decimal degrees (-180 to 180)
  */
 public data class Coordinates(val latitude: Double, val longitude: Double)
 
 /**
  * Represents the camera position and orientation of the map.
  *
- * @param coordinates The center coordinates of the camera view
- * @param zoom The zoom level of the map (typically 0-20)
- * @param androidCameraPosition Android-specific options for the camera position and orientation
- * @param iosCameraPosition iOS-specific options for the camera position and orientation
+ * @property coordinates The center coordinates of the camera view
+ * @property zoom The zoom level of the map (typically 0-20)
+ * @property androidCameraPosition Android-specific options for the camera position and orientation
+ * @property iosCameraPosition iOS-specific options for the camera position and orientation
  */
 public data class CameraPosition(
     val coordinates: Coordinates,
