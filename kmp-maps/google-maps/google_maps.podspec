@@ -9,6 +9,7 @@ Pod::Spec.new do |spec|
     spec.vendored_frameworks      = 'build/cocoapods/framework/google_maps.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '16.0'
+    spec.dependency 'Google-Maps-iOS-Utils', '6.1.3'
     spec.dependency 'GoogleMaps', '10.4.0'
                 
     if !Dir.exist?('build/cocoapods/framework/google_maps.framework') || Dir.empty?('build/cocoapods/framework/google_maps.framework')
