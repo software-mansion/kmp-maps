@@ -8,11 +8,11 @@ import androidx.compose.ui.graphics.Color
  * @param geoJson Raw GeoJSON document (UTF-8). Supports Geometry, Feature, and FeatureCollection
  * @param visible Whether the layer is visible. Default: true
  * @param zIndex Drawing order relative to other layers (higher draws on top)
- * @param isClickable: If true, features from this layer can emit click events when supported
- * @param isGeodesic: If true, lines/polygon edges are rendered as geodesics when supported
- * @param lineStringStyle: Style for LineString features
- * @param polygonStyle: Style for Polygon features
- * @param pointStyle: Style for Point features
+ * @param isClickable If true, features from this layer can emit click events when supported
+ * @param isGeodesic If true, lines/polygon edges are rendered as geodesics when supported
+ * @param lineStringStyle Style for LineString features
+ * @param polygonStyle Style for Polygon features
+ * @param pointStyle Style for Point features
  */
 public data class GeoJsonLayer(
     val geoJson: String,
@@ -32,9 +32,9 @@ internal const val DEFAULT_STROKE_WIDTH = 2f
 /**
  * Represents a style of GeoJSON line.
  *
- * @param lineWidth: Stroke width for LineString
- * @param lineColor: Stroke color for LineString features
- * @param pattern: Dash pattern for strokes. See StrokePatternItem for available pattern items
+ * @param lineWidth Stroke width for LineString
+ * @param lineColor Stroke color for LineString features
+ * @param pattern Dash pattern for strokes. See StrokePatternItem for available pattern items
  *   (Android only)
  */
 public data class LineStringStyle(
@@ -46,9 +46,9 @@ public data class LineStringStyle(
 /**
  * Represents a style of GeoJSON polygon.
  *
- * @param fillColor: Fill color for polygon interiors
- * @param strokeColor: Stroke color for polygon outlines
- * @param strokeWidth: Stroke width for polygon outlines
+ * @param fillColor Fill color for polygon interiors
+ * @param strokeColor Stroke color for polygon outlines
+ * @param strokeWidth Stroke width for polygon outlines
  */
 public data class PolygonStyle(
     val fillColor: Color? = null,
@@ -59,12 +59,12 @@ public data class PolygonStyle(
 /**
  * Represents a style of GeoJSON point.
  *
- * @param alpha: Opacity for point symbols/markers in the range [0f, 1f]
- * @param isDraggable: Whether point markers are draggable (when supported)
- * @param isFlat: Whether the marker icon is flat against the map surface (when supported)
- * @param pointTitle: Title used for marker info windows where supported
- * @param snippet: Subtitle/description used for marker info windows
- * @param rotation: Marker/icon rotation in degrees
+ * @param alpha Opacity for point symbols/markers in the range [0f, 1f]
+ * @param isDraggable Whether point markers are draggable (when supported)
+ * @param isFlat Whether the marker icon is flat against the map surface (when supported)
+ * @param pointTitle Title used for marker info windows where supported
+ * @param snippet Subtitle/description used for marker info windows
+ * @param rotation Marker/icon rotation in degrees
  * @param infoWindowAnchorU Horizontal info window anchor relative to the marker (0..1)
  * @param infoWindowAnchorV Vertical info window anchor relative to the marker (0..1)
  * @param anchorU Horizontal marker icon anchor relative to the icon (0..1)
