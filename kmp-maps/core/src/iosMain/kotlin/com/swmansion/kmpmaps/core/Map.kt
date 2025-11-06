@@ -123,6 +123,8 @@ public actual fun Map(
                 rendered.overlays.forEach { overlay -> view.addOverlay(overlay) }
                 rendered.annotations.forEach { ann -> view.addAnnotation(ann) }
 
+                view.reapplyCorePolylineStyles(polylineStyles)
+
                 renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
             } else {
                 renderedGeoJsonLayers = renderedGeoJsonLayers - index
@@ -172,6 +174,9 @@ public actual fun Map(
                     onMapLongClick = onMapLongClick,
                     onPOIClick = onPOIClick,
                     onCameraMove = onCameraMove,
+                    geoJsonPolygonStyles = geoJsonPolygonStyles,
+                    geoJsonPolylineStyles = geoJsonPolylineStyles,
+                    geoJsonPointStyles = geoJsonPointStyles,
                 )
             mkMapView.delegate = delegate
             mapDelegate = delegate
