@@ -52,6 +52,6 @@ public actual fun Map(
         onMapLongClick,
         onPOIClick,
         onMapLoaded,
-        geoJsonLayers
+        geoJsonLayers,
     )
 }
