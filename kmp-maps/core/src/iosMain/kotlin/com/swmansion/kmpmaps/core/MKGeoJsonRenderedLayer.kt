@@ -150,9 +150,7 @@ private fun collectAndAdd(
             overlays += obj
             polylineStyles[obj] = buildLineStyle(defaults, featureProps)
         }
-        is MKMultiPolygon -> {
-            overlays += obj
-        }
+        is MKMultiPolygon,
         is MKMultiPolyline -> {
             overlays += obj
         }
@@ -276,8 +274,11 @@ private fun buildPolygonStyle(
     val strokeColor = strokeHex?.toUIColor() ?: defaultStroke
     val fillBase = fillHex?.toUIColor() ?: defaultFill
     val fillColor =
-        if (fillOpacity != null && fillBase != null) fillBase.colorWithAlphaComponent(fillOpacity)
-        else fillBase
+        if (fillOpacity != null && fillBase != null) {
+            fillBase.colorWithAlphaComponent(fillOpacity)
+        } else {
+            fillBase
+        }
 
     return AppleMapsGeoJsonPolygonStyle(
         strokeColor = strokeColor,
@@ -311,8 +312,8 @@ private fun buildPointStyle(
  */
 private fun Map<String, Any?>.string(key: String): String? =
     when (val v = this[key]) {
-        is String -> v.takeIf { it.isNotBlank() }
-        is NSString -> v.toString().takeIf { it.isNotBlank() }
+        is String -> v.takeIf(String::isNotBlank)
+        is NSString -> v.toString().takeIf(String::isNotBlank)
         else -> null
     }
 
@@ -329,9 +330,7 @@ private fun Map<String, Any?>.double(key: String): Double? =
         is String -> v.toDoubleOrNull()
         is NSString -> v.toString().toDoubleOrNull()
         is Double -> v
-        is Float -> v.toDouble()
-        is Int -> v.toDouble()
-        is Long -> v.toDouble()
+        is Number -> v.toDouble()
         else -> null
     }
 

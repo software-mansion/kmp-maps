@@ -96,9 +96,9 @@ public actual fun Map(
         keysToRemove.forEach { idx ->
             renderedGeoJsonLayers[idx]?.let { rendered ->
                 rendered.clear(view)
-                rendered.polygonStyles.keys.forEach { geoJsonPolygonStyles.remove(it) }
-                rendered.polylineStyles.keys.forEach { geoJsonPolylineStyles.remove(it) }
-                rendered.pointStyles.keys.forEach { geoJsonPointStyles.remove(it) }
+                rendered.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+                rendered.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+                rendered.pointStyles.keys.forEach(geoJsonPointStyles::remove)
             }
         }
         renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
@@ -106,9 +106,9 @@ public actual fun Map(
         geoJsonLayers.forEachIndexed { index, layer ->
             renderedGeoJsonLayers[index]?.let { prev ->
                 prev.clear(view)
-                prev.polygonStyles.keys.forEach { geoJsonPolygonStyles.remove(it) }
-                prev.polylineStyles.keys.forEach { geoJsonPolylineStyles.remove(it) }
-                prev.pointStyles.keys.forEach { geoJsonPointStyles.remove(it) }
+                prev.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+                prev.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+                prev.pointStyles.keys.forEach(geoJsonPointStyles::remove)
             }
 
             if (layer.visible == false) {
@@ -122,8 +122,8 @@ public actual fun Map(
                 rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
                 rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
 
-                rendered.overlays.forEach { overlay -> view.addOverlay(overlay) }
-                rendered.annotations.forEach { ann -> view.addAnnotation(ann) }
+                rendered.overlays.forEach(view::addOverlay)
+                rendered.annotations.forEach(view::addAnnotation)
 
                 view.reapplyCorePolylineStyles(polylineStyles)
 
