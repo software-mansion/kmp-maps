@@ -5,8 +5,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Dot
+import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.PatternItem
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
@@ -130,3 +134,17 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let
  * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null)
  */
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
+
+/**
+ * Converts the multiplatform stroke pattern description into a list of Google Maps Android
+ * [PatternItem]s.
+ *
+ * @return List of [PatternItem] suitable for Google Maps styling.
+ */
+internal fun List<StrokePatternItem>.toGooglePattern(): List<PatternItem> = map {
+    when (it) {
+        is StrokePatternItem.Dot -> Dot()
+        is StrokePatternItem.Dash -> Dash(it.lengthPx)
+        is StrokePatternItem.Gap -> Gap(it.lengthPx)
+    }
+}
