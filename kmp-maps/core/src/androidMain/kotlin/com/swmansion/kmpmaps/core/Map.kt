@@ -11,7 +11,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
@@ -130,7 +129,6 @@ public actual fun Map(
         DisposableEffect(Unit) {
             onDispose {
                 androidGeoJsonLayers.values.forEach { it.removeLayerFromMap() }
-                androidGeoJsonLayers = emptyMap()
             }
         }
 
@@ -206,6 +204,11 @@ public actual fun Map(
     }
 }
 
+private fun applyAlpha(color: Int, opacity: Float?): Int =
+    if (opacity != null)
+        ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
+    else color
+
 private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
     defaultLineStringStyle.isClickable = geo.isClickable == true
@@ -246,11 +249,6 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
 
         val fillHex = feature.getProperty("fill")
         val fillOpacity = feature.getProperty("fill-opacity")?.toFloatOrNull()
-
-        fun applyAlpha(color: Int, opacity: Float?): Int =
-            if (opacity != null)
-                ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
-            else color
 
         when (feature.geometry) {
             is GeoJsonLineString -> {
