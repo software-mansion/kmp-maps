@@ -18,7 +18,7 @@ import platform.UIKit.UIColor
  * @param color Stroke color (UIKit UIColor).
  * @param width Stroke width in screen points.
  */
-public data class AppleGeoJsonLineStyle(val color: UIColor, val width: Double)
+public data class AppleMapsGeoJsonLineStyle(val color: UIColor, val width: Double)
 
 /**
  * Style for a GeoJSON Polygon rendered on Apple Maps (MapKit).
@@ -27,7 +27,7 @@ public data class AppleGeoJsonLineStyle(val color: UIColor, val width: Double)
  * @param strokeWidth Outline width in screen points.
  * @param fillColor Optional fill color (UIKit UIColor). Use null to disable fill.
  */
-public data class AppleGeoJsonPolygonStyle(
+public data class AppleMapsGeoJsonPolygonStyle(
     val strokeColor: UIColor,
     val strokeWidth: Double,
     val fillColor: UIColor?,
@@ -38,7 +38,7 @@ public data class AppleGeoJsonPolygonStyle(
  *
  * @param visible Controls marker visibility.
  */
-public data class AppleGeoJsonPointStyle(val visible: Boolean = true)
+public data class AppleMapsGeoJsonPointStyle(val visible: Boolean = true)
 
 /**
  * Handle for a rendered GeoJSON layer on MKMapView. Keep this instance and call clear(from:) to
@@ -47,9 +47,9 @@ public data class AppleGeoJsonPointStyle(val visible: Boolean = true)
 public class MKGeoJsonRenderedLayer(
     internal val overlays: List<MKOverlayProtocol>,
     internal val annotations: List<MKAnnotationProtocol>,
-    internal val polylineStyles: Map<MKPolyline, AppleGeoJsonLineStyle> = emptyMap(),
-    internal val polygonStyles: Map<MKPolygon, AppleGeoJsonPolygonStyle> = emptyMap(),
-    internal val pointStyles: Map<MKPointAnnotation, AppleGeoJsonPointStyle> = emptyMap(),
+    internal val polylineStyles: Map<MKPolyline, AppleMapsGeoJsonLineStyle> = emptyMap(),
+    internal val polygonStyles: Map<MKPolygon, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
+    internal val pointStyles: Map<MKPointAnnotation, AppleMapsGeoJsonPointStyle> = emptyMap(),
 ) {
     @OptIn(ExperimentalForeignApi::class)
     public fun clear(from: MKMapView) {
@@ -72,9 +72,9 @@ public fun MKMapView.renderGeoJson(geoJson: String): MKGeoJsonRenderedLayer? {
 
     val annotations = mutableListOf<MKAnnotationProtocol>()
     val overlays = mutableListOf<MKOverlayProtocol>()
-    val polylineStyles = mutableMapOf<MKPolyline, AppleGeoJsonLineStyle>()
-    val polygonStyles = mutableMapOf<MKPolygon, AppleGeoJsonPolygonStyle>()
-    val pointStyles = mutableMapOf<MKPointAnnotation, AppleGeoJsonPointStyle>()
+    val polylineStyles = mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>()
+    val polygonStyles = mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>()
+    val pointStyles = mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
 
     objects.forEach { obj ->
         collectAndAdd(
@@ -119,9 +119,9 @@ private fun collectAndAdd(
     mapView: MKMapView,
     overlays: MutableList<MKOverlayProtocol>,
     annotations: MutableList<MKAnnotationProtocol>,
-    polylineStyles: MutableMap<MKPolyline, AppleGeoJsonLineStyle>,
-    polygonStyles: MutableMap<MKPolygon, AppleGeoJsonPolygonStyle>,
-    pointStyles: MutableMap<MKPointAnnotation, AppleGeoJsonPointStyle>,
+    polylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    polygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
+    pointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     defaults: GeoJsonLayer?,
     featureProps: Map<String, Any?>?,
 ) {
@@ -232,12 +232,12 @@ private fun NSDictionary.toKotlinStringAnyMap(): Map<String, Any?> {
  *
  * @param defaults Optional layer‑wide defaults.
  * @param props Optional per‑feature properties.
- * @return Resolved [AppleGeoJsonLineStyle].
+ * @return Resolved [AppleMapsGeoJsonLineStyle].
  */
 private fun buildLineStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
-): AppleGeoJsonLineStyle {
+): AppleMapsGeoJsonLineStyle {
     val defaultColor =
         defaults?.lineStringStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
     val defaultWidth =
@@ -248,7 +248,7 @@ private fun buildLineStyle(
 
     val color = strokeHex?.toUIColor() ?: defaultColor
     val width = strokeWidth ?: defaultWidth
-    return AppleGeoJsonLineStyle(color = color, width = width)
+    return AppleMapsGeoJsonLineStyle(color = color, width = width)
 }
 
 /**
@@ -256,12 +256,12 @@ private fun buildLineStyle(
  *
  * @param defaults Optional layer‑wide defaults.
  * @param props Optional per‑feature properties.
- * @return Resolved [AppleGeoJsonPolygonStyle].
+ * @return Resolved [AppleMapsGeoJsonPolygonStyle].
  */
 private fun buildPolygonStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
-): AppleGeoJsonPolygonStyle {
+): AppleMapsGeoJsonPolygonStyle {
     val defaultStroke =
         defaults?.polygonStyle?.strokeColor?.toAppleMapsColor() ?: UIColor.blackColor
     val defaultStrokeWidth =
@@ -279,7 +279,7 @@ private fun buildPolygonStyle(
         if (fillOpacity != null && fillBase != null) fillBase.colorWithAlphaComponent(fillOpacity)
         else fillBase
 
-    return AppleGeoJsonPolygonStyle(
+    return AppleMapsGeoJsonPolygonStyle(
         strokeColor = strokeColor,
         strokeWidth = strokeWidth ?: defaultStrokeWidth,
         fillColor = fillColor,
@@ -291,15 +291,15 @@ private fun buildPolygonStyle(
  *
  * @param defaults Optional layer‑wide defaults.
  * @param props Optional per‑feature properties.
- * @return Resolved [AppleGeoJsonPointStyle].
+ * @return Resolved [AppleMapsGeoJsonPointStyle].
  */
 private fun buildPointStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
-): AppleGeoJsonPointStyle {
+): AppleMapsGeoJsonPointStyle {
     val visible = props?.bool("visible") ?: (defaults?.visible ?: true)
 
-    return AppleGeoJsonPointStyle(visible = visible)
+    return AppleMapsGeoJsonPointStyle(visible = visible)
 }
 
 /**

@@ -40,9 +40,9 @@ internal class MapDelegate(
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
     private var onCameraMove: ((CameraPosition) -> Unit)?,
-    private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleGeoJsonPolygonStyle>,
-    private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleGeoJsonLineStyle>,
-    private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleGeoJsonPointStyle>,
+    private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
+    private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     /**

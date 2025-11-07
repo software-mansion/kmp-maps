@@ -64,9 +64,11 @@ public actual fun Map(
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
 
-    val geoJsonPolygonStyles = remember { mutableMapOf<MKPolygon, AppleGeoJsonPolygonStyle>() }
-    val geoJsonPolylineStyles = remember { mutableMapOf<MKPolyline, AppleGeoJsonLineStyle>() }
-    val geoJsonPointStyles = remember { mutableMapOf<MKPointAnnotation, AppleGeoJsonPointStyle>() }
+    val geoJsonPolygonStyles = remember { mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>() }
+    val geoJsonPolylineStyles = remember { mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>() }
+    val geoJsonPointStyles = remember {
+        mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
+    }
 
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
