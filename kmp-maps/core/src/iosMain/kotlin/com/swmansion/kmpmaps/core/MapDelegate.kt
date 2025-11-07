@@ -4,17 +4,21 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
+import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCircleRenderer
 import platform.MapKit.MKMapView
 import platform.MapKit.MKMapViewDelegateProtocol
+import platform.MapKit.MKMarkerAnnotationView
 import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
 import platform.MapKit.MKPolyline
 import platform.MapKit.MKPolylineRenderer
+import platform.MapKit.MKUserLocation
+import platform.UIKit.UIColor
 import platform.UIKit.UIGestureRecognizerStateBegan
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
@@ -36,6 +40,9 @@ internal class MapDelegate(
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
     private var onCameraMove: ((CameraPosition) -> Unit)?,
+    private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
+    private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     /**
@@ -50,24 +57,49 @@ internal class MapDelegate(
             is MKCircle -> {
                 val circleStyle = circleStyles[rendererForOverlay]
                 val renderer = MKCircleRenderer(rendererForOverlay)
-                renderer.strokeColor = circleStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (circleStyle?.lineWidth ?: 1).toDouble()
+                renderer.strokeColor =
+                    circleStyle?.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                renderer.lineWidth = (circleStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH).toDouble()
                 renderer.fillColor = circleStyle?.color?.toAppleMapsColor()
                 renderer
             }
             is MKPolygon -> {
-                val polygonStyle = polygonStyles[rendererForOverlay]
+                val core = polygonStyles[rendererForOverlay]
                 val renderer = MKPolygonRenderer(rendererForOverlay)
-                renderer.strokeColor = polygonStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (polygonStyle?.lineWidth ?: 1).toDouble()
-                renderer.fillColor = polygonStyle?.color?.toAppleMapsColor()
+                if (core != null) {
+                    renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                    renderer.lineWidth = core.lineWidth.toDouble()
+                    renderer.fillColor = core.color?.toAppleMapsColor()
+                } else {
+                    val gj = geoJsonPolygonStyles[rendererForOverlay]
+                    if (gj != null) {
+                        renderer.strokeColor = gj.strokeColor
+                        renderer.lineWidth = gj.strokeWidth
+                        renderer.fillColor = gj.fillColor
+                    } else {
+                        renderer.strokeColor = UIColor.blackColor
+                        renderer.lineWidth = DEFAULT_STROKE_WIDTH.toDouble()
+                        renderer.fillColor = null
+                    }
+                }
                 renderer
             }
             is MKPolyline -> {
-                val polylineStyle = polylineStyles[rendererForOverlay]
+                val core = polylineStyles[rendererForOverlay]
                 val renderer = MKPolylineRenderer(rendererForOverlay)
-                renderer.strokeColor = polylineStyle?.lineColor?.toAppleMapsColor()
-                renderer.lineWidth = (polylineStyle?.width ?: 1).toDouble()
+                if (core != null) {
+                    renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
+                    renderer.lineWidth = core.width.toDouble()
+                } else {
+                    val gj = geoJsonPolylineStyles[rendererForOverlay]
+                    if (gj != null) {
+                        renderer.strokeColor = gj.color
+                        renderer.lineWidth = gj.width
+                    } else {
+                        renderer.strokeColor = UIColor.blackColor
+                        renderer.lineWidth = DEFAULT_STROKE_WIDTH.toDouble()
+                    }
+                }
                 renderer
             }
             else -> MKCircleRenderer(rendererForOverlay)
@@ -96,6 +128,33 @@ internal class MapDelegate(
         val region = mapView.region
         val cameraPosition = region.toCameraPosition()
         onCameraMove?.invoke(cameraPosition)
+    }
+
+    /**
+     * Handles GeoJSON annotations.
+     *
+     * @param mapView The map view whose region changed
+     * @param viewForAnnotation The annotation view that was selected
+     */
+    override fun mapView(
+        mapView: MKMapView,
+        viewForAnnotation: MKAnnotationProtocol,
+    ): MKAnnotationView? {
+        if (viewForAnnotation is MKUserLocation) return null
+        val point = viewForAnnotation as? MKPointAnnotation ?: return null
+
+        val style = geoJsonPointStyles[point] ?: return null
+        val reuseId = "kmp_geojson_marker"
+
+        val view =
+            mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKMarkerAnnotationView
+                ?: MKMarkerAnnotationView(annotation = viewForAnnotation, reuseIdentifier = reuseId)
+
+        view.annotation = viewForAnnotation
+        view.canShowCallout = true
+        view.hidden = !style.visible
+
+        return view
     }
 
     /**

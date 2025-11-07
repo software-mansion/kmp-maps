@@ -18,6 +18,7 @@ import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.MapKit.addOverlay
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
@@ -54,11 +55,20 @@ public actual fun Map(
     var hasLocationPermission by remember {
         mutableStateOf(locationPermissionHandler.checkPermission())
     }
+    var renderedGeoJsonLayers by remember {
+        mutableStateOf<Map<Int, MKGeoJsonRenderedLayer>>(emptyMap())
+    }
 
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKPointAnnotation, Marker>() }
+
+    val geoJsonPolygonStyles = remember { mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>() }
+    val geoJsonPolylineStyles = remember { mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>() }
+    val geoJsonPointStyles = remember {
+        mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
+    }
 
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
@@ -76,6 +86,51 @@ public actual fun Map(
     LaunchedEffect(properties.isMyLocationEnabled) {
         if (properties.isMyLocationEnabled && !hasLocationPermission) {
             locationPermissionHandler.requestPermission()
+        }
+    }
+
+    LaunchedEffect(mapView, geoJsonLayers) {
+        val view = mapView ?: return@LaunchedEffect
+        val desiredKeys = geoJsonLayers.indices.toSet()
+        val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
+        keysToRemove.forEach { idx ->
+            renderedGeoJsonLayers[idx]?.let { rendered ->
+                rendered.clear(view)
+                rendered.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+                rendered.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+                rendered.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+            }
+        }
+        renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
+
+        geoJsonLayers.forEachIndexed { index, layer ->
+            renderedGeoJsonLayers[index]?.let { prev ->
+                prev.clear(view)
+                prev.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+                prev.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+                prev.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+            }
+
+            if (layer.visible == false) {
+                renderedGeoJsonLayers = renderedGeoJsonLayers - index
+                return@forEachIndexed
+            }
+
+            val rendered = view.renderGeoJson(layer.geoJson)
+            if (rendered != null) {
+                rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
+                rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
+                rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
+
+                rendered.overlays.forEach(view::addOverlay)
+                rendered.annotations.forEach(view::addAnnotation)
+
+                view.reapplyCorePolylineStyles(polylineStyles)
+
+                renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
+            } else {
+                renderedGeoJsonLayers = renderedGeoJsonLayers - index
+            }
         }
     }
 
@@ -121,6 +176,9 @@ public actual fun Map(
                     onMapLongClick = onMapLongClick,
                     onPOIClick = onPOIClick,
                     onCameraMove = onCameraMove,
+                    geoJsonPolygonStyles = geoJsonPolygonStyles,
+                    geoJsonPolylineStyles = geoJsonPolylineStyles,
+                    geoJsonPointStyles = geoJsonPointStyles,
                 )
             mkMapView.delegate = delegate
             mapDelegate = delegate
