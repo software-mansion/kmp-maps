@@ -26,6 +26,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.data.Layer
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 import com.google.maps.android.data.geojson.GeoJsonLineString
 import com.google.maps.android.data.geojson.GeoJsonLineStringStyle
@@ -99,7 +100,7 @@ public actual fun Map(
                     val desiredKeys = geoJsonLayers.indices.toSet()
                     val keysToRemove = androidGeoJsonLayers.keys - desiredKeys
                     keysToRemove.forEach { k -> androidGeoJsonLayers[k]?.removeLayerFromMap() }
-                    androidGeoJsonLayers = androidGeoJsonLayers.filterKeys { it in desiredKeys }
+                    androidGeoJsonLayers = androidGeoJsonLayers.filterKeys(desiredKeys::contains)
 
                     geoJsonLayers.forEachIndexed { index, geo ->
                         if (geo.visible == false) {
@@ -127,7 +128,7 @@ public actual fun Map(
         }
 
         DisposableEffect(Unit) {
-            onDispose { androidGeoJsonLayers.values.forEach { it.removeLayerFromMap() } }
+            onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
         }
 
         markers.forEach { marker ->
@@ -202,10 +203,12 @@ public actual fun Map(
     }
 }
 
-private fun applyAlpha(color: Int, opacity: Float?): Int =
-    if (opacity != null)
+private fun applyAlpha(color: Int, opacity: Float?) =
+    if (opacity != null) {
         ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
-    else color
+    } else {
+        color
+    }
 
 private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
