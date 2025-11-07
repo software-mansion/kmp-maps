@@ -127,9 +127,7 @@ public actual fun Map(
         }
 
         DisposableEffect(Unit) {
-            onDispose {
-                androidGeoJsonLayers.values.forEach { it.removeLayerFromMap() }
-            }
+            onDispose { androidGeoJsonLayers.values.forEach { it.removeLayerFromMap() } }
         }
 
         markers.forEach { marker ->
