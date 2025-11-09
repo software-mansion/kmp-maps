@@ -394,7 +394,7 @@ internal fun AppleMapsPointOfInterestCategory.toMKPointOfInterestCategory():
  * @return UIColor corresponding to the androidx Color object
  */
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color.toAppleMapsColor(): UIColor {
+public fun Color.toAppleMapsColor(): UIColor {
     val argb = this.toArgb()
     return UIColor.colorWithRed(
         red = ((argb shr 16) and 0xFF) / 255.0,

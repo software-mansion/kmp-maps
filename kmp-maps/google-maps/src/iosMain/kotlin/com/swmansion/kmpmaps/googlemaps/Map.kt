@@ -89,12 +89,12 @@ public actual fun Map(
     }
 
     DisposableEffect(mapView) {
-        mapView?.let { geoJsonManager.attach(it) }
-        onDispose { geoJsonManager.clear() }
+        mapView?.let(geoJsonManager::attach)
+        onDispose(geoJsonManager::clear)
     }
 
     LaunchedEffect(mapView, geoJsonLayers) {
-        mapView ?: return@LaunchedEffect
+        if (mapView == null) return@LaunchedEffect
         geoJsonManager.render(geoJsonLayers)
     }
 

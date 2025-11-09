@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSMapStyle
 import cocoapods.GoogleMaps.GMSMapView
@@ -23,6 +22,7 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.toAppleMapsColor
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLLocationCoordinate2DMake
@@ -164,22 +164,6 @@ internal fun MapType?.toGoogleMapsMapType() =
     }
 
 /**
- * Converts androidx Color to Apple UIKit's UIColor.
- *
- * @return UIColor corresponding to the androidx Color object
- */
-@OptIn(ExperimentalForeignApi::class)
-internal fun Color.toAppleMapsColor(): UIColor {
-    val argb = this.toArgb()
-    return UIColor.colorWithRed(
-        red = ((argb shr 16) and 0xFF) / 255.0,
-        green = ((argb shr 8) and 0xFF) / 255.0,
-        blue = (argb and 0xFF) / 255.0,
-        alpha = ((argb shr 24) and 0xFF) / 255.0,
-    )
-}
-
-/**
  * Switches between light and dark mode for the map.
  *
  * @param isDarkModeEnabled true for dark mode, false for light mode
@@ -248,14 +232,16 @@ public fun GMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
  * @return UIColor created from this Color or the fallback.
  */
 internal fun Color?.toUIColor(fallback: UIColor): UIColor =
-    if (this == null) fallback
-    else
+    if (this == null) {
+        fallback
+    } else {
         UIColor(
             red = this.red.toDouble(),
             green = this.green.toDouble(),
             blue = this.blue.toDouble(),
             alpha = this.alpha.toDouble(),
         )
+    }
 
 /**
  * Safely reads a String value from an NSDictionary by key.
@@ -307,7 +293,7 @@ internal fun parseHexToUIColor(hexInput: String?): UIColor? {
             val b = hex.substring(4, 6).toIntOrNull(16) ?: return null
             UIColor(red = r / 255.0, green = g / 255.0, blue = b / 255.0, alpha = 1.0)
         }
-        +8 -> {
+        8 -> {
             val a = hex.substring(0, 2).toIntOrNull(16) ?: return null
             val r = hex.substring(2, 4).toIntOrNull(16) ?: return null
             val g = hex.substring(4, 6).toIntOrNull(16) ?: return null

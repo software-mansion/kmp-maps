@@ -31,7 +31,7 @@ internal class GeoJsonRendererManager {
     }
 
     fun clear() {
-        renderers.values.forEach { it.clear() }
+        renderers.values.forEach(GMUGeometryRenderer::clear)
         renderers = emptyMap()
     }
 
@@ -41,7 +41,7 @@ internal class GeoJsonRendererManager {
         val desired = layers.indices.toSet()
         val toRemove = renderers.keys - desired
         toRemove.forEach { idx -> renderers[idx]?.clear() }
-        renderers = renderers.filterKeys { it in desired }
+        renderers = renderers.filterKeys(desired::contains)
 
         layers.forEachIndexed { index, layer ->
             renderers[index]?.clear()
@@ -127,8 +127,11 @@ internal class GeoJsonRendererManager {
                     is GMULineString -> {
                         val strokeUIColor =
                             (parseHexToUIColor(strokeHex) ?: lineStrokeColor).let { c ->
-                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
-                                else c
+                                if (strokeOpacity != null) {
+                                    c.colorWithAlphaComponent(strokeOpacity)
+                                } else {
+                                    c
+                                }
                             }
                         val width = strokeWidthJson ?: lineWidth
 
@@ -152,17 +155,23 @@ internal class GeoJsonRendererManager {
                     is GMUPolygon -> {
                         val strokeUIColor =
                             (parseHexToUIColor(strokeHex) ?: polygonStrokeColor).let { c ->
-                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
-                                else c
+                                if (strokeOpacity != null) {
+                                    c.colorWithAlphaComponent(strokeOpacity)
+                                } else {
+                                    c
+                                }
                             }
                         val width = strokeWidthJson ?: strokeWidth
 
                         val finalFill =
                             (parseHexToUIColor(fillHex) ?: fillColor).let { c ->
-                                if (fillOpacity != null) c.colorWithAlphaComponent(fillOpacity)
-                                else c
+                                if (fillOpacity != null) {
+                                    c.colorWithAlphaComponent(fillOpacity)
+                                } else {
+                                    c
+                                }
                             }
-                        val hasFill = (fillHex != null) || (layer.polygonStyle?.fillColor != null)
+                        val hasFill = fillHex != null || layer.polygonStyle?.fillColor != null
 
                         val featurePolygonStyle =
                             GMUStyle(
