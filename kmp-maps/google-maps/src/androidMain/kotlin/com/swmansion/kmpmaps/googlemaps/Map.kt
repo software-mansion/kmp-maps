@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapUISettings
@@ -31,6 +32,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    geoJsonLayers: List<GeoJsonLayer>,
 ) {
     CoreMap(
         modifier,
@@ -50,5 +52,6 @@ public actual fun Map(
         onMapLongClick,
         onPOIClick,
         onMapLoaded,
+        geoJsonLayers,
     )
 }

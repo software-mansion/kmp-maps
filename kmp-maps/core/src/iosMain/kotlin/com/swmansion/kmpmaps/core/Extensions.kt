@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.annotation.RestrictTo
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import kotlin.collections.set
@@ -392,9 +393,11 @@ internal fun AppleMapsPointOfInterestCategory.toMKPointOfInterestCategory():
  * Converts androidx Color to Apple UIKit's UIColor.
  *
  * @return UIColor corresponding to the androidx Color object
+ * @suppress
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalForeignApi::class)
-internal fun Color.toAppleMapsColor(): UIColor {
+public fun Color.toAppleMapsColor(): UIColor {
     val argb = this.toArgb()
     return UIColor.colorWithRed(
         red = ((argb shr 16) and 0xFF) / 255.0,
