@@ -230,6 +230,10 @@ public actual fun Map(
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
             mkMapView.delegate = mapDelegate
 
+            cameraPosition?.let { pos ->
+                mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
+            }
+
             tapGesture?.let { gesture ->
                 mkMapView.removeGestureRecognizer(gesture)
                 gesture.addTarget(

@@ -18,6 +18,7 @@ import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -69,6 +70,14 @@ public actual fun Map(
 
     val cameraPositionState = rememberCameraPositionState {
         cameraPosition?.let { position = it.toGoogleMapsCameraPosition() }
+    }
+
+    LaunchedEffect(cameraPosition) {
+        cameraPosition?.let {
+            cameraPositionState.move(
+                CameraUpdateFactory.newCameraPosition(it.toGoogleMapsCameraPosition()),
+            )
+        }
     }
 
     GoogleMap(
