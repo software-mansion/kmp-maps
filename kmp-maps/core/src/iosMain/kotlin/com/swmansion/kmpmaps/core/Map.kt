@@ -127,8 +127,6 @@ public actual fun Map(
 
                 view.reapplyCorePolylineStyles(polylineStyles)
 
-                view.reapplyCorePolylineStyles(polylineStyles)
-
                 renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
             } else {
                 renderedGeoJsonLayers = renderedGeoJsonLayers - index
