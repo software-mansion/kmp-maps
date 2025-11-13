@@ -72,10 +72,12 @@ public actual fun Map(
         cameraPosition?.let { position = it.toGoogleMapsCameraPosition() }
     }
 
-    LaunchedEffect(cameraPosition) {
-        cameraPosition?.let {
+    var mapLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(cameraPosition, mapLoaded) {
+        if (mapLoaded && cameraPosition != null) {
             cameraPositionState.move(
-                CameraUpdateFactory.newCameraPosition(it.toGoogleMapsCameraPosition()),
+                CameraUpdateFactory.newCameraPosition(cameraPosition.toGoogleMapsCameraPosition()),
             )
         }
     }
@@ -98,7 +100,9 @@ public actual fun Map(
             onPOIClick?.let { callback ->
                 { poi -> callback(Coordinates(poi.latLng.latitude, poi.latLng.longitude)) }
             },
-        onMapLoaded = onMapLoaded,
+        onMapLoaded = {
+            mapLoaded = true
+            onMapLoaded?.invoke() },
     ) {
         var androidGeoJsonLayers by remember {
             mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
