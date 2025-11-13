@@ -77,7 +77,7 @@ public actual fun Map(
     LaunchedEffect(cameraPosition, mapLoaded) {
         if (mapLoaded && cameraPosition != null) {
             cameraPositionState.move(
-                CameraUpdateFactory.newCameraPosition(cameraPosition.toGoogleMapsCameraPosition()),
+                CameraUpdateFactory.newCameraPosition(cameraPosition.toGoogleMapsCameraPosition())
             )
         }
     }
@@ -102,7 +102,8 @@ public actual fun Map(
             },
         onMapLoaded = {
             mapLoaded = true
-            onMapLoaded?.invoke() },
+            onMapLoaded?.invoke()
+        },
     ) {
         var androidGeoJsonLayers by remember {
             mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
