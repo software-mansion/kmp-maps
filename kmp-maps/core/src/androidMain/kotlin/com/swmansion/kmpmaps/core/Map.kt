@@ -18,6 +18,7 @@ import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -71,6 +72,16 @@ public actual fun Map(
         cameraPosition?.let { position = it.toGoogleMapsCameraPosition() }
     }
 
+    var mapLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(cameraPosition, mapLoaded) {
+        if (mapLoaded && cameraPosition != null) {
+            cameraPositionState.move(
+                CameraUpdateFactory.newCameraPosition(cameraPosition.toGoogleMapsCameraPosition())
+            )
+        }
+    }
+
     GoogleMap(
         mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
         modifier = modifier.fillMaxSize(),
@@ -89,7 +100,10 @@ public actual fun Map(
             onPOIClick?.let { callback ->
                 { poi -> callback(Coordinates(poi.latLng.latitude, poi.latLng.longitude)) }
             },
-        onMapLoaded = onMapLoaded,
+        onMapLoaded = {
+            mapLoaded = true
+            onMapLoaded?.invoke()
+        },
     ) {
         var androidGeoJsonLayers by remember {
             mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
