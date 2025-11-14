@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Surface
@@ -210,39 +209,29 @@ internal fun MapsScreen() {
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("GeoJSON")
+                    Text(text = "GeoJSON", modifier = Modifier.padding(end = 8.dp))
                     Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showPointGeoJson = !showPointGeoJson },
                     ) {
-                        Checkbox(
-                            checked = showPointGeoJson,
-                            onCheckedChange = { showPointGeoJson = it },
+                        FilterChip(
+                            selected = showPointGeoJson,
+                            onClick = { showPointGeoJson = !showPointGeoJson },
+                            label = { Text("Point") },
                         )
-                        Text("Point")
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showPolygonGeoJson = !showPolygonGeoJson },
-                    ) {
-                        Checkbox(
-                            checked = showPolygonGeoJson,
-                            onCheckedChange = { showPolygonGeoJson = it },
+                        FilterChip(
+                            selected = showPolygonGeoJson,
+                            onClick = { showPolygonGeoJson = !showPolygonGeoJson },
+                            label = { Text("Area") },
                         )
-                        Text("Area")
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { showLineGeoJson = !showLineGeoJson },
-                    ) {
-                        Checkbox(
-                            checked = showLineGeoJson,
-                            onCheckedChange = { showLineGeoJson = it },
+                        FilterChip(
+                            selected = showLineGeoJson,
+                            onClick = { showLineGeoJson = !showLineGeoJson },
+                            label = { Text("Line") },
                         )
-                        Text("Line")
                     }
                 }
             }
