@@ -70,6 +70,8 @@ public actual fun Map(
         mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
     }
 
+    val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
+
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
             isSystemInDarkTheme()
@@ -230,8 +232,11 @@ public actual fun Map(
             mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
             mkMapView.delegate = mapDelegate
 
-            cameraPosition?.let { pos ->
-                mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
+            if (cameraPosition != lastCameraPosition.value) {
+                cameraPosition?.let { pos ->
+                    mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
+                }
+                lastCameraPosition.value = cameraPosition
             }
 
             tapGesture?.let { gesture ->
