@@ -10,10 +10,10 @@
 
 Check out the sample project in the `/sample` directory for complete usage examples.
 
-|                                                                       iOS (Apple Maps)                                                                       |                                                                      Android (Google Maps)                                                                       |
-| :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/ios_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/android_preview.png?raw=true" height="600" style="display: block; margin: 0 auto;"> |
-|                                                _Map view with circles, polygon, polylines and markers on iOS_                                                |                                                _Map view with circles, polygon, polylines and markers on Android_                                                |
+|                                                                     iOS (Apple Maps)                                                                      |                                                                   Android (Google Maps)                                                                   |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/user-attachments/assets/f87322dd-0acc-4195-870f-974b60e47a63?raw=true" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/user-attachments/assets/c3e4fc93-235d-49b8-b533-2f4362837302?raw=true" height="600" style="display: block; margin: 0 auto;"> |
+|                                              _Map view with circles, polygon, polylines and markers on iOS_                                               |                                            _Map view with circles, polygon, polylines and markers on Android_                                             |
 
 ## ✨ Features
 
