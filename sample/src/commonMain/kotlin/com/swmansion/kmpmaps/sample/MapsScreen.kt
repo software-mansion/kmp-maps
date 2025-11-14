@@ -90,7 +90,7 @@ internal fun MapsScreen() {
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
-            modifier = Modifier.weight(0.55f),
+            modifier = Modifier.weight(1f),
             mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
@@ -129,7 +129,7 @@ internal fun MapsScreen() {
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayers = geoJsonLayers,
         )
-        Surface(modifier = Modifier.weight(0.45f)) {
+        Surface {
             Column(
                 Modifier.fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))
