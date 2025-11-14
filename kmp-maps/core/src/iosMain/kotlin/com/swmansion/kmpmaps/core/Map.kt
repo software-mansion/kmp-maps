@@ -18,7 +18,6 @@ import platform.MapKit.MKMapView
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
-import platform.MapKit.addOverlay
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
@@ -93,47 +92,15 @@ public actual fun Map(
 
     LaunchedEffect(mapView, geoJsonLayers) {
         val view = mapView ?: return@LaunchedEffect
-        val desiredKeys = geoJsonLayers.indices.toSet()
-        val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
-        keysToRemove.forEach { idx ->
-            renderedGeoJsonLayers[idx]?.let { rendered ->
-                rendered.clear(view)
-                rendered.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
-                rendered.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
-                rendered.pointStyles.keys.forEach(geoJsonPointStyles::remove)
-            }
-        }
-        renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
-
-        geoJsonLayers.forEachIndexed { index, layer ->
-            renderedGeoJsonLayers[index]?.let { prev ->
-                prev.clear(view)
-                prev.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
-                prev.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
-                prev.pointStyles.keys.forEach(geoJsonPointStyles::remove)
-            }
-
-            if (layer.visible == false) {
-                renderedGeoJsonLayers = renderedGeoJsonLayers - index
-                return@forEachIndexed
-            }
-
-            val rendered = view.renderGeoJson(layer.geoJson)
-            if (rendered != null) {
-                rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
-                rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
-                rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
-
-                rendered.overlays.forEach(view::addOverlay)
-                rendered.annotations.forEach(view::addAnnotation)
-
-                view.reapplyCorePolylineStyles(polylineStyles)
-
-                renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
-            } else {
-                renderedGeoJsonLayers = renderedGeoJsonLayers - index
-            }
-        }
+        renderedGeoJsonLayers =
+            view.updateRenderedGeoJsonLayers(
+                geoJsonLayers = geoJsonLayers,
+                currentRendered = renderedGeoJsonLayers,
+                geoJsonPolygonStyles = geoJsonPolygonStyles,
+                geoJsonPolylineStyles = geoJsonPolylineStyles,
+                geoJsonPointStyles = geoJsonPointStyles,
+                polylineStyles = polylineStyles,
+            )
     }
 
     UIKitView(

@@ -437,3 +437,72 @@ internal fun MKMapView.reapplyCorePolylineStyles(polylineStyles: Map<MKPolyline,
         r.lineWidth = style.width.toDouble()
     }
 }
+
+/**
+ * Synchronizes rendered GeoJSON layers with the desired list, updating overlays/annotations and
+ * maintaining style maps.
+ *
+ * @param geoJsonLayers Ordered list of desired GeoJSON layers (index acts as stable key)
+ * @param currentRendered Previously rendered layers keyed by their index
+ * @param geoJsonPolygonStyles Global style map for GeoJSON polygons
+ * @param geoJsonPolylineStyles Global style map for GeoJSON polylines
+ * @param geoJsonPointStyles Global style map for GeoJSON points
+ * @param polylineStyles Core polyline style mapping used to reapply stroke/render changes
+ * @return Updated mapping of indices to rendered GeoJSON layer objects
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@OptIn(ExperimentalForeignApi::class)
+internal fun MKMapView.updateRenderedGeoJsonLayers(
+    geoJsonLayers: List<GeoJsonLayer>,
+    currentRendered: Map<Int, MKGeoJsonRenderedLayer>,
+    geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
+    geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
+    polylineStyles: Map<MKPolyline, Polyline>,
+): Map<Int, MKGeoJsonRenderedLayer> {
+    var renderedGeoJsonLayers = currentRendered
+
+    val desiredKeys = geoJsonLayers.indices.toSet()
+    val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
+    keysToRemove.forEach { idx ->
+        renderedGeoJsonLayers[idx]?.let { rendered ->
+            rendered.clear(this)
+            rendered.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+            rendered.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+            rendered.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+        }
+    }
+    renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
+
+    geoJsonLayers.forEachIndexed { index, layer ->
+        renderedGeoJsonLayers[index]?.let { prev ->
+            prev.clear(this)
+            prev.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
+            prev.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
+            prev.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+        }
+
+        if (layer.visible == false) {
+            renderedGeoJsonLayers = renderedGeoJsonLayers - index
+            return@forEachIndexed
+        }
+
+        val rendered = renderGeoJson(layer.geoJson)
+        if (rendered != null) {
+            rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
+            rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
+            rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
+
+            rendered.overlays.forEach(this::addOverlay)
+            rendered.annotations.forEach(this::addAnnotation)
+
+            this.reapplyCorePolylineStyles(polylineStyles)
+
+            renderedGeoJsonLayers = renderedGeoJsonLayers + (index to rendered)
+        } else {
+            renderedGeoJsonLayers = renderedGeoJsonLayers - index
+        }
+    }
+
+    return renderedGeoJsonLayers
+}
