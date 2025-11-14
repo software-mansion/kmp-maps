@@ -207,34 +207,29 @@ internal fun MapsScreen() {
                         )
                     },
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(text = "GeoJSON", modifier = Modifier.padding(end = 8.dp))
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        FilterChip(
-                            selected = showPointGeoJson,
-                            onClick = { showPointGeoJson = !showPointGeoJson },
-                            label = { Text("Point") },
-                        )
-                        FilterChip(
-                            selected = showPolygonGeoJson,
-                            onClick = { showPolygonGeoJson = !showPolygonGeoJson },
-                            label = { Text("Area") },
-                        )
-                        FilterChip(
-                            selected = showLineGeoJson,
-                            onClick = { showLineGeoJson = !showLineGeoJson },
-                            label = { Text("Line") },
-                        )
-                    }
-                }
+                ListItem(
+                    headlineContent = { Text("GeoJSON") },
+                    modifier = Modifier.height(48.dp),
+                    trailingContent = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = showPointGeoJson,
+                                onClick = { showPointGeoJson = !showPointGeoJson },
+                                label = { Text("Point") },
+                            )
+                            FilterChip(
+                                selected = showPolygonGeoJson,
+                                onClick = { showPolygonGeoJson = !showPolygonGeoJson },
+                                label = { Text("Area") },
+                            )
+                            FilterChip(
+                                selected = showLineGeoJson,
+                                onClick = { showLineGeoJson = !showLineGeoJson },
+                                label = { Text("Line") },
+                            )
+                        }
+                    },
+                )
             }
         }
     }
