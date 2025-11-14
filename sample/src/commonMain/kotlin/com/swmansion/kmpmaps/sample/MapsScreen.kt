@@ -209,6 +209,7 @@ internal fun MapsScreen() {
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(text = "GeoJSON", modifier = Modifier.padding(end = 8.dp))
