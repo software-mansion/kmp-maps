@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.ui.graphics.Color
+import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSMapStyle
 import cocoapods.GoogleMaps.GMSMapView
@@ -15,6 +16,7 @@ import cocoapods.GoogleMaps.kGMSTypeTerrain
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
 import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
+import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.GoogleMapsMapStyleOptions
 import com.swmansion.kmpmaps.core.MapType
@@ -223,6 +225,26 @@ public fun GMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
     val renderer = GMUGeometryRenderer(map = utilsMapView, geometries = parser.features)
     renderer.render()
     return renderer
+}
+
+/**
+ * Converts the [CameraPosition] to a native [GMSCameraPosition] and applies it to this map view.
+ *
+ * @param position The camera position to convert
+ */
+@OptIn(ExperimentalForeignApi::class)
+public fun GMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
+    camera =
+        GMSCameraPosition.cameraWithTarget(
+            target =
+                CLLocationCoordinate2DMake(
+                    position.coordinates.latitude,
+                    position.coordinates.longitude,
+                ),
+            zoom = position.zoom,
+            bearing = (position.iosCameraPosition?.gmsBearing ?: 0f).toDouble(),
+            viewingAngle = (position.iosCameraPosition?.gmsViewingAngle ?: 0f).toDouble(),
+        )
 }
 
 /**

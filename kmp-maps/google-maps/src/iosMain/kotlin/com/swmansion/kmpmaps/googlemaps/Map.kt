@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
-import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMarker
@@ -31,7 +30,6 @@ import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.CoreLocation.CLLocationCoordinate2DMake
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
@@ -68,6 +66,8 @@ public actual fun Map(
     val polygonMapping = remember { mutableMapOf<GMSPolygon, Polygon>() }
     val polylineMapping = remember { mutableMapOf<GMSPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
+
+    val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
 
     val isDarkModeEnabled =
         if (properties.mapTheme == MapTheme.SYSTEM) {
@@ -121,20 +121,7 @@ public actual fun Map(
 
             uiSettings.toGoogleMapsSettings(gmsMapView)
 
-            cameraPosition?.let { pos ->
-                val camera =
-                    GMSCameraPosition.cameraWithTarget(
-                        target =
-                            CLLocationCoordinate2DMake(
-                                pos.coordinates.latitude,
-                                pos.coordinates.longitude,
-                            ),
-                        zoom = pos.zoom,
-                        bearing = (pos.iosCameraPosition?.gmsBearing ?: 0f).toDouble(),
-                        viewingAngle = (pos.iosCameraPosition?.gmsViewingAngle ?: 0f).toDouble(),
-                    )
-                gmsMapView.camera = camera
-            }
+            cameraPosition?.let { position -> gmsMapView.setUpGMSCameraPosition(position) }
 
             val delegate =
                 MapDelegate(
@@ -182,6 +169,11 @@ public actual fun Map(
 
             uiSettings.toGoogleMapsSettings(gmsMapView)
             gmsMapView.delegate = mapDelegate
+
+            if (cameraPosition != lastCameraPosition.value) {
+                cameraPosition?.let { position -> gmsMapView.setUpGMSCameraPosition(position) }
+                lastCameraPosition.value = cameraPosition
+            }
 
             updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)
             updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
