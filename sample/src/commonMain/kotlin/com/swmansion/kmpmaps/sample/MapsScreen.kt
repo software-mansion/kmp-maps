@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Surface
@@ -42,6 +43,7 @@ import com.swmansion.kmpmaps.core.PointStyle
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
+import kotlin.random.Random
 
 @Composable
 internal fun MapsScreen() {
@@ -230,6 +232,10 @@ internal fun MapsScreen() {
                         }
                     },
                 )
+                Button(
+                    onClick = { currentCameraPosition = getRandomPosition() },
+                    content = { Text("Random location") },
+                )
             }
         }
     }
@@ -307,3 +313,13 @@ private fun Map(
             )
     }
 }
+
+private fun getRandomPosition() =
+    CameraPosition(
+        coordinates =
+            Coordinates(
+                latitude = Random.nextDouble(50.0, 52.0),
+                longitude = Random.nextDouble(50.0, 52.0),
+            ),
+        zoom = 13f,
+    )
