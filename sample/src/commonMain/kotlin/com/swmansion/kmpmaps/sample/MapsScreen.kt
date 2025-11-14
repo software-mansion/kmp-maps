@@ -31,12 +31,14 @@ import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.PointStyle
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
@@ -56,6 +58,34 @@ internal fun MapsScreen() {
     }
     var showAllComponents by remember { mutableStateOf(true) }
     var useGoogleMapsMapView by remember { mutableStateOf(true) }
+    var showPointGeoJson by remember { mutableStateOf(false) }
+    var showPolygonGeoJson by remember { mutableStateOf(false) }
+    var showLineGeoJson by remember { mutableStateOf(false) }
+
+    val geoJsonLayers =
+        remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
+            buildList {
+                if (showPointGeoJson) {
+                    add(
+                        GeoJsonLayer(
+                            geoJson = EXAMPLE_POINT_GEO_JSON,
+                            pointStyle =
+                                PointStyle(
+                                    snippet = "Recommended food places",
+                                    infoWindowAnchorU = 0.1f,
+                                    infoWindowAnchorV = 0.7f,
+                                ),
+                        )
+                    )
+                }
+                if (showPolygonGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
+                }
+                if (showLineGeoJson) {
+                    add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+                }
+            }
+        }
 
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
@@ -96,6 +126,7 @@ internal fun MapsScreen() {
             onMapLongClick = { println("Map long clicked: $it") },
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
+            geoJsonLayers = geoJsonLayers,
         )
         Surface {
             Column(
@@ -176,6 +207,29 @@ internal fun MapsScreen() {
                         )
                     },
                 )
+                ListItem(
+                    headlineContent = { Text("GeoJSON") },
+                    modifier = Modifier.height(48.dp),
+                    trailingContent = {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = showPointGeoJson,
+                                onClick = { showPointGeoJson = !showPointGeoJson },
+                                label = { Text("Point") },
+                            )
+                            FilterChip(
+                                selected = showPolygonGeoJson,
+                                onClick = { showPolygonGeoJson = !showPolygonGeoJson },
+                                label = { Text("Area") },
+                            )
+                            FilterChip(
+                                selected = showLineGeoJson,
+                                onClick = { showLineGeoJson = !showLineGeoJson },
+                                label = { Text("Line") },
+                            )
+                        }
+                    },
+                )
             }
         }
     }
@@ -206,6 +260,7 @@ private fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
+    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -227,6 +282,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayers = geoJsonLayers,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -247,6 +303,7 @@ private fun Map(
                 onMapLongClick = onMapLongClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                geoJsonLayers = geoJsonLayers,
             )
     }
 }
