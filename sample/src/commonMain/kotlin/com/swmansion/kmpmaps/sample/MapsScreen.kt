@@ -1,7 +1,9 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -11,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
@@ -26,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
@@ -89,6 +94,16 @@ internal fun MapsScreen() {
             }
         }
 
+    val customMarkerContent =
+        mapOf(
+            "custom_blue_circle_marker" to
+                @Composable {
+                    Box(modifier = Modifier.size(50.dp).background(Color.Blue, CircleShape)) {
+                        Text("Custom")
+                    }
+                }
+        )
+
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
             modifier = Modifier.weight(1f),
@@ -129,6 +144,7 @@ internal fun MapsScreen() {
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayers = geoJsonLayers,
+            customMarkerContent = customMarkerContent,
         )
         Surface {
             Column(
@@ -267,6 +283,7 @@ private fun Map(
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
+    customMarkerContent: Map<String, @Composable () -> Unit> = emptyMap(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -289,6 +306,7 @@ private fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
+                customMarkerContent = customMarkerContent,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
