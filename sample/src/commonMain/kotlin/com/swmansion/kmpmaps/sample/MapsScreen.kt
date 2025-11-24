@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
@@ -96,11 +96,11 @@ internal fun MapsScreen() {
 
     val customMarkerContent =
         mapOf(
-            "custom_blue_circle_marker" to
+            "custom_marker" to
                 @Composable {
-                    Box(modifier = Modifier.size(50.dp).background(Color.Blue, CircleShape)) {
-                        Text("Custom")
-                    }
+                    Box(
+                        modifier = Modifier.size(25.dp).background(Color.Blue, CutCornerShape(8.dp))
+                    )
                 }
         )
 

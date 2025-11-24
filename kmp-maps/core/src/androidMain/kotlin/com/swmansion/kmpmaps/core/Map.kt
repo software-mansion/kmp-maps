@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -16,15 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.IntOffset
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.Projection
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -89,7 +85,8 @@ public actual fun Map(
         }
     }
 
-    val (nativeMarkers, customMarkers) = markers.partition { it.contentId == null }
+    val (nativeMarkers, customMarkers) =
+        markers.partition { it.contentId == null || !customMarkerContent.containsKey(it.contentId) }
 
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
@@ -157,7 +154,6 @@ public actual fun Map(
             }
 
             nativeMarkers.forEach { marker ->
-                println("native_markers ${marker.contentId}")
                 Marker(
                     state = marker.toGoogleMapsMarkerState(),
                     title = marker.title,
@@ -226,29 +222,12 @@ public actual fun Map(
             }
         }
 
-        customMarkers.forEach { marker ->
-            val content = customMarkerContent[marker.contentId]
-
-            content?.let {
-                val projection = cameraPositionState.projection
-                val screenLocation =
-                    projection?.toScreenLocation(
-                        LatLng(
-                            marker.coordinates.latitude,
-                            marker.coordinates.longitude,
-                        )
-                    )
-                screenLocation?.let { point ->
-                    Box(
-                        modifier =
-                            Modifier.offset { IntOffset(point.x, point.y) }
-                                .clickable { onMarkerClick?.invoke(marker) }
-                    ) {
-                        it()
-                    }
-                }
-            }
-        }
+        CustomMarkers(
+            markers = customMarkers,
+            customMarkerContent = customMarkerContent,
+            projection = cameraPositionState.projection,
+            onMarkerClick = onMarkerClick,
+        )
     }
 
     LaunchedEffect(cameraPositionState.position) {
