@@ -2,7 +2,14 @@ package com.swmansion.kmpmaps.core
 
 import android.Manifest
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -13,8 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
+import com.google.android.gms.maps.Projection
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -74,6 +84,7 @@ public actual fun Map(
     }
 
     var mapLoaded by remember { mutableStateOf(false) }
+    var mapProjection by remember { mutableStateOf<Projection?>(null) }
 
     LaunchedEffect(cameraPosition, mapLoaded) {
         if (mapLoaded && cameraPosition != null) {
@@ -83,29 +94,34 @@ public actual fun Map(
         }
     }
 
-    GoogleMap(
-        mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
-        modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        properties = properties.toGoogleMapsProperties(locationPermissionState),
-        uiSettings = uiSettings.toGoogleMapsUiSettings(),
-        onMapClick =
-            onMapClick?.let { callback ->
-                { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
+    val (nativeMarkers, customMarkers) = markers.partition { 
+        it.contentId == null
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        GoogleMap(
+            mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
+            modifier = modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            properties = properties.toGoogleMapsProperties(locationPermissionState),
+            uiSettings = uiSettings.toGoogleMapsUiSettings(),
+            onMapClick =
+                onMapClick?.let { callback ->
+                    { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
+                },
+            onMapLongClick =
+                onMapLongClick?.let { callback ->
+                    { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
+                },
+            onPOIClick =
+                onPOIClick?.let { callback ->
+                    { poi -> callback(Coordinates(poi.latLng.latitude, poi.latLng.longitude)) }
+                },
+            onMapLoaded = {
+                mapLoaded = true
+                onMapLoaded?.invoke()
             },
-        onMapLongClick =
-            onMapLongClick?.let { callback ->
-                { latLng -> callback(Coordinates(latLng.latitude, latLng.longitude)) }
-            },
-        onPOIClick =
-            onPOIClick?.let { callback ->
-                { poi -> callback(Coordinates(poi.latLng.latitude, poi.latLng.longitude)) }
-            },
-        onMapLoaded = {
-            mapLoaded = true
-            onMapLoaded?.invoke()
-        },
-    ) {
+        ) {
         var androidGeoJsonLayers by remember {
             mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
         }
@@ -146,7 +162,12 @@ public actual fun Map(
             onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
         }
 
-        markers.forEach { marker ->
+        MapEffect(cameraPositionState.position) { map ->
+            mapProjection = map.projection
+        }
+
+        nativeMarkers.forEach { marker ->
+            println("native_markers ${marker.contentId}")
             Marker(
                 state = marker.toGoogleMapsMarkerState(),
                 title = marker.title,
@@ -210,6 +231,36 @@ public actual fun Map(
                     }
                 },
             )
+        }
+        }
+
+        customMarkers.forEach { marker ->
+            println("custom_markers ${marker.contentId}")
+
+            val content = customMarkerContent[marker.contentId]
+            if (content != null && mapProjection != null) {
+                println("custom_markers ${marker.contentId}")
+
+                val projection = mapProjection!!
+                val screenLocation = projection.toScreenLocation(
+                    com.google.android.gms.maps.model.LatLng(
+                        marker.coordinates.latitude,
+                        marker.coordinates.longitude
+                    )
+                )
+
+                Box(
+                    modifier = Modifier
+                        .offset {
+                            IntOffset(screenLocation.x, screenLocation.y)
+                        }
+                        .clickable {
+                            onMarkerClick?.invoke(marker)
+                        }
+                ) {
+                    content()
+                }
+            }
         }
     }
 
