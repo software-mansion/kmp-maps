@@ -328,6 +328,7 @@ private fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
+                customMarkerContent = customMarkerContent,
             )
     }
 }

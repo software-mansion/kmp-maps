@@ -2,14 +2,10 @@ package com.swmansion.kmpmaps.core
 
 import android.Manifest
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -21,14 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
-import com.google.android.gms.maps.Projection
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.Projection
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -94,9 +89,7 @@ public actual fun Map(
         }
     }
 
-    val (nativeMarkers, customMarkers) = markers.partition { 
-        it.contentId == null
-    }
+    val (nativeMarkers, customMarkers) = markers.partition { it.contentId == null }
 
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
@@ -122,116 +115,117 @@ public actual fun Map(
                 onMapLoaded?.invoke()
             },
         ) {
-        var androidGeoJsonLayers by remember {
-            mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
-        }
+            var androidGeoJsonLayers by remember {
+                mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
+            }
 
-        MapEffect(geoJsonLayers) { map ->
-            runCatching {
-                    val desiredKeys = geoJsonLayers.indices.toSet()
-                    val keysToRemove = androidGeoJsonLayers.keys - desiredKeys
-                    keysToRemove.forEach { k -> androidGeoJsonLayers[k]?.removeLayerFromMap() }
-                    androidGeoJsonLayers = androidGeoJsonLayers.filterKeys(desiredKeys::contains)
+            MapEffect(geoJsonLayers) { map ->
+                runCatching {
+                        val desiredKeys = geoJsonLayers.indices.toSet()
+                        val keysToRemove = androidGeoJsonLayers.keys - desiredKeys
+                        keysToRemove.forEach { k -> androidGeoJsonLayers[k]?.removeLayerFromMap() }
+                        androidGeoJsonLayers =
+                            androidGeoJsonLayers.filterKeys(desiredKeys::contains)
 
-                    geoJsonLayers.forEachIndexed { index, geo ->
-                        if (geo.visible == false) {
+                        geoJsonLayers.forEachIndexed { index, geo ->
+                            if (geo.visible == false) {
+                                androidGeoJsonLayers[index]?.removeLayerFromMap()
+                                androidGeoJsonLayers = androidGeoJsonLayers - index
+                                return@forEachIndexed
+                            }
+
                             androidGeoJsonLayers[index]?.removeLayerFromMap()
-                            androidGeoJsonLayers = androidGeoJsonLayers - index
-                            return@forEachIndexed
+
+                            val json =
+                                runCatching { JSONObject(geo.geoJson) }
+                                    .getOrElse {
+                                        Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
+                                        return@forEachIndexed
+                                    }
+
+                            val layer = GoogleGeoJsonLayer(map, json).apply { applyStylesFrom(geo) }
+
+                            layer.addLayerToMap()
+                            androidGeoJsonLayers = androidGeoJsonLayers + (index to layer)
                         }
-
-                        androidGeoJsonLayers[index]?.removeLayerFromMap()
-
-                        val json =
-                            runCatching { JSONObject(geo.geoJson) }
-                                .getOrElse {
-                                    Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
-                                    return@forEachIndexed
-                                }
-
-                        val layer = GoogleGeoJsonLayer(map, json).apply { applyStylesFrom(geo) }
-
-                        layer.addLayerToMap()
-                        androidGeoJsonLayers = androidGeoJsonLayers + (index to layer)
                     }
-                }
-                .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layers", t) }
-        }
+                    .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layers", t) }
+            }
 
-        DisposableEffect(Unit) {
-            onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
-        }
+            DisposableEffect(Unit) {
+                onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
+            }
 
-        MapEffect(cameraPositionState.position) { map ->
-            mapProjection = map.projection
-        }
+            MapEffect(cameraPositionState.position) { map -> mapProjection = map.projection }
 
-        nativeMarkers.forEach { marker ->
-            println("native_markers ${marker.contentId}")
-            Marker(
-                state = marker.toGoogleMapsMarkerState(),
-                title = marker.title,
-                anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                draggable = marker.androidMarkerOptions.draggable,
-                snippet = marker.androidMarkerOptions.snippet,
-                zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                onClick = {
-                    onMarkerClick?.invoke(marker)
-                    onMarkerClick == null
-                },
-            )
-        }
+            nativeMarkers.forEach { marker ->
+                println("native_markers ${marker.contentId}")
+                Marker(
+                    state = marker.toGoogleMapsMarkerState(),
+                    title = marker.title,
+                    anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                    draggable = marker.androidMarkerOptions.draggable,
+                    snippet = marker.androidMarkerOptions.snippet,
+                    zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                    onClick = {
+                        onMarkerClick?.invoke(marker)
+                        onMarkerClick == null
+                    },
+                )
+            }
 
-        circles.forEach { circle ->
-            Circle(
-                center = circle.center.toGoogleMapsLatLng(),
-                radius = circle.radius.toDouble(),
-                strokeColor = Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
-                strokeWidth = circle.lineWidth ?: 10f,
-                fillColor = Color(circle.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
-                clickable = true,
-                onClick = {
-                    if (onCircleClick != null) {
-                        onCircleClick(circle)
-                    } else {
-                        onMapClick?.invoke(circle.center)
-                    }
-                },
-            )
-        }
+            circles.forEach { circle ->
+                Circle(
+                    center = circle.center.toGoogleMapsLatLng(),
+                    radius = circle.radius.toDouble(),
+                    strokeColor = Color(circle.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
+                    strokeWidth = circle.lineWidth ?: 10f,
+                    fillColor = Color(circle.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
+                    clickable = true,
+                    onClick = {
+                        if (onCircleClick != null) {
+                            onCircleClick(circle)
+                        } else {
+                            onMapClick?.invoke(circle.center)
+                        }
+                    },
+                )
+            }
 
-        polygons.forEach { polygon ->
-            Polygon(
-                points = polygon.coordinates.map { it.toGoogleMapsLatLng() },
-                strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
-                strokeWidth = polygon.lineWidth,
-                fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
-                clickable = true,
-                onClick = {
-                    if (onPolygonClick != null) {
-                        onPolygonClick(polygon)
-                    } else {
-                        onMapClick?.invoke(polygon.coordinates[0])
-                    }
-                },
-            )
-        }
+            polygons.forEach { polygon ->
+                Polygon(
+                    points = polygon.coordinates.map { it.toGoogleMapsLatLng() },
+                    strokeColor =
+                        Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
+                    strokeWidth = polygon.lineWidth,
+                    fillColor =
+                        Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
+                    clickable = true,
+                    onClick = {
+                        if (onPolygonClick != null) {
+                            onPolygonClick(polygon)
+                        } else {
+                            onMapClick?.invoke(polygon.coordinates[0])
+                        }
+                    },
+                )
+            }
 
-        polylines.forEach { polyline ->
-            Polyline(
-                points = polyline.coordinates.map { it.toGoogleMapsLatLng() },
-                color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
-                width = polyline.width,
-                clickable = true,
-                onClick = {
-                    if (onPolylineClick != null) {
-                        onPolylineClick(polyline)
-                    } else {
-                        onMapClick?.invoke(polyline.coordinates[0])
-                    }
-                },
-            )
-        }
+            polylines.forEach { polyline ->
+                Polyline(
+                    points = polyline.coordinates.map { it.toGoogleMapsLatLng() },
+                    color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
+                    width = polyline.width,
+                    clickable = true,
+                    onClick = {
+                        if (onPolylineClick != null) {
+                            onPolylineClick(polyline)
+                        } else {
+                            onMapClick?.invoke(polyline.coordinates[0])
+                        }
+                    },
+                )
+            }
         }
 
         customMarkers.forEach { marker ->
@@ -242,21 +236,18 @@ public actual fun Map(
                 println("custom_markers ${marker.contentId}")
 
                 val projection = mapProjection!!
-                val screenLocation = projection.toScreenLocation(
-                    com.google.android.gms.maps.model.LatLng(
-                        marker.coordinates.latitude,
-                        marker.coordinates.longitude
+                val screenLocation =
+                    projection.toScreenLocation(
+                        com.google.android.gms.maps.model.LatLng(
+                            marker.coordinates.latitude,
+                            marker.coordinates.longitude,
+                        )
                     )
-                )
 
                 Box(
-                    modifier = Modifier
-                        .offset {
-                            IntOffset(screenLocation.x, screenLocation.y)
-                        }
-                        .clickable {
-                            onMarkerClick?.invoke(marker)
-                        }
+                    modifier =
+                        Modifier.offset { IntOffset(screenLocation.x, screenLocation.y) }
+                            .clickable { onMarkerClick?.invoke(marker) }
                 ) {
                     content()
                 }

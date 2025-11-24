@@ -33,6 +33,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
+    customMarkerContent: Map<String, @Composable () -> Unit>,
 ) {
     CoreMap(
         modifier,
@@ -53,5 +54,6 @@ public actual fun Map(
         onPOIClick,
         onMapLoaded,
         geoJsonLayers,
+        customMarkerContent,
     )
 }
