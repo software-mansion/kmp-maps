@@ -24,6 +24,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.Projection
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -79,7 +80,6 @@ public actual fun Map(
     }
 
     var mapLoaded by remember { mutableStateOf(false) }
-    var mapProjection by remember { mutableStateOf<Projection?>(null) }
 
     LaunchedEffect(cameraPosition, mapLoaded) {
         if (mapLoaded && cameraPosition != null) {
@@ -156,8 +156,6 @@ public actual fun Map(
                 onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
             }
 
-            MapEffect(cameraPositionState.position) { map -> mapProjection = map.projection }
-
             nativeMarkers.forEach { marker ->
                 println("native_markers ${marker.contentId}")
                 Marker(
@@ -229,27 +227,25 @@ public actual fun Map(
         }
 
         customMarkers.forEach { marker ->
-            println("custom_markers ${marker.contentId}")
-
             val content = customMarkerContent[marker.contentId]
-            if (content != null && mapProjection != null) {
-                println("custom_markers ${marker.contentId}")
 
-                val projection = mapProjection!!
+            content?.let {
+                val projection = cameraPositionState.projection
                 val screenLocation =
-                    projection.toScreenLocation(
-                        com.google.android.gms.maps.model.LatLng(
+                    projection?.toScreenLocation(
+                        LatLng(
                             marker.coordinates.latitude,
                             marker.coordinates.longitude,
                         )
                     )
-
-                Box(
-                    modifier =
-                        Modifier.offset { IntOffset(screenLocation.x, screenLocation.y) }
-                            .clickable { onMarkerClick?.invoke(marker) }
-                ) {
-                    content()
+                screenLocation?.let { point ->
+                    Box(
+                        modifier =
+                            Modifier.offset { IntOffset(point.x, point.y) }
+                                .clickable { onMarkerClick?.invoke(marker) }
+                    ) {
+                        it()
+                    }
                 }
             }
         }
