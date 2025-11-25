@@ -13,6 +13,7 @@ import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.useContents
+import platform.CoreGraphics.CGPoint
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCircle
@@ -165,6 +166,18 @@ internal fun MKMapView.updateAppleMapsMarkers(
         addAnnotation(mkAnnotation)
     }
     return markerMapping
+}
+
+/**
+ * Converts geographic coordinates to screen point on MKMapView.
+ *
+ * @param coordinates The geographic coordinates to convert
+ * @return CGPoint representing the screen location, or null if conversion fails
+ */
+@OptIn(ExperimentalForeignApi::class)
+internal fun MKMapView.coordinateToScreenPoint(coordinates: Coordinates): CValue<CGPoint> {
+    val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
+    return convertCoordinate(coordinate, toPointToView = this)
 }
 
 /**
