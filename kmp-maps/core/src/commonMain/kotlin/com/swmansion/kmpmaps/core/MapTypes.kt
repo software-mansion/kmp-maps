@@ -68,8 +68,7 @@ public data class MapUISettings(
  * @property title The title text displayed when the marker is tapped
  * @property androidMarkerOptions Android-specific options for customizing a marker
  * @property iosMarkerOptions iOS-specific options for customizing a marker
- * @property contentId Optional identifier for custom Compose content. When provided on Android, the
- *   marker will use AdvancedMarker with custom composable content instead of standard markers.
+ * @property contentId Optional identifier for custom Compose content.
  */
 public data class Marker(
     val coordinates: Coordinates,
