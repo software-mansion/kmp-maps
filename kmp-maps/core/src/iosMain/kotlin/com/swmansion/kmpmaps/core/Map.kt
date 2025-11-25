@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -80,9 +79,6 @@ public actual fun Map(
             properties.mapTheme == MapTheme.DARK
         }
 
-    val (nativeMarkers, customMarkers) =
-        markers.partition { it.contentId == null || !customMarkerContent.containsKey(it.contentId) }
-
     LaunchedEffect(Unit) {
         locationPermissionHandler.setOnPermissionChanged {
             hasLocationPermission = locationPermissionHandler.checkPermission()
@@ -108,147 +104,137 @@ public actual fun Map(
             )
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        UIKitView(
-            factory = {
-                val mkMapView = MKMapView()
+    UIKitView(
+        factory = {
+            val mkMapView = MKMapView()
 
-                mkMapView.mapType = properties.mapType.toAppleMapsMapType()
+            mkMapView.mapType = properties.mapType.toAppleMapsMapType()
 
-                mkMapView.switchTheme(isDarkModeEnabled)
+            mkMapView.switchTheme(isDarkModeEnabled)
 
-                mkMapView.showsUserLocation =
-                    properties.isMyLocationEnabled && hasLocationPermission
-                mkMapView.showsTraffic = properties.isTrafficEnabled
-                mkMapView.showsBuildings = properties.isBuildingEnabled
-                mkMapView.showsPointsOfInterest = properties.iosMapProperties.showPOI
-                properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
-                    val poiFilter = poiCategories.toMKPointOfInterestFilter()
-                    mkMapView.pointOfInterestFilter = poiFilter
-                }
+            mkMapView.showsUserLocation = properties.isMyLocationEnabled && hasLocationPermission
+            mkMapView.showsTraffic = properties.isTrafficEnabled
+            mkMapView.showsBuildings = properties.isBuildingEnabled
+            mkMapView.showsPointsOfInterest = properties.iosMapProperties.showPOI
+            properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
+                val poiFilter = poiCategories.toMKPointOfInterestFilter()
+                mkMapView.pointOfInterestFilter = poiFilter
+            }
 
-                mkMapView.showsCompass = uiSettings.compassEnabled
-                mkMapView.zoomEnabled = uiSettings.zoomEnabled
-                mkMapView.scrollEnabled = uiSettings.scrollEnabled
-                mkMapView.rotateEnabled = uiSettings.rotateEnabled
-                mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
+            mkMapView.showsCompass = uiSettings.compassEnabled
+            mkMapView.zoomEnabled = uiSettings.zoomEnabled
+            mkMapView.scrollEnabled = uiSettings.scrollEnabled
+            mkMapView.rotateEnabled = uiSettings.rotateEnabled
+            mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
 
+            cameraPosition?.let { pos ->
+                mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
+            }
+
+            val delegate =
+                MapDelegate(
+                    properties = properties,
+                    circleStyles = circleStyles,
+                    polygonStyles = polygonStyles,
+                    polylineStyles = polylineStyles,
+                    markerMapping = markerMapping,
+                    onMarkerClick = onMarkerClick,
+                    onCircleClick = onCircleClick,
+                    onPolygonClick = onPolygonClick,
+                    onPolylineClick = onPolylineClick,
+                    onMapClick = onMapClick,
+                    onMapLongClick = onMapLongClick,
+                    onPOIClick = onPOIClick,
+                    onCameraMove = onCameraMove,
+                    geoJsonPolygonStyles = geoJsonPolygonStyles,
+                    geoJsonPolylineStyles = geoJsonPolylineStyles,
+                    geoJsonPointStyles = geoJsonPointStyles,
+                    customMarkerContent = customMarkerContent,
+                )
+            mkMapView.delegate = delegate
+            mapDelegate = delegate
+
+            markerMapping.clear()
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
+            mkMapView.updateAppleMapsCircles(circles, circleStyles)
+            mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
+            mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
+
+            val tapGestureRecognizer = UITapGestureRecognizer()
+            tapGestureRecognizer.addTarget(
+                target = delegate,
+                action = NSSelectorFromString("handleMapTap:"),
+            )
+            mkMapView.addGestureRecognizer(tapGestureRecognizer)
+            tapGesture = tapGestureRecognizer
+
+            val longPressGestureRecognizer = UILongPressGestureRecognizer()
+            longPressGestureRecognizer.addTarget(
+                target = delegate,
+                action = NSSelectorFromString("handleMapLongPress:"),
+            )
+            mkMapView.addGestureRecognizer(longPressGestureRecognizer)
+            longPressGesture = longPressGestureRecognizer
+
+            mapView = mkMapView
+            mkMapView
+        },
+        modifier = modifier.fillMaxSize(),
+        update = { mkMapView ->
+            mkMapView.mapType = properties.mapType.toAppleMapsMapType()
+
+            mkMapView.switchTheme(isDarkModeEnabled)
+
+            mkMapView.showsUserLocation = properties.isMyLocationEnabled && hasLocationPermission
+            mkMapView.showsTraffic = properties.isTrafficEnabled
+            mkMapView.showsBuildings = properties.isBuildingEnabled
+
+            properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
+                val poiFilter = poiCategories.toMKPointOfInterestFilter()
+                mkMapView.pointOfInterestFilter = poiFilter
+            }
+
+            mkMapView.showsCompass = uiSettings.compassEnabled
+            mkMapView.zoomEnabled = uiSettings.zoomEnabled
+            mkMapView.scrollEnabled = uiSettings.scrollEnabled
+            mkMapView.rotateEnabled = uiSettings.rotateEnabled
+            mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
+            mkMapView.delegate = mapDelegate
+
+            if (cameraPosition != lastCameraPosition.value) {
                 cameraPosition?.let { pos ->
                     mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
                 }
+                lastCameraPosition.value = cameraPosition
+            }
 
-                val delegate =
-                    MapDelegate(
-                        properties = properties,
-                        circleStyles = circleStyles,
-                        polygonStyles = polygonStyles,
-                        polylineStyles = polylineStyles,
-                        markerMapping = markerMapping,
-                        onMarkerClick = onMarkerClick,
-                        onCircleClick = onCircleClick,
-                        onPolygonClick = onPolygonClick,
-                        onPolylineClick = onPolylineClick,
-                        onMapClick = onMapClick,
-                        onMapLongClick = onMapLongClick,
-                        onPOIClick = onPOIClick,
-                        onCameraMove = onCameraMove,
-                        geoJsonPolygonStyles = geoJsonPolygonStyles,
-                        geoJsonPolylineStyles = geoJsonPolylineStyles,
-                        geoJsonPointStyles = geoJsonPointStyles,
-                    )
-                mkMapView.delegate = delegate
-                mapDelegate = delegate
-
-                markerMapping.clear()
-                markerMapping.putAll(mkMapView.updateAppleMapsMarkers(nativeMarkers))
-                mkMapView.updateAppleMapsCircles(circles, circleStyles)
-                mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
-                mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
-
-                val tapGestureRecognizer = UITapGestureRecognizer()
-                tapGestureRecognizer.addTarget(
-                    target = delegate,
+            tapGesture?.let { gesture ->
+                mkMapView.removeGestureRecognizer(gesture)
+                gesture.addTarget(
+                    mapDelegate as Any,
                     action = NSSelectorFromString("handleMapTap:"),
                 )
-                mkMapView.addGestureRecognizer(tapGestureRecognizer)
-                tapGesture = tapGestureRecognizer
+                mkMapView.addGestureRecognizer(gesture)
+            }
 
-                val longPressGestureRecognizer = UILongPressGestureRecognizer()
-                longPressGestureRecognizer.addTarget(
-                    target = delegate,
+            longPressGesture?.let { gesture ->
+                mkMapView.removeGestureRecognizer(gesture)
+                gesture.addTarget(
+                    mapDelegate as Any,
                     action = NSSelectorFromString("handleMapLongPress:"),
                 )
-                mkMapView.addGestureRecognizer(longPressGestureRecognizer)
-                longPressGesture = longPressGestureRecognizer
+                mkMapView.addGestureRecognizer(gesture)
+            }
 
-                mapView = mkMapView
-                mkMapView
-            },
-            modifier = modifier.fillMaxSize(),
-            update = { mkMapView ->
-                mkMapView.mapType = properties.mapType.toAppleMapsMapType()
-
-                mkMapView.switchTheme(isDarkModeEnabled)
-
-                mkMapView.showsUserLocation =
-                    properties.isMyLocationEnabled && hasLocationPermission
-                mkMapView.showsTraffic = properties.isTrafficEnabled
-                mkMapView.showsBuildings = properties.isBuildingEnabled
-
-                properties.iosMapProperties.pointsOfInterest?.let { poiCategories ->
-                    val poiFilter = poiCategories.toMKPointOfInterestFilter()
-                    mkMapView.pointOfInterestFilter = poiFilter
-                }
-
-                mkMapView.showsCompass = uiSettings.compassEnabled
-                mkMapView.zoomEnabled = uiSettings.zoomEnabled
-                mkMapView.scrollEnabled = uiSettings.scrollEnabled
-                mkMapView.rotateEnabled = uiSettings.rotateEnabled
-                mkMapView.pitchEnabled = uiSettings.togglePitchEnabled
-                mkMapView.delegate = mapDelegate
-
-                if (cameraPosition != lastCameraPosition.value) {
-                    cameraPosition?.let { pos ->
-                        mkMapView.setRegion(pos.toMKCoordinateRegion(), animated = false)
-                    }
-                    lastCameraPosition.value = cameraPosition
-                }
-
-                tapGesture?.let { gesture ->
-                    mkMapView.removeGestureRecognizer(gesture)
-                    gesture.addTarget(
-                        mapDelegate as Any,
-                        action = NSSelectorFromString("handleMapTap:"),
-                    )
-                    mkMapView.addGestureRecognizer(gesture)
-                }
-
-                longPressGesture?.let { gesture ->
-                    mkMapView.removeGestureRecognizer(gesture)
-                    gesture.addTarget(
-                        mapDelegate as Any,
-                        action = NSSelectorFromString("handleMapLongPress:"),
-                    )
-                    mkMapView.addGestureRecognizer(gesture)
-                }
-
-                markerMapping.clear()
-                markerMapping.putAll(mkMapView.updateAppleMapsMarkers(nativeMarkers))
-                mkMapView.updateAppleMapsCircles(circles, circleStyles)
-                mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
-                mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
-            },
-            properties =
-                UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
-        )
-
-        CustomMarkers(
-            markers = customMarkers,
-            customMarkerContent = customMarkerContent,
-            mapView = mapView,
-            onMarkerClick = onMarkerClick,
-        )
-    }
+            markerMapping.clear()
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
+            mkMapView.updateAppleMapsCircles(circles, circleStyles)
+            mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
+            mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
+        },
+        properties =
+            UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
+    )
 
     LaunchedEffect(mapView) { mapView?.let { mkMapView -> onMapLoaded?.invoke() } }
 }

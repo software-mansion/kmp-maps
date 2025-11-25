@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.runtime.Composable
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -43,6 +44,7 @@ internal class MapDelegate(
     private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
     private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
     private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
+    private val customMarkerContent: Map<String, @Composable () -> Unit>,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     /**
@@ -131,7 +133,7 @@ internal class MapDelegate(
     }
 
     /**
-     * Handles GeoJSON annotations.
+     * Handles GeoJSON annotations and custom markers.
      *
      * @param mapView The map view whose region changed
      * @param viewForAnnotation The annotation view that was selected
@@ -143,18 +145,45 @@ internal class MapDelegate(
         if (viewForAnnotation is MKUserLocation) return null
         val point = viewForAnnotation as? MKPointAnnotation ?: return null
 
-        val style = geoJsonPointStyles[point] ?: return null
-        val reuseId = "kmp_geojson_marker"
+        val marker = markerMapping[point]
+        if (
+            marker != null &&
+                marker.contentId != null &&
+                customMarkerContent.containsKey(marker.contentId)
+        ) {
+            val reuseId = "kmp_custom_marker_${marker.contentId}"
+            val content = customMarkerContent[marker.contentId] ?: return null
 
-        val view =
-            mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKMarkerAnnotationView
-                ?: MKMarkerAnnotationView(annotation = viewForAnnotation, reuseIdentifier = reuseId)
+            val annotationView =
+                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers
+                    ?: CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
 
-        view.annotation = viewForAnnotation
-        view.canShowCallout = true
-        view.hidden = !style.visible
+            annotationView.annotation = viewForAnnotation
+            annotationView.canShowCallout = false
+            annotationView.updateContent(content)
 
-        return view
+            return annotationView
+        }
+
+        val style = geoJsonPointStyles[point]
+        if (style != null) {
+            val reuseId = "kmp_geojson_marker"
+            val view =
+                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
+                    as? MKMarkerAnnotationView
+                    ?: MKMarkerAnnotationView(
+                        annotation = viewForAnnotation,
+                        reuseIdentifier = reuseId,
+                    )
+
+            view.annotation = viewForAnnotation
+            view.canShowCallout = true
+            view.hidden = !style.visible
+
+            return view
+        }
+
+        return null
     }
 
     /**
