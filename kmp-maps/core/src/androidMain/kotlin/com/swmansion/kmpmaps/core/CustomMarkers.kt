@@ -18,9 +18,10 @@ internal fun CustomMarkers(
     projection: Projection?,
     onMarkerClick: ((Marker) -> Unit)?,
 ) {
-    val validMarkers = remember(markers, customMarkerContent) {
-        markers.filter { it.contentId != null && customMarkerContent.containsKey(it.contentId) }
-    }
+    val validMarkers =
+        remember(markers, customMarkerContent) {
+            markers.filter { it.contentId != null && customMarkerContent.containsKey(it.contentId) }
+        }
 
     if (projection == null || validMarkers.isEmpty()) return
 
@@ -28,19 +29,14 @@ internal fun CustomMarkers(
         modifier = Modifier.fillMaxSize(),
         content = {
             validMarkers.forEach { marker ->
-                Box(
-                    modifier = Modifier
-                        .clickable { onMarkerClick?.invoke(marker) }
-                ) {
+                Box(modifier = Modifier.clickable { onMarkerClick?.invoke(marker) }) {
                     customMarkerContent[marker.contentId]?.invoke()
                 }
             }
         },
     ) { measurables, constraints ->
-
-        val placeables = measurables.map {
-            it.measure(constraints.copy(minWidth = 0, minHeight = 0))
-        }
+        val placeables =
+            measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeables.forEachIndexed { index, placeable ->
