@@ -1,68 +1,72 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
 import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
-import platform.UIKit.NSLayoutConstraint
-import platform.UIKit.UIView
+import platform.UIKit.UIColor
 import platform.UIKit.UIViewController
-import platform.UIKit.addChildViewController
-import platform.UIKit.didMoveToParentViewController
-import platform.UIKit.removeFromParentViewController
-import platform.UIKit.willMoveToParentViewController
+
+private const val MAX_DIM = 500.0
 
 @OptIn(ExperimentalForeignApi::class)
 internal class CustomMarkers(annotation: MKAnnotationProtocol, reuseIdentifier: String?) :
     MKAnnotationView(annotation = annotation, reuseIdentifier = reuseIdentifier) {
-    private var composeViewController: UIViewController? = null
+    private var viewController: UIViewController? = null
 
     fun updateContent(content: @Composable () -> Unit) {
-        composeViewController?.view?.removeFromSuperview()
-        composeViewController?.removeFromParentViewController()
+        viewController?.view?.removeFromSuperview()
 
-        val viewController = ComposeUIViewController { content() }
-        composeViewController = viewController
+        val vc = ComposeUIViewController { AutoSizeBox(::updateFrameSize) { content() } }
 
-        val composeView = viewController.view
-        composeView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(composeView)
+        vc.view.backgroundColor = UIColor.clearColor
+        vc.view.opaque = false
 
-        NSLayoutConstraint.activateConstraints(
-            listOf(
-                composeView.leadingAnchor.constraintEqualToAnchor(leadingAnchor),
-                composeView.trailingAnchor.constraintEqualToAnchor(trailingAnchor),
-                composeView.topAnchor.constraintEqualToAnchor(topAnchor),
-                composeView.bottomAnchor.constraintEqualToAnchor(bottomAnchor),
-            )
-        )
+        addSubview(vc.view)
+        viewController = vc
 
-        setFrame(CGRectMake(0.0, 0.0, 50.0, 50.0))
-        centerOffset = CGPointMake(0.0, 0.0)
-
-        var parentVC: UIViewController? = null
-        var currentView: UIView? = superview
-
-        while (currentView != null && parentVC == null) {
-            val responder = currentView.nextResponder
-            parentVC = responder as? UIViewController
-            currentView = currentView.superview
-        }
-
-        parentVC?.addChildViewController(viewController)
-        viewController.didMoveToParentViewController(parentVC)
+        setFrame(CGRectMake(0.0, 0.0, MAX_DIM, MAX_DIM))
+        vc.view.setFrame(bounds)
     }
 
     override fun prepareForReuse() {
         super.prepareForReuse()
-        composeViewController?.let { vc ->
-            vc.view.removeFromSuperview()
-            vc.willMoveToParentViewController(null)
-            vc.removeFromParentViewController()
-        }
-        composeViewController = null
+        viewController?.view?.removeFromSuperview()
+        viewController = null
+    }
+
+    private fun updateFrameSize(width: Double, height: Double) {
+        val currentOrigin = frame.useContents { origin }
+        setFrame(CGRectMake(currentOrigin.x, currentOrigin.y, width, height))
+        viewController?.view?.setFrame(bounds)
+        centerOffset = CGPointMake(0.0, -height / 2.0)
+    }
+}
+
+@Composable
+private fun AutoSizeBox(
+    onSizeChanged: (width: Double, height: Double) -> Unit,
+    content: @Composable () -> Unit,
+) {
+    val density = LocalDensity.current
+    Box(
+        modifier =
+            Modifier.wrapContentSize().onGloballyPositioned { coords ->
+                onSizeChanged(
+                    with(density) { coords.size.width.toDp().value.toDouble() },
+                    with(density) { coords.size.height.toDp().value.toDouble() },
+                )
+            }
+    ) {
+        content()
     }
 }
