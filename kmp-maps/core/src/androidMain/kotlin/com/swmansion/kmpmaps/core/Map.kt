@@ -2,7 +2,6 @@ package com.swmansion.kmpmaps.core
 
 import android.Manifest
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -91,7 +90,7 @@ public actual fun Map(
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
             mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties = properties.toGoogleMapsProperties(locationPermissionState),
             uiSettings = uiSettings.toGoogleMapsUiSettings(),

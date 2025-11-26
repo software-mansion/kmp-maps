@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import com.google.android.gms.maps.Projection
@@ -18,17 +17,12 @@ internal fun CustomMarkers(
     projection: Projection?,
     onMarkerClick: ((Marker) -> Unit)?,
 ) {
-    val validMarkers =
-        remember(markers, customMarkerContent) {
-            markers.filter { it.contentId != null && customMarkerContent.containsKey(it.contentId) }
-        }
-
-    if (projection == null || validMarkers.isEmpty()) return
+    if (projection == null || markers.isEmpty()) return
 
     Layout(
         modifier = Modifier.fillMaxSize(),
         content = {
-            validMarkers.forEach { marker ->
+            markers.forEach { marker ->
                 Box(modifier = Modifier.clickable { onMarkerClick?.invoke(marker) }) {
                     customMarkerContent[marker.contentId]?.invoke()
                 }
@@ -40,7 +34,7 @@ internal fun CustomMarkers(
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeables.forEachIndexed { index, placeable ->
-                val marker = validMarkers[index]
+                val marker = markers[index]
 
                 val latLng = LatLng(marker.coordinates.latitude, marker.coordinates.longitude)
                 val screenPosition = projection.toScreenLocation(latLng)
