@@ -1,11 +1,6 @@
 package com.swmansion.kmpmaps.core
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -49,24 +44,5 @@ internal class CustomMarkers(annotation: MKAnnotationProtocol, reuseIdentifier: 
         setFrame(CGRectMake(currentOrigin.x, currentOrigin.y, width, height))
         viewController?.view?.setFrame(bounds)
         centerOffset = CGPointMake(0.0, -height / 2.0)
-    }
-}
-
-@Composable
-private fun AutoSizeBox(
-    onSizeChanged: (width: Double, height: Double) -> Unit,
-    content: @Composable () -> Unit,
-) {
-    val density = LocalDensity.current
-    Box(
-        modifier =
-            Modifier.wrapContentSize().onGloballyPositioned { coords ->
-                onSizeChanged(
-                    with(density) { coords.size.width.toDp().value.toDouble() },
-                    with(density) { coords.size.height.toDp().value.toDouble() },
-                )
-            }
-    ) {
-        content()
     }
 }
