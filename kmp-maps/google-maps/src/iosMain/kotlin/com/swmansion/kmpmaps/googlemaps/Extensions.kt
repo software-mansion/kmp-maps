@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.googlemaps
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCircle
@@ -48,14 +49,28 @@ internal fun updateGoogleMapsMarkers(
     mapView: GMSMapView,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
+    customMarkerContent: Map<String, @Composable () -> Unit>,
 ) {
     markerMapping.keys.forEach { marker -> marker.map = null }
     markerMapping.clear()
 
     markers.forEach { marker ->
         val gmsMarker = GMSMarker()
+
         gmsMarker.position =
-            CLLocationCoordinate2DMake(marker.coordinates.latitude, marker.coordinates.longitude)
+            CLLocationCoordinate2DMake(
+                latitude = marker.coordinates.latitude,
+                longitude = marker.coordinates.longitude,
+            )
+
+        val content = marker.contentId?.let { customMarkerContent[it] }
+
+        content?.let {
+            val iconView = CustomMarkers(gmsMarker)
+            iconView.setContent(it)
+            gmsMarker.iconView = iconView
+        }
+
         gmsMarker.title = marker.title
         gmsMarker.map = mapView
         markerMapping[gmsMarker] = marker

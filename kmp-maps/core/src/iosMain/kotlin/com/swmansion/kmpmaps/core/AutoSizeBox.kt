@@ -8,7 +8,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 
 @Composable
-internal fun AutoSizeBox(
+public fun AutoSizeBox(
     onSizeChanged: (width: Double, height: Double) -> Unit,
     content: @Composable () -> Unit,
 ) {
