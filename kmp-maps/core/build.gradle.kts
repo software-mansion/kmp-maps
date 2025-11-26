@@ -19,7 +19,11 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
     sourceSets {
+        val desktopMain by getting
+
         commonMain.dependencies {
             implementation(compose.components.resources)
             implementation(compose.foundation)
@@ -37,6 +41,11 @@ kotlin {
             implementation(libs.google.maps.android.mapsCompose)
             implementation(libs.google.maps.android.mapsComposeUtils)
         }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            // implementation(libs.jetBrains.kotlinX.coroutines.swing)
+        }
     }
 }
 
@@ -49,6 +58,20 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+compose.desktop {
+    application {
+        nativeDistributions {
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+            )
+            packageName = "com.swmansion.kmpmaps.core"
+            packageVersion = "1.0.0"
+        }
     }
 }
 

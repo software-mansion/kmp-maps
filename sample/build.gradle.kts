@@ -22,6 +22,8 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
         homepage = "https://github.com/software-mansion/kmp-maps"
@@ -40,6 +42,7 @@ kotlin {
     }
 
     sourceSets {
+        val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidX.activity.compose)
@@ -58,6 +61,11 @@ kotlin {
             implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
+        }
     }
 }
 
@@ -79,6 +87,21 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures { buildConfig = true }
+}
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+        nativeDistributions {
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+            )
+            packageName = "com.swmansion.kmpmaps.sample"
+            packageVersion = "1.0.0"
+        }
+    }
 }
 
 dependencies { debugImplementation(compose.uiTooling) }
