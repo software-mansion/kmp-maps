@@ -43,8 +43,12 @@ public data class IosUISettings(
  * iOS-specific options for customizing a marker.
  *
  * @property tintColor The tint color for the marker (Apple Maps only)
+ * @property glyphText Custom text/emoji to display on the marker (Apple Maps only, iOS 11+)
  */
-public data class IosMarkerOptions(val tintColor: Color? = null)
+public data class IosMarkerOptions(
+    val tintColor: Color? = null,
+    val glyphText: String? = null
+)
 
 /**
  * iOS-specific options for the camera position and orientation of the map.

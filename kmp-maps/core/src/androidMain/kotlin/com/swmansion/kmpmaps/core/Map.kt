@@ -24,6 +24,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -146,18 +147,36 @@ public actual fun Map(
         }
 
         markers.forEach { marker ->
-            Marker(
-                state = marker.toGoogleMapsMarkerState(),
-                title = marker.title,
-                anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                draggable = marker.androidMarkerOptions.draggable,
-                snippet = marker.androidMarkerOptions.snippet,
-                zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                onClick = {
-                    onMarkerClick?.invoke(marker)
-                    onMarkerClick == null
-                },
-            )
+            if (marker.content != null) {
+                // Use custom composable marker
+                MarkerComposable(
+                    state = marker.toGoogleMapsMarkerState(),
+                    title = marker.title,
+                    anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                    draggable = marker.androidMarkerOptions.draggable,
+                    snippet = marker.androidMarkerOptions.snippet,
+                    zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                    onClick = {
+                        onMarkerClick?.invoke(marker)
+                        onMarkerClick == null
+                    },
+                    content = marker.content
+                )
+            } else {
+                // Use standard marker
+                Marker(
+                    state = marker.toGoogleMapsMarkerState(),
+                    title = marker.title,
+                    anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                    draggable = marker.androidMarkerOptions.draggable,
+                    snippet = marker.androidMarkerOptions.snippet,
+                    zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                    onClick = {
+                        onMarkerClick?.invoke(marker)
+                        onMarkerClick == null
+                    },
+                )
+            }
         }
 
         circles.forEach { circle ->

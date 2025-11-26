@@ -143,6 +143,29 @@ internal class MapDelegate(
         if (viewForAnnotation is MKUserLocation) return null
         val point = viewForAnnotation as? MKPointAnnotation ?: return null
 
+        val marker = markerMapping[point]
+        if (marker != null) {
+            val reuseId = "kmp_custom_marker"
+            val view =
+                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? MKMarkerAnnotationView
+                    ?: MKMarkerAnnotationView(annotation = viewForAnnotation, reuseIdentifier = reuseId)
+
+            view.annotation = viewForAnnotation
+            view.canShowCallout = true
+
+            // Apply custom styling
+            marker.iosMarkerOptions?.let { options ->
+                options.tintColor?.let { color ->
+                    view.markerTintColor = color.toAppleMapsColor()
+                }
+                options.glyphText?.let { text ->
+                    view.glyphText = text
+                }
+            }
+
+            return view
+        }
+
         val style = geoJsonPointStyles[point] ?: return null
         val reuseId = "kmp_geojson_marker"
 

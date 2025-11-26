@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -68,12 +69,16 @@ public data class MapUISettings(
  * @property title The title text displayed when the marker is tapped
  * @property androidMarkerOptions Android-specific options for customizing a marker
  * @property iosMarkerOptions iOS-specific options for customizing a marker
+ * @property content Optional composable content for custom marker appearance. When provided,
+ *   this will render a custom composable as the marker instead of the default marker icon.
+ *   Note: Custom composable markers are currently only supported on Android.
  */
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
+    val content: (@Composable () -> Unit)? = null,
 )
 
 /**
