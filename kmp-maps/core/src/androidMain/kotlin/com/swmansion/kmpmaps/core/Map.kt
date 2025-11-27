@@ -86,7 +86,7 @@ public actual fun Map(
 
     GoogleMap(
         mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         properties = properties.toGoogleMapsProperties(locationPermissionState),
         uiSettings = uiSettings.toGoogleMapsUiSettings(),
