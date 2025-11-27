@@ -40,11 +40,6 @@ internal class CustomMarkers(private val gmsMarker: GMSMarker) :
         vc.view.setFrame(this.bounds)
     }
 
-    fun dispose() {
-        controller?.view?.removeFromSuperview()
-        controller = null
-    }
-
     private fun updateFrameSize(width: Double, height: Double) {
         val currentOrigin = frame.useContents { origin }
         setFrame(CGRectMake(currentOrigin.x, currentOrigin.y, width, height))
