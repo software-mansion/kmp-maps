@@ -165,8 +165,7 @@ internal class MapDelegate(
             return annotationView
         }
 
-        val style = geoJsonPointStyles[point]
-        if (style != null) {
+        geoJsonPointStyles[point]?.let { style ->
             val reuseId = "kmp_geojson_marker"
             val view =
                 mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)

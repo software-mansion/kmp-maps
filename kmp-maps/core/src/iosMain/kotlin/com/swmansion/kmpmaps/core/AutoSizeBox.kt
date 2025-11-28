@@ -16,10 +16,12 @@ internal fun AutoSizeBox(
     Box(
         modifier =
             Modifier.wrapContentSize().onGloballyPositioned { coords ->
-                onSizeChanged(
-                    with(density) { coords.size.width.toDp().value.toDouble() },
-                    with(density) { coords.size.height.toDp().value.toDouble() },
-                )
+                with(density) {
+                    onSizeChanged(
+                        coords.size.width.toDp().value.toDouble(),
+                        coords.size.height.toDp().value.toDouble(),
+                    )
+                }
             }
     ) {
         content()
