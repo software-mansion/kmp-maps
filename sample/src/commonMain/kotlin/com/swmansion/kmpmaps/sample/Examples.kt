@@ -19,6 +19,7 @@ val exampleMarkers =
             coordinates = softwareMansionPin,
             title = "Software Mansion",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Software house"),
+            contentId = "swmansion_marker",
         ),
         Marker(
             coordinates = cracowMainStationPin,

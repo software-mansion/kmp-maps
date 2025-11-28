@@ -1,17 +1,21 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -26,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
@@ -43,7 +48,10 @@ import com.swmansion.kmpmaps.core.PointStyle
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
+import kmp_maps.sample.generated.resources.Res
+import kmp_maps.sample.generated.resources.swmansion_logo
 import kotlin.random.Random
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 internal fun MapsScreen() {
@@ -89,6 +97,21 @@ internal fun MapsScreen() {
             }
         }
 
+    val customMarkerContent =
+        mapOf(
+            "swmansion_marker" to
+                @Composable {
+                    Box(modifier = Modifier.height(40.dp).width(80.dp)) {
+                        Image(
+                            painter = painterResource(Res.drawable.swmansion_logo),
+                            contentDescription = "Software Mansion logo",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                        )
+                    }
+                }
+        )
+
     Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
         Map(
             modifier = Modifier.weight(1f),
@@ -129,6 +152,7 @@ internal fun MapsScreen() {
             onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayers = geoJsonLayers,
+            customMarkerContent = customMarkerContent,
         )
         Surface {
             Column(
@@ -267,6 +291,7 @@ private fun Map(
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
+    customMarkerContent: Map<String, @Composable () -> Unit> = emptyMap(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -289,6 +314,7 @@ private fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
+                customMarkerContent = customMarkerContent,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -310,6 +336,7 @@ private fun Map(
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
+                customMarkerContent = customMarkerContent,
             )
     }
 }
