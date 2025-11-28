@@ -31,7 +31,7 @@
 		1FEF7AAAD05CB0B7A932ECFB /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-            );
+			);
 			path = Configuration;
 			sourceTree = "<group>";
 		};
