@@ -10,21 +10,41 @@
 
 Check out the sample project in the `/sample` directory for complete usage examples.
 
-|                                                                     iOS (Apple Maps)                                                                      |                                                                   Android (Google Maps)                                                                   |
-| :-------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                  iOS (Apple Maps)                                                                   |                                                                  Android (Google Maps)                                                                  |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> |
-|                                              _Map view with circles, polygon, polylines and markers on iOS_                                               |                                            _Map view with circles, polygon, polylines and markers on Android_                                             |
+|                                           _Map view with circles, polygon, polylines and markers on iOS_                                            |                                           _Map view with circles, polygon, polylines and markers on Android_                                            |
 
 ## ✨ Features
 
--   **Cross-platform compatibility** - Single API for both Android and iOS
--   **Native performance** - Uses Google Maps SDK on Android and Apple Maps (MapKit) on iOS
--   **Compose Multiplatform** - Built with Compose Multiplatform for modern UI development
--   **Rich functionality** - Support for markers, circles, polygons, polylines, and custom styling
--   **Interactive callbacks** - Handle user interactions like clicks, camera movements, and gestures
--   **Location services** - Built-in location permission handling and user location display
+- **Multi-Provider Support:** Android (Google Maps) & iOS (Apple Maps or Google Maps).
+- **Fully Customizable Markers:** Create markers using standard Compose Multiplatform code.
+- **GeoJSON Support:** Easily render GeoJSON layers with customizable styling capabilities.
+- **Native Rendering:** Powered by underlying native SDKs, ensuring smooth performance, correct gesture handling, and native look and feel.
+- **Rich Geometry Support:** Draw interactive circles, polygons, and polylines with full control over colors, strokes, and fills.
+- **Location Services:** Built-in location permission handling and user location display.
+- **Interactive Callbacks:** Comprehensive event handling for map clicks, camera movements, POI interactions, and marker events.
+- **Compose Multiplatform:** Built with Compose Multiplatform for modern UI development.
 
 ## 🚀 Usage
+
+### Import
+
+Choose the appropriate import based on your needs:
+
+- **Native Implementation:** Uses Google Maps on Android and Apple Maps on iOS.
+
+  ```kotlin
+  import com.swmansion.kmpmaps.core.Map
+  ```
+
+- **Google Maps on Both Platforms:** Uses Google Maps SDK on both Android and iOS.
+
+  ```kotlin
+  import com.swmansion.kmpmaps.googlemaps.Map
+  ```
+
+### Example
 
 ```kotlin
 @Composable
