@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.annotation.RestrictTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -7,8 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 
+/** @suppress */
 @Composable
-internal fun AutoSizeBox(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun AutoSizeBox(
     onSizeChanged: (width: Double, height: Double) -> Unit,
     content: @Composable () -> Unit,
 ) {

@@ -143,7 +143,7 @@ public actual fun Map(
             gmsMapView.delegate = delegate
             mapDelegate = delegate
 
-            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)
+            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
             updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(gmsMapView, polygons, polygonMapping)
             updateGoogleMapsPolylines(gmsMapView, polylines, polylineMapping)
@@ -176,7 +176,7 @@ public actual fun Map(
                 lastCameraPosition.value = cameraPosition
             }
 
-            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping)
+            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
             updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(gmsMapView, polygons, polygonMapping)
             updateGoogleMapsPolylines(gmsMapView, polylines, polylineMapping)
