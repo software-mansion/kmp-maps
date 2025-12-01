@@ -65,6 +65,8 @@ public actual fun Map(
                 val engine = webView.engine
                 engineRef.value = engine
 
+                engine.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+
                 val bridge = object {
                     @Suppress("unused")
                     fun onMapClick(lat: Double, lng: Double) {
@@ -86,10 +88,10 @@ public actual fun Map(
                     if (newState === javafx.concurrent.Worker.State.SUCCEEDED) {
                         val window = engine.executeScript("window") as JSObject
                         window.setMember("kotlinBridge", bridge)
-                        engine.executeScript("console.log = (msg) => kotlinBridge.log(msg);")
                         engine.executeScript("console.error = (msg) => kotlinBridge.log('ERROR: ' + msg);")
                     } else if (newState === javafx.concurrent.Worker.State.FAILED) {
-                        println("WebView FAILED: ${engine.loadWorker.exception}")
+                        println("JS LOG: WebView load failed")
+                        engine.loadWorker.exception?.printStackTrace()
                     }
                 }
 

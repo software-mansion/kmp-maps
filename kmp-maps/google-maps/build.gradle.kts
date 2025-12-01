@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetBrains.compose)
@@ -60,16 +62,23 @@ kotlin {
             implementation("org.openjfx:javafx-web:$javafxVersion:$javafxClassifier")
             implementation("org.openjfx:javafx-swing:$javafxVersion:$javafxClassifier")
             implementation("org.openjfx:javafx-media:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-fxml:$javafxVersion:$javafxClassifier")
         }
     }
 }
 
-val projectApiKey: String? = (project.findProperty("googleMapsApiKey") as String?)
+val secretsProperties = Properties()
+val secretsFile = rootProject.file("secrets.properties")
+if (secretsFile.exists()) {
+    secretsFile.inputStream().use { secretsProperties.load(it) }
+}
+
+val apiKey = secretsProperties.getProperty("MAPS_API_KEY")
     ?: System.getenv("GOOGLE_MAPS_API_KEY")
 
 tasks.withType<ProcessResources>().configureEach {
     filesMatching("**/web/index.html") {
-        expand(mapOf("API_KEY" to (projectApiKey ?: "")))
+        expand(mapOf("API_KEY" to (apiKey ?: "")))
     }
 }
 
