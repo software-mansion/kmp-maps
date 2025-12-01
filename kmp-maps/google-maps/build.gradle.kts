@@ -69,17 +69,15 @@ kotlin {
 
 val secretsProperties = Properties()
 val secretsFile = rootProject.file("secrets.properties")
+
 if (secretsFile.exists()) {
     secretsFile.inputStream().use { secretsProperties.load(it) }
 }
 
-val apiKey = secretsProperties.getProperty("MAPS_API_KEY")
-    ?: System.getenv("GOOGLE_MAPS_API_KEY")
+val apiKey = secretsProperties.getProperty("MAPS_API_KEY") ?: System.getenv("GOOGLE_MAPS_API_KEY")
 
 tasks.withType<ProcessResources>().configureEach {
-    filesMatching("**/web/index.html") {
-        expand(mapOf("API_KEY" to (apiKey ?: "")))
-    }
+    filesMatching("**/web/index.html") { expand(mapOf("API_KEY" to (apiKey ?: ""))) }
 }
 
 android {

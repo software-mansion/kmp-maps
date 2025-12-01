@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
@@ -14,15 +13,15 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
-import javafx.embed.swing.JFXPanel
-import javafx.scene.Scene
-import javafx.scene.web.WebEngine
-import javafx.scene.web.WebView
-import netscape.javascript.JSObject
-import javax.swing.SwingUtilities
 import java.util.concurrent.atomic.AtomicBoolean
 import javafx.application.Platform
+import javafx.embed.swing.JFXPanel
+import javafx.scene.Scene
 import javafx.scene.layout.StackPane
+import javafx.scene.web.WebEngine
+import javafx.scene.web.WebView
+import javax.swing.SwingUtilities
+import netscape.javascript.JSObject
 
 @Composable
 public actual fun Map(
@@ -55,7 +54,9 @@ public actual fun Map(
         modifier = modifier.fillMaxSize(),
         factory = {
             if (!javafxStarted.getAndSet(true)) {
-                try { Platform.startup { } } catch (_: IllegalStateException) { }
+                try {
+                    Platform.startup {}
+                } catch (_: IllegalStateException) {}
             }
 
             val jfxPanel = JFXPanel()
@@ -65,38 +66,43 @@ public actual fun Map(
                 val engine = webView.engine
                 engineRef.value = engine
 
-                engine.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+                engine.userAgent =
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
 
-                val bridge = object {
-                    @Suppress("unused")
-                    fun onMapClick(lat: Double, lng: Double) {
-                        SwingUtilities.invokeLater { onMapClick?.invoke(Coordinates(lat, lng)) }
-                    }
+                val bridge =
+                    object {
+                        @Suppress("unused")
+                        fun onMapClick(lat: Double, lng: Double) {
+                            SwingUtilities.invokeLater { onMapClick?.invoke(Coordinates(lat, lng)) }
+                        }
 
-                    @Suppress("unused")
-                    fun onMapLoaded() {
-                        SwingUtilities.invokeLater { onMapLoaded?.invoke() }
-                    }
+                        @Suppress("unused")
+                        fun onMapLoaded() {
+                            SwingUtilities.invokeLater { onMapLoaded?.invoke() }
+                        }
 
-                    @Suppress("unused")
-                    fun log(message: Any?) {
-                        println("JS LOG: $message")
+                        @Suppress("unused")
+                        fun log(message: Any?) {
+                            println("JS LOG: $message")
+                        }
                     }
-                }
 
                 engine.loadWorker.stateProperty().addListener { _, _, newState ->
                     if (newState === javafx.concurrent.Worker.State.SUCCEEDED) {
                         val window = engine.executeScript("window") as JSObject
                         window.setMember("kotlinBridge", bridge)
-                        engine.executeScript("console.error = (msg) => kotlinBridge.log('ERROR: ' + msg);")
+                        engine.executeScript(
+                            "console.error = (msg) => kotlinBridge.log('ERROR: ' + msg);"
+                        )
                     } else if (newState === javafx.concurrent.Worker.State.FAILED) {
                         println("JS LOG: WebView load failed")
                         engine.loadWorker.exception?.printStackTrace()
                     }
                 }
 
-                val url = object {}.javaClass.getResource("/web/index.html")
-                    ?: error("Cannot find /web/index.html resource in google-maps module")
+                val url =
+                    object {}.javaClass.getResource("/web/index.html")
+                        ?: error("Cannot find /web/index.html resource in google-maps module")
                 engine.load(url.toExternalForm())
 
                 val stackPane = StackPane()
@@ -116,7 +122,9 @@ public actual fun Map(
                         val lat = cam.coordinates.latitude
                         val lng = cam.coordinates.longitude
                         val zoom = cam.zoom
-                        try { engine.executeScript("setCamera($lat, $lng, $zoom);") } catch (_: Exception) { }
+                        try {
+                            engine.executeScript("setCamera($lat, $lng, $zoom);")
+                        } catch (_: Exception) {}
                     }
                 }
 
@@ -126,10 +134,13 @@ public actual fun Map(
                         try {
                             engine.executeScript("clearMarkers && clearMarkers();")
                             snapshot.forEachIndexed { idx, m ->
-                                val script = "addMarker('m$idx', ${m.coordinates.latitude}, ${m.coordinates.longitude});"
-                                try { engine.executeScript(script) } catch (_: Exception) { }
+                                val script =
+                                    "addMarker('m$idx', ${m.coordinates.latitude}, ${m.coordinates.longitude});"
+                                try {
+                                    engine.executeScript(script)
+                                } catch (_: Exception) {}
                             }
-                        } catch (_: Exception) { }
+                        } catch (_: Exception) {}
                     }
                 }
             }
