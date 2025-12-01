@@ -15,7 +15,6 @@ mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
 jetbrainsKotlinJvm = "2.2.20"
-kotlinx-coroutines-swing = "1.10.2"
 
 [libraries]
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
@@ -27,7 +26,6 @@ google-maps-android-mapsComposeUtils = { module = "com.google.maps.android:maps-
 jetBrains-androidX-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidXLifecycle" }
 jetBrains-androidX-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidXLifecycle" }
 jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines-swing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

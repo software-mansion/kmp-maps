@@ -44,7 +44,6 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            // implementation(libs.jetBrains.kotlinX.coroutines.swing)
         }
     }
 }

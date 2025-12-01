@@ -64,7 +64,6 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
             implementation("org.openjfx:javafx-controls:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
             implementation("org.openjfx:javafx-swing:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
             implementation("org.openjfx:javafx-web:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
