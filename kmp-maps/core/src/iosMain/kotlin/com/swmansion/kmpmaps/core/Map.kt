@@ -149,6 +149,7 @@ public actual fun Map(
                     geoJsonPolygonStyles = geoJsonPolygonStyles,
                     geoJsonPolylineStyles = geoJsonPolylineStyles,
                     geoJsonPointStyles = geoJsonPointStyles,
+                    customMarkerContent = customMarkerContent,
                 )
             mkMapView.delegate = delegate
             mapDelegate = delegate

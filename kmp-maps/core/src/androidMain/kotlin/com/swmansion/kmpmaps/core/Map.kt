@@ -148,7 +148,7 @@ public actual fun Map(
         }
 
         markers.forEach { marker ->
-            val content = marker.contentId?.let(customMarkerContent::get)
+            val content = customMarkerContent[marker.contentId]
 
             if (content != null) {
                 MarkerComposable(
