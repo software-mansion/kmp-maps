@@ -42,9 +42,7 @@ kotlin {
             implementation(libs.google.maps.android.mapsComposeUtils)
         }
 
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+        desktopMain.dependencies { implementation(compose.desktop.currentOs) }
     }
 }
 
