@@ -37,7 +37,7 @@ internal class CustomMarkers(private val gmsMarker: GMSMarker) :
         addSubview(vc.view)
         controller = vc
 
-        vc.view.setFrame(this.bounds)
+        vc.view.setFrame(bounds)
     }
 
     private fun updateFrameSize(width: Double, height: Double) {

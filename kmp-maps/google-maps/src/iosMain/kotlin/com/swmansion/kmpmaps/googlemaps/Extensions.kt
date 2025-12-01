@@ -63,11 +63,9 @@ internal fun updateGoogleMapsMarkers(
                 longitude = marker.coordinates.longitude,
             )
 
-        val content = marker.contentId?.let { customMarkerContent[it] }
-
-        content?.let {
+        customMarkerContent[marker.contentId]?.let { content ->
             val iconView = CustomMarkers(gmsMarker)
-            iconView.setContent(it)
+            iconView.setContent(content)
             gmsMarker.iconView = iconView
         }
 
