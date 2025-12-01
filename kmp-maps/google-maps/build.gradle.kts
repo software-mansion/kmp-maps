@@ -52,8 +52,24 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            // implementation(libs.jetBrains.kotlinX.coroutines.swing)
+            val javafxVersion: String by project
+            val javafxClassifier: String by project
+            implementation("org.openjfx:javafx-base:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-graphics:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-controls:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-web:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-swing:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-media:$javafxVersion:$javafxClassifier")
         }
+    }
+}
+
+val projectApiKey: String? = (project.findProperty("googleMapsApiKey") as String?)
+    ?: System.getenv("GOOGLE_MAPS_API_KEY")
+
+tasks.withType<ProcessResources>().configureEach {
+    filesMatching("**/web/index.html") {
+        expand(mapOf("API_KEY" to (projectApiKey ?: "")))
     }
 }
 

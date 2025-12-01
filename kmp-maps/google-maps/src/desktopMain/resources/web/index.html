@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>KMP Maps - desktop</title>
+        <style>
+            html,
+            body,
+            #map {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+        <script>
+            let map;
+            let markers = {};
+
+            function initMap() {
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: { lat: 0, lng: 0 },
+                    zoom: 2,
+                });
+
+                map.addListener("click", (e) => {
+                    if (window.kotlinBridge && window.kotlinBridge.onMapClick) {
+                        try {
+                            window.kotlinBridge.onMapClick(e.latLng.lat(), e.latLng.lng());
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                });
+
+                if (window.kotlinBridge && window.kotlinBridge.onMapLoaded) {
+                    try {
+                        window.kotlinBridge.onMapLoaded();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            }
+
+            function setCamera(lat, lng, zoom) {
+                if (!map) return;
+                map.setCenter({ lat: lat, lng: lng });
+                map.setZoom(Number(zoom));
+            }
+
+            function addMarker(id, lat, lng) {
+                if (!map) return;
+                const pos = { lat: Number(lat), lng: Number(lng) };
+                if (markers[id]) {
+                    markers[id].setPosition(pos);
+                    return;
+                }
+                const m = new google.maps.Marker({ position: pos, map: map });
+                m.addListener("click", () => {
+                    if (window.kotlinBridge && window.kotlinBridge.onMarkerClick) {
+                        try {
+                            window.kotlinBridge.onMarkerClick(id);
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                });
+                markers[id] = m;
+            }
+
+            function clearMarkers() {
+                Object.values(markers).forEach((m) => m.setMap(null));
+                markers = {};
+            }
+        </script>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?v=3.63&key=<YOUR_API_KEY>&callback=initMap&format=png"
+            async
+            defer
+        ></script>
+    </head>
+    <body>
+        <div id="map"></div>
+    </body>
+</html>
