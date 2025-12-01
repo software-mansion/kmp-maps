@@ -12,6 +12,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(22)
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -67,6 +68,12 @@ kotlin {
             implementation("org.openjfx:javafx-controls:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
             implementation("org.openjfx:javafx-swing:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
             implementation("org.openjfx:javafx-web:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
+            implementation("org.openjfx:javafx-graphics:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
+            implementation("org.openjfx:javafx-base:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
+            implementation("org.openjfx:javafx-media:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
+            implementation("org.openjfx:javafx-fxml:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}")
+
+
         }
     }
 }
