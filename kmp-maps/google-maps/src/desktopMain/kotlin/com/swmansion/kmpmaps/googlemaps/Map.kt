@@ -43,6 +43,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
+    customMarkerContent: Map<String, @Composable () -> Unit>,
 ) {
     val engineRef = remember { mutableStateOf<WebEngine?>(null) }
     val javafxStarted = remember { AtomicBoolean(false) }
