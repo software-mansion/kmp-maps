@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -8,7 +9,6 @@ import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
 import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
-import platform.UIKit.UIColor
 import platform.UIKit.UIViewController
 
 private const val MAX_DIM = 500.0
@@ -18,25 +18,20 @@ internal class CustomMarkers(annotation: MKAnnotationProtocol, reuseIdentifier: 
     MKAnnotationView(annotation = annotation, reuseIdentifier = reuseIdentifier) {
     private var viewController: UIViewController? = null
 
+    @OptIn(ExperimentalComposeUiApi::class)
     fun updateContent(content: @Composable () -> Unit) {
         viewController?.view?.removeFromSuperview()
 
-        val vc = ComposeUIViewController { AutoSizeBox(::updateFrameSize) { content() } }
-
-        vc.view.backgroundColor = UIColor.clearColor
-        vc.view.opaque = false
+        val vc =
+            ComposeUIViewController(configure = { opaque = false }) {
+                AutoSizeBox(::updateFrameSize) { content() }
+            }
 
         addSubview(vc.view)
         viewController = vc
 
         setFrame(CGRectMake(0.0, 0.0, MAX_DIM, MAX_DIM))
         vc.view.setFrame(bounds)
-    }
-
-    override fun prepareForReuse() {
-        super.prepareForReuse()
-        viewController?.view?.removeFromSuperview()
-        viewController = null
     }
 
     private fun updateFrameSize(width: Double, height: Double) {
