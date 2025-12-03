@@ -147,3 +147,11 @@ public data class CameraPosition(
     val androidCameraPosition: AndroidCameraPosition? = null,
     val iosCameraPosition: IosCameraPosition? = null,
 )
+
+/**
+ * Configuration options for marker clustering on the map.
+ *
+ * @property enabled Controls whether marker clustering is active. When set to true, markers that
+ *   are close to each other will be grouped into a single cluster icon.
+ */
+public data class ClusterSettings(val enabled: Boolean = true)

@@ -36,6 +36,7 @@ import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
@@ -277,6 +278,7 @@ private fun Map(
     cameraPosition: CameraPosition? = null,
     properties: MapProperties = MapProperties(),
     uiSettings: MapUISettings = MapUISettings(),
+    clusterSettings: ClusterSettings = ClusterSettings(),
     markers: List<Marker> = emptyList(),
     circles: List<Circle> = emptyList(),
     polygons: List<Polygon> = emptyList(),
@@ -300,6 +302,7 @@ private fun Map(
                 cameraPosition = cameraPosition,
                 properties = properties,
                 uiSettings = uiSettings,
+                clusterSettings = clusterSettings,
                 markers = markers,
                 circles = circles,
                 polygons = polygons,
@@ -322,6 +325,7 @@ private fun Map(
                 cameraPosition = cameraPosition,
                 properties = properties,
                 uiSettings = uiSettings,
+                clusterSettings = clusterSettings,
                 markers = markers,
                 circles = circles,
                 polygons = polygons,
