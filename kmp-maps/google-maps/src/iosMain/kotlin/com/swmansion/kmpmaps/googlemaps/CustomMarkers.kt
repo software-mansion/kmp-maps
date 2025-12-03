@@ -1,13 +1,13 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeUIViewController
 import cocoapods.GoogleMaps.GMSMarker
 import com.swmansion.kmpmaps.core.AutoSizeBox
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGRectMake
-import platform.UIKit.UIColor
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
 
@@ -19,20 +19,14 @@ internal class CustomMarkers(private val gmsMarker: GMSMarker) :
 
     private var controller: UIViewController? = null
 
-    init {
-        this.backgroundColor = UIColor.clearColor
-        this.opaque = false
-    }
-
+    @OptIn(ExperimentalComposeUiApi::class)
     fun setContent(content: @Composable () -> Unit) {
         controller?.view?.removeFromSuperview()
 
-        val vc = ComposeUIViewController {
-            AutoSizeBox(onSizeChanged = ::updateFrameSize) { content() }
-        }
-
-        vc.view.backgroundColor = UIColor.clearColor
-        vc.view.opaque = false
+        val vc =
+            ComposeUIViewController(configure = { opaque = false }) {
+                AutoSizeBox(onSizeChanged = ::updateFrameSize) { content() }
+            }
 
         addSubview(vc.view)
         controller = vc
