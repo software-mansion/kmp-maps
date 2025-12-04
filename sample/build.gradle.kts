@@ -12,6 +12,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(22)
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -21,6 +22,8 @@ kotlin {
             binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
     }
+
+    jvm("desktop")
 
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
@@ -40,6 +43,7 @@ kotlin {
     }
 
     sourceSets {
+        val desktopMain by getting
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidX.activity.compose)
@@ -57,6 +61,31 @@ kotlin {
             implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(
+                "org.openjfx:javafx-controls:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-swing:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-web:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-graphics:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-base:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-media:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+            implementation(
+                "org.openjfx:javafx-fxml:${project.properties["javafxVersion"]}:${project.properties["javafxClassifier"]}"
+            )
+        }
     }
 }
 
@@ -78,6 +107,22 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures { buildConfig = true }
+}
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+        nativeDistributions {
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+            )
+            packageName = "com.swmansion.kmpmaps.sample"
+            packageVersion = "1.0.0"
+        }
+        jvmArgs += listOf("--add-modules", "javafx.controls,javafx.swing,javafx.web")
+    }
 }
 
 dependencies { debugImplementation(compose.uiTooling) }
