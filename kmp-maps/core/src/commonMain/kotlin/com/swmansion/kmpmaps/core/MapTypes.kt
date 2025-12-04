@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -149,9 +150,24 @@ public data class CameraPosition(
 )
 
 /**
- * Configuration options for marker clustering on the map.
+ * Represents a group of markers that have been combined into a single cluster.
  *
- * @property enabled Controls whether marker clustering is active. When set to true, markers that
- *   are close to each other will be grouped into a single cluster icon.
+ * @property coordinates The coordinates of the cluster.
+ * @property size The number of markers contained within this cluster.
+ * @property items The list of [Marker] that make up this cluster.
  */
-public data class ClusterSettings(val enabled: Boolean = true)
+public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
+
+/**
+ * Configuration options for marker clustering.
+ *
+ * @property enabled Enables marker clustering.
+ * @property onClusterClick Callback invoked on cluster click. Return `true` to consume the event or
+ *   `false` to allow the default platform behavior.
+ * @property clusterContent Optional Composable to render custom cluster UI.
+ */
+public data class ClusterSettings(
+    val enabled: Boolean = true,
+    val onClusterClick: ((Cluster) -> Boolean)? = null,
+    val clusterContent: (@Composable (Cluster) -> Unit)? = null,
+)
