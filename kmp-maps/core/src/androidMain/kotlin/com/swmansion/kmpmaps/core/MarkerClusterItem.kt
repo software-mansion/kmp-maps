@@ -5,6 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,11 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
-/**
- * Implementation of ClusterItem for marker clustering on Android.
- *
- * @property marker The Marker object to cluster
- */
 internal data class MarkerClusterItem(val marker: Marker) : ClusterItem {
     override fun getPosition(): LatLng =
         LatLng(marker.coordinates.latitude, marker.coordinates.longitude)
@@ -50,4 +48,14 @@ internal fun DefaultCluster(size: Int) {
             fontSize = 14.sp,
         )
     }
+}
+
+@Composable
+internal fun DefaultPin() {
+    Icon(
+        imageVector = Icons.Filled.LocationOn,
+        contentDescription = "Standard Marker",
+        tint = Color(0xFFEA4335),
+        modifier = Modifier.size(40.dp),
+    )
 }

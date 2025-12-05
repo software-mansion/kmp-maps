@@ -24,6 +24,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -199,12 +200,7 @@ public actual fun Map(
                     if (content != null) {
                         content()
                     } else {
-                        Icon(
-                            imageVector = Icons.Filled.LocationOn,
-                            contentDescription = "Standard Marker",
-                            tint = Color.Red,
-                            modifier = Modifier.size(40.dp),
-                        )
+                        DefaultPin()
                     }
                 },
             )
