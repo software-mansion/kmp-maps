@@ -8,8 +8,9 @@ androidXActivity = "1.11.0"
 androidXLifecycle = "2.9.4"
 compose = "1.9.0"
 dokka = "2.1.0"
-googleMapsCompose = "6.10.0"
-googleMapsComposeUtils = "6.10.0"
+googleMapsCompose = "6.12.2"
+googleMapsComposeUtils = "6.12.2"
+googleMapsUtils = "3.19.1"
 kotlin = "2.2.20"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
@@ -23,6 +24,7 @@ google-android-gms-playServicesMaps = { module = "com.google.android.gms:play-se
 google-android-libraries-mapsPlatform-secretsGradlePlugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 google-maps-android-mapsCompose = { module = "com.google.maps.android:maps-compose", version.ref = "googleMapsCompose" }
 google-maps-android-mapsComposeUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "googleMapsComposeUtils" }
+google-maps-utils = {module = "com.google.maps.android:android-maps-utils", version.ref = "googleMapsUtils"}
 jetBrains-androidX-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidXLifecycle" }
 jetBrains-androidX-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidXLifecycle" }
 jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
