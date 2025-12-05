@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import com.swmansion.kmpmaps.core.AndroidMarkerOptions
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.IosMarkerOptions
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
@@ -32,6 +33,37 @@ val exampleMarkers =
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
         ),
     )
+
+val exampleClusteringMarkers = listOf(
+    Marker(
+        coordinates = Coordinates(latitude=50.06239243733063, longitude=19.94280840984881),
+        title = "A-Food",
+        iosMarkerOptions = IosMarkerOptions(
+            clusterTag = "marker_food"
+        )
+    ),
+    Marker(
+        coordinates = Coordinates(latitude=50.05781822870319, longitude=19.9381599379439),
+        title = "B-Food",
+        iosMarkerOptions = IosMarkerOptions(
+            clusterTag = "marker_food"
+        )
+    ),
+    Marker(
+        coordinates = Coordinates(latitude=50.054231083336134, longitude=19.936321796442407),
+        title = "A-Monument",
+        iosMarkerOptions = IosMarkerOptions(
+            clusterTag = "marker_monument"
+        )
+    ),
+    Marker(
+        coordinates = Coordinates(latitude=50.05629759912554, longitude=19.930885889848916),
+        title = "B-Monument",
+        iosMarkerOptions = IosMarkerOptions(
+            clusterTag = "marker_monument"
+        )
+    ),
+)
 
 @Composable
 fun getExampleCircles() =

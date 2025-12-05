@@ -68,10 +68,11 @@ internal fun MapsScreen() {
         )
     }
     var showAllComponents by remember { mutableStateOf(true) }
-    var useGoogleMapsMapView by remember { mutableStateOf(true) }
+    var useGoogleMapsMapView by remember { mutableStateOf(false) }
     var showPointGeoJson by remember { mutableStateOf(false) }
     var showPolygonGeoJson by remember { mutableStateOf(false) }
     var showLineGeoJson by remember { mutableStateOf(false) }
+    var clusteringEnabled by remember { mutableStateOf(false) }
 
     val geoJsonLayers =
         remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
@@ -139,7 +140,16 @@ internal fun MapsScreen() {
                     scaleBarEnabled = true,
                     androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
                 ),
-            markers = if (showAllComponents) exampleMarkers else emptyList(),
+            markers = if (showAllComponents) {
+                if (clusteringEnabled) exampleClusteringMarkers else exampleMarkers
+            } else emptyList(),
+            clusterSettings = ClusterSettings(
+                enabled = clusteringEnabled,
+                onClusterClick = { cluster ->
+                    println("Cluster clicked: ${cluster.size} markers at ${cluster.coordinates}")
+                    false
+                },
+            ),
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
             polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
             polylines = if (showAllComponents) getExamplePolylines() else emptyList(),
@@ -223,6 +233,19 @@ internal fun MapsScreen() {
                         )
                     },
                 )
+                if (isIOS() && !useGoogleMapsMapView) {
+                    ListItem(
+                        headlineContent = { Text("Marker Clustering") },
+                        modifier =
+                            Modifier.height(48.dp).clickable { clusteringEnabled = !clusteringEnabled },
+                        trailingContent = {
+                            Switch(
+                                checked = clusteringEnabled,
+                                onCheckedChange = { clusteringEnabled = it },
+                            )
+                        },
+                    )
+                }
                 ListItem(
                     headlineContent = { Text("Show my location") },
                     modifier =
