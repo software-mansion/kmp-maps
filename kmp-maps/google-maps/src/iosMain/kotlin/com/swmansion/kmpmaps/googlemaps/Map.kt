@@ -13,13 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
-import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol as UtilsGMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
 import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterIconGenerator
 import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer
@@ -63,7 +62,7 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable () -> Unit>,
 ) {
-    var mapView by remember { mutableStateOf<GMSMapView?>(null) }
+    var mapView by remember { mutableStateOf<UtilsGMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val geoJsonManager = remember { GeoJsonRendererManager() }
 
@@ -114,9 +113,7 @@ public actual fun Map(
         factory = {
             ensureInitialized()
 
-            val gmsMapView = GMSMapView()
-            val utilsMapView = gmsMapView as? UtilsGMSMapView
-                ?: error("Failed to cast GMSMapView to Utils GMSMapView")
+            val utilsMapView = UtilsGMSMapView()
             val utilsDelegate = (mapDelegate as Any) as? UtilsGMSMapViewDelegateProtocol
                 ?: error("Failed to cast MapDelegate to Utils MapDelegate")
 
@@ -126,7 +123,7 @@ public actual fun Map(
             val manager = GMUClusterManager(utilsMapView, algorithm, renderer)
 
             val clusteringDelegate = MarkerClusterManagerDelegate(
-                mapView = gmsMapView,
+                mapView = utilsMapView,
                 clusterSettings = clusterSettings,
                 onMarkerClick = onMarkerClick,
                 customMarkerContent = customMarkerContent
@@ -137,24 +134,25 @@ public actual fun Map(
             renderer.delegate = clusteringDelegate
             clusterManager = manager
 
-            gmsMapView.mapType = properties.mapType.toGoogleMapsMapType()
+            utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
 
-            gmsMapView.switchTheme(isDarkModeEnabled)
+            utilsMapView.switchTheme(isDarkModeEnabled)
 
-            gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
-            gmsMapView.trafficEnabled = properties.isTrafficEnabled
-            gmsMapView.buildingsEnabled = properties.isBuildingEnabled
-            gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
-            gmsMapView.mapStyle =
+            utilsMapView.setMyLocationEnabled(properties.isMyLocationEnabled && hasLocationPermission)
+            utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
+            utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
+            utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
+            utilsMapView.setMapStyle(
                 properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
-            gmsMapView.setMinZoom(
+            )
+            utilsMapView.setMinZoom(
                 properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
                 properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
             )
 
-            uiSettings.toGoogleMapsSettings(gmsMapView)
+            uiSettings.toGoogleMapsSettings(utilsMapView)
 
-            cameraPosition?.let { position -> gmsMapView.setUpGMSCameraPosition(position) }
+            cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
 
             val delegate =
                 MapDelegate(
@@ -172,19 +170,19 @@ public actual fun Map(
                     polylineMapping = polylineMapping,
                 )
 
-            gmsMapView.delegate = delegate
+            utilsMapView.setDelegate(delegate)
             mapDelegate = delegate
 
-            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
-            updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
-            updateGoogleMapsPolygons(gmsMapView, polygons, polygonMapping)
-            updateGoogleMapsPolylines(gmsMapView, polylines, polylineMapping)
+            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+            updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
+            updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
+            updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)
 
-            mapView = gmsMapView
-            gmsMapView
+            mapView = utilsMapView
+            utilsMapView
         },
         modifier = modifier.fillMaxSize(),
-        update = { gmsMapView ->
+        update = { utilsMapView ->
             val manager = clusterManager
 
             if (manager != null && clusterSettings.enabled) {
@@ -196,40 +194,41 @@ public actual fun Map(
 
             } else {
                 manager?.clearItems()
-                updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
+                updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
             }
 
-            gmsMapView.mapType = properties.mapType.toGoogleMapsMapType()
+            utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
 
-            gmsMapView.switchTheme(isDarkModeEnabled)
+            utilsMapView.switchTheme(isDarkModeEnabled)
 
-            gmsMapView.myLocationEnabled = properties.isMyLocationEnabled && hasLocationPermission
-            gmsMapView.trafficEnabled = properties.isTrafficEnabled
-            gmsMapView.buildingsEnabled = properties.isBuildingEnabled
-            gmsMapView.indoorEnabled = properties.iosMapProperties.gmsIsIndoorEnabled
-            gmsMapView.mapStyle =
+            utilsMapView.setMyLocationEnabled(properties.isMyLocationEnabled && hasLocationPermission)
+            utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
+            utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
+            utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
+            utilsMapView.setMapStyle(
                 properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
-            gmsMapView.setMinZoom(
+            )
+            utilsMapView.setMinZoom(
                 properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
                 properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
             )
 
-            uiSettings.toGoogleMapsSettings(gmsMapView)
-            gmsMapView.delegate = mapDelegate
+            uiSettings.toGoogleMapsSettings(utilsMapView)
+            utilsMapView.setDelegate(mapDelegate)
 
             if (cameraPosition != lastCameraPosition.value) {
-                cameraPosition?.let { position -> gmsMapView.setUpGMSCameraPosition(position) }
+                cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
                 lastCameraPosition.value = cameraPosition
             }
 
-            updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
-            updateGoogleMapsCircles(gmsMapView, circles, circleMapping)
-            updateGoogleMapsPolygons(gmsMapView, polygons, polygonMapping)
-            updateGoogleMapsPolylines(gmsMapView, polylines, polylineMapping)
+            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+            updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
+            updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
+            updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)
         },
         properties =
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
 
-    LaunchedEffect(mapView) { mapView?.let { gmsMapView -> onMapLoaded?.invoke() } }
+    LaunchedEffect(mapView) { mapView?.let { onMapLoaded?.invoke() } }
 }

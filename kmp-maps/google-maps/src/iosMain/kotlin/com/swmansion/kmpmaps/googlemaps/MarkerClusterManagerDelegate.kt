@@ -2,8 +2,8 @@ package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.runtime.Composable
 import cocoapods.GoogleMaps.GMSCameraUpdate
-import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.animateWithCameraUpdate
+import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterItemProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
@@ -21,7 +21,7 @@ import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MarkerClusterManagerDelegate(
-    private val mapView: GMSMapView,
+    private val mapView: UtilsGMSMapView,
     private val clusterSettings: ClusterSettings,
     private val onMarkerClick: ((Marker) -> Unit)?,
     private val customMarkerContent: Map<String, @Composable () -> Unit>,
@@ -37,7 +37,7 @@ internal class MarkerClusterManagerDelegate(
             if (content != null) {
                 val iconView =
                     willRenderMarker.iconView() as? CustomMarkers
-                        ?: CustomMarkers(willRenderMarker as cocoapods.GoogleMaps.GMSMarker)
+                        ?: CustomMarkers(willRenderMarker)
 
                 iconView.setContent(content)
                 willRenderMarker.setIconView(iconView)
@@ -68,7 +68,7 @@ internal class MarkerClusterManagerDelegate(
 
                 val iconView =
                     willRenderMarker.iconView() as? CustomMarkers
-                        ?: CustomMarkers(willRenderMarker as cocoapods.GoogleMaps.GMSMarker)
+                        ?: CustomMarkers(willRenderMarker)
 
                 iconView.setContent { clusterSettings.clusterContent!!.invoke(kmpCluster) }
                 willRenderMarker.setIconView(iconView)
@@ -101,9 +101,9 @@ internal class MarkerClusterManagerDelegate(
         val consumed = clusterSettings.onClusterClick?.invoke(kmpCluster) ?: false
 
         if (!consumed) {
-            val newZoom = mapView.camera.zoom + 1
+            val newZoom = mapView.camera().zoom()+ 1
             val update = GMSCameraUpdate.setTarget(didTapCluster.position, newZoom)
-            mapView.animateWithCameraUpdate(update)
+//            mapView.animateWithCameraUpdate(update)
         }
         return true
     }

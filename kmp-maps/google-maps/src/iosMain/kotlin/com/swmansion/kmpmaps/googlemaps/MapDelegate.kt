@@ -1,13 +1,13 @@
 package com.swmansion.kmpmaps.googlemaps
 
-import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSMapView
-import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
-import cocoapods.GoogleMaps.GMSMarker
-import cocoapods.GoogleMaps.GMSOverlay
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
+import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
+import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
+import cocoapods.Google_Maps_iOS_Utils.GMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMSMarker
+import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -46,11 +46,11 @@ internal class MapDelegate(
      */
     override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition) {
         onCameraMove?.let {
-            didChangeCameraPosition.target.useContents {
+            didChangeCameraPosition.target().useContents {
                 val cameraPosition =
                     CameraPosition(
                         coordinates = Coordinates(latitude = latitude, longitude = longitude),
-                        zoom = didChangeCameraPosition.zoom,
+                        zoom = didChangeCameraPosition.zoom(),
                     )
                 it(cameraPosition)
             }
@@ -68,7 +68,7 @@ internal class MapDelegate(
         return onMarkerClick?.let {
             val marker = markerMapping[didTapMarker]
             if (marker != null) {
-                mapView.selectedMarker = didTapMarker
+                mapView.setSelectedMarker(didTapMarker)
                 it(marker)
                 true
             } else {
