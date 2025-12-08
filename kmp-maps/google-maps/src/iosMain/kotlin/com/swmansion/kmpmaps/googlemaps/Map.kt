@@ -18,9 +18,7 @@ import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
-import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterIconGenerator
 import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer
-import cocoapods.Google_Maps_iOS_Utils.GMUNonHierarchicalDistanceBasedAlgorithm
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
@@ -76,7 +74,9 @@ public actual fun Map(
 
     var clusterManager by remember { mutableStateOf<GMUClusterManager?>(null) }
     var clusterRenderer by remember { mutableStateOf<GMUDefaultClusterRenderer?>(null) }
-    var currentClusteringDelegate by remember { mutableStateOf<MarkerClusterManagerDelegate?>(null) }
+    var currentClusteringDelegate by remember {
+        mutableStateOf<MarkerClusterManagerDelegate?>(null)
+    }
 
     val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
 
@@ -115,11 +115,6 @@ public actual fun Map(
 
             val utilsMapView = UtilsGMSMapView()
 
-            val iconGenerator = GMUDefaultClusterIconGenerator()
-            val algorithm = GMUNonHierarchicalDistanceBasedAlgorithm()
-            val renderer = GMUDefaultClusterRenderer(utilsMapView, iconGenerator)
-            val manager = GMUClusterManager(utilsMapView, algorithm, renderer)
-
             val delegate =
                 MapDelegate(
                     onCameraMove = onCameraMove,
@@ -138,19 +133,17 @@ public actual fun Map(
 
             mapDelegate = delegate
 
-            val clusteringDelegate =
-                MarkerClusterManagerDelegate(
+            val clusteringComponents =
+                initializeClustering(
                     mapView = utilsMapView,
+                    mapDelegate = delegate,
                     clusterSettings = clusterSettings,
                     onMarkerClick = onMarkerClick,
                     customMarkerContent = customMarkerContent,
                 )
 
-            manager.setDelegate(clusteringDelegate, mapDelegate = mapDelegate)
-
-            renderer.delegate = clusteringDelegate
-            clusterManager = manager
-            clusterRenderer = renderer
+            clusterManager = clusteringComponents.manager
+            clusterRenderer = clusteringComponents.renderer
 
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
             utilsMapView.switchTheme(isDarkModeEnabled)
@@ -206,18 +199,21 @@ public actual fun Map(
                 lastCameraPosition.value = cameraPosition
             }
             if (manager != null && clusterSettings.enabled) {
-                markerMapping.keys.forEach { it.setMap(null)  }
+                markerMapping.keys.forEach { it.setMap(null) }
                 markerMapping.clear()
 
-                val newDelegate = MarkerClusterManagerDelegate(
-                    mapView = utilsMapView,
-                    clusterSettings = clusterSettings,
-                    onMarkerClick = onMarkerClick,
-                    customMarkerContent = customMarkerContent
-                )
+                val newDelegate =
+                    MarkerClusterManagerDelegate(
+                        mapView = utilsMapView,
+                        clusterSettings = clusterSettings,
+                        onMarkerClick = onMarkerClick,
+                        customMarkerContent = customMarkerContent,
+                    )
 
                 currentClusteringDelegate = newDelegate
-                val utilsDelegate = (mapDelegate as Any) as? cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
+                val utilsDelegate =
+                    (mapDelegate as Any)
+                        as? cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 
                 manager.setDelegate(newDelegate, mapDelegate = utilsDelegate)
                 renderer?.delegate = newDelegate
