@@ -15,6 +15,8 @@ import cocoapods.Google_Maps_iOS_Utils.GMUClusterRendererProtocol
 import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.DefaultCluster
+import com.swmansion.kmpmaps.core.DefaultPin
 import com.swmansion.kmpmaps.core.Marker
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -34,26 +36,26 @@ internal class MarkerClusterManagerDelegate(
         if (userData is MarkerClusterItem) {
             val marker = userData.marker
             val content = marker.contentId?.let { customMarkerContent[it] }
+            val iconView =
+                willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
 
             if (content != null) {
-                val iconView =
-                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
-
                 iconView.setContent(content)
-                willRenderMarker.setIconView(iconView)
-                willRenderMarker.setTracksViewChanges(true)
             } else {
-                willRenderMarker.setIconView(null)
+                iconView.setContent { DefaultPin() }
             }
+            willRenderMarker.setIconView(iconView)
+            willRenderMarker.setTracksViewChanges(true)
             willRenderMarker.setTitle(marker.title)
             willRenderMarker.setZIndex(marker.androidMarkerOptions.zIndex?.toInt() ?: 0)
         } else if (userData is GMUClusterProtocol) {
+            val itemsList = userData.items
+            val markers = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
+            val count = userData.count.toInt()
+            val iconView =
+                willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
+
             if (clusterSettings.clusterContent != null) {
-                val itemsList = userData.items
-
-                val markers = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
-
-                val count = userData.count.toInt()
 
                 val kmpCluster =
                     Cluster(
@@ -66,14 +68,12 @@ internal class MarkerClusterManagerDelegate(
                         items = markers,
                     )
 
-                val iconView =
-                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
-
                 clusterSettings.clusterContent?.let { iconView.setContent { it(kmpCluster) } }
-
-                willRenderMarker.setIconView(iconView)
-                willRenderMarker.setTracksViewChanges(true)
+            } else {
+                iconView.setContent { DefaultCluster(size = count) }
             }
+            willRenderMarker.setIconView(iconView)
+            willRenderMarker.setTracksViewChanges(true)
         }
     }
 
