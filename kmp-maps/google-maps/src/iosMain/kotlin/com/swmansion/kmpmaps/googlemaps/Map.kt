@@ -14,9 +14,16 @@ import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSMapView
+import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSMarker
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
+import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol as UtilsGMSMapViewDelegateProtocol
+import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
+import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterIconGenerator
+import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer
+import cocoapods.Google_Maps_iOS_Utils.GMUNonHierarchicalDistanceBasedAlgorithm
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
@@ -70,6 +77,8 @@ public actual fun Map(
     val polylineMapping = remember { mutableMapOf<GMSPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
 
+    var clusterManager by remember { mutableStateOf<GMUClusterManager?>(null) }
+
     val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
 
     val isDarkModeEnabled =
@@ -106,6 +115,27 @@ public actual fun Map(
             ensureInitialized()
 
             val gmsMapView = GMSMapView()
+            val utilsMapView = gmsMapView as? UtilsGMSMapView
+                ?: error("Failed to cast GMSMapView to Utils GMSMapView")
+            val utilsDelegate = (mapDelegate as Any) as? UtilsGMSMapViewDelegateProtocol
+                ?: error("Failed to cast MapDelegate to Utils MapDelegate")
+
+            val iconGenerator = GMUDefaultClusterIconGenerator()
+            val algorithm = GMUNonHierarchicalDistanceBasedAlgorithm()
+            val renderer = GMUDefaultClusterRenderer(utilsMapView, iconGenerator)
+            val manager = GMUClusterManager(utilsMapView, algorithm, renderer)
+
+            val clusteringDelegate = MarkerClusterManagerDelegate(
+                mapView = gmsMapView,
+                clusterSettings = clusterSettings,
+                onMarkerClick = onMarkerClick,
+                customMarkerContent = customMarkerContent
+            )
+
+            manager.setDelegate(clusteringDelegate, mapDelegate = utilsDelegate)
+
+            renderer.delegate = clusteringDelegate
+            clusterManager = manager
 
             gmsMapView.mapType = properties.mapType.toGoogleMapsMapType()
 
@@ -155,6 +185,20 @@ public actual fun Map(
         },
         modifier = modifier.fillMaxSize(),
         update = { gmsMapView ->
+            val manager = clusterManager
+
+            if (manager != null && clusterSettings.enabled) {
+                manager.clearItems()
+
+                val items = markers.map { MarkerClusterItem(it) }
+                manager.addItems(items)
+                manager.cluster()
+
+            } else {
+                manager?.clearItems()
+                updateGoogleMapsMarkers(gmsMapView, markers, markerMapping, customMarkerContent)
+            }
+
             gmsMapView.mapType = properties.mapType.toGoogleMapsMapType()
 
             gmsMapView.switchTheme(isDarkModeEnabled)
