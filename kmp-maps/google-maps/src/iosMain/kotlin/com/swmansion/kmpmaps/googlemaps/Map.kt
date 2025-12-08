@@ -118,6 +118,24 @@ public actual fun Map(
             val renderer = GMUDefaultClusterRenderer(utilsMapView, iconGenerator)
             val manager = GMUClusterManager(utilsMapView, algorithm, renderer)
 
+            val delegate =
+                MapDelegate(
+                    onCameraMove = onCameraMove,
+                    onMarkerClick = onMarkerClick,
+                    onCircleClick = onCircleClick,
+                    onPolygonClick = onPolygonClick,
+                    onPolylineClick = onPolylineClick,
+                    onMapClick = onMapClick,
+                    onMapLongClick = onMapLongClick,
+                    onPOIClick = onPOIClick,
+                    markerMapping = markerMapping,
+                    circleMapping = circleMapping,
+                    polygonMapping = polygonMapping,
+                    polylineMapping = polylineMapping,
+                )
+
+            mapDelegate = delegate
+
             val clusteringDelegate =
                 MarkerClusterManagerDelegate(
                     mapView = utilsMapView,
@@ -132,9 +150,7 @@ public actual fun Map(
             clusterManager = manager
 
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
-
             utilsMapView.switchTheme(isDarkModeEnabled)
-
             utilsMapView.setMyLocationEnabled(
                 properties.isMyLocationEnabled && hasLocationPermission
             )
@@ -153,29 +169,7 @@ public actual fun Map(
 
             cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
 
-            val delegate =
-                MapDelegate(
-                    onCameraMove = onCameraMove,
-                    onMarkerClick = onMarkerClick,
-                    onCircleClick = onCircleClick,
-                    onPolygonClick = onPolygonClick,
-                    onPolylineClick = onPolylineClick,
-                    onMapClick = onMapClick,
-                    onMapLongClick = onMapLongClick,
-                    onPOIClick = onPOIClick,
-                    markerMapping = markerMapping,
-                    circleMapping = circleMapping,
-                    polygonMapping = polygonMapping,
-                    polylineMapping = polylineMapping,
-                )
-
             utilsMapView.setDelegate(delegate)
-            mapDelegate = delegate
-
-//            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
-            updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
-            updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
-            updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)
 
             mapView = utilsMapView
             utilsMapView
@@ -185,9 +179,7 @@ public actual fun Map(
             val manager = clusterManager
 
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
-
             utilsMapView.switchTheme(isDarkModeEnabled)
-
             utilsMapView.setMyLocationEnabled(
                 properties.isMyLocationEnabled && hasLocationPermission
             )
@@ -210,6 +202,9 @@ public actual fun Map(
                 lastCameraPosition.value = cameraPosition
             }
             if (manager != null && clusterSettings.enabled) {
+                markerMapping.keys.forEach { it.setMap(null)  }
+                markerMapping.clear()
+
                 manager.clearItems()
 
                 val items = markers.map { MarkerClusterItem(it) }
