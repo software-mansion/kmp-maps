@@ -399,3 +399,76 @@ internal fun initializeClustering(
         clusteringDelegate = clusteringDelegate,
     )
 }
+
+/**
+ * Updates clustering markers on the map.
+ *
+ * @param manager The cluster manager instance
+ * @param renderer The cluster renderer instance
+ * @param mapView The map view
+ * @param mapDelegate The map delegate for handling map events
+ * @param markers List of markers to cluster
+ * @param markerMapping Mutable map to store marker mappings (will be cleared)
+ * @param clusterSettings Configuration settings for clustering
+ * @param onMarkerClick Callback for marker click events
+ * @param customMarkerContent Map of custom marker content composables
+ * @return The created clustering delegate
+ */
+@OptIn(ExperimentalForeignApi::class)
+internal fun updateClusteringMarkers(
+    manager: GMUClusterManager,
+    renderer: GMUDefaultClusterRenderer,
+    mapView: UtilsGMSMapView,
+    mapDelegate: MapDelegate?,
+    markers: List<Marker>,
+    markerMapping: MutableMap<GMSMarker, Marker>,
+    clusterSettings: ClusterSettings,
+    onMarkerClick: ((Marker) -> Unit)?,
+    customMarkerContent: Map<String, @Composable () -> Unit>,
+): MarkerClusterManagerDelegate {
+    markerMapping.keys.forEach { it.setMap(null) }
+    markerMapping.clear()
+
+    val clusteringDelegate =
+        MarkerClusterManagerDelegate(
+            mapView = mapView,
+            clusterSettings = clusterSettings,
+            onMarkerClick = onMarkerClick,
+            customMarkerContent = customMarkerContent,
+        )
+
+    val utilsDelegate = (mapDelegate as Any) as? GMSMapViewDelegateProtocol
+    manager.setDelegate(clusteringDelegate, mapDelegate = utilsDelegate)
+    renderer.delegate = clusteringDelegate
+
+    manager.clearItems()
+    val items = markers.map { MarkerClusterItem(it) }
+    manager.addItems(items)
+    manager.cluster()
+
+    return clusteringDelegate
+}
+
+/**
+ * Disables clustering and updates markers normally on the map.
+ *
+ * @param manager The cluster manager instance (can be null)
+ * @param mapView The map view
+ * @param mapDelegate The map delegate for handling map events
+ * @param markers List of markers to display
+ * @param markerMapping Mutable map to store marker mappings
+ * @param customMarkerContent Map of custom marker content composables
+ */
+@OptIn(ExperimentalForeignApi::class)
+internal fun disableClusteringAndUpdateMarkers(
+    manager: GMUClusterManager?,
+    mapView: UtilsGMSMapView,
+    mapDelegate: MapDelegate?,
+    markers: List<Marker>,
+    markerMapping: MutableMap<GMSMarker, Marker>,
+    customMarkerContent: Map<String, @Composable () -> Unit>,
+) {
+    manager?.clearItems()
+    mapView.setDelegate(mapDelegate)
+    updateGoogleMapsMarkers(mapView, markers, markerMapping, customMarkerContent)
+}

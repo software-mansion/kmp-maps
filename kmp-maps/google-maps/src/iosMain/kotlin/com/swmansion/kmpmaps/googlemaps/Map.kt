@@ -198,36 +198,30 @@ public actual fun Map(
                 cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
                 lastCameraPosition.value = cameraPosition
             }
-            if (manager != null && clusterSettings.enabled) {
-                markerMapping.keys.forEach { it.setMap(null) }
-                markerMapping.clear()
 
-                val newDelegate =
-                    MarkerClusterManagerDelegate(
+            if (manager != null && renderer != null && clusterSettings.enabled) {
+                currentClusteringDelegate =
+                    updateClusteringMarkers(
+                        manager = manager,
+                        renderer = renderer,
                         mapView = utilsMapView,
+                        mapDelegate = mapDelegate,
+                        markers = markers,
+                        markerMapping = markerMapping,
                         clusterSettings = clusterSettings,
                         onMarkerClick = onMarkerClick,
                         customMarkerContent = customMarkerContent,
                     )
-
-                currentClusteringDelegate = newDelegate
-                val utilsDelegate =
-                    (mapDelegate as Any)
-                        as? cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
-
-                manager.setDelegate(newDelegate, mapDelegate = utilsDelegate)
-                renderer?.delegate = newDelegate
-
-                manager.clearItems()
-                val items = markers.map { MarkerClusterItem(it) }
-                manager.addItems(items)
-                manager.cluster()
             } else {
-                manager?.clearItems()
                 currentClusteringDelegate = null
-
-                utilsMapView.setDelegate(mapDelegate)
-                updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+                disableClusteringAndUpdateMarkers(
+                    manager = manager,
+                    mapView = utilsMapView,
+                    mapDelegate = mapDelegate,
+                    markers = markers,
+                    markerMapping = markerMapping,
+                    customMarkerContent = customMarkerContent,
+                )
             }
             updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
