@@ -28,6 +28,7 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
+            implementation(compose.materialIconsExtended)
         }
 
         androidMain.dependencies {
@@ -35,7 +36,6 @@ kotlin {
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
             implementation(libs.google.maps.android.mapsComposeUtils)
-            implementation(compose.materialIconsExtended)
             implementation(libs.google.maps.utils)
         }
     }
