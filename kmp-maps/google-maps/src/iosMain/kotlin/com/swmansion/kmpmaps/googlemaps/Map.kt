@@ -172,7 +172,7 @@ public actual fun Map(
             utilsMapView.setDelegate(delegate)
             mapDelegate = delegate
 
-            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+//            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
             updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
             updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)
