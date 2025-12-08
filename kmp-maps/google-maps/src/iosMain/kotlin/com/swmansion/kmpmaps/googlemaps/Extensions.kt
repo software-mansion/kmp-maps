@@ -70,7 +70,7 @@ internal fun updateGoogleMapsMarkers(
             gmsMarker.setIconView(iconView)
         }
 
-        gmsMarker.setTitle( marker.title)
+        gmsMarker.setTitle(marker.title)
         gmsMarker.setMap(mapView)
         markerMapping[gmsMarker] = marker
     }
@@ -209,9 +209,11 @@ internal fun MapUISettings.toGoogleMapsSettings(mapView: UtilsGMSMapView) {
     mapView.settings().setCompassButton(compassEnabled)
     mapView.settings().setMyLocationButton(myLocationButtonEnabled)
     mapView.settings().setIndoorPicker(iosUISettings.gmsIndoorPicker)
-    mapView.settings().setAllowScrollGesturesDuringRotateOrZoom(
-        iosUISettings.gmsScrollGesturesEnabledDuringRotateOrZoom
-    )
+    mapView
+        .settings()
+        .setAllowScrollGesturesDuringRotateOrZoom(
+            iosUISettings.gmsScrollGesturesEnabledDuringRotateOrZoom
+        )
     mapView.settings().setConsumesGesturesInView(iosUISettings.gmsConsumesGesturesInView)
 }
 

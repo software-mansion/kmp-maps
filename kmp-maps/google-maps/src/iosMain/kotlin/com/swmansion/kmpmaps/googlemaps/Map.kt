@@ -13,10 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
-import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol as UtilsGMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
@@ -114,22 +112,21 @@ public actual fun Map(
             ensureInitialized()
 
             val utilsMapView = UtilsGMSMapView()
-            val utilsDelegate = (mapDelegate as Any) as? UtilsGMSMapViewDelegateProtocol
-                ?: error("Failed to cast MapDelegate to Utils MapDelegate")
 
             val iconGenerator = GMUDefaultClusterIconGenerator()
             val algorithm = GMUNonHierarchicalDistanceBasedAlgorithm()
             val renderer = GMUDefaultClusterRenderer(utilsMapView, iconGenerator)
             val manager = GMUClusterManager(utilsMapView, algorithm, renderer)
 
-            val clusteringDelegate = MarkerClusterManagerDelegate(
-                mapView = utilsMapView,
-                clusterSettings = clusterSettings,
-                onMarkerClick = onMarkerClick,
-                customMarkerContent = customMarkerContent
-            )
+            val clusteringDelegate =
+                MarkerClusterManagerDelegate(
+                    mapView = utilsMapView,
+                    clusterSettings = clusterSettings,
+                    onMarkerClick = onMarkerClick,
+                    customMarkerContent = customMarkerContent,
+                )
 
-            manager.setDelegate(clusteringDelegate, mapDelegate = utilsDelegate)
+            manager.setDelegate(clusteringDelegate, mapDelegate = mapDelegate)
 
             renderer.delegate = clusteringDelegate
             clusterManager = manager
@@ -138,7 +135,9 @@ public actual fun Map(
 
             utilsMapView.switchTheme(isDarkModeEnabled)
 
-            utilsMapView.setMyLocationEnabled(properties.isMyLocationEnabled && hasLocationPermission)
+            utilsMapView.setMyLocationEnabled(
+                properties.isMyLocationEnabled && hasLocationPermission
+            )
             utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
             utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
             utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
@@ -185,23 +184,13 @@ public actual fun Map(
         update = { utilsMapView ->
             val manager = clusterManager
 
-            if (manager != null && clusterSettings.enabled) {
-                manager.clearItems()
-
-                val items = markers.map { MarkerClusterItem(it) }
-                manager.addItems(items)
-                manager.cluster()
-
-            } else {
-                manager?.clearItems()
-                updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
-            }
-
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
 
             utilsMapView.switchTheme(isDarkModeEnabled)
 
-            utilsMapView.setMyLocationEnabled(properties.isMyLocationEnabled && hasLocationPermission)
+            utilsMapView.setMyLocationEnabled(
+                properties.isMyLocationEnabled && hasLocationPermission
+            )
             utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
             utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
             utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
@@ -220,8 +209,16 @@ public actual fun Map(
                 cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
                 lastCameraPosition.value = cameraPosition
             }
+            if (manager != null && clusterSettings.enabled) {
+                manager.clearItems()
 
-            updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+                val items = markers.map { MarkerClusterItem(it) }
+                manager.addItems(items)
+                manager.cluster()
+            } else {
+                manager?.clearItems()
+                updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
+            }
             updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
             updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
             updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)

@@ -4,8 +4,8 @@ import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
 import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
-import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
 import com.swmansion.kmpmaps.core.CameraPosition
