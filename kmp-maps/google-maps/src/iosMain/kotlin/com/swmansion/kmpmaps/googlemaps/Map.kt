@@ -75,6 +75,8 @@ public actual fun Map(
     val markerMapping = remember { mutableMapOf<GMSMarker, Marker>() }
 
     var clusterManager by remember { mutableStateOf<GMUClusterManager?>(null) }
+    var clusterRenderer by remember { mutableStateOf<GMUDefaultClusterRenderer?>(null) }
+    var currentClusteringDelegate by remember { mutableStateOf<MarkerClusterManagerDelegate?>(null) }
 
     val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
 
@@ -148,6 +150,7 @@ public actual fun Map(
 
             renderer.delegate = clusteringDelegate
             clusterManager = manager
+            clusterRenderer = renderer
 
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
             utilsMapView.switchTheme(isDarkModeEnabled)
@@ -177,6 +180,7 @@ public actual fun Map(
         modifier = modifier.fillMaxSize(),
         update = { utilsMapView ->
             val manager = clusterManager
+            val renderer = clusterRenderer
 
             utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
             utilsMapView.switchTheme(isDarkModeEnabled)
@@ -205,13 +209,28 @@ public actual fun Map(
                 markerMapping.keys.forEach { it.setMap(null)  }
                 markerMapping.clear()
 
-                manager.clearItems()
+                val newDelegate = MarkerClusterManagerDelegate(
+                    mapView = utilsMapView,
+                    clusterSettings = clusterSettings,
+                    onMarkerClick = onMarkerClick,
+                    customMarkerContent = customMarkerContent
+                )
 
+                currentClusteringDelegate = newDelegate
+                val utilsDelegate = (mapDelegate as Any) as? cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
+
+                manager.setDelegate(newDelegate, mapDelegate = utilsDelegate)
+                renderer?.delegate = newDelegate
+
+                manager.clearItems()
                 val items = markers.map { MarkerClusterItem(it) }
                 manager.addItems(items)
                 manager.cluster()
             } else {
                 manager?.clearItems()
+                currentClusteringDelegate = null
+
+                utilsMapView.setDelegate(mapDelegate)
                 updateGoogleMapsMarkers(utilsMapView, markers, markerMapping, customMarkerContent)
             }
             updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
