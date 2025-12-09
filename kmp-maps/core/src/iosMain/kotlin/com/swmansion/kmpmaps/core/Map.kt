@@ -29,6 +29,7 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
+    clusterSettings: ClusterSettings,
     markers: List<Marker>,
     circles: List<Circle>,
     polygons: List<Polygon>,

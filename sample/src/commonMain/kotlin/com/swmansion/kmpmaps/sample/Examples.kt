@@ -31,6 +31,11 @@ val exampleMarkers =
             title = "Kazimierz",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
         ),
+        Marker(
+            coordinates = Coordinates(50.0540, 19.9354),
+            title = "Wawel Royal Castle",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Castle"),
+        ),
     )
 
 @Composable

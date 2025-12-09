@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.MapProperties
@@ -23,6 +24,7 @@ import com.swmansion.kmpmaps.core.Polyline
  *   position
  * @param properties Configuration properties for the map behavior and appearance
  * @param uiSettings UI settings that control interactive elements and gestures
+ * @param clusterSettings Configuration settings for marker clustering behavior
  * @param markers List of markers to display on the map
  * @param circles List of circles to display on the map
  * @param polygons List of polygons to display on the map
@@ -45,6 +47,7 @@ public expect fun Map(
     cameraPosition: CameraPosition? = null,
     properties: MapProperties = MapProperties(),
     uiSettings: MapUISettings = MapUISettings(),
+    clusterSettings: ClusterSettings = ClusterSettings(),
     markers: List<Marker> = emptyList(),
     circles: List<Circle> = emptyList(),
     polygons: List<Polygon> = emptyList(),

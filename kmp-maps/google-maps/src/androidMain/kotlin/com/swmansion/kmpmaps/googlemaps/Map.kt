@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
@@ -19,6 +20,7 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
+    clusterSettings: ClusterSettings,
     markers: List<Marker>,
     circles: List<Circle>,
     polygons: List<Polygon>,
@@ -40,6 +42,7 @@ public actual fun Map(
         cameraPosition,
         properties,
         uiSettings,
+        clusterSettings = clusterSettings,
         markers,
         circles,
         polygons,
