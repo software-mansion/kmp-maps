@@ -38,6 +38,60 @@ val exampleMarkers =
         ),
     )
 
+val clusterMarkers =
+    listOf(
+        Marker(
+            coordinates = Coordinates(50.25306369740463, 19.01123497635126),
+            title = "Katowice Point 1",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:27"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.25596431517816, 19.009420461952686),
+            title = "Katowice Point 2",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:27"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.260024797656214, 19.00771927088499),
+            title = "Katowice Point 3",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:27"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.262678510942685, 19.010191597044468),
+            title = "Katowice Point 4",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:28"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.25654437467036, 19.02547985315323),
+            title = "Katowice Point 5",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:28"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.252976661136856, 19.025615975260735),
+            title = "Katowice Point 6",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:29"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.25090274993564, 19.01395708322525),
+            title = "Katowice Point 7",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:29"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.2528171656916, 19.008240960538387),
+            title = "Katowice Point 8",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:30"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.260938321008624, 19.006698690354824),
+            title = "Katowice Point 9",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:30"),
+        ),
+        Marker(
+            coordinates = Coordinates(50.26391090161824, 19.00928433984518),
+            title = "Katowice Point 10",
+            androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:31"),
+        ),
+    ) + exampleMarkers
+
 @Composable
 fun getExampleCircles() =
     listOf(
