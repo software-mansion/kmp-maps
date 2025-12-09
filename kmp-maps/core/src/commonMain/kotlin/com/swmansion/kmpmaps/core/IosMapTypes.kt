@@ -43,10 +43,8 @@ public data class IosUISettings(
  * iOS-specific options for customizing a marker.
  *
  * @property tintColor The tint color for the marker (Apple Maps only)
- * @property clusterTag A string identifier that groups markers into clusters. Markers sharing the
- *   same tag are clustered together
  */
-public data class IosMarkerOptions(val tintColor: Color? = null, val clusterTag: String? = null)
+public data class IosMarkerOptions(val tintColor: Color? = null)
 
 /**
  * iOS-specific options for the camera position and orientation of the map.
