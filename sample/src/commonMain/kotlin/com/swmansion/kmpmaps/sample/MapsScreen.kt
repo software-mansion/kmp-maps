@@ -148,7 +148,7 @@ internal fun MapsScreen() {
                     scaleBarEnabled = true,
                     androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
                 ),
-            markers = exampleMarkers,
+            markers = if (showAllComponents) exampleMarkers else emptyList(),
             clusterSettings =
                 ClusterSettings(
                     enabled = clusteringEnabled,
@@ -260,7 +260,7 @@ internal fun MapsScreen() {
                     },
                 )
                 ListItem(
-                    headlineContent = { Text("Marker Clustering") },
+                    headlineContent = { Text("Marker clustering") },
                     modifier =
                         Modifier.height(48.dp).clickable { clusteringEnabled = !clusteringEnabled },
                     trailingContent = {

@@ -47,7 +47,7 @@ public expect fun Map(
     cameraPosition: CameraPosition? = null,
     properties: MapProperties = MapProperties(),
     uiSettings: MapUISettings = MapUISettings(),
-    clusterSettings: ClusterSettings,
+    clusterSettings: ClusterSettings = ClusterSettings(),
     markers: List<Marker> = emptyList(),
     circles: List<Circle> = emptyList(),
     polygons: List<Polygon> = emptyList(),

@@ -71,7 +71,7 @@ public data class MapUISettings(
  * @property iosMarkerOptions iOS-specific options for customizing a marker
  * @property contentId Optional identifier for custom Compose content. When provided, this ID is
  *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
- *   null or not found, the marker uses the default native rendering.
+ *   null or not found, the marker uses the default native rendering
  */
 public data class Marker(
     val coordinates: Coordinates,
@@ -152,22 +152,22 @@ public data class CameraPosition(
 /**
  * Represents a group of markers that have been combined into a single cluster.
  *
- * @property coordinates The coordinates of the cluster.
- * @property size The number of markers contained within this cluster.
- * @property items The list of [Marker] that make up this cluster.
+ * @property coordinates The coordinates of the cluster
+ * @property size The number of markers contained within this cluster
+ * @property items The list of [Marker] that make up this cluster
  */
 public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
 
 /**
  * Configuration options for marker clustering.
  *
- * @property enabled Enables marker clustering.
+ * @property enabled Enables marker clustering
  * @property onClusterClick Callback invoked on cluster click. Return `true` to consume the event or
- *   `false` to allow the default platform behavior.
- * @property clusterContent Optional Composable to render custom cluster UI.
+ *   `false` to allow the default platform behavior
+ * @property clusterContent Optional Composable to render custom cluster UI
  */
 public data class ClusterSettings(
-    val enabled: Boolean = true,
+    val enabled: Boolean = false,
     val onClusterClick: ((Cluster) -> Boolean)? = null,
     val clusterContent: (@Composable (Cluster) -> Unit)? = null,
 )
