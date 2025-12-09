@@ -155,10 +155,9 @@ internal fun List<StrokePatternItem>.toGooglePattern(): List<PatternItem> = map 
  *
  * @return Cluster with coordinates, size, and list of markers
  */
-internal fun GoogleMapCluster<MarkerClusterItem>.toNativeCluster(): Cluster {
-    return Cluster(
+internal fun GoogleMapCluster<MarkerClusterItem>.toNativeCluster() =
+    Cluster(
         coordinates = Coordinates(position.latitude, position.longitude),
         size = size,
         items = items.map(MarkerClusterItem::marker),
     )
-}
