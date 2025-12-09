@@ -3,7 +3,6 @@ package com.swmansion.kmpmaps.core
 import android.Manifest
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -151,52 +150,27 @@ public actual fun Map(
         }
 
         if (clusterSettings.enabled) {
-            val clusterItems = remember(markers) { markers.map { MarkerClusterItem(it) } }
+            val clusterItems = remember(markers) { markers.map(::MarkerClusterItem) }
 
             Clustering(
                 items = clusterItems,
                 onClusterClick = { androidCluster ->
-                    val kmpCluster =
-                        Cluster(
-                            coordinates =
-                                Coordinates(
-                                    androidCluster.position.latitude,
-                                    androidCluster.position.longitude,
-                                ),
-                            size = androidCluster.size,
-                            items = androidCluster.items.map { it.marker },
-                        )
-                    clusterSettings.onClusterClick?.invoke(kmpCluster) ?: false
+                    clusterSettings.onClusterClick?.invoke(androidCluster.toNativeCluster())
+                        ?: false
                 },
                 onClusterItemClick = { clusterItem ->
                     onMarkerClick?.invoke(clusterItem.marker)
-                    true
+                    onMarkerClick == null
                 },
                 clusterContent = { androidCluster ->
                     if (clusterSettings.clusterContent != null) {
-                        val kmpCluster =
-                            Cluster(
-                                coordinates =
-                                    Coordinates(
-                                        androidCluster.position.latitude,
-                                        androidCluster.position.longitude,
-                                    ),
-                                size = androidCluster.size,
-                                items = androidCluster.items.map { it.marker },
-                            )
-                        clusterSettings.clusterContent.invoke(kmpCluster)
+                        clusterSettings.clusterContent.invoke(androidCluster.toNativeCluster())
                     } else {
                         DefaultCluster(size = androidCluster.size)
                     }
                 },
                 clusterItemContent = { clusterItem ->
-                    val content = customMarkerContent[clusterItem.marker.contentId]
-
-                    if (content != null) {
-                        content()
-                    } else {
-                        DefaultPin()
-                    }
+                    customMarkerContent[clusterItem.marker.contentId]?.invoke() ?: DefaultPin()
                 },
             )
         } else {
@@ -254,7 +228,7 @@ public actual fun Map(
 
         polygons.forEach { polygon ->
             Polygon(
-                points = polygon.coordinates.map { it.toGoogleMapsLatLng() },
+                points = polygon.coordinates.map(Coordinates::toGoogleMapsLatLng),
                 strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
                 fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
@@ -271,7 +245,7 @@ public actual fun Map(
 
         polylines.forEach { polyline ->
             Polyline(
-                points = polyline.coordinates.map { it.toGoogleMapsLatLng() },
+                points = polyline.coordinates.map(Coordinates::toGoogleMapsLatLng),
                 color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 width = polyline.width,
                 clickable = true,
