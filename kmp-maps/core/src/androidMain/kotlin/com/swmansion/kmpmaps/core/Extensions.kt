@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PatternItem
+import com.google.maps.android.clustering.Cluster as GoogleMapCluster
 import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
@@ -148,3 +149,15 @@ internal fun List<StrokePatternItem>.toGooglePattern(): List<PatternItem> = map 
         is StrokePatternItem.Gap -> Gap(it.lengthPx)
     }
 }
+
+/**
+ * Converts Google Maps [GoogleMapCluster] to native [Cluster].
+ *
+ * @return Cluster with coordinates, size, and list of markers
+ */
+internal fun GoogleMapCluster<MarkerClusterItem>.toNativeCluster() =
+    Cluster(
+        coordinates = Coordinates(position.latitude, position.longitude),
+        size = size,
+        items = items.map(MarkerClusterItem::marker),
+    )

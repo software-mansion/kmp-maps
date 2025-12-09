@@ -28,6 +28,7 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
+            implementation(compose.materialIconsExtended)
         }
 
         androidMain.dependencies {

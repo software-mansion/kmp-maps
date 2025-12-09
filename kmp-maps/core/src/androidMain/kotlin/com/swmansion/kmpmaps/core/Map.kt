@@ -27,6 +27,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.data.Layer
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
@@ -148,36 +149,62 @@ public actual fun Map(
             onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
         }
 
-        markers.forEach { marker ->
-            val content = customMarkerContent[marker.contentId]
+        if (clusterSettings.enabled) {
+            val clusterItems = remember(markers) { markers.map(::MarkerClusterItem) }
 
-            if (content != null) {
-                MarkerComposable(
-                    state = marker.toGoogleMapsMarkerState(),
-                    title = marker.title,
-                    anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                    draggable = marker.androidMarkerOptions.draggable,
-                    snippet = marker.androidMarkerOptions.snippet,
-                    zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                    onClick = {
-                        onMarkerClick?.invoke(marker)
-                        onMarkerClick == null
-                    },
-                    content = content,
-                )
-            } else {
-                Marker(
-                    state = marker.toGoogleMapsMarkerState(),
-                    title = marker.title,
-                    anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                    draggable = marker.androidMarkerOptions.draggable,
-                    snippet = marker.androidMarkerOptions.snippet,
-                    zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                    onClick = {
-                        onMarkerClick?.invoke(marker)
-                        onMarkerClick == null
-                    },
-                )
+            Clustering(
+                items = clusterItems,
+                onClusterClick = { androidCluster ->
+                    clusterSettings.onClusterClick?.invoke(androidCluster.toNativeCluster())
+                        ?: false
+                },
+                onClusterItemClick = { clusterItem ->
+                    onMarkerClick?.invoke(clusterItem.marker)
+                    onMarkerClick == null
+                },
+                clusterContent = { androidCluster ->
+                    if (clusterSettings.clusterContent != null) {
+                        clusterSettings.clusterContent.invoke(androidCluster.toNativeCluster())
+                    } else {
+                        DefaultCluster(size = androidCluster.size)
+                    }
+                },
+                clusterItemContent = { clusterItem ->
+                    customMarkerContent[clusterItem.marker.contentId]?.invoke() ?: DefaultPin()
+                },
+            )
+        } else {
+            markers.forEach { marker ->
+                val content = customMarkerContent[marker.contentId]
+
+                if (content != null) {
+                    MarkerComposable(
+                        state = marker.toGoogleMapsMarkerState(),
+                        title = marker.title,
+                        anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                        draggable = marker.androidMarkerOptions.draggable,
+                        snippet = marker.androidMarkerOptions.snippet,
+                        zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                        onClick = {
+                            onMarkerClick?.invoke(marker)
+                            onMarkerClick == null
+                        },
+                        content = content,
+                    )
+                } else {
+                    Marker(
+                        state = marker.toGoogleMapsMarkerState(),
+                        title = marker.title,
+                        anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                        draggable = marker.androidMarkerOptions.draggable,
+                        snippet = marker.androidMarkerOptions.snippet,
+                        zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                        onClick = {
+                            onMarkerClick?.invoke(marker)
+                            onMarkerClick == null
+                        },
+                    )
+                }
             }
         }
 
@@ -201,7 +228,7 @@ public actual fun Map(
 
         polygons.forEach { polygon ->
             Polygon(
-                points = polygon.coordinates.map { it.toGoogleMapsLatLng() },
+                points = polygon.coordinates.map(Coordinates::toGoogleMapsLatLng),
                 strokeColor = Color(polygon.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 strokeWidth = polygon.lineWidth,
                 fillColor = Color(polygon.color?.toArgb() ?: android.graphics.Color.TRANSPARENT),
@@ -218,7 +245,7 @@ public actual fun Map(
 
         polylines.forEach { polyline ->
             Polyline(
-                points = polyline.coordinates.map { it.toGoogleMapsLatLng() },
+                points = polyline.coordinates.map(Coordinates::toGoogleMapsLatLng),
                 color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                 width = polyline.width,
                 clickable = true,
@@ -231,10 +258,10 @@ public actual fun Map(
                 },
             )
         }
-    }
 
-    LaunchedEffect(cameraPositionState.position) {
-        onCameraMove?.invoke(cameraPositionState.position.toCameraPosition())
+        LaunchedEffect(cameraPositionState.position) {
+            onCameraMove?.invoke(cameraPositionState.position.toCameraPosition())
+        }
     }
 }
 
