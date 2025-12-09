@@ -74,9 +74,17 @@ public actual fun Map(
 
     var clusterManager by remember { mutableStateOf<GMUClusterManager?>(null) }
     var clusterRenderer by remember { mutableStateOf<GMUDefaultClusterRenderer?>(null) }
-    var currentClusteringDelegate by remember {
-        mutableStateOf<MarkerClusterManagerDelegate?>(null)
-    }
+    val clusteringDelegate =
+        remember(mapView, clusterSettings, onMarkerClick, customMarkerContent) {
+            mapView?.let { map ->
+                MarkerClusterManagerDelegate(
+                    mapView = map,
+                    clusterSettings = clusterSettings,
+                    onMarkerClick = onMarkerClick,
+                    customMarkerContent = customMarkerContent,
+                )
+            }
+        }
 
     val lastCameraPosition = remember { mutableStateOf(cameraPosition) }
 
@@ -137,9 +145,7 @@ public actual fun Map(
                 initializeClustering(
                     mapView = utilsMapView,
                     mapDelegate = delegate,
-                    clusterSettings = clusterSettings,
-                    onMarkerClick = onMarkerClick,
-                    customMarkerContent = customMarkerContent,
+                    clusteringDelegate = clusteringDelegate,
                 )
 
             clusterManager = clusteringComponents.manager
@@ -199,21 +205,21 @@ public actual fun Map(
                 lastCameraPosition.value = cameraPosition
             }
 
-            if (manager != null && renderer != null && clusterSettings.enabled) {
-                currentClusteringDelegate =
-                    updateClusteringMarkers(
-                        manager = manager,
-                        renderer = renderer,
-                        mapView = utilsMapView,
-                        mapDelegate = mapDelegate,
-                        markers = markers,
-                        markerMapping = markerMapping,
-                        clusterSettings = clusterSettings,
-                        onMarkerClick = onMarkerClick,
-                        customMarkerContent = customMarkerContent,
-                    )
+            if (
+                manager != null &&
+                    renderer != null &&
+                    clusterSettings.enabled &&
+                    clusteringDelegate != null
+            ) {
+                updateClusteringMarkers(
+                    manager = manager,
+                    renderer = renderer,
+                    mapDelegate = mapDelegate,
+                    clusteringDelegate = clusteringDelegate,
+                    markers = markers,
+                    markerMapping = markerMapping,
+                )
             } else {
-                currentClusteringDelegate = null
                 disableClusteringAndUpdateMarkers(
                     manager = manager,
                     mapView = utilsMapView,

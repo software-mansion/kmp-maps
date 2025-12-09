@@ -14,7 +14,6 @@ import cocoapods.GoogleMaps.kGMSTypeTerrain
 import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
 import cocoapods.Google_Maps_iOS_Utils.GMSMapStyle
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
 import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterIconGenerator
@@ -24,7 +23,6 @@ import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
 import cocoapods.Google_Maps_iOS_Utils.GMUNonHierarchicalDistanceBasedAlgorithm
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
-import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.GoogleMapsMapStyleOptions
 import com.swmansion.kmpmaps.core.MapType
 import com.swmansion.kmpmaps.core.MapUISettings
@@ -353,9 +351,9 @@ internal fun parseHexToUIColor(hexInput: String?): UIColor? {
 /** Data class holding initialized clustering components for Google Maps. */
 @OptIn(ExperimentalForeignApi::class)
 internal data class ClusteringComponents(
-    val manager: cocoapods.Google_Maps_iOS_Utils.GMUClusterManager,
-    val renderer: cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer,
-    val clusteringDelegate: MarkerClusterManagerDelegate,
+    val manager: GMUClusterManager?,
+    val renderer: GMUDefaultClusterRenderer?,
+    val clusteringDelegate: MarkerClusterManagerDelegate?,
 )
 
 /**
@@ -363,34 +361,21 @@ internal data class ClusteringComponents(
  *
  * @param mapView The map view to configure clustering for
  * @param mapDelegate The map delegate for handling map events
- * @param clusterSettings Configuration settings for clustering
- * @param onMarkerClick Callback for marker click events
- * @param customMarkerContent Map of custom marker content composables
+ * @param clusteringDelegate The clustering delegate for handling clustering events
  * @return Configured clustering components
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun initializeClustering(
     mapView: UtilsGMSMapView,
     mapDelegate: MapDelegate,
-    clusterSettings: ClusterSettings,
-    onMarkerClick: ((Marker) -> Unit)?,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    clusteringDelegate: MarkerClusterManagerDelegate?,
 ): ClusteringComponents {
     val iconGenerator = GMUDefaultClusterIconGenerator()
     val algorithm = GMUNonHierarchicalDistanceBasedAlgorithm()
     val renderer = GMUDefaultClusterRenderer(mapView, iconGenerator)
     val manager = GMUClusterManager(mapView, algorithm, renderer)
 
-    val clusteringDelegate =
-        MarkerClusterManagerDelegate(
-            mapView = mapView,
-            clusterSettings = clusterSettings,
-            onMarkerClick = onMarkerClick,
-            customMarkerContent = customMarkerContent,
-        )
-
-    val utilsDelegate = (mapDelegate as Any) as? GMSMapViewDelegateProtocol
-    manager.setDelegate(clusteringDelegate, mapDelegate = utilsDelegate)
+    manager.setDelegate(clusteringDelegate, mapDelegate)
     renderer.delegate = clusteringDelegate
 
     return ClusteringComponents(
@@ -405,48 +390,32 @@ internal fun initializeClustering(
  *
  * @param manager The cluster manager instance
  * @param renderer The cluster renderer instance
- * @param mapView The map view
  * @param mapDelegate The map delegate for handling map events
  * @param markers List of markers to cluster
- * @param markerMapping Mutable map to store marker mappings (will be cleared)
- * @param clusterSettings Configuration settings for clustering
- * @param onMarkerClick Callback for marker click events
- * @param customMarkerContent Map of custom marker content composables
+ * @param markerMapping Mutable map to store marker mappings
  * @return The created clustering delegate
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateClusteringMarkers(
     manager: GMUClusterManager,
     renderer: GMUDefaultClusterRenderer,
-    mapView: UtilsGMSMapView,
     mapDelegate: MapDelegate?,
+    clusteringDelegate: MarkerClusterManagerDelegate,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
-    clusterSettings: ClusterSettings,
-    onMarkerClick: ((Marker) -> Unit)?,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
-): MarkerClusterManagerDelegate {
+) {
     markerMapping.keys.forEach { it.setMap(null) }
     markerMapping.clear()
 
-    val clusteringDelegate =
-        MarkerClusterManagerDelegate(
-            mapView = mapView,
-            clusterSettings = clusterSettings,
-            onMarkerClick = onMarkerClick,
-            customMarkerContent = customMarkerContent,
-        )
-
-    val utilsDelegate = (mapDelegate as Any) as? GMSMapViewDelegateProtocol
-    manager.setDelegate(clusteringDelegate, mapDelegate = utilsDelegate)
+    manager.setDelegate(clusteringDelegate, mapDelegate)
     renderer.delegate = clusteringDelegate
 
     manager.clearItems()
-    val items = markers.map { MarkerClusterItem(it) }
+
+    val items = markers.map(::MarkerClusterItem)
+
     manager.addItems(items)
     manager.cluster()
-
-    return clusteringDelegate
 }
 
 /**
