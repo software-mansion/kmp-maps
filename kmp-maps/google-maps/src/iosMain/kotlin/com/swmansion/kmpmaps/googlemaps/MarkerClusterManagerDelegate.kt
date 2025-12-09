@@ -35,15 +35,10 @@ internal class MarkerClusterManagerDelegate(
 
         if (userData is MarkerClusterItem) {
             val marker = userData.marker
-            val content = marker.contentId?.let { customMarkerContent[it] }
             val iconView =
                 willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
 
-            if (content != null) {
-                iconView.setContent(content)
-            } else {
-                iconView.setContent { DefaultPin() }
-            }
+            iconView.setContent(customMarkerContent[marker.contentId] ?: { DefaultPin() })
             willRenderMarker.setIconView(iconView)
             willRenderMarker.setTracksViewChanges(true)
             willRenderMarker.setTitle(marker.title)
@@ -112,9 +107,7 @@ internal class MarkerClusterManagerDelegate(
         clusterManager: GMUClusterManager,
         didTapClusterItem: GMUClusterItemProtocol,
     ): Boolean {
-        if (didTapClusterItem is MarkerClusterItem) {
-            onMarkerClick?.invoke(didTapClusterItem.marker)
-        }
+        if (didTapClusterItem is MarkerClusterItem) onMarkerClick?.invoke(didTapClusterItem.marker)
         return true
     }
 }

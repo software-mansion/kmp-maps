@@ -237,5 +237,5 @@ public actual fun Map(
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
 
-    LaunchedEffect(mapView) { mapView?.let { onMapLoaded?.invoke() } }
+    LaunchedEffect(mapView) { if (mapView != null) onMapLoaded?.invoke() }
 }
