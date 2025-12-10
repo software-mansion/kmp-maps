@@ -33,42 +33,46 @@ internal class MarkerClusterManagerDelegate(
     override fun renderer(renderer: GMUClusterRendererProtocol, willRenderMarker: GMSMarker) {
         val userData = willRenderMarker.userData()
 
-        if (userData is MarkerClusterItem) {
-            val marker = userData.marker
-            val iconView =
-                willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
+        when (userData) {
+            is MarkerClusterItem -> {
+                val marker = userData.marker
+                val iconView =
+                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
 
-            iconView.setContent(customMarkerContent[marker.contentId] ?: { DefaultPin() })
-            willRenderMarker.setIconView(iconView)
-            willRenderMarker.setTracksViewChanges(true)
-            willRenderMarker.setTitle(marker.title)
-            willRenderMarker.setZIndex(marker.androidMarkerOptions.zIndex?.toInt() ?: 0)
-        } else if (userData is GMUClusterProtocol) {
-            val itemsList = userData.items
-            val markers = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
-            val count = userData.count.toInt()
-            val iconView =
-                willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
-
-            if (clusterSettings.clusterContent != null) {
-
-                val kmpCluster =
-                    Cluster(
-                        coordinates =
-                            Coordinates(
-                                userData.position.useContents { latitude },
-                                userData.position.useContents { longitude },
-                            ),
-                        size = count,
-                        items = markers,
-                    )
-
-                clusterSettings.clusterContent?.let { iconView.setContent { it(kmpCluster) } }
-            } else {
-                iconView.setContent { DefaultCluster(size = count) }
+                iconView.setContent(customMarkerContent[marker.contentId] ?: { DefaultPin() })
+                willRenderMarker.setIconView(iconView)
+                willRenderMarker.setTracksViewChanges(true)
+                willRenderMarker.setTitle(marker.title)
+                willRenderMarker.setZIndex(marker.androidMarkerOptions.zIndex?.toInt() ?: 0)
             }
-            willRenderMarker.setIconView(iconView)
-            willRenderMarker.setTracksViewChanges(true)
+            is GMUClusterProtocol -> {
+                val itemsList = userData.items
+                val markers = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
+                val count = userData.count.toInt()
+                val iconView =
+                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
+
+                if (clusterSettings.clusterContent != null) {
+
+                    val kmpCluster =
+                        Cluster(
+                            coordinates =
+                                Coordinates(
+                                    userData.position.useContents { latitude },
+                                    userData.position.useContents { longitude },
+                                ),
+                            size = count,
+                            items = markers,
+                        )
+
+                    clusterSettings.clusterContent?.let { iconView.setContent { it(kmpCluster) } }
+                } else {
+                    iconView.setContent { DefaultCluster(size = count) }
+                }
+                willRenderMarker.setIconView(iconView)
+                willRenderMarker.setTracksViewChanges(true)
+            }
+            else -> return
         }
     }
 
