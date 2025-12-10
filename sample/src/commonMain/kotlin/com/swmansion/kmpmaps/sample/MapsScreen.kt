@@ -71,16 +71,16 @@ internal fun MapsScreen() {
         mutableStateOf(
             CameraPosition(
                 coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
-                zoom = 13f,
+                zoom = 10f,
             )
         )
     }
     var showAllComponents by remember { mutableStateOf(true) }
-    var useGoogleMapsMapView by remember { mutableStateOf(false) }
+    var useGoogleMapsMapView by remember { mutableStateOf(true) }
     var showPointGeoJson by remember { mutableStateOf(false) }
     var showPolygonGeoJson by remember { mutableStateOf(false) }
     var showLineGeoJson by remember { mutableStateOf(false) }
-    var clusteringEnabled by remember { mutableStateOf(false) }
+    var clusteringEnabled by remember { mutableStateOf(true) }
 
     val geoJsonLayers =
         remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {

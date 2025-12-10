@@ -1,6 +1,5 @@
 package com.swmansion.kmpmaps.googlemaps
 
-import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMUFeature
 import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
@@ -26,8 +25,8 @@ internal class GeoJsonRendererManager {
     private var mapView: UtilsGMSMapView? = null
     private var renderers: Map<Int, GMUGeometryRenderer> = emptyMap()
 
-    fun attach(view: GMSMapView) {
-        mapView = view as UtilsGMSMapView
+    fun attach(view: UtilsGMSMapView) {
+        mapView = view
     }
 
     fun clear() {

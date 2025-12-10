@@ -3,7 +3,7 @@ package com.swmansion.kmpmaps.googlemaps
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeUIViewController
-import cocoapods.GoogleMaps.GMSMarker
+import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import com.swmansion.kmpmaps.core.AutoSizeBox
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -38,6 +38,6 @@ internal class CustomMarkers(private val gmsMarker: GMSMarker) :
         val currentOrigin = frame.useContents { origin }
         setFrame(CGRectMake(currentOrigin.x, currentOrigin.y, width, height))
         controller?.view?.setFrame(bounds)
-        gmsMarker.groundAnchor = platform.CoreGraphics.CGPointMake(0.5, 1.0)
+        gmsMarker.setGroundAnchor(platform.CoreGraphics.CGPointMake(0.5, 1.0))
     }
 }
