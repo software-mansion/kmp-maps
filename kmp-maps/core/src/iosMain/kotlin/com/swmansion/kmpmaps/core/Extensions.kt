@@ -16,6 +16,7 @@ import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPoint
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCoordinateRegion
 import platform.MapKit.MKCoordinateRegionMake
@@ -145,14 +146,15 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
  * Updates Apple Maps markers by removing existing annotations and adding new ones.
  *
  * @param markers List of MapMarker objects to display
- * @return MutableMap mapping MKPointAnnotation to MapMarker for click handling
+ * @return MutableMap mapping MKAnnotationProtocol to MapMarker for click handling
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsMarkers(
     markers: List<Marker>
-): MutableMap<MKPointAnnotation, Marker> {
+): MutableMap<MKAnnotationProtocol, Marker> {
     removeAnnotations(this.annotations)
-    val markerMapping = mutableMapOf<MKPointAnnotation, Marker>()
+    val markerMapping = mutableMapOf<MKAnnotationProtocol, Marker>()
+
     markers.forEach { marker ->
         val mkAnnotation =
             MKPointAnnotation().apply {
