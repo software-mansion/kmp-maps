@@ -123,9 +123,9 @@ internal class MapDelegate(
                 val memberAnnotations = annotation.memberAnnotations
 
                 val markers =
-                    memberAnnotations.filterIsInstance<MKPointAnnotation>().mapNotNull {
-                        markerMapping[it]
-                    }
+                    memberAnnotations
+                        .filterIsInstance<MKPointAnnotation>()
+                        .mapNotNull(markerMapping::get)
 
                 if (markers.isNotEmpty()) {
                     val clusterCoordinate =
@@ -179,15 +179,10 @@ internal class MapDelegate(
             if (clusterSettings.clusterContent == null) return null
 
             val reuseId = "kmp_cluster_view"
-            var clusterView =
-                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers
-
-            if (clusterView == null) {
-                clusterView =
-                    CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
-            } else {
-                clusterView.annotation = viewForAnnotation
-            }
+            val clusterView =
+                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers)
+                    ?.apply { annotation = viewForAnnotation }
+                    ?: CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
 
             val memberAnnotations = viewForAnnotation.memberAnnotations
             val markers =
@@ -234,18 +229,14 @@ internal class MapDelegate(
 
         if (marker != null) {
             val reuseId = "kmp_standard_marker"
-            var view =
-                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
-                    as? MKMarkerAnnotationView
-            if (view == null) {
-                view =
-                    MKMarkerAnnotationView(
+            val view =
+                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
+                        as? MKMarkerAnnotationView)
+                    ?.apply { annotation = viewForAnnotation }
+                    ?: MKMarkerAnnotationView(
                         annotation = viewForAnnotation,
                         reuseIdentifier = reuseId,
                     )
-            } else {
-                view.annotation = viewForAnnotation
-            }
 
             view.canShowCallout = true
             view.markerTintColor = marker.iosMarkerOptions?.tintColor?.toAppleMapsColor()
