@@ -9,6 +9,7 @@ import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCircleRenderer
+import platform.MapKit.MKClusterAnnotation
 import platform.MapKit.MKMapView
 import platform.MapKit.MKMapViewDelegateProtocol
 import platform.MapKit.MKMarkerAnnotationView
@@ -32,7 +33,7 @@ internal class MapDelegate(
     private val circleStyles: MutableMap<MKCircle, Circle>,
     private val polygonStyles: MutableMap<MKPolygon, Polygon>,
     private val polylineStyles: MutableMap<MKPolyline, Polyline>,
-    private val markerMapping: MutableMap<MKPointAnnotation, Marker>,
+    private val markerMapping: MutableMap<MKAnnotationProtocol, Marker>,
     private var onMarkerClick: ((Marker) -> Unit)?,
     private var onCircleClick: ((Circle) -> Unit)?,
     private var onPolygonClick: ((Polygon) -> Unit)?,
@@ -45,6 +46,7 @@ internal class MapDelegate(
     private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
     private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     private val customMarkerContent: Map<String, @Composable () -> Unit>,
+    private val clusterSettings: ClusterSettings,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
     /**
@@ -114,9 +116,36 @@ internal class MapDelegate(
      * @param didSelectAnnotationView The annotation view that was selected
      */
     override fun mapView(mapView: MKMapView, didSelectAnnotationView: MKAnnotationView) {
-        val annotation = didSelectAnnotationView.annotation
-        if (annotation is MKPointAnnotation) {
-            markerMapping[annotation]?.let { marker -> onMarkerClick?.invoke(marker) }
+        val annotation = didSelectAnnotationView.annotation ?: return
+
+        when (annotation) {
+            is MKClusterAnnotation -> {
+                val memberAnnotations = annotation.memberAnnotations
+
+                val markers =
+                    memberAnnotations
+                        .filterIsInstance<MKPointAnnotation>()
+                        .mapNotNull(markerMapping::get)
+
+                if (markers.isNotEmpty()) {
+                    val clusterCoordinate =
+                        annotation.coordinate.useContents { Coordinates(latitude, longitude) }
+
+                    val cluster =
+                        Cluster(
+                            coordinates = clusterCoordinate,
+                            size = markers.size,
+                            items = markers,
+                        )
+
+                    val consumed = clusterSettings.onClusterClick?.invoke(cluster) ?: false
+
+                    if (!consumed) mapView.showAnnotations(memberAnnotations, animated = true)
+                }
+                mapView.deselectAnnotation(annotation, animated = false)
+            }
+            is MKPointAnnotation ->
+                markerMapping[annotation]?.let { marker -> onMarkerClick?.invoke(marker) }
         }
     }
 
@@ -143,9 +172,38 @@ internal class MapDelegate(
         viewForAnnotation: MKAnnotationProtocol,
     ): MKAnnotationView? {
         if (viewForAnnotation is MKUserLocation) return null
-        val point = viewForAnnotation as? MKPointAnnotation ?: return null
 
+        if (viewForAnnotation is MKClusterAnnotation) {
+            if (clusterSettings.clusterContent == null) return null
+
+            val reuseId = "kmp_cluster_view"
+            val clusterView =
+                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers)
+                    ?.apply { annotation = viewForAnnotation }
+                    ?: CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
+
+            val memberAnnotations = viewForAnnotation.memberAnnotations
+            val markers =
+                memberAnnotations.filterIsInstance<MKPointAnnotation>().mapNotNull {
+                    markerMapping[it]
+                }
+
+            val clusterCoordinate =
+                viewForAnnotation.coordinate.useContents { Coordinates(latitude, longitude) }
+
+            val cluster =
+                Cluster(coordinates = clusterCoordinate, size = markers.size, items = markers)
+
+            clusterView.updateContent { clusterSettings.clusterContent.invoke(cluster) }
+
+            return clusterView
+        }
+
+        val point = viewForAnnotation as? MKPointAnnotation ?: return null
         val marker = markerMapping[point]
+
+        val clusterId = if (clusterSettings.enabled) "kmp_marker_cluster_group" else null
+
         if (
             marker != null &&
                 marker.contentId != null &&
@@ -162,7 +220,28 @@ internal class MapDelegate(
             annotationView.canShowCallout = false
             annotationView.updateContent(content)
 
+            annotationView.clusteringIdentifier = clusterId
+
             return annotationView
+        }
+
+        if (marker != null) {
+            val reuseId = "kmp_standard_marker"
+            val view =
+                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
+                        as? MKMarkerAnnotationView)
+                    ?.apply { annotation = viewForAnnotation }
+                    ?: MKMarkerAnnotationView(
+                        annotation = viewForAnnotation,
+                        reuseIdentifier = reuseId,
+                    )
+
+            view.canShowCallout = true
+            view.markerTintColor = marker.iosMarkerOptions?.tintColor?.toAppleMapsColor()
+
+            view.clusteringIdentifier = clusterId
+
+            return view
         }
 
         geoJsonPointStyles[point]?.let { style ->
