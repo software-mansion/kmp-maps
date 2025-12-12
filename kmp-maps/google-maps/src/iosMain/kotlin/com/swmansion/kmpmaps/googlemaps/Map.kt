@@ -61,6 +61,7 @@ public actual fun Map(
     var mapView by remember { mutableStateOf<UtilsGMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val geoJsonManager = remember { GeoJsonRendererManager() }
+    var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
 
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     var hasLocationPermission by remember {
@@ -114,7 +115,8 @@ public actual fun Map(
 
     LaunchedEffect(mapView, geoJsonLayers) {
         if (mapView == null) return@LaunchedEffect
-        geoJsonManager.render(geoJsonLayers)
+        geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers, clusterSettings)
+        geoJsonExtractedMarkers.forEach { println("[#111] Extracted marker: ${it.coordinates}") }
     }
 
     UIKitView(
@@ -216,7 +218,7 @@ public actual fun Map(
                     renderer = renderer,
                     mapDelegate = mapDelegate,
                     clusteringDelegate = clusteringDelegate,
-                    markers = markers,
+                    markers = (markers + geoJsonExtractedMarkers).distinct(),
                     markerMapping = markerMapping,
                 )
             } else {
@@ -224,7 +226,7 @@ public actual fun Map(
                     manager = manager,
                     mapView = utilsMapView,
                     mapDelegate = mapDelegate,
-                    markers = markers,
+                    markers = (markers + geoJsonExtractedMarkers).distinct(),
                     markerMapping = markerMapping,
                     customMarkerContent = customMarkerContent,
                 )

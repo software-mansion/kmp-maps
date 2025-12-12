@@ -8,9 +8,13 @@ import cocoapods.Google_Maps_iOS_Utils.GMULineString
 import cocoapods.Google_Maps_iOS_Utils.GMUPoint
 import cocoapods.Google_Maps_iOS_Utils.GMUPolygon
 import cocoapods.Google_Maps_iOS_Utils.GMUStyle
+import com.swmansion.kmpmaps.core.ClusterSettings
+import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
+import com.swmansion.kmpmaps.core.Marker
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPointMake
 import platform.Foundation.NSData
 import platform.Foundation.NSDictionary
@@ -34,8 +38,9 @@ internal class GeoJsonRendererManager {
         renderers = emptyMap()
     }
 
-    fun render(layers: List<GeoJsonLayer>) {
-        val view = mapView ?: return
+    fun render(layers: List<GeoJsonLayer>, clusterSettings: ClusterSettings): List<Marker> {
+        val view = mapView ?: return emptyList()
+        val allExtractedMarkers = mutableListOf<Marker>()
 
         val desired = layers.indices.toSet()
         val toRemove = renderers.keys - desired
@@ -112,9 +117,24 @@ internal class GeoJsonRendererManager {
                 )
 
             var featureIdx = 0
-            parser.features.forEach { feature ->
-                val f = feature as? GMUFeature ?: return@forEach
-                val dict = f.properties as? NSDictionary
+            val featuresToRender = mutableListOf<GMUFeature>()
+            val features = parser.features as? List<GMUFeature> ?: emptyList()
+
+            features.forEach { feature ->
+                val dict = feature.properties as? NSDictionary
+
+                if (feature.geometry is GMUPoint && clusterSettings.enabled) {
+                    val point = feature.geometry as GMUPoint
+
+                    val coordinates =
+                        point.coordinate.useContents { Coordinates(latitude, longitude) }
+                    val title = getString(dict, "title")
+
+                    val marker = Marker(coordinates = coordinates, title = title)
+                    allExtractedMarkers.add(marker)
+                    return@forEach
+                }
+
                 val strokeHex = getString(dict, "stroke")
                 val strokeOpacity = getDouble(dict, "stroke-opacity")?.coerceIn(0.0, 1.0)
                 val strokeWidthJson = getDouble(dict, "stroke-width")
@@ -122,7 +142,7 @@ internal class GeoJsonRendererManager {
                 val fillHex = getString(dict, "fill")
                 val fillOpacity = getDouble(dict, "fill-opacity")?.coerceIn(0.0, 1.0)
 
-                when (f.geometry) {
+                when (feature.geometry) {
                     is GMULineString -> {
                         val strokeUIColor =
                             (parseHexToUIColor(strokeHex) ?: lineStrokeColor).let { c ->
@@ -148,7 +168,7 @@ internal class GeoJsonRendererManager {
                                 hasFill = false,
                                 hasStroke = true,
                             )
-                        f.style = featureLineStyle
+                        feature.style = featureLineStyle
                         featureIdx += 1
                     }
                     is GMUPolygon -> {
@@ -186,7 +206,7 @@ internal class GeoJsonRendererManager {
                                 hasFill = hasFill,
                                 hasStroke = true,
                             )
-                        f.style = featurePolygonStyle
+                        feature.style = featurePolygonStyle
                         featureIdx += 1
                     }
                     is GMUPoint -> {
@@ -206,24 +226,26 @@ internal class GeoJsonRendererManager {
                                 hasFill = false,
                                 hasStroke = false,
                             )
-                        f.style = featurePointStyle
+                        feature.style = featurePointStyle
                         featureIdx += 1
                     }
                     else -> {
-                        f.style = polygonStyle
+                        feature.style = polygonStyle
                     }
                 }
+                featuresToRender.add(feature)
             }
 
             val renderer =
                 GMUGeometryRenderer(
                     map = view,
-                    geometries = parser.features,
+                    geometries = featuresToRender,
                     styles = listOf(lineStyle, polygonStyle, pointStyle),
                 )
             renderer.render()
 
             renderers = renderers + (index to renderer)
         }
+        return allExtractedMarkers
     }
 }
