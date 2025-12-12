@@ -474,8 +474,10 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
     geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
     geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     polylineStyles: Map<MKPolyline, Polyline>,
-): Map<Int, MKGeoJsonRenderedLayer> {
+    clusterSettings: ClusterSettings,
+): Pair<Map<Int, MKGeoJsonRenderedLayer>, List<Marker>> {
     var renderedGeoJsonLayers = currentRendered
+    val allExtractedMarkers = mutableListOf<Marker>()
 
     val desiredKeys = geoJsonLayers.indices.toSet()
     val keysToRemove = renderedGeoJsonLayers.keys - desiredKeys
@@ -502,7 +504,7 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             return@forEachIndexed
         }
 
-        val rendered = renderGeoJson(layer.geoJson)
+        val rendered = renderGeoJson(layer.geoJson, clusterSettings)
         if (rendered != null) {
             rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
             rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
@@ -510,6 +512,8 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
 
             rendered.overlays.forEach(this::addOverlay)
             rendered.annotations.forEach(this::addAnnotation)
+
+            allExtractedMarkers.addAll(rendered.extractedMarkers)
 
             this.reapplyCorePolylineStyles(polylineStyles)
 
@@ -519,5 +523,5 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
         }
     }
 
-    return renderedGeoJsonLayers
+    return renderedGeoJsonLayers to allExtractedMarkers
 }

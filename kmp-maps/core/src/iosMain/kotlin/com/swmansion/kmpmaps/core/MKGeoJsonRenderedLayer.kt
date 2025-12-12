@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import platform.Foundation.NSArray
 import platform.Foundation.NSDictionary
 import platform.Foundation.NSJSONSerialization
@@ -47,6 +48,7 @@ public data class AppleMapsGeoJsonPointStyle(val visible: Boolean = true)
 public class MKGeoJsonRenderedLayer(
     internal val overlays: List<MKOverlayProtocol>,
     internal val annotations: List<MKAnnotationProtocol>,
+    internal val extractedMarkers: List<Marker>,
     internal val polylineStyles: Map<MKPolyline, AppleMapsGeoJsonLineStyle> = emptyMap(),
     internal val polygonStyles: Map<MKPolygon, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
     internal val pointStyles: Map<MKPointAnnotation, AppleMapsGeoJsonPointStyle> = emptyMap(),
@@ -65,13 +67,18 @@ public class MKGeoJsonRenderedLayer(
  * @return A handle to the rendered layer, or null if decoding fails.
  */
 @OptIn(ExperimentalForeignApi::class)
-public fun MKMapView.renderGeoJson(geoJson: String): MKGeoJsonRenderedLayer? {
+public fun MKMapView.renderGeoJson(
+    geoJson: String,
+    clusterSettings: ClusterSettings,
+): MKGeoJsonRenderedLayer? {
     val data = (geoJson as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return null
     val decoder = MKGeoJSONDecoder()
     val objects = decoder.geoJSONObjectsWithData(data, error = null) ?: return null
 
     val annotations = mutableListOf<MKAnnotationProtocol>()
     val overlays = mutableListOf<MKOverlayProtocol>()
+    val extractedMarkers = mutableListOf<Marker>()
+
     val polylineStyles = mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>()
     val polygonStyles = mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>()
     val pointStyles = mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
@@ -82,17 +89,20 @@ public fun MKMapView.renderGeoJson(geoJson: String): MKGeoJsonRenderedLayer? {
             mapView = this,
             overlays = overlays,
             annotations = annotations,
+            extractedMarkers = extractedMarkers,
             polylineStyles = polylineStyles,
             polygonStyles = polygonStyles,
             pointStyles = pointStyles,
             defaults = null,
             featureProps = null,
+            clusterSettings = clusterSettings,
         )
     }
 
     return MKGeoJsonRenderedLayer(
         overlays = overlays,
         annotations = annotations,
+        extractedMarkers = extractedMarkers,
         polylineStyles = polylineStyles,
         polygonStyles = polygonStyles,
         pointStyles = pointStyles,
@@ -119,11 +129,13 @@ private fun collectAndAdd(
     mapView: MKMapView,
     overlays: MutableList<MKOverlayProtocol>,
     annotations: MutableList<MKAnnotationProtocol>,
+    extractedMarkers: MutableList<Marker>,
     polylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
     polygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
     pointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     defaults: GeoJsonLayer?,
     featureProps: Map<String, Any?>?,
+    clusterSettings: ClusterSettings,
 ) {
     when (obj) {
         is MKGeoJSONFeature -> {
@@ -134,11 +146,13 @@ private fun collectAndAdd(
                     mapView,
                     overlays,
                     annotations,
+                    extractedMarkers,
                     polylineStyles,
                     polygonStyles,
                     pointStyles,
                     defaults,
                     props,
+                    clusterSettings,
                 )
             }
         }
@@ -155,21 +169,29 @@ private fun collectAndAdd(
             overlays += obj
         }
         is MKPointAnnotation -> {
-            val title =
-                featureProps?.string("title")
-                    ?: featureProps?.string("name")
-                    ?: defaults?.pointStyle?.pointTitle
-            val subtitle =
-                featureProps?.string("snippet")
-                    ?: featureProps?.string("description")
-                    ?: defaults?.pointStyle?.snippet
-            if (title != null) obj.setTitle(title)
-            if (subtitle != null) obj.setSubtitle(subtitle)
+            if (clusterSettings.enabled) {
+                val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
+                val title = featureProps?.string("title")
 
-            val style = buildPointStyle(defaults, featureProps)
-            pointStyles[obj] = style
+                val marker = Marker(coordinates = coordinates, title = title)
+                extractedMarkers.add(marker)
+            } else {
+                val title =
+                    featureProps?.string("title")
+                        ?: featureProps?.string("name")
+                        ?: defaults?.pointStyle?.pointTitle
+                val subtitle =
+                    featureProps?.string("snippet")
+                        ?: featureProps?.string("description")
+                        ?: defaults?.pointStyle?.snippet
+                if (title != null) obj.setTitle(title)
+                if (subtitle != null) obj.setSubtitle(subtitle)
 
-            annotations += obj
+                val style = buildPointStyle(defaults, featureProps)
+                pointStyles[obj] = style
+
+                annotations += obj
+            }
         }
         is NSArray -> {
             val n = obj.count.toInt()
@@ -180,11 +202,13 @@ private fun collectAndAdd(
                     mapView,
                     overlays,
                     annotations,
+                    extractedMarkers,
                     polylineStyles,
                     polygonStyles,
                     pointStyles,
                     defaults,
                     featureProps,
+                    clusterSettings,
                 )
             }
         }
