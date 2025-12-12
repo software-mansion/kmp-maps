@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,10 @@ public actual fun Map(
         mutableStateOf<Map<Int, MKGeoJsonRenderedLayer>>(emptyMap())
     }
     var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
+    val allMarkers by
+        remember(markers, geoJsonExtractedMarkers) {
+            derivedStateOf { markers + geoJsonExtractedMarkers }
+        }
 
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
@@ -162,9 +167,7 @@ public actual fun Map(
             mapDelegate = delegate
 
             markerMapping.clear()
-            markerMapping.putAll(
-                mkMapView.updateAppleMapsMarkers((markers + geoJsonExtractedMarkers).distinct())
-            )
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(allMarkers))
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
@@ -236,9 +239,7 @@ public actual fun Map(
             }
 
             markerMapping.clear()
-            markerMapping.putAll(
-                mkMapView.updateAppleMapsMarkers((markers + geoJsonExtractedMarkers).distinct())
-            )
+            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(allMarkers))
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
