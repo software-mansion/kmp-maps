@@ -60,6 +60,7 @@ public actual fun Map(
     var renderedGeoJsonLayers by remember {
         mutableStateOf<Map<Int, MKGeoJsonRenderedLayer>>(emptyMap())
     }
+    var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
 
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
@@ -93,9 +94,9 @@ public actual fun Map(
         }
     }
 
-    LaunchedEffect(mapView, geoJsonLayers) {
+    LaunchedEffect(mapView, geoJsonLayers, clusterSettings.enabled) {
         val view = mapView ?: return@LaunchedEffect
-        renderedGeoJsonLayers =
+        val result =
             view.updateRenderedGeoJsonLayers(
                 geoJsonLayers = geoJsonLayers,
                 currentRendered = renderedGeoJsonLayers,
@@ -103,7 +104,10 @@ public actual fun Map(
                 geoJsonPolylineStyles = geoJsonPolylineStyles,
                 geoJsonPointStyles = geoJsonPointStyles,
                 polylineStyles = polylineStyles,
+                clusterSettings = clusterSettings,
             )
+        renderedGeoJsonLayers = result.first
+        geoJsonExtractedMarkers = result.second
     }
 
     UIKitView(
@@ -158,7 +162,9 @@ public actual fun Map(
             mapDelegate = delegate
 
             markerMapping.clear()
-            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
+            markerMapping.putAll(
+                mkMapView.updateAppleMapsMarkers((markers + geoJsonExtractedMarkers).distinct())
+            )
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
@@ -230,7 +236,9 @@ public actual fun Map(
             }
 
             markerMapping.clear()
-            markerMapping.putAll(mkMapView.updateAppleMapsMarkers(markers))
+            markerMapping.putAll(
+                mkMapView.updateAppleMapsMarkers((markers + geoJsonExtractedMarkers).distinct())
+            )
             mkMapView.updateAppleMapsCircles(circles, circleStyles)
             mkMapView.updateAppleMapsPolygons(polygons, polygonStyles)
             mkMapView.updateAppleMapsPolylines(polylines, polylineStyles)
