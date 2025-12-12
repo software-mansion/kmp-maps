@@ -4,9 +4,17 @@ on:
   pull_request:
   push:
     branches: [main]
+permissions:
+  contents: read
 jobs:
   check-formatting:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: ktfmt --dry-run --kotlinlang-style --set-exit-if-changed .
+      - uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 24
+      - run: |
+          curl -sSL -o ktfmt.jar https://github.com/facebook/ktfmt/releases/download/v0.58/ktfmt-0.58-with-dependencies.jar
+          java -jar ktfmt.jar --dry-run --kotlinlang-style --set-exit-if-changed .
