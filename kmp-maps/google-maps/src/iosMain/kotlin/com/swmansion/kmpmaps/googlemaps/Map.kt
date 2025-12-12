@@ -62,7 +62,8 @@ public actual fun Map(
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val geoJsonManager = remember { GeoJsonRendererManager() }
     var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
-    val allMarkers = remember(markers, geoJsonExtractedMarkers) { markers + geoJsonExtractedMarkers }
+    val allMarkers =
+        remember(markers, geoJsonExtractedMarkers) { markers + geoJsonExtractedMarkers }
 
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     var hasLocationPermission by remember {
