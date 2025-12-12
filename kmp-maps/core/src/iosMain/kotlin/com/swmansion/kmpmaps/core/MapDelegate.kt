@@ -140,9 +140,7 @@ internal class MapDelegate(
 
                     val consumed = clusterSettings.onClusterClick?.invoke(cluster) ?: false
 
-                    if (!consumed) {
-                        mapView.showAnnotations(memberAnnotations, animated = true)
-                    }
+                    if (!consumed) mapView.showAnnotations(memberAnnotations, animated = true)
                 }
                 mapView.deselectAnnotation(annotation, animated = false)
             }
