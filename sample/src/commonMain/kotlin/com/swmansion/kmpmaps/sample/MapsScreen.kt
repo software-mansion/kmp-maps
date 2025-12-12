@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.exclude
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +20,19 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.Surface
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +68,7 @@ import kmp_maps.sample.generated.resources.swmansion_logo
 import kotlin.random.Random
 import org.jetbrains.compose.resources.painterResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MapsScreen() {
     var selectedMapType by remember { mutableStateOf(MapType.NORMAL) }
@@ -81,6 +88,9 @@ internal fun MapsScreen() {
     var showPolygonGeoJson by remember { mutableStateOf(false) }
     var showLineGeoJson by remember { mutableStateOf(false) }
     var clusteringEnabled by remember { mutableStateOf(true) }
+
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
 
     val geoJsonLayers =
         remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
@@ -122,9 +132,15 @@ internal fun MapsScreen() {
                 }
         )
 
-    Column(Modifier.fillMaxHeight(), Arrangement.Bottom) {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { showBottomSheet = true }) {
+                Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
+            }
+        }
+    ) {
         Map(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxSize(),
             mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
             cameraPosition = currentCameraPosition,
             properties =
@@ -191,7 +207,13 @@ internal fun MapsScreen() {
             geoJsonLayers = geoJsonLayers,
             customMarkerContent = customMarkerContent,
         )
-        Surface {
+    }
+
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = bottomSheetState,
+        ) {
             Column(
                 Modifier.fillMaxWidth()
                     .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))

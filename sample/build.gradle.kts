@@ -53,6 +53,7 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
+            implementation(compose.materialIconsExtended)
             implementation(project(":kmp-maps:core"))
             implementation(project(":kmp-maps:google-maps"))
         }
