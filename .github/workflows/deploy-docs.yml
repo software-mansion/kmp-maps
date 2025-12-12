@@ -16,19 +16,10 @@ concurrency:
 
 jobs:
   build-docs:
-    runs-on: macos-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: zulu
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
 
       - name: Generate Dokka documentation
         run: ./gradlew :kmp-maps:dokkaGeneratePublicationHtml
@@ -45,7 +36,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build-docs
     steps:
       - name: Deploy to GitHub Pages
