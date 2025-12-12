@@ -116,7 +116,6 @@ public actual fun Map(
     LaunchedEffect(mapView, geoJsonLayers) {
         if (mapView == null) return@LaunchedEffect
         geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers, clusterSettings)
-        geoJsonExtractedMarkers.forEach { println("[#111] Extracted marker: ${it.coordinates}") }
     }
 
     UIKitView(
