@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,10 +62,7 @@ public actual fun Map(
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val geoJsonManager = remember { GeoJsonRendererManager() }
     var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
-    val allMarkers by
-        remember(markers, geoJsonExtractedMarkers) {
-            derivedStateOf { markers + geoJsonExtractedMarkers }
-        }
+    val allMarkers = remember(markers, geoJsonExtractedMarkers) { markers + geoJsonExtractedMarkers }
 
     val locationPermissionHandler = remember { LocationPermissionHandler() }
     var hasLocationPermission by remember {
