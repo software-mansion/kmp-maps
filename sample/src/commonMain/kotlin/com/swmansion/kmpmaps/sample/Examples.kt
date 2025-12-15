@@ -1,13 +1,43 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.swmansion.kmpmaps.core.AndroidMarkerOptions
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import kmp_maps.sample.generated.resources.Res
+import kmp_maps.sample.generated.resources.swmansion_logo
+import org.jetbrains.compose.resources.painterResource
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
 val cracowMainStationPin = Coordinates(latitude = 50.06839615782847, longitude = 19.947491884231567)
@@ -94,6 +124,74 @@ val clusterMarkers =
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Time: 09:33:31"),
         ),
     ) + exampleMarkers
+
+val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
+    mapOf(
+        "swmansion_marker" to
+            @Composable { marker ->
+                Box(modifier = Modifier.height(40.dp).width(80.dp)) {
+                    Image(
+                        painter = painterResource(Res.drawable.swmansion_logo),
+                        contentDescription = "Software Mansion logo",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
+                    )
+                }
+            },
+        "colored_pin_marker" to
+            { marker ->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Pin",
+                        tint = Color.Magenta,
+                        modifier = Modifier.size(48.dp),
+                    )
+                    Surface(
+                        color = Color.Black.copy(alpha = 0.7f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(top = 2.dp),
+                    ) {
+                        Text(
+                            text = marker.title ?: "",
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        )
+                    }
+                }
+            },
+    )
+
+val customClusterContent: @Composable (Cluster) -> Unit =
+    @Composable { cluster ->
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
+            Box(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
+            )
+            Box(
+                modifier =
+                    Modifier.size(36.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.Black, CircleShape)
+                        .border(2.dp, Color.White, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                val text = if (cluster.size > 99) "99+" else cluster.size.toString()
+
+                Text(
+                    text = text,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    fontSize = 13.sp,
+                )
+            }
+        }
+    }
 
 @Composable
 fun getExampleCircles() =
