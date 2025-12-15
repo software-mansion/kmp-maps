@@ -6,7 +6,7 @@ Add libraries to `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-kmpMaps = "0.6.0"
+kmpMaps = "0.7.0"
 
 [libraries]
 # For native map (Apple Maps on iOS, Google Maps on Android)
