@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -40,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +54,7 @@ import com.swmansion.kmpmaps.core.AndroidMapProperties
 import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
@@ -129,8 +134,61 @@ internal fun MapsScreen() {
                             contentScale = ContentScale.Fit,
                         )
                     }
-                }
+                },
+            "colored_pin_marker" to
+                { marker ->
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Pin",
+                            tint = Color.Magenta,
+                            modifier = Modifier.size(48.dp),
+                        )
+                        Surface(
+                            color = Color.Black.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier.padding(top = 2.dp),
+                        ) {
+                            Text(
+                                text = marker.title ?: "",
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            )
+                        }
+                    }
+                },
         )
+
+    val customClusterContent: @Composable (Cluster) -> Unit =
+        @Composable { cluster ->
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
+                )
+                Box(
+                    modifier =
+                        Modifier.size(36.dp)
+                            .shadow(4.dp, CircleShape)
+                            .background(Color.Black, CircleShape)
+                            .border(2.dp, Color.White, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val text = if (cluster.size > 99) "99+" else cluster.size.toString()
+
+                    Text(
+                        text = text,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        fontSize = 13.sp,
+                    )
+                }
+            }
+        }
 
     Scaffold(
         floatingActionButton = {
@@ -168,23 +226,7 @@ internal fun MapsScreen() {
             clusterSettings =
                 ClusterSettings(
                     enabled = clusteringEnabled,
-                    clusterContent = { cluster ->
-                        Box(
-                            modifier =
-                                Modifier.size(40.dp)
-                                    .background(Color.Red, CircleShape)
-                                    .border(2.dp, Color.White, CircleShape),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = cluster.size.toString(),
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                fontSize = 14.sp,
-                            )
-                        }
-                    },
+                    clusterContent = customClusterContent,
                     onClusterClick = { cluster ->
                         println(
                             "Cluster clicked: ${cluster.size} markers at ${cluster.coordinates}"

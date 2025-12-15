@@ -25,16 +25,19 @@ val exampleMarkers =
             coordinates = cracowMainStationPin,
             title = "Kraków Main",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Transit station"),
+            contentId = "colored_pin_marker",
         ),
         Marker(
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
+            contentId = "colored_pin_marker",
         ),
         Marker(
             coordinates = Coordinates(50.0540, 19.9354),
             title = "Wawel Royal Castle",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Castle"),
+            contentId = "colored_pin_marker",
         ),
     )
 
