@@ -56,7 +56,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     var mapView by remember { mutableStateOf<UtilsGMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }

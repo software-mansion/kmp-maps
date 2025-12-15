@@ -45,7 +45,7 @@ internal class MapDelegate(
     private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
     private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
     private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
-    private val customMarkerContent: Map<String, @Composable () -> Unit>,
+    private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private val clusterSettings: ClusterSettings,
 ) : NSObject(), MKMapViewDelegateProtocol {
 
@@ -218,7 +218,7 @@ internal class MapDelegate(
 
             annotationView.annotation = viewForAnnotation
             annotationView.canShowCallout = false
-            annotationView.updateContent(content)
+            annotationView.updateContent { content(marker) }
 
             annotationView.clusteringIdentifier = clusterId
 

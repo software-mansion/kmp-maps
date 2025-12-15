@@ -119,5 +119,5 @@ public expect fun Map(
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
-    customMarkerContent: Map<String, @Composable () -> Unit> = emptyMap(),
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
 )
