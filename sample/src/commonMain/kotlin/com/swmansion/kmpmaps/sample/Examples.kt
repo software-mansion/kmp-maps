@@ -128,7 +128,7 @@ val clusterMarkers =
 val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
     mapOf(
         "swmansion_marker" to
-            @Composable { marker ->
+            { marker ->
                 Box(modifier = Modifier.height(40.dp).width(80.dp)) {
                     Image(
                         painter = painterResource(Res.drawable.swmansion_logo),
@@ -164,34 +164,33 @@ val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
             },
     )
 
-val customClusterContent: @Composable (Cluster) -> Unit =
-    @Composable { cluster ->
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
-            Box(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
-            )
-            Box(
-                modifier =
-                    Modifier.size(36.dp)
-                        .shadow(4.dp, CircleShape)
-                        .background(Color.Black, CircleShape)
-                        .border(2.dp, Color.White, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                val text = if (cluster.size > 99) "99+" else cluster.size.toString()
+val customClusterContent: @Composable (Cluster) -> Unit = { cluster ->
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
+        Box(
+            modifier =
+                Modifier.fillMaxSize()
+                    .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
+        )
+        Box(
+            modifier =
+                Modifier.size(36.dp)
+                    .shadow(4.dp, CircleShape)
+                    .background(Color.Black, CircleShape)
+                    .border(2.dp, Color.White, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            val text = if (cluster.size > 99) "99+" else cluster.size.toString()
 
-                Text(
-                    text = text,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center,
-                    fontSize = 13.sp,
-                )
-            }
+            Text(
+                text = text,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                fontSize = 13.sp,
+            )
         }
     }
+}
 
 @Composable
 fun getExampleCircles() =
@@ -248,12 +247,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Talerz"
+        "title": "Random 1"
       },
       "geometry": {
         "coordinates": [
-          19.95948931821505,
-          50.05038942777688
+          19.912189144770718,
+          50.06865411437797
         ],
         "type": "Point"
       },
@@ -262,12 +261,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Orzo"
+        "title": "Random 2"
       },
       "geometry": {
         "coordinates": [
-          19.960003698811732,
-          50.04742820536811
+          19.912786665903937,
+          50.06756184910992
         ],
         "type": "Point"
       },
@@ -276,12 +275,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Yoko"
+        "title": "Random 3"
       },
       "geometry": {
         "coordinates": [
-          19.96248330639625,
-          50.047431323021385
+          19.916507529421125,
+          50.07029941818287
         ],
         "type": "Point"
       },
@@ -290,59 +289,16 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Hindus"
+        "title": "Random 4"
       },
       "geometry": {
         "coordinates": [
-          19.962415157734426,
-          50.04733706656535
+          19.9137020847733,
+          50.07131293218115
         ],
         "type": "Point"
       },
       "id": 3
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Hankki"
-      },
-      "geometry": {
-        "coordinates": [
-          19.959083406925373,
-          50.04978124578909
-        ],
-        "type": "Point"
-      },
-      "id": 4
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Emalia"
-      },
-      "geometry": {
-        "coordinates": [
-          19.96405060818745,
-          50.04874731432909
-        ],
-        "type": "Point"
-      },
-      "id": 5
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Mateo",
-        "description": "Bar"
-      },
-      "geometry": {
-        "coordinates": [
-          19.966124483792726,
-          50.04619662329256
-        ],
-        "type": "Point"
-      },
-      "id": 6
     }
   ]
 }
