@@ -53,7 +53,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     var mapLoaded by remember { mutableStateOf(false) }
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -164,7 +164,8 @@ public actual fun Map(
                     }
                 },
                 clusterItemContent = { clusterItem ->
-                    customMarkerContent[clusterItem.marker.contentId]?.invoke() ?: DefaultPin()
+                    customMarkerContent[clusterItem.marker.contentId]?.invoke(clusterItem.marker)
+                        ?: DefaultPin(clusterItem.marker)
                 },
             )
         } else {
@@ -183,7 +184,7 @@ public actual fun Map(
                             onMarkerClick?.invoke(marker)
                             onMarkerClick == null
                         },
-                        content = content,
+                        content = { content(marker) },
                     )
                 } else {
                     Marker(

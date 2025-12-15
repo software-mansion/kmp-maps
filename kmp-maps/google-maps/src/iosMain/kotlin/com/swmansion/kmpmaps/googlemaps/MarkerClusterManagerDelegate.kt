@@ -27,7 +27,7 @@ internal class MarkerClusterManagerDelegate(
     private val mapView: UtilsGMSMapView,
     private val clusterSettings: ClusterSettings,
     private val onMarkerClick: ((Marker) -> Unit)?,
-    private val customMarkerContent: Map<String, @Composable () -> Unit>,
+    private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) : NSObject(), GMUClusterManagerDelegateProtocol, GMUClusterRendererDelegateProtocol {
 
     override fun renderer(renderer: GMUClusterRendererProtocol, willRenderMarker: GMSMarker) {
@@ -38,8 +38,9 @@ internal class MarkerClusterManagerDelegate(
                 val marker = userData.marker
                 val iconView =
                     willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
+                val content = customMarkerContent[marker.contentId]
 
-                iconView.setContent(customMarkerContent[marker.contentId] ?: { DefaultPin() })
+                iconView.setContent { content?.invoke(marker) ?: DefaultPin(marker) }
                 willRenderMarker.setIconView(iconView)
                 willRenderMarker.setTracksViewChanges(true)
                 willRenderMarker.setTitle(marker.title)

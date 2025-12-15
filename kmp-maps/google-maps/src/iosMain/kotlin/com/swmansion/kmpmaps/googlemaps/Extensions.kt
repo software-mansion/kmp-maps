@@ -53,7 +53,7 @@ internal fun updateGoogleMapsMarkers(
     mapView: UtilsGMSMapView,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     markerMapping.keys.forEach { marker -> marker.setMap(null) }
     markerMapping.clear()
@@ -70,7 +70,7 @@ internal fun updateGoogleMapsMarkers(
 
         customMarkerContent[marker.contentId]?.let { content ->
             val iconView = CustomMarkers(gmsMarker)
-            iconView.setContent(content)
+            iconView.setContent { content(marker) }
             gmsMarker.setIconView(iconView)
         }
 
@@ -435,7 +435,7 @@ internal fun disableClusteringAndUpdateMarkers(
     mapDelegate: MapDelegate?,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     manager?.clearItems()
     mapView.setDelegate(mapDelegate)

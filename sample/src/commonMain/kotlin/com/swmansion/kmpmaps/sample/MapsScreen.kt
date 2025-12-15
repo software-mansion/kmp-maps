@@ -117,10 +117,10 @@ internal fun MapsScreen() {
             }
         }
 
-    val customMarkerContent =
+    val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
         mapOf(
             "swmansion_marker" to
-                @Composable {
+                @Composable { marker ->
                     Box(modifier = Modifier.height(40.dp).width(80.dp)) {
                         Image(
                             painter = painterResource(Res.drawable.swmansion_logo),
@@ -362,7 +362,7 @@ private fun Map(
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
-    customMarkerContent: Map<String, @Composable () -> Unit> = emptyMap(),
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->

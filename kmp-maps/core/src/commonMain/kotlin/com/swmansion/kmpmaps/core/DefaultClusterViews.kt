@@ -4,6 +4,7 @@ import androidx.annotation.RestrictTo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -43,11 +44,18 @@ public fun DefaultCluster(size: Int) {
 /** @suppress */
 @Composable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun DefaultPin() {
-    Icon(
-        imageVector = Icons.Filled.LocationOn,
-        contentDescription = "Standard Marker",
-        tint = Color(0xFFEA4335),
-        modifier = Modifier.size(40.dp),
-    )
+public fun DefaultPin(marker: Marker) {
+    Column(modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(
+            imageVector = Icons.Filled.LocationOn,
+            contentDescription = "Standard Marker",
+            tint = Color(0xFFEA4335),
+            modifier = Modifier.size(40.dp),
+        )
+        Text(
+            text = marker.title ?: "Marker title",
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+        )
+    }
 }
