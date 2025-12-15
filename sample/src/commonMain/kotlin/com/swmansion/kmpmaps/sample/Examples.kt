@@ -1,13 +1,44 @@
 package com.swmansion.kmpmaps.sample
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.swmansion.kmpmaps.core.AndroidMarkerOptions
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import kmp_maps.sample.generated.resources.Res
+import kmp_maps.sample.generated.resources.swmansion_logo
+import org.jetbrains.compose.resources.painterResource
 
 val softwareMansionPin = Coordinates(latitude = 50.0486, longitude = 19.9654)
 val cracowMainStationPin = Coordinates(latitude = 50.06839615782847, longitude = 19.947491884231567)
@@ -25,16 +56,19 @@ val exampleMarkers =
             coordinates = cracowMainStationPin,
             title = "Kraków Main",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Transit station"),
+            contentId = "colored_pin_marker",
         ),
         Marker(
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
+            contentId = "colored_pin_marker",
         ),
         Marker(
             coordinates = Coordinates(50.0540, 19.9354),
             title = "Wawel Royal Castle",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Castle"),
+            contentId = "colored_pin_marker",
         ),
     )
 
@@ -92,6 +126,75 @@ val clusterMarkers =
         ),
     ) + exampleMarkers
 
+val customMarkerContent =
+    mapOf<String, @Composable (Marker) -> Unit>(
+        "swmansion_marker" to
+            {
+                Box(modifier = Modifier.height(40.dp).width(80.dp)) {
+                    Image(
+                        painter = painterResource(Res.drawable.swmansion_logo),
+                        contentDescription = "Software Mansion logo",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
+                    )
+                }
+            },
+        "colored_pin_marker" to
+            { marker ->
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "Pin",
+                        tint = Color.Magenta,
+                        modifier = Modifier.size(48.dp),
+                    )
+                    Surface(
+                        color = Color.Black.copy(alpha = 0.7f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.padding(top = 2.dp),
+                    ) {
+                        Text(
+                            text = marker.title.orEmpty(),
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        )
+                    }
+                }
+            },
+    )
+
+val customClusterContent =
+    @Composable { cluster: Cluster ->
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
+            Box(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
+            )
+            Box(
+                modifier =
+                    Modifier.size(36.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.Black, CircleShape)
+                        .border(2.dp, Color.White, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = if (cluster.size > 99) "99+" else "${cluster.size}",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                )
+            }
+        }
+    }
+
 @Composable
 fun getExampleCircles() =
     listOf(
@@ -147,12 +250,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Talerz"
+        "title": "Random 1"
       },
       "geometry": {
         "coordinates": [
-          19.95948931821505,
-          50.05038942777688
+          19.912189144770718,
+          50.06865411437797
         ],
         "type": "Point"
       },
@@ -161,12 +264,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Orzo"
+        "title": "Random 2"
       },
       "geometry": {
         "coordinates": [
-          19.960003698811732,
-          50.04742820536811
+          19.912786665903937,
+          50.06756184910992
         ],
         "type": "Point"
       },
@@ -175,12 +278,12 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Yoko"
+        "title": "Random 3"
       },
       "geometry": {
         "coordinates": [
-          19.96248330639625,
-          50.047431323021385
+          19.916507529421125,
+          50.07029941818287
         ],
         "type": "Point"
       },
@@ -189,59 +292,16 @@ const val EXAMPLE_POINT_GEO_JSON =
     {
       "type": "Feature",
       "properties": {
-        "title": "Hindus"
+        "title": "Random 4"
       },
       "geometry": {
         "coordinates": [
-          19.962415157734426,
-          50.04733706656535
+          19.9137020847733,
+          50.07131293218115
         ],
         "type": "Point"
       },
       "id": 3
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Hankki"
-      },
-      "geometry": {
-        "coordinates": [
-          19.959083406925373,
-          50.04978124578909
-        ],
-        "type": "Point"
-      },
-      "id": 4
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Emalia"
-      },
-      "geometry": {
-        "coordinates": [
-          19.96405060818745,
-          50.04874731432909
-        ],
-        "type": "Point"
-      },
-      "id": 5
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "title": "Mateo",
-        "description": "Bar"
-      },
-      "geometry": {
-        "coordinates": [
-          19.966124483792726,
-          50.04619662329256
-        ],
-        "type": "Point"
-      },
-      "id": 6
     }
   ]
 }
