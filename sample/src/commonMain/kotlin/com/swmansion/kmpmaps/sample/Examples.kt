@@ -3,6 +3,7 @@ package com.swmansion.kmpmaps.sample
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -125,10 +126,10 @@ val clusterMarkers =
         ),
     ) + exampleMarkers
 
-val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
-    mapOf(
+val customMarkerContent =
+    mapOf<String, @Composable (Marker) -> Unit>(
         "swmansion_marker" to
-            { marker ->
+            {
                 Box(modifier = Modifier.height(40.dp).width(80.dp)) {
                     Image(
                         painter = painterResource(Res.drawable.swmansion_logo),
@@ -140,7 +141,10 @@ val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
             },
         "colored_pin_marker" to
             { marker ->
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "Pin",
@@ -153,7 +157,7 @@ val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
                         modifier = Modifier.padding(top = 2.dp),
                     ) {
                         Text(
-                            text = marker.title ?: "",
+                            text = marker.title.orEmpty(),
                             color = Color.White,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -164,33 +168,32 @@ val customMarkerContent: Map<String, @Composable (Marker) -> Unit> =
             },
     )
 
-val customClusterContent: @Composable (Cluster) -> Unit = { cluster ->
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
-        Box(
-            modifier =
-                Modifier.fillMaxSize()
-                    .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
-        )
-        Box(
-            modifier =
-                Modifier.size(36.dp)
-                    .shadow(4.dp, CircleShape)
-                    .background(Color.Black, CircleShape)
-                    .border(2.dp, Color.White, CircleShape),
-            contentAlignment = Alignment.Center,
-        ) {
-            val text = if (cluster.size > 99) "99+" else cluster.size.toString()
-
-            Text(
-                text = text,
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center,
-                fontSize = 13.sp,
+val customClusterContent =
+    @Composable { cluster: Cluster ->
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {
+            Box(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .background(color = Color.Black.copy(alpha = 0.2f), shape = CircleShape)
             )
+            Box(
+                modifier =
+                    Modifier.size(36.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.Black, CircleShape)
+                        .border(2.dp, Color.White, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = if (cluster.size > 99) "99+" else "${cluster.size}",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                )
+            }
         }
     }
-}
 
 @Composable
 fun getExampleCircles() =
