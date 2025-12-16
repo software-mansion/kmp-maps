@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetBrains.compose)
@@ -20,6 +22,8 @@ kotlin {
         }
     }
 
+    jvm("desktop")
+
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
         homepage = "https://github.com/software-mansion/kmp-maps"
@@ -36,6 +40,7 @@ kotlin {
     }
 
     sourceSets {
+        val desktopMain by getting
         commonMain.dependencies {
             implementation(compose.components.resources)
             implementation(compose.foundation)
@@ -46,7 +51,33 @@ kotlin {
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             implementation(project(":kmp-maps:core"))
         }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            val javafxVersion: String by project
+            val javafxClassifier: String by project
+            implementation("org.openjfx:javafx-base:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-graphics:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-controls:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-web:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-swing:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-media:$javafxVersion:$javafxClassifier")
+            implementation("org.openjfx:javafx-fxml:$javafxVersion:$javafxClassifier")
+        }
     }
+}
+
+val secretsProperties = Properties()
+val secretsFile = rootProject.file("secrets.properties")
+
+if (secretsFile.exists()) {
+    secretsFile.inputStream().use { secretsProperties.load(it) }
+}
+
+val apiKey = secretsProperties.getProperty("MAPS_API_KEY") ?: System.getenv("GOOGLE_MAPS_API_KEY")
+
+tasks.withType<ProcessResources>().configureEach {
+    filesMatching("**/web/index.html") { expand(mapOf("API_KEY" to (apiKey ?: ""))) }
 }
 
 android {
@@ -58,6 +89,20 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+compose.desktop {
+    application {
+        nativeDistributions {
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+            )
+            packageName = "com.swmansion.kmpmaps.core"
+            packageVersion = "1.0.0"
+        }
     }
 }
 
