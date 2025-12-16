@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.awt.SwingPanel
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.MapProperties
@@ -29,6 +30,7 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
+    clusterSettings: ClusterSettings,
     markers: List<Marker>,
     circles: List<Circle>,
     polygons: List<Polygon>,
@@ -43,7 +45,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     val engineRef = remember { mutableStateOf<WebEngine?>(null) }
     val javafxStarted = remember { AtomicBoolean(false) }

@@ -13,6 +13,7 @@ public actual fun Map(
     cameraPosition: CameraPosition?,
     properties: MapProperties,
     uiSettings: MapUISettings,
+    clusterSettings: ClusterSettings,
     markers: List<Marker>,
     circles: List<Circle>,
     polygons: List<Polygon>,
@@ -27,7 +28,7 @@ public actual fun Map(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
-    customMarkerContent: Map<String, @Composable () -> Unit>,
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("Maps not implemented on desktop yet")
