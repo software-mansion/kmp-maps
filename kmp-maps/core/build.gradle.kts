@@ -39,6 +39,13 @@ kotlin {
             implementation(libs.google.maps.android.mapsCompose)
             implementation(libs.google.maps.android.mapsComposeUtils)
         }
+
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.compose.webview.multiplatform.desktop)
+            implementation(libs.kcef)
+        }
     }
 }
 

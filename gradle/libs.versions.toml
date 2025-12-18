@@ -7,17 +7,21 @@ android-targetSdk = "36"
 androidXActivity = "1.11.0"
 androidXLifecycle = "2.9.4"
 compose = "1.9.0"
+composeWebviewMultiplatformDesktop = "2.0.3"
 dokka = "2.1.0"
 googleMapsCompose = "6.12.2"
 googleMapsComposeUtils = "6.12.2"
+kcef = "2025.03.23"
 kotlin = "2.2.20"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
 jetbrainsKotlinJvm = "2.2.20"
+kotlinx-coroutines = "1.10.2"
 
 [libraries]
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
+compose-webview-multiplatform-desktop = { module = "io.github.kevinnzou:compose-webview-multiplatform-desktop", version.ref = "composeWebviewMultiplatformDesktop" }
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 google-android-gms-playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 google-android-libraries-mapsPlatform-secretsGradlePlugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
@@ -26,6 +30,8 @@ google-maps-android-mapsComposeUtils = { module = "com.google.maps.android:maps-
 jetBrains-androidX-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidXLifecycle" }
 jetBrains-androidX-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidXLifecycle" }
 jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kcef = { module = "dev.datlag:kcef", version.ref = "kcef" }
+kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
