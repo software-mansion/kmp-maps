@@ -7,6 +7,7 @@ import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
+import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
@@ -36,5 +37,26 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
-    // TODO: NOT IMPLEMENTED
+    CoreMap(
+        modifier,
+        cameraPosition,
+        properties,
+        uiSettings,
+        clusterSettings = clusterSettings,
+        markers,
+        circles,
+        polygons,
+        polylines,
+        onCameraMove,
+        onMarkerClick,
+        onCircleClick,
+        onPolygonClick,
+        onPolylineClick,
+        onMapClick,
+        onMapLongClick,
+        onPOIClick,
+        onMapLoaded,
+        geoJsonLayers,
+        customMarkerContent,
+    )
 }

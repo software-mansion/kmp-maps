@@ -42,7 +42,7 @@ fun main() = application {
         }
 
         if (initialized) {
-            Text("Success")
+            App()
         } else {
             Text("Downloading and initializing map engine...")
         }
