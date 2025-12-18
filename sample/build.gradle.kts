@@ -64,9 +64,6 @@ kotlin {
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.compose.webview.multiplatform.desktop)
-            implementation(libs.kcef)
         }
     }
 }
@@ -102,18 +99,24 @@ compose.desktop {
         }
 
         jvmArgs(
-            "--add-opens", "java.desktop/sun.awt=ALL-UNNAMED",
-            "--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED",
-            "--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED"
+            "--add-opens",
+            "java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-opens",
+            "java.desktop/sun.lwawt=ALL-UNNAMED",
+            "--add-opens",
+            "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
         )
     }
 }
 
 tasks.withType<JavaExec> {
     jvmArgs(
-        "--add-opens", "java.desktop/sun.awt=ALL-UNNAMED",
-        "--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED",
-        "--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED"
+        "--add-opens",
+        "java.desktop/sun.awt=ALL-UNNAMED",
+        "--add-opens",
+        "java.desktop/sun.lwawt=ALL-UNNAMED",
+        "--add-opens",
+        "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
     )
 }
 
