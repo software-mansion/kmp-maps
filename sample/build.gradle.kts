@@ -62,9 +62,7 @@ kotlin {
             implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
-        jvmMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
+        jvmMain.dependencies { implementation(compose.desktop.currentOs) }
     }
 }
 

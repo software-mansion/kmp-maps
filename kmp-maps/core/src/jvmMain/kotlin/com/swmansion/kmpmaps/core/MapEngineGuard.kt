@@ -13,10 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
-internal fun MapEngineGuard(
-    loadingContent: @Composable () -> Unit = { Text("Initializing Map Engine...") },
-    content: @Composable () -> Unit,
-) {
+internal fun MapEngineGuard(content: @Composable () -> Unit) {
     var isReady by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -35,6 +32,6 @@ internal fun MapEngineGuard(
     if (isReady) {
         content()
     } else {
-        loadingContent()
+        Text("Initializing Map Engine...")
     }
 }

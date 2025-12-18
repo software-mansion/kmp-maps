@@ -1,6 +1,11 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
@@ -29,44 +34,13 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
-    val htmlContent =
-        """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8" />
-                <style>html, body, #map { height: 100%; margin: 0; padding: 0; }</style>
-            </head>
-            <body>
-                <div id="map"></div>
-                <script>
-                    function initMap() {
-                        try {
-                            new google.maps.Map(document.getElementById("map"), {
-                                center: { lat: 52.2297, lng: 21.0122 },
-                                zoom: 12,
-                                renderingType: google.maps.RenderingType.RASTER,
-                                mapTypeId: google.maps.MapTypeId.ROADMAP
-                            });
-                        } catch (e) {
-                            document.body.innerHTML = "ERR: " + e;
-                        }
-                    }
-                </script>
-                <script 
-                    src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap&loading=async" 
-                    async defer>
-                </script>
-            </body>
-            </html>
-        """
-            .trimIndent()
-
-    val state = rememberWebViewStateWithHTMLData(data = htmlContent, baseUrl = "https://localhost/")
-
+    var htmlContent by remember { mutableStateOf<String?>(null) }
     val navigator = rememberWebViewNavigator()
+    val apiKey = remember { MapConfiguration.googleMapsApiKey }
+    val state =
+        rememberWebViewStateWithHTMLData(data = htmlContent ?: "", baseUrl = "https://localhost/")
 
-    MapEngineGuard {
-        WebView(state = state, modifier = modifier, navigator = navigator, onCreated = { _ -> })
-    }
+    LaunchedEffect(Unit) { htmlContent = loadHTMLContent(apiKey) }
+
+    MapEngineGuard { WebView(state = state, modifier = modifier, navigator = navigator) }
 }
