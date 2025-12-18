@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     explicitApi()
-    jvmToolchain(17)
+    jvmToolchain(22)
     androidTarget { publishLibraryVariants("release") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -19,6 +19,8 @@ kotlin {
             isStatic = true
         }
     }
+
+    jvm()
 
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
