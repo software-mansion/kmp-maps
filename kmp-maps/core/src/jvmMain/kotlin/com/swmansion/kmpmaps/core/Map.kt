@@ -1,11 +1,15 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
@@ -35,12 +39,23 @@ public actual fun Map(
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     var htmlContent by remember { mutableStateOf<String?>(null) }
-    val navigator = rememberWebViewNavigator()
     val apiKey = remember { MapConfiguration.googleMapsApiKey }
-    val state =
-        rememberWebViewStateWithHTMLData(data = htmlContent ?: "", baseUrl = "https://localhost/")
 
     LaunchedEffect(Unit) { htmlContent = loadHTMLContent(apiKey) }
 
-    MapEngineGuard { WebView(state = state, modifier = modifier, navigator = navigator) }
+    if (htmlContent != null) {
+        val state = rememberWebViewStateWithHTMLData(data = htmlContent!!)
+        val navigator = rememberWebViewNavigator()
+
+        WebView(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            navigator = navigator,
+            onCreated = { _ -> },
+        )
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
 }

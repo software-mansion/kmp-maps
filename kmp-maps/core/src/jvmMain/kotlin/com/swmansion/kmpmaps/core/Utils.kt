@@ -1,6 +1,6 @@
 package com.swmansion.kmpmaps.core
 
-internal fun loadHTMLContent(apiKey: String): String? {
+internal fun loadHTMLContent(apiKey: String): String {
     val resourcePath = "web/google_map.html"
     val inputStream =
         Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)
