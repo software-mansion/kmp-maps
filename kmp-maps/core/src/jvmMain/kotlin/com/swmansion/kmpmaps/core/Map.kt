@@ -58,19 +58,37 @@ public actual fun Map(
         val jsBridge = rememberWebViewJsBridge(navigator)
 
         LaunchedEffect(jsBridge) {
-            jsBridge.register(object : IJsMessageHandler {
-                override fun methodName() = "onMapClick"
-                override fun handle(
-                    message: JsMessage,
-                    navigator: WebViewNavigator?,
-                    callback: (String) -> Unit
-                ) {
-                    try {
-                        val coords = Json.decodeFromString<Coordinates>(message.params)
-                        onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
-                    } catch (e: Exception) { e.printStackTrace() }
+            jsBridge.register(
+                object : IJsMessageHandler {
+                    override fun methodName() = "onMapClick"
+
+                    override fun handle(
+                        message: JsMessage,
+                        navigator: WebViewNavigator?,
+                        callback: (String) -> Unit,
+                    ) {
+                        try {
+                            val coords = Json.decodeFromString<Coordinates>(message.params)
+                            onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                 }
-            })
+            )
+            jsBridge.register(
+                object : IJsMessageHandler {
+                    override fun methodName() = "onMarkerClick"
+
+                    override fun handle(
+                        message: JsMessage,
+                        navigator: WebViewNavigator?,
+                        callback: (String) -> Unit,
+                    ) {
+                        println("Marker clicked!")
+                    }
+                }
+            )
         }
 
         LaunchedEffect(markers, clusterSettings.enabled, loadingState) {

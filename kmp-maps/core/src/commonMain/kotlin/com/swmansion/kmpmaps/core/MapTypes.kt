@@ -133,8 +133,7 @@ public data class Polyline(
  * @property latitude The latitude coordinate in decimal degrees (-90 to 90)
  * @property longitude The longitude coordinate in decimal degrees (-180 to 180)
  */
-@Serializable
-public data class Coordinates(val latitude: Double, val longitude: Double)
+@Serializable public data class Coordinates(val latitude: Double, val longitude: Double)
 
 /**
  * Represents the camera position and orientation of the map.

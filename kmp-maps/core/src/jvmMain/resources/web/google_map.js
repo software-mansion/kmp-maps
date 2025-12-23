@@ -1,43 +1,72 @@
 let map;
 let markers = [];
-let clusterManager = null;
+let markerCluster;
+let AdvancedMarkerElement;
+let PinElement;
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
+async function initMap() {
+    const { Map } = await google.maps.importLibrary("maps");
+    const { AdvancedMarkerElement: MarkerClass, PinElement: PinClass } = await google.maps.importLibrary("marker");
+    
+    AdvancedMarkerElement = MarkerClass;
+    PinElement = PinClass;
+
+    map = new Map(document.getElementById("map"), {
+        mapId: "KMP_MAPS",
         center: { lat: 50.0619, lng: 19.9373 },
         zoom: 13,
         disableDefaultUI: true,
     });
+
+    if (window.markerClusterer) {
+        markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
+    }
 
     map.addListener("click", (e) => {
         sendToKotlin("onMapClick", JSON.stringify({latitude: e.latLng.lat(), longitude: e.latLng.lng()}));
     });
 }
 
-function updateMarkers(json, clusteringEnabled) {
+function updateMarkers(jsonString, clusterEnabled) {
+    if (!map || !AdvancedMarkerElement) {
+        console.warn("Map not ready yet.");
+        return;
+    }
+
     clearMarkers();
 
-    const data = JSON.parse(json);
+    try {
+        const data = JSON.parse(jsonString);
+        const newMarkers = [];
 
-    markers = data.map(m => {
-        const marker = new google.maps.Marker({
-            position: m.position,
-            title: m.title,
-            map: clusteringEnabled ? null : map
+        data.forEach(item => {
+            const marker = new AdvancedMarkerElement({
+                map: map,
+                position: item.position,
+                title: item.title || "",
+            });
+
+            marker.addListener("click", () => {
+                sendToKotlin("onMarkerClick", "{}");
+            });
+
+            newMarkers.push(marker);
         });
 
-        return marker;
-    });
+        markers = newMarkers;
 
-    if (clusteringEnabled && typeof markerClusterer !== 'undefined') {
-        clusterManager = new markerClusterer.MarkerClusterer({ map, markers });
+        if (clusterEnabled && markerCluster) {
+            markerCluster.clearMarkers();
+            markerCluster.addMarkers(markers);
+        }
+    } catch (e) {
+        console.error("Error during updateMarkers:", e);
     }
 }
 
 function clearMarkers() {
-    if (clusterManager) {
-        clusterManager.clearMarkers();
-        clusterManager = null;
+    if (markerCluster) {
+        markerCluster.clearMarkers();
     }
     markers.forEach(m => m.setMap(null));
     markers = [];
@@ -46,7 +75,7 @@ function clearMarkers() {
 function sendToKotlin(method, data) {
     if (window.kmpJsBridge && window.kmpJsBridge.callNative) {
             window.kmpJsBridge.callNative(method, data);
-        } else {
-            console.error("Bridge not found for method: " + method);
-        }
+    } else {
+        console.error("Bridge not found for method: " + method);
+    }
 }

@@ -20,4 +20,3 @@ internal fun Coordinates.toJson(): JsonObject = buildJsonObject {
 internal fun List<JsonObject>.toJsonString(): String {
     return JsonArray(this).toString()
 }
-
