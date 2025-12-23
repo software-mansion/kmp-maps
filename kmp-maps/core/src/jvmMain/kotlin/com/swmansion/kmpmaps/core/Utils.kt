@@ -1,13 +1,17 @@
 package com.swmansion.kmpmaps.core
 
 internal fun loadHTMLContent(apiKey: String): String {
-    val resourcePath = "web/google_map.html"
-    val inputStream =
-        Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)
-            ?: object {}.javaClass.classLoader.getResourceAsStream(resourcePath)
+    val html = readResource("web/google_map.html")
+    val js = readResource("web/google_map.js")
 
-    return inputStream.let {
-        val template = inputStream.bufferedReader().use { it.readText() }
-        template.replace("{{API_KEY}}", apiKey)
-    }
+    return html.replace("{{API_KEY}}", apiKey).replace("{{LOCAL_JS_CONTENT}}", js)
+}
+
+private fun readResource(path: String): String {
+    val stream =
+        object {}.javaClass.getResourceAsStream("/$path")
+            ?: object {}.javaClass.getResourceAsStream(path)
+            ?: Thread.currentThread().contextClassLoader.getResourceAsStream(path)
+            ?: throw IllegalArgumentException("Resource not found: $path")
+    return stream.bufferedReader().use { it.readText() }
 }
