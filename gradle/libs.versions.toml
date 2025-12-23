@@ -13,6 +13,7 @@ googleMapsCompose = "6.12.2"
 googleMapsComposeUtils = "6.12.2"
 kcef = "2024.04.20.4"
 kotlin = "2.2.20"
+kotlinxSerializationJson = "1.9.0"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
@@ -32,6 +33,7 @@ jetBrains-androidX-lifecycle-viewmodelCompose = { module = "org.jetbrains.androi
 jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kcef = { module = "dev.datlag:kcef", version.ref = "kcef" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -42,3 +44,4 @@ jetBrains-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", ve
 jetBrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+kotlin-serialization = {id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}

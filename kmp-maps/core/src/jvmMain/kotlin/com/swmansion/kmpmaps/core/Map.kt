@@ -11,9 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.multiplatform.webview.jsbridge.IJsMessageHandler
+import com.multiplatform.webview.jsbridge.JsMessage
+import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
+import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
+import kotlinx.serialization.json.Json
 
 @Composable
 public actual fun Map(
@@ -45,12 +51,41 @@ public actual fun Map(
 
     if (htmlContent != null) {
         val state = rememberWebViewStateWithHTMLData(data = htmlContent!!)
+        val loadingState = state.loadingState
+        state.webSettings.isJavaScriptEnabled = true
+
         val navigator = rememberWebViewNavigator()
+        val jsBridge = rememberWebViewJsBridge(navigator)
+
+        LaunchedEffect(jsBridge) {
+            jsBridge.register(object : IJsMessageHandler {
+                override fun methodName() = "onMapClick"
+                override fun handle(
+                    message: JsMessage,
+                    navigator: WebViewNavigator?,
+                    callback: (String) -> Unit
+                ) {
+                    try {
+                        val coords = Json.decodeFromString<Coordinates>(message.params)
+                        onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
+                    } catch (e: Exception) { e.printStackTrace() }
+                }
+            })
+        }
+
+        LaunchedEffect(markers, clusterSettings.enabled, loadingState) {
+            val json = markers.map { it.toJson() }.toJsonString()
+
+            if (loadingState is LoadingState.Finished) {
+                navigator.evaluateJavaScript("updateMarkers('$json', ${clusterSettings.enabled})")
+            }
+        }
 
         WebView(
             modifier = Modifier.fillMaxSize(),
             state = state,
             navigator = navigator,
+            webViewJsBridge = jsBridge,
             onCreated = { _ -> },
         )
     } else {

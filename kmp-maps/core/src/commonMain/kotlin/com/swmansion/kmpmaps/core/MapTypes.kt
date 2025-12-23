@@ -2,6 +2,7 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Serializable
 
 /**
  * Theme options for map appearance.
@@ -132,6 +133,7 @@ public data class Polyline(
  * @property latitude The latitude coordinate in decimal degrees (-90 to 90)
  * @property longitude The longitude coordinate in decimal degrees (-180 to 180)
  */
+@Serializable
 public data class Coordinates(val latitude: Double, val longitude: Double)
 
 /**

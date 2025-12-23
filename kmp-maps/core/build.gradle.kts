@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -31,6 +32,7 @@ kotlin {
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             implementation(compose.materialIconsExtended)
+            implementation(libs.kotlinx.serialization.json)
         }
 
         androidMain.dependencies {
