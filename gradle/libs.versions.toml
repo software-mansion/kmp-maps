@@ -10,11 +10,11 @@ compose = "1.9.0"
 dokka = "2.1.0"
 googleMapsCompose = "6.12.2"
 googleMapsComposeUtils = "6.12.2"
-kotlin = "2.2.20"
+kotlin = "2.3.0"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 secretsGradlePlugin = "2.0.1"
-jetbrainsKotlinJvm = "2.2.20"
+jetbrainsKotlinJvm = "2.3.0"
 
 [libraries]
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
