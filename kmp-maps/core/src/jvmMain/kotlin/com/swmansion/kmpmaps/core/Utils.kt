@@ -1,8 +1,12 @@
 package com.swmansion.kmpmaps.core
 
-internal fun loadHTMLContent(apiKey: String): String {
+internal fun loadHTMLContent(apiKey: String, cameraPosition: CameraPosition?): String {
     val html = readResource("web/google_map.html")
-    val js = readResource("web/google_map.js")
+    val js =
+        readResource("web/google_map.js")
+            .replace("{{INITIAL_LAT}}", cameraPosition?.coordinates?.latitude.toString())
+            .replace("{{INITIAL_LNG}}", cameraPosition?.coordinates?.longitude.toString())
+            .replace("{{INITIAL_ZOOM}}", cameraPosition?.zoom.toString())
 
     return html.replace("{{API_KEY}}", apiKey).replace("{{LOCAL_JS_CONTENT}}", js)
 }

@@ -13,8 +13,11 @@ async function initMap() {
 
     map = new Map(document.getElementById("map"), {
         mapId: "KMP_MAPS",
-        center: { lat: 50.0619, lng: 19.9373 },
-        zoom: 13,
+        center: {
+            lat: {{INITIAL_LAT}},
+            lng: {{INITIAL_LNG}}
+        },
+        zoom: {{INITIAL_ZOOM}},
         disableDefaultUI: true,
     });
 

@@ -47,7 +47,7 @@ public actual fun Map(
     var htmlContent by remember { mutableStateOf<String?>(null) }
     val apiKey = remember { MapConfiguration.googleMapsApiKey }
 
-    LaunchedEffect(Unit) { htmlContent = loadHTMLContent(apiKey) }
+    LaunchedEffect(Unit) { htmlContent = loadHTMLContent(apiKey, cameraPosition) }
 
     if (htmlContent != null) {
         val state = rememberWebViewStateWithHTMLData(data = htmlContent!!)
