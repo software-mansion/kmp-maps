@@ -60,7 +60,7 @@ public actual fun Map(
         LaunchedEffect(jsBridge) {
             jsBridge.register(
                 object : IJsMessageHandler {
-                    override fun methodName() = "onMapClick"
+                    override fun methodName() = "onCameraMove"
 
                     override fun handle(
                         message: JsMessage,
@@ -68,8 +68,9 @@ public actual fun Map(
                         callback: (String) -> Unit,
                     ) {
                         try {
-                            val coords = Json.decodeFromString<Coordinates>(message.params)
-                            onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
+                            val currentCameraPosition =
+                                Json.decodeFromString<CameraPosition>(message.params)
+                            onCameraMove?.invoke(currentCameraPosition)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -97,7 +98,7 @@ public actual fun Map(
             )
             jsBridge.register(
                 object : IJsMessageHandler {
-                    override fun methodName() = "onCameraMove"
+                    override fun methodName() = "onMapClick"
 
                     override fun handle(
                         message: JsMessage,
@@ -105,15 +106,29 @@ public actual fun Map(
                         callback: (String) -> Unit,
                     ) {
                         try {
-                            val currentCameraPosition =
-                                Json.decodeFromString<CameraPosition>(message.params)
-                            onCameraMove?.invoke(currentCameraPosition)
+                            val coords = Json.decodeFromString<Coordinates>(message.params)
+                            onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
                 }
             )
+            jsBridge.register(object : IJsMessageHandler {
+                override fun methodName() = "onPOIClick"
+                override fun handle(message: JsMessage, navigator: WebViewNavigator?, callback: (String) -> Unit) {
+                    try {
+                        val coords = Json.decodeFromString<Coordinates>(message.params)
+                        onPOIClick?.invoke(coords)
+                    } catch (e: Exception) { e.printStackTrace() }
+                }
+            })
+            jsBridge.register(object : IJsMessageHandler {
+                override fun methodName() = "onMapLoaded"
+                override fun handle(message: JsMessage, navigator: WebViewNavigator?, callback: (String) -> Unit) {
+                    onMapLoaded?.invoke()
+                }
+            })
         }
 
         LaunchedEffect(markers, clusterSettings.enabled, loadingState) {

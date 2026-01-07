@@ -25,8 +25,24 @@ async function initMap() {
         markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
     }
 
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+        window.kmpJsBridge.callNative("onMapLoaded", "{}");
+    });
+
     map.addListener("click", (e) => {
-        sendToKotlin("onMapClick", JSON.stringify({latitude: e.latLng.lat(), longitude: e.latLng.lng()}));
+        if (e.placeId) {
+            e.stop();
+
+            window.kmpJsBridge.callNative("onPOIClick", JSON.stringify({
+                latitude: e.latLng.lat(),
+                longitude: e.latLng.lng()
+            }));
+        } else {
+            window.kmpJsBridge.callNative("onMapClick", JSON.stringify({
+                latitude: e.latLng.lat(),
+                longitude: e.latLng.lng()
+            }));
+        }
     });
 
     map.addListener("idle", () => {
