@@ -147,6 +147,7 @@ public data class Polyline(
  * @property androidCameraPosition Android-specific options for the camera position and orientation
  * @property iosCameraPosition iOS-specific options for the camera position and orientation
  */
+@Serializable
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,

@@ -28,6 +28,28 @@ async function initMap() {
     map.addListener("click", (e) => {
         sendToKotlin("onMapClick", JSON.stringify({latitude: e.latLng.lat(), longitude: e.latLng.lng()}));
     });
+
+    map.addListener("idle", () => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+
+        if (center) {
+            const cameraState = {
+                coordinates: {
+                    latitude: center.lat(),
+                    longitude: center.lng(),
+                },
+                zoom
+            };
+
+            if (window.kmpJsBridge) {
+                window.kmpJsBridge.callNative(
+                    "onCameraMove",
+                    JSON.stringify(cameraState)
+                );
+            }
+        }
+    });
 }
 
 function updateMarkers(jsonString, clusterEnabled) {

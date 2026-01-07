@@ -95,6 +95,25 @@ public actual fun Map(
                     }
                 }
             )
+            jsBridge.register(
+                object : IJsMessageHandler {
+                    override fun methodName() = "onCameraMove"
+
+                    override fun handle(
+                        message: JsMessage,
+                        navigator: WebViewNavigator?,
+                        callback: (String) -> Unit,
+                    ) {
+                        try {
+                            val currentCameraPosition =
+                                Json.decodeFromString<CameraPosition>(message.params)
+                            onCameraMove?.invoke(currentCameraPosition)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                }
+            )
         }
 
         LaunchedEffect(markers, clusterSettings.enabled, loadingState) {

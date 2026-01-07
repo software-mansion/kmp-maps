@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Serializable
 
 /**
  * iOS-specific map behavior and appearance configuration options.
@@ -52,6 +53,7 @@ public data class IosMarkerOptions(val tintColor: Color? = null)
  * @property gmsBearing The bearing (rotation) of the camera in degrees (Google Maps only)
  * @property gmsViewingAngle The viewing angle of the camera in degrees (Google Maps only)
  */
+@Serializable
 public data class IosCameraPosition(
     val gmsBearing: Float? = null,
     val gmsViewingAngle: Float? = null,
