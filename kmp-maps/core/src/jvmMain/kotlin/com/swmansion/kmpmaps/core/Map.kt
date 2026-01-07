@@ -85,7 +85,13 @@ public actual fun Map(
                         navigator: WebViewNavigator?,
                         callback: (String) -> Unit,
                     ) {
-                        println("Marker clicked!")
+                        try {
+                            val markerId = message.params
+                            val clickedMarker = markers.find { marker -> marker.id == markerId }
+                            clickedMarker?.let { onMarkerClick?.invoke(it) }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             )

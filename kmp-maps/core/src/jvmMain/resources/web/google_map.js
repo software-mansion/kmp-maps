@@ -41,13 +41,13 @@ function updateMarkers(jsonString, clusterEnabled) {
 
         data.forEach(item => {
             const marker = new AdvancedMarkerElement({
-                map: map,
+                map,
                 position: item.position,
                 title: item.title || "",
             });
 
             marker.addListener("click", () => {
-                sendToKotlin("onMarkerClick", "{}");
+                sendToKotlin("onMarkerClick", String(item.id));
             });
 
             newMarkers.push(marker);
@@ -73,9 +73,9 @@ function clearMarkers() {
 }
 
 function sendToKotlin(method, data) {
-    if (window.kmpJsBridge && window.kmpJsBridge.callNative) {
-            window.kmpJsBridge.callNative(method, data);
+    if (window.kmpJsBridge?.callNative) {
+        window.kmpJsBridge.callNative(method, data);
     } else {
-        console.error("Bridge not found for method: " + method);
+        console.error(`Bridge not found for method: ${method}`);
     }
 }

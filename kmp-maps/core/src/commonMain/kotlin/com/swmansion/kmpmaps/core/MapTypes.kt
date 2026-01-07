@@ -2,6 +2,8 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 /**
@@ -74,7 +76,9 @@ public data class MapUISettings(
  *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
  *   null or not found, the marker uses the default native rendering
  */
+@OptIn(ExperimentalUuidApi::class)
 public data class Marker(
+    val id: String = Uuid.random().toString(),
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
