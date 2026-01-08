@@ -2,8 +2,10 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -40,6 +42,20 @@ internal fun WebMapProperties.toJson(): JsonObject = buildJsonObject {
     put("clickableIcons", clickableIcons)
     put("backgroundColor", backgroundColor?.toHex())
     restriction?.let { put("restriction", it.toJson()) }
+    putStyles(styles)
+}
+
+private fun JsonObjectBuilder.putStyles(options: GoogleMapsMapStyleOptions?) {
+    val jsonString = options?.json
+    if (jsonString.isNullOrBlank()) return
+
+    try {
+        val element = Json.parseToJsonElement(jsonString)
+
+        put("styles", element)
+    } catch (e: Exception) {
+        println("KMPMaps: Error parsing styles JSON: ${e.message}")
+    }
 }
 
 internal fun WebMapRestriction.toJson(): JsonObject = buildJsonObject {
@@ -70,7 +86,6 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
     mapTypeControlPosition?.let { put("mapTypeControlPosition", it.name) }
     streetViewControlPosition?.let { put("streetViewControlPosition", it.name) }
     rotateControlPosition?.let { put("rotateControlPosition", it.name) }
-    fullscreenControlPosition?.let { put("fullscreenControlPosition", it.name) }
 }
 
 internal fun Color.toHex() = String.format("#%06X", (0xFFFFFF and toArgb()))

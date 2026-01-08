@@ -25,7 +25,6 @@ public data class WebUISettings(
     val mapTypeControlPosition: WebControlPosition? = null,
     val streetViewControlPosition: WebControlPosition? = null,
     val rotateControlPosition: WebControlPosition? = null,
-    val fullscreenControlPosition: WebControlPosition? = null,
 )
 
 public data class WebMapRestriction(
