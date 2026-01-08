@@ -11,15 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.multiplatform.webview.jsbridge.IJsMessageHandler
-import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
-import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
-import kotlinx.serialization.json.Json
 
 @Composable
 public actual fun Map(
@@ -57,101 +53,38 @@ public actual fun Map(
         val navigator = rememberWebViewNavigator()
         val jsBridge = rememberWebViewJsBridge(navigator)
 
-        LaunchedEffect(jsBridge) {
-            jsBridge.register(
-                object : IJsMessageHandler {
-                    override fun methodName() = "onCameraMove"
-
-                    override fun handle(
-                        message: JsMessage,
-                        navigator: WebViewNavigator?,
-                        callback: (String) -> Unit,
-                    ) {
-                        try {
-                            val currentCameraPosition =
-                                Json.decodeFromString<CameraPosition>(message.params)
-                            onCameraMove?.invoke(currentCameraPosition)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            )
-            jsBridge.register(
-                object : IJsMessageHandler {
-                    override fun methodName() = "onMarkerClick"
-
-                    override fun handle(
-                        message: JsMessage,
-                        navigator: WebViewNavigator?,
-                        callback: (String) -> Unit,
-                    ) {
-                        try {
-                            val markerId = message.params
-                            val clickedMarker = markers.find { marker -> marker.id == markerId }
-                            clickedMarker?.let { onMarkerClick?.invoke(it) }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            )
-            jsBridge.register(
-                object : IJsMessageHandler {
-                    override fun methodName() = "onMapClick"
-
-                    override fun handle(
-                        message: JsMessage,
-                        navigator: WebViewNavigator?,
-                        callback: (String) -> Unit,
-                    ) {
-                        try {
-                            val coords = Json.decodeFromString<Coordinates>(message.params)
-                            onMapClick?.invoke(Coordinates(coords.latitude, coords.longitude))
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            )
-            jsBridge.register(
-                object : IJsMessageHandler {
-                    override fun methodName() = "onPOIClick"
-
-                    override fun handle(
-                        message: JsMessage,
-                        navigator: WebViewNavigator?,
-                        callback: (String) -> Unit,
-                    ) {
-                        try {
-                            val coords = Json.decodeFromString<Coordinates>(message.params)
-                            onPOIClick?.invoke(coords)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            )
-            jsBridge.register(
-                object : IJsMessageHandler {
-                    override fun methodName() = "onMapLoaded"
-
-                    override fun handle(
-                        message: JsMessage,
-                        navigator: WebViewNavigator?,
-                        callback: (String) -> Unit,
-                    ) {
-                        onMapLoaded?.invoke()
-                    }
-                }
+        LaunchedEffect(jsBridge, markers) {
+            registerMapEvents(
+                jsBridge = jsBridge,
+                markers = markers,
+                onCameraMove = onCameraMove,
+                onMarkerClick = onMarkerClick,
+                onMapClick = onMapClick,
+                onPOIClick = onPOIClick,
+                onMapLoaded = onMapLoaded,
             )
         }
 
         LaunchedEffect(markers, clusterSettings.enabled, loadingState) {
-            val json = markers.map { it.toJson() }.toJsonString()
-
             if (loadingState is LoadingState.Finished) {
-                navigator.evaluateJavaScript("updateMarkers('$json', ${clusterSettings.enabled})")
+                val markersJson = markers.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript(
+                    "updateMarkers('$markersJson', ${clusterSettings.enabled})"
+                )
+            }
+        }
+
+        LaunchedEffect(properties, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = properties.toJson().toString()
+                navigator.evaluateJavaScript("updateMapProperties($json)")
+            }
+        }
+
+        LaunchedEffect(uiSettings, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = uiSettings.toJson().toString()
+                navigator.evaluateJavaScript("updateMapUISettings($json)")
             }
         }
 

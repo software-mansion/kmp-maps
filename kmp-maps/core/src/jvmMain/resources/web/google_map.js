@@ -31,7 +31,7 @@ async function initMap() {
 
     map.addListener("click", (e) => {
         if (e.placeId) {
-            e.stop();
+            // e.stop();
 
             window.kmpJsBridge.callNative("onPOIClick", JSON.stringify({
                 latitude: e.latLng.lat(),
@@ -103,6 +103,98 @@ function updateMarkers(jsonString, clusterEnabled) {
     } catch (e) {
         console.error("Error during updateMarkers:", e);
     }
+}
+
+function updateMapProperties(props) {
+    if (!map) return;
+
+    if (props.isTrafficEnabled) {
+        if (!trafficLayer) {
+            trafficLayer = new google.maps.TrafficLayer();
+        }
+        trafficLayer.setMap(map);
+    } else {
+        if (trafficLayer) {
+            trafficLayer.setMap(null);
+        }
+    }
+
+    let typeId = google.maps.MapTypeId.ROADMAP;
+    switch (props.mapType) {
+        case "SATELLITE": typeId = google.maps.MapTypeId.SATELLITE; break;
+        case "TERRAIN": typeId = google.maps.MapTypeId.TERRAIN; break;
+        case "HYBRID": typeId = google.maps.MapTypeId.HYBRID; break;
+        case "NORMAL": default: typeId = google.maps.MapTypeId.ROADMAP; break;
+    }
+    map.setMapTypeId(typeId);
+
+    const web = props.web;
+    if (web) {
+        const options = {
+            gestureHandling: web.gestureHandling,
+            disableDoubleClickZoom: web.disableDoubleClickZoom,
+            keyboardShortcuts: web.keyboardShortcuts,
+            clickableIcons: web.clickableIcons,
+        };
+
+        if (web.mapId !== null) options.mapId = web.mapId;
+        if (web.minZoom !== null) options.minZoom = web.minZoom;
+        if (web.maxZoom !== null) options.maxZoom = web.maxZoom;
+        if (web.restriction !== null) options.restriction = web.restriction;
+        if (web.backgroundColor !== null) options.backgroundColor = web.backgroundColor;
+        if (web.styles !== null) options.styles = web.styles;
+
+        map.setOptions(options);
+    }
+}
+
+function updateMapUISettings(settings) {
+    if (!map) return;
+
+    const web = settings.web;
+
+    const options = {
+        disableDefaultUI: web.disableDefaultUI,
+        draggable: settings.scrollEnabled,
+        scrollwheel: settings.zoomEnabled,
+    };
+
+    if (web) {
+        options.disableDefaultUI = web.disableDefaultUI;
+
+        if (!web.disableDefaultUI) {
+            const getPos = (posName) => {
+                if (!posName) return null;
+                return { position: google.maps.ControlPosition[posName] };
+            };
+
+            options.zoomControl = web.zoomControl;
+            if (web.zoomControl && web.zoomControlPosition) {
+                options.zoomControlOptions = getPos(web.zoomControlPosition);
+            }
+
+            options.mapTypeControl = web.mapTypeControl;
+            if (web.mapTypeControl && web.mapTypeControlPosition) {
+                options.mapTypeControlOptions = getPos(web.mapTypeControlPosition);
+            }
+
+            options.streetViewControl = web.streetViewControl;
+            if (web.streetViewControl && web.streetViewControlPosition) {
+                options.streetViewControlOptions = getPos(web.streetViewControlPosition);
+            }
+
+            options.rotateControl = web.rotateControl;
+            if (web.rotateControl && web.rotateControlPosition) {
+                options.rotateControlOptions = getPos(web.rotateControlPosition);
+            }
+
+            options.fullscreenControl = web.fullscreenControl;
+        }
+    } else {
+        options.zoomControl = settings.zoomEnabled;
+    }
+
+    map.setOptions(options);
 }
 
 function clearMarkers() {

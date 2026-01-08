@@ -1,9 +1,16 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
+
+internal fun List<JsonObject>.toJsonString(): String {
+    return JsonArray(this).toString()
+}
 
 internal fun Marker.toJson(): JsonObject = buildJsonObject {
     put("id", id)
@@ -17,6 +24,53 @@ internal fun Coordinates.toJson(): JsonObject = buildJsonObject {
     put("lng", longitude)
 }
 
-internal fun List<JsonObject>.toJsonString(): String {
-    return JsonArray(this).toString()
+internal fun MapProperties.toJson(): JsonObject = buildJsonObject {
+    put("isTrafficEnabled", isTrafficEnabled)
+    put("mapType", mapType.name)
+    put("web", webMapProperties.toJson())
 }
+
+internal fun WebMapProperties.toJson(): JsonObject = buildJsonObject {
+    put("mapId", mapId)
+    put("gestureHandling", gestureHandling.name.lowercase())
+    put("disableDoubleClickZoom", disableDoubleClickZoom)
+    put("keyboardShortcuts", keyboardShortcuts)
+    put("minZoom", minZoom)
+    put("maxZoom", maxZoom)
+    put("clickableIcons", clickableIcons)
+    put("backgroundColor", backgroundColor?.toHex())
+    restriction?.let { put("restriction", it.toJson()) }
+}
+
+internal fun WebMapRestriction.toJson(): JsonObject = buildJsonObject {
+    put("strictBounds", strictBounds)
+    putJsonObject("latLngBounds") {
+        put("north", north)
+        put("south", south)
+        put("east", east)
+        put("west", west)
+    }
+}
+
+internal fun MapUISettings.toJson(): JsonObject = buildJsonObject {
+    put("zoomEnabled", zoomEnabled)
+    put("scrollEnabled", scrollEnabled)
+    put("web", webUISettings.toJson())
+}
+
+internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
+    put("zoomControl", zoomControl)
+    put("mapTypeControl", mapTypeControl)
+    put("streetViewControl", streetViewControl)
+    put("rotateControl", rotateControl)
+    put("fullscreenControl", false)
+    put("disableDefaultUI", disableDefaultUI)
+
+    zoomControlPosition?.let { put("zoomControlPosition", it.name) }
+    mapTypeControlPosition?.let { put("mapTypeControlPosition", it.name) }
+    streetViewControlPosition?.let { put("streetViewControlPosition", it.name) }
+    rotateControlPosition?.let { put("rotateControlPosition", it.name) }
+    fullscreenControlPosition?.let { put("fullscreenControlPosition", it.name) }
+}
+
+internal fun Color.toHex() = String.format("#%06X", (0xFFFFFF and toArgb()))

@@ -34,7 +34,7 @@ public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
-    val mapType: MapType? = MapType.NORMAL,
+    val mapType: MapType = MapType.NORMAL,
     val mapTheme: MapTheme = MapTheme.SYSTEM,
     val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
     val iosMapProperties: IosMapProperties = IosMapProperties(),
