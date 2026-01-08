@@ -6,10 +6,11 @@ import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.web.WebViewNavigator
 import kotlinx.serialization.json.Json
 
-internal fun loadHTMLContent(apiKey: String, cameraPosition: CameraPosition?): String {
+internal fun loadHTMLContent(apiKey: String, cameraPosition: CameraPosition?, webMapProperties: WebMapProperties?): String {
     val html = readResource("web/google_map.html")
     val js =
         readResource("web/google_map.js")
+            .replace("{{INITIAL_MAP_ID}}", webMapProperties?.mapId ?: "DEMO_MAP_ID")
             .replace("{{INITIAL_LAT}}", cameraPosition?.coordinates?.latitude.toString())
             .replace("{{INITIAL_LNG}}", cameraPosition?.coordinates?.longitude.toString())
             .replace("{{INITIAL_ZOOM}}", cameraPosition?.zoom.toString())

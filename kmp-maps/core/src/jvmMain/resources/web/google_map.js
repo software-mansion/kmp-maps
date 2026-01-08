@@ -12,7 +12,7 @@ async function initMap() {
     PinElement = PinClass;
 
     map = new Map(document.getElementById("map"), {
-        mapId: "KMP_MAPS",
+        mapId: "{{INITIAL_MAP_ID}}",
         center: {
             lat: {{INITIAL_LAT}},
             lng: {{INITIAL_LNG}}
