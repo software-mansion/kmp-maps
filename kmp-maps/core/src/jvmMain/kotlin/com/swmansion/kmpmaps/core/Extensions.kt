@@ -126,5 +126,3 @@ internal fun Polyline.toJson(): JsonObject = buildJsonObject {
         put("strokeOpacity", it.alpha)
     }
 }
-
-
