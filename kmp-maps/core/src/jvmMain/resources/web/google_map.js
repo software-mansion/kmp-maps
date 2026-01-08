@@ -1,5 +1,8 @@
 let map;
 let markers = [];
+let jsCircles = [];
+let jsPolygons = [];
+let jsPolylines = [];
 let markerCluster;
 let trafficLayer = null;
 let AdvancedMarkerElement;
@@ -194,6 +197,96 @@ function updateMapUISettings(settings) {
     }
 
     map.setOptions(options);
+}
+
+function updateCircles(jsonString) {
+    if (!map) return;
+
+    jsCircles.forEach(c => c.setMap(null));
+    jsCircles = [];
+
+    try {
+        const data = JSON.parse(jsonString);
+        data.forEach((item) => {
+            const circle = new google.maps.Circle({
+                map: map,
+                center: item.center,
+                radius: item.radius,
+                fillColor: item.fillColor || "#000000",
+                fillOpacity: item.fillOpacity !== undefined ? item.fillOpacity : 0.0,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 2
+            });
+
+            circle.addListener("click", () => {
+                window.kmpJsBridge.callNative("onCircleClick", String(item.id));
+            });
+
+            jsCircles.push(circle);
+        });
+    } catch (e) { console.error("Error updating circles:", e); }
+}
+
+function updatePolygons(jsonString) {
+    if (!map) return;
+
+    jsPolygons.forEach(p => p.setMap(null));
+    jsPolygons = [];
+
+    try {
+        const data = JSON.parse(jsonString);
+        data.forEach((item) => {
+            const polygon = new google.maps.Polygon({
+                map: map,
+                paths: item.paths,
+                fillColor: item.fillColor || "#000000",
+                fillOpacity: item.fillOpacity !== undefined ? item.fillOpacity : 0.0,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 2
+            });
+
+            polygon.addListener("click", () => {
+                window.kmpJsBridge.callNative("onPolygonClick", String(item.id));
+            });
+
+            jsPolygons.push(polygon);
+        });
+    } catch (e) { console.error("Error updating polygons:", e); }
+}
+
+
+function updatePolylines(jsonString) {
+    if (!map) return;
+
+    jsPolylines.forEach(p => p.setMap(null));
+    jsPolylines = [];
+
+    try {
+        const data = JSON.parse(jsonString);
+        data.forEach((item) => {
+            const polyline = new google.maps.Polyline({
+                map: map,
+                path: item.path,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 3
+            });
+
+            polyline.addListener("click", () => {
+                window.kmpJsBridge.callNative("onPolylineClick", String(item.id));
+            });
+
+            jsPolylines.push(polyline);
+        });
+    } catch (e) { console.error("Error updating polylines:", e); }
 }
 
 function clearMarkers() {

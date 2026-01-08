@@ -58,8 +58,14 @@ public actual fun Map(
             registerMapEvents(
                 jsBridge = jsBridge,
                 markers = markers,
+                circles = circles,
+                polygons = polygons,
+                polylines = polylines,
                 onCameraMove = onCameraMove,
                 onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
                 onMapClick = onMapClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
@@ -72,6 +78,27 @@ public actual fun Map(
                 navigator.evaluateJavaScript(
                     "updateMarkers('$markersJson', ${clusterSettings.enabled})"
                 )
+            }
+        }
+
+        LaunchedEffect(circles, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = circles.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updateCircles('$json')")
+            }
+        }
+
+        LaunchedEffect(polygons, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = polygons.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updatePolygons('$json')")
+            }
+        }
+
+        LaunchedEffect(polylines, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = polylines.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updatePolylines('$json')")
             }
         }
 

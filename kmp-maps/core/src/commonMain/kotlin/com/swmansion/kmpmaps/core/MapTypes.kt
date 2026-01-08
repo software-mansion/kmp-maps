@@ -98,7 +98,9 @@ public data class Marker(
  * @property lineColor The color of the circle's border
  * @property lineWidth The width of the circle's border
  */
+@OptIn(ExperimentalUuidApi::class)
 public data class Circle(
+    val id: String = Uuid.random().toString(),
     val center: Coordinates,
     val radius: Float,
     val color: Color? = null,
@@ -114,7 +116,9 @@ public data class Circle(
  * @property color The fill color of the polygon
  * @property lineColor The color of the polygon's border
  */
+@OptIn(ExperimentalUuidApi::class)
 public data class Polygon(
+    val id: String = Uuid.random().toString(),
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
     val color: Color? = null,
@@ -128,7 +132,9 @@ public data class Polygon(
  * @property width The width of the polyline
  * @property lineColor The color of the polyline
  */
+@OptIn(ExperimentalUuidApi::class)
 public data class Polyline(
+    val id: String = Uuid.random().toString(),
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,

@@ -84,3 +84,47 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
 }
 
 internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())
+internal fun Circle.toJson(): JsonObject = buildJsonObject {
+    put("id", id)
+    put("center", center.toJson())
+    put("radius", radius)
+
+    lineColor?.let {
+        put("strokeColor", it.toHex())
+        put("strokeOpacity", it.alpha)
+    }
+    lineWidth?.let { put("strokeWeight", it) }
+
+    color?.let {
+        put("fillColor", it.toHex())
+        put("fillOpacity", it.alpha)
+    }
+}
+
+internal fun Polygon.toJson(): JsonObject = buildJsonObject {
+    put("id", id)
+    put("paths", JsonArray(coordinates.map { it.toJson() }))
+    put("strokeWeight", lineWidth)
+
+    lineColor?.let {
+        put("strokeColor", it.toHex())
+        put("strokeOpacity", it.alpha)
+    }
+    color?.let {
+        put("fillColor", it.toHex())
+        put("fillOpacity", it.alpha)
+    }
+}
+
+internal fun Polyline.toJson(): JsonObject = buildJsonObject {
+    put("id", id)
+    put("path", JsonArray(coordinates.map { it.toJson() }))
+    put("strokeWeight", width)
+
+    lineColor?.let {
+        put("strokeColor", it.toHex())
+        put("strokeOpacity", it.alpha)
+    }
+}
+
+

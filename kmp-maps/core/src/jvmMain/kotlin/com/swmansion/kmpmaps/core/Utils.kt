@@ -35,8 +35,14 @@ private fun readResource(path: String): String {
 internal fun registerMapEvents(
     jsBridge: WebViewJsBridge,
     markers: List<Marker>,
+    circles: List<Circle>,
+    polygons: List<Polygon>,
+    polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
     onMarkerClick: ((Marker) -> Unit)?,
+    onCircleClick: ((Circle) -> Unit)?,
+    onPolygonClick: ((Polygon) -> Unit)?,
+    onPolylineClick: ((Polyline) -> Unit)?,
     onMapClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
@@ -63,6 +69,18 @@ internal fun registerMapEvents(
     }
 
     jsBridge.registerHandler("onMapLoaded") { onMapLoaded?.invoke() }
+
+    jsBridge.registerHandler("onCircleClick") { id ->
+        circles.find { it.id == id }?.let { onCircleClick?.invoke(it) }
+    }
+
+    jsBridge.registerHandler("onPolygonClick") { id ->
+        polygons.find { it.id == id }?.let { onPolygonClick?.invoke(it) }
+    }
+
+    jsBridge.registerHandler("onPolylineClick") { id ->
+        polylines.find { it.id == id }?.let { onPolylineClick?.invoke(it) }
+    }
 }
 
 private fun WebViewJsBridge.registerHandler(methodName: String, handler: (String) -> Unit) {
