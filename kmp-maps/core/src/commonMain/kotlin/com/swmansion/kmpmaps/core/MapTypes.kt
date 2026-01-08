@@ -38,6 +38,7 @@ public data class MapProperties(
     val mapTheme: MapTheme = MapTheme.SYSTEM,
     val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
     val iosMapProperties: IosMapProperties = IosMapProperties(),
+    val webMapProperties: WebMapProperties = WebMapProperties(),
 )
 
 /**
@@ -63,6 +64,7 @@ public data class MapUISettings(
     val rotateEnabled: Boolean = true,
     val androidUISettings: AndroidUISettings = AndroidUISettings(),
     val iosUISettings: IosUISettings = IosUISettings(),
+    val webUISettings: WebUISettings = WebUISettings(),
 )
 
 /**

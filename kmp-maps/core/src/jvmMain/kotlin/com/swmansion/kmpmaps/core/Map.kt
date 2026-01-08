@@ -114,21 +114,37 @@ public actual fun Map(
                     }
                 }
             )
-            jsBridge.register(object : IJsMessageHandler {
-                override fun methodName() = "onPOIClick"
-                override fun handle(message: JsMessage, navigator: WebViewNavigator?, callback: (String) -> Unit) {
-                    try {
-                        val coords = Json.decodeFromString<Coordinates>(message.params)
-                        onPOIClick?.invoke(coords)
-                    } catch (e: Exception) { e.printStackTrace() }
+            jsBridge.register(
+                object : IJsMessageHandler {
+                    override fun methodName() = "onPOIClick"
+
+                    override fun handle(
+                        message: JsMessage,
+                        navigator: WebViewNavigator?,
+                        callback: (String) -> Unit,
+                    ) {
+                        try {
+                            val coords = Json.decodeFromString<Coordinates>(message.params)
+                            onPOIClick?.invoke(coords)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                 }
-            })
-            jsBridge.register(object : IJsMessageHandler {
-                override fun methodName() = "onMapLoaded"
-                override fun handle(message: JsMessage, navigator: WebViewNavigator?, callback: (String) -> Unit) {
-                    onMapLoaded?.invoke()
+            )
+            jsBridge.register(
+                object : IJsMessageHandler {
+                    override fun methodName() = "onMapLoaded"
+
+                    override fun handle(
+                        message: JsMessage,
+                        navigator: WebViewNavigator?,
+                        callback: (String) -> Unit,
+                    ) {
+                        onMapLoaded?.invoke()
+                    }
                 }
-            })
+            )
         }
 
         LaunchedEffect(markers, clusterSettings.enabled, loadingState) {
