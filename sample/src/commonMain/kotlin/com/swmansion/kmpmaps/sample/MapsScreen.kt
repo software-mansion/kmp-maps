@@ -133,7 +133,7 @@ internal fun MapsScreen() {
                     scaleBarEnabled = true,
                     androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
                 ),
-            markers = if (showAllComponents) clusterMarkers else emptyList(),
+            markers = if (showAllComponents) exampleMarkers else emptyList(),
             clusterSettings =
                 ClusterSettings(
                     enabled = clusteringEnabled,
@@ -159,6 +159,7 @@ internal fun MapsScreen() {
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayers = geoJsonLayers,
             customMarkerContent = customMarkerContent,
+            webCustomMarkerContent = customWebMarkerContent,
         )
     }
 
@@ -316,6 +317,7 @@ private fun Map(
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
     customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
+    webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -340,6 +342,7 @@ private fun Map(
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
+                webCustomMarkerContent = webCustomMarkerContent,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -363,6 +366,7 @@ private fun Map(
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
+                webCustomMarkerContent = webCustomMarkerContent,
             )
     }
 }

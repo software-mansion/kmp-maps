@@ -70,7 +70,7 @@ async function initMap() {
     });
 }
 
-function updateMarkers(jsonString, clusterEnabled) {
+function updateMarkers(data, clusterEnabled) {
     if (!map || !AdvancedMarkerElement) {
         console.warn("Map not ready yet.");
         return;
@@ -79,14 +79,24 @@ function updateMarkers(jsonString, clusterEnabled) {
     clearMarkers();
 
     try {
-        const data = JSON.parse(jsonString);
         const newMarkers = [];
 
         data.forEach(item => {
+            let contentNode = null;
+
+            if (item.renderedHtml) {
+                const div = document.createElement('div');
+                div.innerHTML = item.renderedHtml;
+                div.className = `kmp-marker-wrapper ${item.contentId || ''}`;
+
+                contentNode = div;
+            }
+
             const marker = new AdvancedMarkerElement({
                 map,
                 position: item.position,
                 title: item.title || "",
+                content: contentNode
             });
 
             marker.addListener("click", () => {

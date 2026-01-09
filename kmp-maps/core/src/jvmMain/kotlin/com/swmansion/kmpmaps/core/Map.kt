@@ -38,6 +38,7 @@ public actual fun Map(
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
+    webCustomMarkerContent: Map<String, (Marker) -> String>,
 ) {
     var htmlContent by remember { mutableStateOf<String?>(null) }
 
@@ -72,11 +73,11 @@ public actual fun Map(
             )
         }
 
-        LaunchedEffect(markers, clusterSettings.enabled, loadingState) {
+        LaunchedEffect(markers, webCustomMarkerContent, clusterSettings.enabled, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val markersJson = markers.map { it.toJson() }.toJsonString()
+                val markersJson = markers.toJson(webCustomMarkerContent).toString()
                 navigator.evaluateJavaScript(
-                    "updateMarkers('$markersJson', ${clusterSettings.enabled})"
+                    "updateMarkers($markersJson, ${clusterSettings.enabled})"
                 )
             }
         }

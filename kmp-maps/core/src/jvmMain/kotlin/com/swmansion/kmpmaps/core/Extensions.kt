@@ -6,17 +6,35 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 
 internal fun List<JsonObject>.toJsonString() = JsonArray(this).toString()
 
+internal fun List<Marker>.toJson(webCustomMarkerContent: Map<String, (Marker) -> String>) =
+    buildJsonArray {
+        this@toJson.forEach { marker ->
+            val baseJson = marker.toJson().toMutableMap()
+
+            marker.contentId?.let { id ->
+                webCustomMarkerContent[id]?.invoke(marker)?.let {
+                    baseJson["renderedHtml"] = JsonPrimitive(it.trimIndent())
+                }
+            }
+
+            add(JsonObject(baseJson))
+        }
+    }
+
 internal fun Marker.toJson(): JsonObject = buildJsonObject {
     put("id", id)
     put("position", coordinates.toJson())
     put("title", title)
     put("opacity", 1.0f)
+    contentId?.let { put("contentId", it) }
 }
 
 internal fun Coordinates.toJson(): JsonObject = buildJsonObject {
