@@ -144,6 +144,7 @@ internal fun MapsScreen() {
                         )
                         false
                     },
+                    webClusterContent = webClusterContent,
                 ),
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
             polygons = if (showAllComponents) getExamplePolygons() else emptyList(),

@@ -1,12 +1,16 @@
 let map;
 let markers = [];
+
 let jsCircles = [];
 let jsPolygons = [];
 let jsPolylines = [];
+
 let markerCluster;
 let trafficLayer = null;
 let AdvancedMarkerElement;
 let PinElement;
+
+const clusterCache = new Map();
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
@@ -70,13 +74,14 @@ async function initMap() {
     });
 }
 
-function updateMarkers(data, clusterEnabled) {
+function updateMarkers(data, clusterEnabled, hasCustomClusterContent) {
     if (!map || !AdvancedMarkerElement) {
         console.warn("Map not ready yet.");
         return;
     }
 
     clearMarkers();
+    clusterCache.clear();
 
     try {
         const newMarkers = [];
@@ -119,6 +124,36 @@ function updateMarkers(data, clusterEnabled) {
 
         if (clusterEnabled && markerCluster) {
             markerCluster.clearMarkers();
+
+            if (hasCustomClusterContent) {
+                markerCluster.renderer = {
+                    render: (cluster) => {
+                        const clusterId = `cluster-${cluster.position.lat()}-${cluster.position.lng()}-${cluster.count}`;
+                        const container = document.createElement("div");
+                        container.id = clusterId;
+
+                        if (clusterCache.has(clusterId)) {
+                            container.innerHTML = clusterCache.get(clusterId);
+                        } else {
+                            container.innerHTML = `<div style="background: #4285F4; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">${cluster.count}</div>`;
+
+                            const clusterParams = {
+                                id: clusterId,
+                                coordinates: { latitude: cluster.position.lat(), longitude: cluster.position.lng() },
+                                size: cluster.count,
+                                items: cluster.markers.map(m => m._kmpData)
+                            };
+                            sendToKotlin("renderCluster", JSON.stringify(clusterParams));
+                        }
+
+                        return new AdvancedMarkerElement({
+                            position: cluster.position,
+                            content: container
+                        });
+                    }
+                };
+            }
+
             markerCluster.addMarkers(markers);
 
             google.maps.event.clearListeners(markerCluster, "click");
@@ -140,6 +175,14 @@ function updateMarkers(data, clusterEnabled) {
         }
     } catch (e) {
         console.error("Error during updateMarkers:", e);
+    }
+}
+
+function applyClusterHtml(clusterId, html) {
+    clusterCache.set(clusterId, html);
+    const element = document.getElementById(clusterId);
+    if (element) {
+        element.innerHTML = html;
     }
 }
 

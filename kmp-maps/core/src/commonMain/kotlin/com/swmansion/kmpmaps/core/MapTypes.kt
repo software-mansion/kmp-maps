@@ -180,7 +180,13 @@ public data class CameraPosition(
  * @property items The list of [Marker] that make up this cluster
  */
 @Serializable
-public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
+@OptIn(ExperimentalUuidApi::class)
+public data class Cluster(
+    val id: String = Uuid.random().toString(),
+    val coordinates: Coordinates,
+    val size: Int,
+    val items: List<Marker>,
+)
 
 /**
  * Configuration options for marker clustering.
@@ -194,6 +200,7 @@ public data class ClusterSettings(
     val enabled: Boolean = false,
     val onClusterClick: ((Cluster) -> Boolean)? = null,
     val clusterContent: (@Composable (Cluster) -> Unit)? = null,
+    val webClusterContent: ((Cluster) -> String)? = null,
 )
 
 internal object ColorSerializer : KSerializer<Color> {

@@ -77,8 +77,9 @@ public actual fun Map(
         LaunchedEffect(markers, webCustomMarkerContent, clusterSettings.enabled, loadingState) {
             if (loadingState is LoadingState.Finished) {
                 val markersJson = markers.toJson(webCustomMarkerContent).toString()
+                val hasCustomCluster = clusterSettings.webClusterContent != null
                 navigator.evaluateJavaScript(
-                    "updateMarkers($markersJson, ${clusterSettings.enabled})"
+                    "updateMarkers($markersJson, ${clusterSettings.enabled}, $hasCustomCluster)"
                 )
             }
         }

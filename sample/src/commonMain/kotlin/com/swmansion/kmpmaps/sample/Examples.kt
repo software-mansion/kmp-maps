@@ -211,6 +211,28 @@ val customWebMarkerContent =
             }
     )
 
+val webClusterContent = { cluster: Cluster ->
+    """
+    <div style="
+        background-color: #4285F4;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        border: 2px solid white;
+    ">
+        ${cluster.size}
+    </div>
+    """
+        .trimIndent()
+}
+
 val customClusterContent =
     @Composable { cluster: Cluster ->
         Box(contentAlignment = Alignment.Center, modifier = Modifier.size(48.dp)) {

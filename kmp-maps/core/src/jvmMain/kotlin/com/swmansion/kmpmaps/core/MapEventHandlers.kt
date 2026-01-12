@@ -23,48 +23,61 @@ internal fun registerMapEvents(
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
 ) {
-    jsBridge.registerHandler("onCameraMove") { params ->
+    jsBridge.registerHandler("onCameraMove") { params, _ ->
         val position = Json.decodeFromString<CameraPosition>(params)
         onCameraMove?.invoke(position)
     }
 
-    jsBridge.registerHandler("onMarkerClick") { params ->
+    jsBridge.registerHandler("onMarkerClick") { params, _ ->
         val markerId = params
         val clickedMarker = markers.find { marker -> marker.id == markerId }
         clickedMarker?.let { onMarkerClick?.invoke(it) }
     }
 
-    jsBridge.registerHandler("onMapClick") { params ->
+    jsBridge.registerHandler("onMapClick") { params, _ ->
         val coords = Json.decodeFromString<Coordinates>(params)
         onMapClick?.invoke(coords)
     }
 
-    jsBridge.registerHandler("onPOIClick") { params ->
+    jsBridge.registerHandler("onPOIClick") { params, _ ->
         val coords = Json.decodeFromString<Coordinates>(params)
         onPOIClick?.invoke(coords)
     }
 
-    jsBridge.registerHandler("onMapLoaded") { onMapLoaded?.invoke() }
+    jsBridge.registerHandler("onMapLoaded") { _, _ -> onMapLoaded?.invoke() }
 
-    jsBridge.registerHandler("onCircleClick") { id ->
+    jsBridge.registerHandler("onCircleClick") { id, _ ->
         circles.find { it.id == id }?.let { onCircleClick?.invoke(it) }
     }
 
-    jsBridge.registerHandler("onPolygonClick") { id ->
+    jsBridge.registerHandler("onPolygonClick") { id, _ ->
         polygons.find { it.id == id }?.let { onPolygonClick?.invoke(it) }
     }
 
-    jsBridge.registerHandler("onPolylineClick") { id ->
+    jsBridge.registerHandler("onPolylineClick") { id, _ ->
         polylines.find { it.id == id }?.let { onPolylineClick?.invoke(it) }
     }
 
-    jsBridge.registerHandler("onClusterClick") { params ->
+    jsBridge.registerHandler("onClusterClick") { params, _ ->
         val cluster = Json.decodeFromString<Cluster>(params)
         clusterSettings.onClusterClick?.invoke(cluster)
     }
+
+    jsBridge.registerHandler("renderCluster") { params, navigator ->
+        val cluster = Json.decodeFromString<Cluster>(params)
+        val html = clusterSettings.webClusterContent?.invoke(cluster)
+
+        if (html != null) {
+            val cleanHtml = html.trimIndent()
+            navigator?.evaluateJavaScript("applyClusterHtml('${cluster.id}', '$cleanHtml')")
+        }
+    }
 }
 
-private fun WebViewJsBridge.registerHandler(methodName: String, handler: (String) -> Unit) {
+private fun WebViewJsBridge.registerHandler(
+    methodName: String,
+    handler: (String, WebViewNavigator?) -> Unit,
+) {
     register(
         object : IJsMessageHandler {
             override fun methodName() = methodName
@@ -75,7 +88,7 @@ private fun WebViewJsBridge.registerHandler(methodName: String, handler: (String
                 callback: (String) -> Unit,
             ) {
                 try {
-                    handler(message.params)
+                    handler(message.params, navigator)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
