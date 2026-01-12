@@ -62,6 +62,7 @@ public actual fun Map(
                 circles = circles,
                 polygons = polygons,
                 polylines = polylines,
+                clusterSettings = clusterSettings,
                 onCameraMove = onCameraMove,
                 onMarkerClick = onMarkerClick,
                 onCircleClick = onCircleClick,

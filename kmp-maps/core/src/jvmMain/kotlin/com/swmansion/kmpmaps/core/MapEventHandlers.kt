@@ -13,6 +13,7 @@ internal fun registerMapEvents(
     circles: List<Circle>,
     polygons: List<Polygon>,
     polylines: List<Polyline>,
+    clusterSettings: ClusterSettings,
     onCameraMove: ((CameraPosition) -> Unit)?,
     onMarkerClick: ((Marker) -> Unit)?,
     onCircleClick: ((Circle) -> Unit)?,
@@ -55,6 +56,11 @@ internal fun registerMapEvents(
 
     jsBridge.registerHandler("onPolylineClick") { id ->
         polylines.find { it.id == id }?.let { onPolylineClick?.invoke(it) }
+    }
+
+    jsBridge.registerHandler("onClusterClick") { params ->
+        val cluster = Json.decodeFromString<Cluster>(params)
+        clusterSettings.onClusterClick?.invoke(cluster)
     }
 }
 

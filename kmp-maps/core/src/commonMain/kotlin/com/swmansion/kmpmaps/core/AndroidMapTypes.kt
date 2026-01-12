@@ -42,6 +42,7 @@ public data class AndroidUISettings(
  * @property snippet Additional text displayed below the title
  * @property zIndex The z-index for layering markers
  */
+@Serializable
 public data class AndroidMarkerOptions(
     val anchor: GoogleMapsAnchor? = null,
     val draggable: Boolean = false,

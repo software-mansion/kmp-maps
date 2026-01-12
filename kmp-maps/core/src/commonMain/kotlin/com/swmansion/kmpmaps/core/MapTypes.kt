@@ -2,9 +2,16 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * Theme options for map appearance.
@@ -79,6 +86,7 @@ public data class MapUISettings(
  *   null or not found, the marker uses the default native rendering
  */
 @OptIn(ExperimentalUuidApi::class)
+@Serializable
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
@@ -171,6 +179,7 @@ public data class CameraPosition(
  * @property size The number of markers contained within this cluster
  * @property items The list of [Marker] that make up this cluster
  */
+@Serializable
 public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
 
 /**
@@ -186,3 +195,16 @@ public data class ClusterSettings(
     val onClusterClick: ((Cluster) -> Boolean)? = null,
     val clusterContent: (@Composable (Cluster) -> Unit)? = null,
 )
+
+internal object ColorSerializer : KSerializer<Color> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: Color) {
+        encoder.encodeInt(value.toArgb())
+    }
+
+    override fun deserialize(decoder: Decoder): Color {
+        return Color(decoder.decodeInt())
+    }
+}

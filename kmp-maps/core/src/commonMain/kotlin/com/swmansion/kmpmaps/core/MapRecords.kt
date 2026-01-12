@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps.core
 
+import kotlinx.serialization.Serializable
+
 /**
  * Configuration for Apple Maps points of interest categories.
  *
@@ -18,7 +20,7 @@ public data class AppleMapsPointOfInterestCategories(
  * @property x The horizontal anchor point (0.0 = left edge, 1.0 = right edge)
  * @property y The vertical anchor point (0.0 = top edge, 1.0 = bottom edge)
  */
-public data class GoogleMapsAnchor(val x: Float, val y: Float)
+@Serializable public data class GoogleMapsAnchor(val x: Float, val y: Float)
 
 /**
  * Custom map styling options for Google Maps.

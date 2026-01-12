@@ -83,7 +83,6 @@ function updateMarkers(data, clusterEnabled) {
 
         data.forEach(item => {
             let contentNode = null;
-
             if (item.renderedHtml) {
                 const div = document.createElement('div');
                 div.innerHTML = item.renderedHtml;
@@ -99,8 +98,18 @@ function updateMarkers(data, clusterEnabled) {
                 content: contentNode
             });
 
+            marker._kmpData = {
+                id: item.id,
+                title: item.title,
+                coordinates: {
+                    latitude: item.position.lat,
+                    longitude: item.position.lng
+                },
+                contentId: item.contentId,
+            };
+
             marker.addListener("click", () => {
-                sendToKotlin("onMarkerClick", String(item.id));
+                sendToKotlin("onMarkerClick", String(marker._kmpData.id));
             });
 
             newMarkers.push(marker);
@@ -111,6 +120,23 @@ function updateMarkers(data, clusterEnabled) {
         if (clusterEnabled && markerCluster) {
             markerCluster.clearMarkers();
             markerCluster.addMarkers(markers);
+
+            google.maps.event.clearListeners(markerCluster, "click");
+
+            google.maps.event.addListener(markerCluster, "click", (cluster) => {
+                const mappedItems = cluster.markers.map(m => m._kmpData);
+
+                const clusterInfo = {
+                    coordinates: {
+                        latitude: cluster.position.lat(),
+                        longitude: cluster.position.lng()
+                    },
+                    size: cluster.count,
+                    items: mappedItems
+                };
+
+                sendToKotlin("onClusterClick", JSON.stringify(clusterInfo));
+            });
         }
     } catch (e) {
         console.error("Error during updateMarkers:", e);
