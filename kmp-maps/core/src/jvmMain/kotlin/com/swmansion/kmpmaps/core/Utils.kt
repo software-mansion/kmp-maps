@@ -4,6 +4,7 @@ import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.web.WebViewNavigator
+import java.io.BufferedReader
 import kotlinx.serialization.json.Json
 
 internal fun loadHTMLContent(
@@ -28,7 +29,7 @@ private fun readResource(path: String): String {
             ?: object {}.javaClass.getResourceAsStream(path)
             ?: Thread.currentThread().contextClassLoader.getResourceAsStream(path)
             ?: throw IllegalArgumentException("Resource not found: $path")
-    return stream.bufferedReader().use { it.readText() }
+    return stream.bufferedReader().use(BufferedReader::readText)
 }
 
 internal fun registerMapEvents(

@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,9 +40,9 @@ public actual fun Map(
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
 ) {
     var htmlContent by remember { mutableStateOf<String?>(null) }
-    val apiKey = remember { MapConfiguration.googleMapsApiKey }
 
     LaunchedEffect(Unit) {
+        val apiKey = MapConfiguration.googleMapsApiKey
         htmlContent = loadHTMLContent(apiKey, cameraPosition, properties.webMapProperties)
     }
 
@@ -91,14 +90,14 @@ public actual fun Map(
         }
 
         WebView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             state = state,
             navigator = navigator,
             webViewJsBridge = jsBridge,
             onCreated = { _ -> },
         )
     } else {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(modifier = modifier, contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     }

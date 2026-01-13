@@ -49,13 +49,8 @@ private fun JsonObjectBuilder.putStyles(options: GoogleMapsMapStyleOptions?) {
     val jsonString = options?.json
     if (jsonString.isNullOrBlank()) return
 
-    try {
-        val element = Json.parseToJsonElement(jsonString)
-
-        put("styles", element)
-    } catch (e: Exception) {
-        println("KMPMaps: Error parsing styles JSON: ${e.message}")
-    }
+    val element = Json.parseToJsonElement(jsonString)
+    put("styles", element)
 }
 
 internal fun WebMapRestriction.toJson(): JsonObject = buildJsonObject {
@@ -79,8 +74,10 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
     put("mapTypeControl", mapTypeControl)
     put("streetViewControl", streetViewControl)
     put("rotateControl", rotateControl)
-    put("fullscreenControl", false)
     put("disableDefaultUI", disableDefaultUI)
+
+    // Fullscreen control is not supported in the web implementation and is always disabled.
+    put("fullscreenControl", false)
 
     zoomControlPosition?.let { put("zoomControlPosition", it.name) }
     mapTypeControlPosition?.let { put("mapTypeControlPosition", it.name) }

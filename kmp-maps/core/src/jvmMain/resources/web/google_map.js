@@ -31,8 +31,6 @@ async function initMap() {
 
     map.addListener("click", (e) => {
         if (e.placeId) {
-            // e.stop();
-
             window.kmpJsBridge.callNative("onPOIClick", JSON.stringify({
                 latitude: e.latLng.lat(),
                 longitude: e.latLng.lng()
