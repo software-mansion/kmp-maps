@@ -1,3 +1,4 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 version = "0.7.0"
@@ -12,6 +13,7 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(17)
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
@@ -21,6 +23,8 @@ kotlin {
             binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
         }
     }
+
+    jvm()
 
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
@@ -58,6 +62,11 @@ kotlin {
             implementation(project(":kmp-maps:google-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.jetBrains.kotlinX.coroutinesSwing)
+            implementation(libs.kcef)
+        }
     }
 }
 
@@ -79,6 +88,38 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures { buildConfig = true }
+}
+
+compose.desktop {
+    application {
+        mainClass = "com.swmansion.kmpmaps.sample.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.swmansion.kmpmaps.sample.MainKt"
+            packageVersion = "1.0.0"
+        }
+
+        jvmArgs(
+            "--add-opens",
+            "java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-opens",
+            "java.desktop/sun.lwawt=ALL-UNNAMED",
+            "--add-opens",
+            "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
+        )
+    }
+}
+
+tasks.withType<JavaExec> {
+    jvmArgs(
+        "--add-opens",
+        "java.desktop/sun.awt=ALL-UNNAMED",
+        "--add-opens",
+        "java.desktop/sun.lwawt=ALL-UNNAMED",
+        "--add-opens",
+        "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
+    )
 }
 
 dependencies { debugImplementation(compose.uiTooling) }

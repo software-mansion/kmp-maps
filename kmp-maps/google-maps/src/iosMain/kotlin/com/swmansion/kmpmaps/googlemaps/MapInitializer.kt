@@ -1,8 +1,8 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import cocoapods.GoogleMaps.GMSServices
+import com.swmansion.kmpmaps.core.MapConfiguration
 import kotlinx.cinterop.ExperimentalForeignApi
-import platform.Foundation.NSBundle
 
 /** Handles initialization of Google Maps SDK for iOS. */
 internal object GoogleMapsInitializer {
@@ -14,7 +14,7 @@ internal object GoogleMapsInitializer {
     @OptIn(ExperimentalForeignApi::class)
     private val initializationResult: Boolean by lazy {
         val apiKey = findApiKey()
-        if (apiKey != null && apiKey.isNotEmpty()) {
+        if (apiKey.isNotEmpty()) {
             GMSServices.provideAPIKey(apiKey)
             true
         } else {
@@ -33,11 +33,9 @@ internal object GoogleMapsInitializer {
     }
 
     /**
-     * Attempts to find the Google Maps API key from Info.plist.
+     * Attempts to find the Google Maps API key from [MapConfiguration]
      *
      * @return API key if found, null otherwise
      */
-    private fun findApiKey() =
-        (NSBundle.mainBundle.objectForInfoDictionaryKey("GoogleMapsAPIKey") as? String)
-            .takeUnless { key -> key.isNullOrEmpty() }
+    private fun findApiKey() = MapConfiguration.googleMapsApiKey
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Google Maps</title>
+    <style>html, body, #map { height: 100%; margin: 0; padding: 0; }</style>
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script type="text/javascript">
+        {{LOCAL_JS_CONTENT}}
+    </script>
+</head>
+    <body>
+        <div id="map"></div>
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&callback=initMap&loading=async"
+            async defer>
+        </script>
+    </body>
+</html>

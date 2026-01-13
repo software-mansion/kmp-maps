@@ -2,6 +2,9 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+import kotlinx.serialization.Serializable
 
 /**
  * Theme options for map appearance.
@@ -31,10 +34,11 @@ public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
     val isTrafficEnabled: Boolean = true,
     val isBuildingEnabled: Boolean = true,
-    val mapType: MapType? = MapType.NORMAL,
+    val mapType: MapType = MapType.NORMAL,
     val mapTheme: MapTheme = MapTheme.SYSTEM,
     val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
     val iosMapProperties: IosMapProperties = IosMapProperties(),
+    val webMapProperties: WebMapProperties = WebMapProperties(),
 )
 
 /**
@@ -60,6 +64,7 @@ public data class MapUISettings(
     val rotateEnabled: Boolean = true,
     val androidUISettings: AndroidUISettings = AndroidUISettings(),
     val iosUISettings: IosUISettings = IosUISettings(),
+    val webUISettings: WebUISettings = WebUISettings(),
 )
 
 /**
@@ -73,13 +78,16 @@ public data class MapUISettings(
  *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
  *   null or not found, the marker uses the default native rendering
  */
+@OptIn(ExperimentalUuidApi::class)
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
-)
+) {
+    internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents a circle overlay on the map.
@@ -132,7 +140,7 @@ public data class Polyline(
  * @property latitude The latitude coordinate in decimal degrees (-90 to 90)
  * @property longitude The longitude coordinate in decimal degrees (-180 to 180)
  */
-public data class Coordinates(val latitude: Double, val longitude: Double)
+@Serializable public data class Coordinates(val latitude: Double, val longitude: Double)
 
 /**
  * Represents the camera position and orientation of the map.
@@ -142,6 +150,7 @@ public data class Coordinates(val latitude: Double, val longitude: Double)
  * @property androidCameraPosition Android-specific options for the camera position and orientation
  * @property iosCameraPosition iOS-specific options for the camera position and orientation
  */
+@Serializable
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,

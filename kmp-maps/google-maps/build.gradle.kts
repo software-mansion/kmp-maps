@@ -20,6 +20,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
         homepage = "https://github.com/software-mansion/kmp-maps"
@@ -44,7 +46,7 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(project(":kmp-maps:core"))
+            api(project(":kmp-maps:core"))
         }
     }
 }

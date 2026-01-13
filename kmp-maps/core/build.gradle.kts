@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
+    alias(libs.plugins.jetBrains.kotlin.plugin.serialization)
 }
 
 kotlin {
@@ -19,6 +20,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     sourceSets {
         commonMain.dependencies {
             implementation(compose.components.resources)
@@ -29,6 +32,7 @@ kotlin {
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             implementation(compose.materialIconsExtended)
+            implementation(libs.jetBrains.kotlinX.serialization.json)
         }
 
         androidMain.dependencies {
@@ -36,6 +40,12 @@ kotlin {
             implementation(libs.google.android.gms.playServicesMaps)
             implementation(libs.google.maps.android.mapsCompose)
             implementation(libs.google.maps.android.mapsComposeUtils)
+        }
+
+        jvmMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.jetBrains.kotlinX.coroutinesSwing)
+            implementation(libs.kevinnZou.composeWebViewMultiplatformDesktop)
         }
     }
 }

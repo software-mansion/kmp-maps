@@ -101,7 +101,6 @@ internal fun MapsScreen() {
                 }
             }
         }
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { showBottomSheet = true }) {

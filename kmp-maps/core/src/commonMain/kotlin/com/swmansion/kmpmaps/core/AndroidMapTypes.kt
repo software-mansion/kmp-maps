@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps.core
 
+import kotlinx.serialization.Serializable
+
 /**
  * Android-specific map behavior and appearance configuration options.
  *
@@ -53,4 +55,5 @@ public data class AndroidMarkerOptions(
  * @property bearing The bearing (rotation) of the camera in degrees
  * @property tilt The tilt angle of the camera in degrees
  */
+@Serializable
 public data class AndroidCameraPosition(val bearing: Float? = null, val tilt: Float? = null)
