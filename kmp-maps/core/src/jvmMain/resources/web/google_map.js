@@ -15,7 +15,7 @@ const clusterCache = new Map();
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement: MarkerClass, PinElement: PinClass } = await google.maps.importLibrary("marker");
-    
+
     AdvancedMarkerElement = MarkerClass;
     PinElement = PinClass;
 
@@ -128,7 +128,8 @@ function updateMarkers(data, clusterEnabled, hasCustomClusterContent) {
             if (hasCustomClusterContent) {
                 markerCluster.renderer = {
                     render: (cluster) => {
-                        const clusterId = `cluster-${cluster.position.lat()}-${cluster.position.lng()}-${cluster.count}`;
+                        const markerIds = cluster.markers.map(m => m._kmpData.id).sort().join(',');
+                        const clusterId = `cluster-${btoa(markerIds)}`;
                         const container = document.createElement("div");
                         container.id = clusterId;
 
@@ -278,14 +279,13 @@ function updateMapUISettings(settings) {
     map.setOptions(options);
 }
 
-function updateCircles(jsonString) {
+function updateCircles(data) {
     if (!map) return;
 
     jsCircles.forEach(c => c.setMap(null));
     jsCircles = [];
 
     try {
-        const data = JSON.parse(jsonString);
         data.forEach((item) => {
             const circle = new google.maps.Circle({
                 map: map,
@@ -309,14 +309,13 @@ function updateCircles(jsonString) {
     } catch (e) { console.error("Error updating circles:", e); }
 }
 
-function updatePolygons(jsonString) {
+function updatePolygons(data) {
     if (!map) return;
 
     jsPolygons.forEach(p => p.setMap(null));
     jsPolygons = [];
 
     try {
-        const data = JSON.parse(jsonString);
         data.forEach((item) => {
             const polygon = new google.maps.Polygon({
                 map: map,
@@ -340,14 +339,13 @@ function updatePolygons(jsonString) {
 }
 
 
-function updatePolylines(jsonString) {
+function updatePolylines(data) {
     if (!map) return;
 
     jsPolylines.forEach(p => p.setMap(null));
     jsPolylines = [];
 
     try {
-        const data = JSON.parse(jsonString);
         data.forEach((item) => {
             const polyline = new google.maps.Polyline({
                 map: map,

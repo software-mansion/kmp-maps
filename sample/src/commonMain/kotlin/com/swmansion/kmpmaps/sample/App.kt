@@ -12,7 +12,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     MaterialTheme(if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
-        MapConfiguration.initialize(googleMapsApiKey = "MY_API_KEY")
         MapsScreen()
     }
 }
+
+val API_KEY = MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")

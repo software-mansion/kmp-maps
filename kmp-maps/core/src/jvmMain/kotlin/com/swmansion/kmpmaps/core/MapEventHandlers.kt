@@ -67,8 +67,9 @@ internal fun registerMapEvents(
         val html = clusterSettings.webClusterContent?.invoke(cluster)
 
         if (html != null) {
-            val cleanHtml = html.trimIndent()
-            navigator?.evaluateJavaScript("applyClusterHtml('${cluster.id}', '$cleanHtml')")
+            val formattedHtml = html.trimIndent()
+            val escapedHtmlJson = Json.encodeToString(formattedHtml)
+            navigator?.evaluateJavaScript("applyClusterHtml(${cluster.id}, '$escapedHtmlJson')")
         }
     }
 }

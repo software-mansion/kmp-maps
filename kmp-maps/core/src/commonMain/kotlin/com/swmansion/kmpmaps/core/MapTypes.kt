@@ -85,7 +85,6 @@ public data class MapUISettings(
  *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
  *   null or not found, the marker uses the default native rendering
  */
-@OptIn(ExperimentalUuidApi::class)
 @Serializable
 public data class Marker(
     val coordinates: Coordinates,
@@ -94,7 +93,7 @@ public data class Marker(
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
 ) {
-    internal val id: String = Uuid.random().toString()
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
 }
 
 /**
@@ -106,15 +105,15 @@ public data class Marker(
  * @property lineColor The color of the circle's border
  * @property lineWidth The width of the circle's border
  */
-@OptIn(ExperimentalUuidApi::class)
 public data class Circle(
-    val id: String = Uuid.random().toString(),
     val center: Coordinates,
     val radius: Float,
     val color: Color? = null,
     val lineColor: Color? = null,
     val lineWidth: Float? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents a polygon overlay on the map.
@@ -124,14 +123,14 @@ public data class Circle(
  * @property color The fill color of the polygon
  * @property lineColor The color of the polygon's border
  */
-@OptIn(ExperimentalUuidApi::class)
 public data class Polygon(
-    val id: String = Uuid.random().toString(),
     val coordinates: List<Coordinates>,
     val lineWidth: Float,
     val color: Color? = null,
     val lineColor: Color? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents a polyline overlay on the map.
@@ -140,13 +139,13 @@ public data class Polygon(
  * @property width The width of the polyline
  * @property lineColor The color of the polyline
  */
-@OptIn(ExperimentalUuidApi::class)
 public data class Polyline(
-    val id: String = Uuid.random().toString(),
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents geographical coordinates (latitude and longitude).
@@ -180,13 +179,9 @@ public data class CameraPosition(
  * @property items The list of [Marker] that make up this cluster
  */
 @Serializable
-@OptIn(ExperimentalUuidApi::class)
-public data class Cluster(
-    val id: String = Uuid.random().toString(),
-    val coordinates: Coordinates,
-    val size: Int,
-    val items: List<Marker>,
-)
+public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Configuration options for marker clustering.

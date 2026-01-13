@@ -76,10 +76,10 @@ public actual fun Map(
 
         LaunchedEffect(markers, webCustomMarkerContent, clusterSettings.enabled, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val markersJson = markers.toJson(webCustomMarkerContent).toString()
+                val json = markers.toJson(webCustomMarkerContent).toString()
                 val hasCustomCluster = clusterSettings.webClusterContent != null
                 navigator.evaluateJavaScript(
-                    "updateMarkers($markersJson, ${clusterSettings.enabled}, $hasCustomCluster)"
+                    "updateMarkers($json, ${clusterSettings.enabled}, $hasCustomCluster)"
                 )
             }
         }
@@ -87,21 +87,21 @@ public actual fun Map(
         LaunchedEffect(circles, loadingState) {
             if (loadingState is LoadingState.Finished) {
                 val json = circles.map { it.toJson() }.toJsonString()
-                navigator.evaluateJavaScript("updateCircles('$json')")
+                navigator.evaluateJavaScript("updateCircles($json)")
             }
         }
 
         LaunchedEffect(polygons, loadingState) {
             if (loadingState is LoadingState.Finished) {
                 val json = polygons.map { it.toJson() }.toJsonString()
-                navigator.evaluateJavaScript("updatePolygons('$json')")
+                navigator.evaluateJavaScript("updatePolygons($json)")
             }
         }
 
         LaunchedEffect(polylines, loadingState) {
             if (loadingState is LoadingState.Finished) {
                 val json = polylines.map { it.toJson() }.toJsonString()
-                navigator.evaluateJavaScript("updatePolylines('$json')")
+                navigator.evaluateJavaScript("updatePolylines($json)")
             }
         }
 
