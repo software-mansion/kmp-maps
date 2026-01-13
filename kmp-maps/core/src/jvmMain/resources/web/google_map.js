@@ -1,6 +1,7 @@
 let map;
 let markers = [];
 let markerCluster;
+let trafficLayer = null;
 let AdvancedMarkerElement;
 let PinElement;
 
@@ -117,7 +118,7 @@ function updateMapProperties(props) {
         }
     }
 
-    let typeId = google.maps.MapTypeId.ROADMAP;
+    let typeId;
     switch (props.mapType) {
         case "SATELLITE": typeId = google.maps.MapTypeId.SATELLITE; break;
         case "TERRAIN": typeId = google.maps.MapTypeId.TERRAIN; break;
