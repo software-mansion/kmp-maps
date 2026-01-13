@@ -42,6 +42,7 @@ import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
+import com.swmansion.kmpmaps.core.MapConfiguration
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
@@ -101,7 +102,7 @@ internal fun MapsScreen() {
                 }
             }
         }
-
+    MapConfiguration.initialize(googleMapsApiKey = "MY_API_KEY")
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { showBottomSheet = true }) {

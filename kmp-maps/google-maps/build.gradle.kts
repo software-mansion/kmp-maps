@@ -46,7 +46,7 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(project(":kmp-maps:core"))
+            api(project(":kmp-maps:core"))
         }
     }
 }

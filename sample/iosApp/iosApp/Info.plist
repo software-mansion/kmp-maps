@@ -7,8 +7,5 @@
 
         <key>NSLocationWhenInUseUsageDescription</key>
         <string>Allow $(PRODUCT_NAME) to use your location</string>
-
-        <key>GoogleMapsAPIKey</key>
-        <string>YOUR_API_KEY</string>
     </dict>
 </plist>

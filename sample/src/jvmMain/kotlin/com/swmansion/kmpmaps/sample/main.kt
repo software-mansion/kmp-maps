@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.swmansion.kmpmaps.core.MapConfiguration
 import dev.datlag.kcef.KCEF
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,6 @@ fun main() = application {
         }
 
         if (initialized) {
-            MapConfiguration.initialize(googleMapsApiKey = "MY_API_KEY")
             App()
         } else {
             Text("Initializing Map Engine...")

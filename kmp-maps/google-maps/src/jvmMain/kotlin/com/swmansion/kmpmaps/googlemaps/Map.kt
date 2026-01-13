@@ -42,7 +42,7 @@ public actual fun Map(
         cameraPosition,
         properties,
         uiSettings,
-        clusterSettings = clusterSettings,
+        clusterSettings,
         markers,
         circles,
         polygons,
