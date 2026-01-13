@@ -10,9 +10,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 
-internal fun List<JsonObject>.toJsonString(): String {
-    return JsonArray(this).toString()
-}
+internal fun List<JsonObject>.toJsonString() = JsonArray(this).toString()
 
 internal fun Marker.toJson(): JsonObject = buildJsonObject {
     put("id", id)
@@ -85,4 +83,4 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
     rotateControlPosition?.let { put("rotateControlPosition", it.name) }
 }
 
-internal fun Color.toHex() = String.format("#%06X", (0xFFFFFF and toArgb()))
+internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())

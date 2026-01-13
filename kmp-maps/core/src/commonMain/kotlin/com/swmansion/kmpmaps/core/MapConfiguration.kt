@@ -10,7 +10,7 @@ public object MapConfiguration {
                     "`MapConfiguration.initialize(googleMapsApiKey = \"...\")`."
             }
 
-    public fun initialize(googleMapsApiKey: String? = null) {
+    public fun initialize(googleMapsApiKey: String) {
         _googleMapsApiKey = googleMapsApiKey
     }
 }
