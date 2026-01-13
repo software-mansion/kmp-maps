@@ -133,7 +133,7 @@ internal fun MapsScreen() {
                     scaleBarEnabled = true,
                     androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
                 ),
-            markers = if (showAllComponents) exampleMarkers else emptyList(),
+            markers = if (showAllComponents) clusterMarkers else emptyList(),
             clusterSettings =
                 ClusterSettings(
                     enabled = clusteringEnabled,

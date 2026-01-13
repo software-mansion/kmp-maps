@@ -4,7 +4,6 @@ import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.web.WebViewNavigator
-import java.io.BufferedReader
 import kotlinx.serialization.json.Json
 
 internal fun registerMapEvents(

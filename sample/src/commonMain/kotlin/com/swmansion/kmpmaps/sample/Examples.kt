@@ -171,7 +171,7 @@ val customMarkerContent =
 val customWebMarkerContent =
     mapOf<String, (Marker) -> String>(
         "web_shop_marker" to
-            { marker ->
+            { _ ->
                 val iconColor = "#FFFFFF"
                 """
             <div style="

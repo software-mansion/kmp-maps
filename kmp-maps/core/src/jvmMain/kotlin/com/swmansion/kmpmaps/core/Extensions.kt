@@ -102,6 +102,7 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
 }
 
 internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())
+
 internal fun Circle.toJson(): JsonObject = buildJsonObject {
     put("id", id)
     put("center", center.toJson())
