@@ -66,7 +66,7 @@ internal fun registerMapEvents(
 }
 
 private fun WebViewJsBridge.registerHandler(methodName: String, handler: (String) -> Unit) {
-    this.register(
+    register(
         object : IJsMessageHandler {
             override fun methodName() = methodName
 
