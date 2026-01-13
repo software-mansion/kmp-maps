@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     explicitApi()
-    jvmToolchain(22)
+    jvmToolchain(17)
     androidTarget { publishLibraryVariants("release") }
 
     listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
