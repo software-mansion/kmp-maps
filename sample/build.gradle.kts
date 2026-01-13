@@ -64,7 +64,7 @@ kotlin {
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.jetBrains.kotlinX.coroutinesSwing)
             implementation(libs.kcef)
         }
     }

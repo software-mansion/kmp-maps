@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.jetBrains.kotlin.plugin.serialization)
 }
 
 kotlin {
@@ -32,7 +32,7 @@ kotlin {
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             implementation(compose.materialIconsExtended)
-            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.jetBrains.kotlinX.serialization.json)
         }
 
         androidMain.dependencies {
@@ -44,8 +44,8 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.compose.webview.multiplatform.desktop)
+            implementation(libs.jetBrains.kotlinX.coroutinesSwing)
+            implementation(libs.kevinnZou.composeWebViewMultiplatformDesktop)
         }
     }
 }
