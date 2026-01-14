@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -8,9 +10,11 @@ plugins {
     alias(libs.plugins.jetBrains.compose)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.buildkonfig)
     kotlin("native.cocoapods")
 }
+
+val googleMapsApiKey: String = gradleLocalProperties(rootDir, providers).getProperty("MAPS_API_KEY")
 
 kotlin {
     jvmToolchain(17)
@@ -80,6 +84,7 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders["MAPS_API_KEY"] = googleMapsApiKey
     }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes { getByName("release") { isMinifyEnabled = false } }
@@ -124,7 +129,10 @@ tasks.withType<JavaExec> {
 
 dependencies { debugImplementation(compose.uiTooling) }
 
-secrets {
-    propertiesFileName = "secrets.properties"
-    defaultPropertiesFileName = "local.defaults.properties"
+buildkonfig {
+    packageName = "com.swmansion.kmpmaps.sample"
+
+    defaultConfigs { buildConfigField(STRING, "MAPS_API_KEY", googleMapsApiKey) }
 }
+
+tasks.named("compileKotlinMetadata") { dependsOn("generateBuildKonfig") }
