@@ -1,5 +1,7 @@
 package com.swmansion.kmpmaps.core
 
+import java.io.BufferedReader
+
 internal fun loadHTMLContent(
     apiKey: String,
     cameraPosition: CameraPosition?,
@@ -22,5 +24,5 @@ private fun readResource(path: String): String {
             ?: object {}.javaClass.getResourceAsStream(path)
             ?: Thread.currentThread().contextClassLoader.getResourceAsStream(path)
             ?: throw IllegalArgumentException("Resource not found: $path")
-    return stream.bufferedReader().use { it.readText() }
+    return stream.bufferedReader().use(BufferedReader::readText)
 }

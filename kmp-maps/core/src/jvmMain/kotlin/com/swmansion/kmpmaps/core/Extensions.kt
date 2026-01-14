@@ -122,7 +122,7 @@ internal fun Circle.toJson(): JsonObject = buildJsonObject {
 
 internal fun Polygon.toJson(): JsonObject = buildJsonObject {
     put("id", id)
-    put("paths", JsonArray(coordinates.map { it.toJson() }))
+    put("paths", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", lineWidth)
 
     lineColor?.let {
@@ -137,7 +137,7 @@ internal fun Polygon.toJson(): JsonObject = buildJsonObject {
 
 internal fun Polyline.toJson(): JsonObject = buildJsonObject {
     put("id", id)
-    put("path", JsonArray(coordinates.map { it.toJson() }))
+    put("path", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", width)
 
     lineColor?.let {
