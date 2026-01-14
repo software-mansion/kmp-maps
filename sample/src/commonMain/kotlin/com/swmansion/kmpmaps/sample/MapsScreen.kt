@@ -34,341 +34,186 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swmansion.kmpmaps.core.AndroidMapProperties
-import com.swmansion.kmpmaps.core.AndroidUISettings
 import com.swmansion.kmpmaps.core.CameraPosition
-import com.swmansion.kmpmaps.core.Circle
-import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
-import com.swmansion.kmpmaps.core.GeoJsonLayer
-import com.swmansion.kmpmaps.core.Map as CoreMap
-import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
-import com.swmansion.kmpmaps.core.MapUISettings
-import com.swmansion.kmpmaps.core.Marker
-import com.swmansion.kmpmaps.core.PointStyle
-import com.swmansion.kmpmaps.core.Polygon
-import com.swmansion.kmpmaps.core.Polyline
-import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MapsScreen() {
-    var selectedMapType by remember { mutableStateOf(MapType.NORMAL) }
-    var selectedMapTheme by remember { mutableStateOf(MapTheme.SYSTEM) }
-    var showUserLocation by remember { mutableStateOf(false) }
-    var currentCameraPosition by remember {
-        mutableStateOf(
-            CameraPosition(
-                coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
-                zoom = 10f,
-            )
-        )
-    }
-    var showAllComponents by remember { mutableStateOf(true) }
-    var useGoogleMapsMapView by remember { mutableStateOf(true) }
-    var showPointGeoJson by remember { mutableStateOf(false) }
-    var showPolygonGeoJson by remember { mutableStateOf(false) }
-    var showLineGeoJson by remember { mutableStateOf(false) }
-    var clusteringEnabled by remember { mutableStateOf(true) }
-
+internal fun MapsScreen(
+    options: MapOptions,
+    updateOptions: (MapOptions.() -> MapOptions) -> Unit,
+    mapContent: @Composable (Modifier) -> Unit,
+) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val geoJsonLayers =
-        remember(showPointGeoJson, showPolygonGeoJson, showLineGeoJson) {
-            buildList {
-                if (showPointGeoJson) {
-                    add(
-                        GeoJsonLayer(
-                            geoJson = EXAMPLE_POINT_GEO_JSON,
-                            pointStyle =
-                                PointStyle(
-                                    snippet = "Recommended food places",
-                                    infoWindowAnchorU = 0.1f,
-                                    infoWindowAnchorV = 0.7f,
-                                ),
-                        )
-                    )
-                }
-                if (showPolygonGeoJson) {
-                    add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
-                }
-                if (showLineGeoJson) {
-                    add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+    if (isJvm()) {
+        mapContent(Modifier.fillMaxSize())
+    } else {
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(onClick = { showBottomSheet = true }) {
+                    Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
                 }
             }
-        }
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showBottomSheet = true }) {
-                Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
-            }
-        }
-    ) {
-        Map(
-            modifier = Modifier.fillMaxSize(),
-            mapProvider = if (useGoogleMapsMapView) MapProvider.GOOGLE_MAPS else MapProvider.NATIVE,
-            cameraPosition = currentCameraPosition,
-            properties =
-                MapProperties(
-                    mapType = selectedMapType,
-                    mapTheme = selectedMapTheme,
-                    isMyLocationEnabled = showUserLocation,
-                    isTrafficEnabled = true,
-                    isBuildingEnabled = true,
-                    androidMapProperties =
-                        AndroidMapProperties(
-                            isIndoorEnabled = true,
-                            minZoomPreference = 3f,
-                            maxZoomPreference = 21f,
-                        ),
-                ),
-            uiSettings =
-                MapUISettings(
-                    compassEnabled = true,
-                    myLocationButtonEnabled = showUserLocation,
-                    scaleBarEnabled = true,
-                    androidUISettings = AndroidUISettings(zoomControlsEnabled = false),
-                ),
-            markers = if (showAllComponents) clusterMarkers else emptyList(),
-            clusterSettings =
-                ClusterSettings(
-                    enabled = clusteringEnabled,
-                    clusterContent = customClusterContent,
-                    onClusterClick = { cluster ->
-                        println(
-                            "Cluster clicked: ${cluster.size} markers at ${cluster.coordinates}"
-                        )
-                        false
-                    },
-                    webClusterContent = webClusterContent,
-                ),
-            circles = if (showAllComponents) getExampleCircles() else emptyList(),
-            polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
-            polylines = if (showAllComponents) getExamplePolylines() else emptyList(),
-            onCameraMove = { position -> println("Camera moved: $position") },
-            onCircleClick = { println("Circle clicked: ${it.center}") },
-            onPolygonClick = { println("Polygon clicked: ${it.coordinates}") },
-            onPolylineClick = { println("Polyline clicked: ${it.coordinates}") },
-            onPOIClick = { println("POI clicked: $it") },
-            onMapLoaded = { println("Map loaded") },
-            onMapLongClick = { println("Map long clicked: $it") },
-            onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
-            onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
-            geoJsonLayers = geoJsonLayers,
-            customMarkerContent = customMarkerContent,
-            webCustomMarkerContent = customWebMarkerContent,
-        )
-    }
-
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = bottomSheetState,
         ) {
-            Column(
-                Modifier.fillMaxWidth()
-                    .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.statusBars))
-                    .padding(vertical = 16.dp),
-                Arrangement.spacedBy(8.dp),
-                Alignment.CenterHorizontally,
+            mapContent(Modifier.fillMaxSize())
+        }
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = bottomSheetState,
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(
-                        onClick = { selectedMapType = MapType.NORMAL },
-                        label = { Text("Normal") },
-                        selected = selectedMapType == MapType.NORMAL,
-                    )
-                    FilterChip(
-                        onClick = { selectedMapType = MapType.SATELLITE },
-                        label = { Text("Satellite") },
-                        selected = selectedMapType == MapType.SATELLITE,
-                    )
-                    FilterChip(
-                        onClick = { selectedMapType = MapType.HYBRID },
-                        label = { Text("Hybrid") },
-                        selected = selectedMapType == MapType.HYBRID,
-                    )
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(
-                        onClick = { selectedMapTheme = MapTheme.SYSTEM },
-                        label = { Text("System") },
-                        selected = selectedMapTheme == MapTheme.SYSTEM,
-                    )
-                    FilterChip(
-                        onClick = { selectedMapTheme = MapTheme.LIGHT },
-                        label = { Text("Light") },
-                        selected = selectedMapTheme == MapTheme.LIGHT,
-                    )
-                    FilterChip(
-                        onClick = { selectedMapTheme = MapTheme.DARK },
-                        label = { Text("Dark") },
-                        selected = selectedMapTheme == MapTheme.DARK,
-                    )
-                }
-                if (isIOS()) {
+                Column(
+                    Modifier.fillMaxWidth()
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.exclude(WindowInsets.statusBars)
+                        )
+                        .padding(vertical = 16.dp),
+                    Arrangement.spacedBy(8.dp),
+                    Alignment.CenterHorizontally,
+                ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapType = MapType.NORMAL) } },
+                            label = { Text("Normal") },
+                            selected = options.mapType == MapType.NORMAL,
+                        )
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapType = MapType.SATELLITE) } },
+                            label = { Text("Satellite") },
+                            selected = options.mapType == MapType.SATELLITE,
+                        )
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapType = MapType.HYBRID) } },
+                            label = { Text("Hybrid") },
+                            selected = options.mapType == MapType.HYBRID,
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapTheme = MapTheme.SYSTEM) } },
+                            label = { Text("System") },
+                            selected = options.mapTheme == MapTheme.SYSTEM,
+                        )
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapTheme = MapTheme.LIGHT) } },
+                            label = { Text("Light") },
+                            selected = options.mapTheme == MapTheme.LIGHT,
+                        )
+                        FilterChip(
+                            onClick = { updateOptions { copy(mapTheme = MapTheme.DARK) } },
+                            label = { Text("Dark") },
+                            selected = options.mapTheme == MapTheme.DARK,
+                        )
+                    }
+                    if (isIOS()) {
+                        ListItem(
+                            headlineContent = { Text("Use Google Maps") },
+                            modifier =
+                                Modifier.height(48.dp).clickable {
+                                    updateOptions {
+                                        copy(useGoogleMapsMapView = !useGoogleMapsMapView)
+                                    }
+                                },
+                            trailingContent = {
+                                Switch(
+                                    checked = options.useGoogleMapsMapView,
+                                    onCheckedChange = { v ->
+                                        updateOptions { copy(useGoogleMapsMapView = v) }
+                                    },
+                                )
+                            },
+                        )
+                    }
                     ListItem(
-                        headlineContent = { Text("Use Google Maps") },
+                        headlineContent = { Text("Show annotations") },
                         modifier =
                             Modifier.height(48.dp).clickable {
-                                useGoogleMapsMapView = !useGoogleMapsMapView
+                                updateOptions { copy(showAllComponents = !showAllComponents) }
                             },
                         trailingContent = {
                             Switch(
-                                checked = useGoogleMapsMapView,
-                                onCheckedChange = { useGoogleMapsMapView = it },
+                                checked = options.showAllComponents,
+                                onCheckedChange = { v ->
+                                    updateOptions { copy(showAllComponents = v) }
+                                },
                             )
                         },
                     )
+                    ListItem(
+                        headlineContent = { Text("Marker clustering") },
+                        modifier =
+                            Modifier.height(48.dp).clickable {
+                                updateOptions { copy(clusteringEnabled = !clusteringEnabled) }
+                            },
+                        trailingContent = {
+                            Switch(
+                                checked = options.clusteringEnabled,
+                                onCheckedChange = { v ->
+                                    updateOptions { copy(clusteringEnabled = v) }
+                                },
+                            )
+                        },
+                    )
+                    ListItem(
+                        headlineContent = { Text("Show my location") },
+                        modifier =
+                            Modifier.height(48.dp).clickable {
+                                updateOptions { copy(showUserLocation = !showUserLocation) }
+                            },
+                        trailingContent = {
+                            Switch(
+                                checked = options.showUserLocation,
+                                onCheckedChange = { v ->
+                                    updateOptions { copy(showUserLocation = v) }
+                                },
+                            )
+                        },
+                    )
+                    ListItem(
+                        headlineContent = { Text("GeoJSON Layers") },
+                        modifier = Modifier.height(48.dp),
+                        trailingContent = {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(
+                                    selected = options.showPointGeoJson,
+                                    onClick = {
+                                        updateOptions { copy(showPointGeoJson = !showPointGeoJson) }
+                                    },
+                                    label = { Text("Point") },
+                                )
+                                FilterChip(
+                                    selected = options.showPolygonGeoJson,
+                                    onClick = {
+                                        updateOptions {
+                                            copy(showPolygonGeoJson = !showPolygonGeoJson)
+                                        }
+                                    },
+                                    label = { Text("Area") },
+                                )
+                                FilterChip(
+                                    selected = options.showLineGeoJson,
+                                    onClick = {
+                                        updateOptions { copy(showLineGeoJson = !showLineGeoJson) }
+                                    },
+                                    label = { Text("Line") },
+                                )
+                            }
+                        },
+                    )
+                    Button(
+                        onClick = { updateOptions { copy(cameraPosition = getRandomPosition()) } },
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                    ) {
+                        Text("Random location")
+                    }
                 }
-                ListItem(
-                    headlineContent = { Text("Show annotations") },
-                    modifier =
-                        Modifier.height(48.dp).clickable { showAllComponents = !showAllComponents },
-                    trailingContent = {
-                        Switch(
-                            checked = showAllComponents,
-                            onCheckedChange = { showAllComponents = it },
-                        )
-                    },
-                )
-                ListItem(
-                    headlineContent = { Text("Marker clustering") },
-                    modifier =
-                        Modifier.height(48.dp).clickable { clusteringEnabled = !clusteringEnabled },
-                    trailingContent = {
-                        Switch(
-                            checked = clusteringEnabled,
-                            onCheckedChange = { clusteringEnabled = it },
-                        )
-                    },
-                )
-                ListItem(
-                    headlineContent = { Text("Show my location") },
-                    modifier =
-                        Modifier.height(48.dp).clickable { showUserLocation = !showUserLocation },
-                    trailingContent = {
-                        Switch(
-                            checked = showUserLocation,
-                            onCheckedChange = { showUserLocation = it },
-                        )
-                    },
-                )
-                ListItem(
-                    headlineContent = { Text("GeoJSON") },
-                    modifier = Modifier.height(48.dp),
-                    trailingContent = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FilterChip(
-                                selected = showPointGeoJson,
-                                onClick = { showPointGeoJson = !showPointGeoJson },
-                                label = { Text("Point") },
-                            )
-                            FilterChip(
-                                selected = showPolygonGeoJson,
-                                onClick = { showPolygonGeoJson = !showPolygonGeoJson },
-                                label = { Text("Area") },
-                            )
-                            FilterChip(
-                                selected = showLineGeoJson,
-                                onClick = { showLineGeoJson = !showLineGeoJson },
-                                label = { Text("Line") },
-                            )
-                        }
-                    },
-                )
-                Button(
-                    onClick = { currentCameraPosition = getRandomPosition() },
-                    content = { Text("Random location") },
-                )
             }
         }
-    }
-}
-
-private enum class MapProvider {
-    NATIVE,
-    GOOGLE_MAPS,
-}
-
-@Composable
-private fun Map(
-    modifier: Modifier = Modifier,
-    mapProvider: MapProvider,
-    cameraPosition: CameraPosition? = null,
-    properties: MapProperties = MapProperties(),
-    uiSettings: MapUISettings = MapUISettings(),
-    clusterSettings: ClusterSettings = ClusterSettings(),
-    markers: List<Marker> = emptyList(),
-    circles: List<Circle> = emptyList(),
-    polygons: List<Polygon> = emptyList(),
-    polylines: List<Polyline> = emptyList(),
-    onCameraMove: ((CameraPosition) -> Unit)? = null,
-    onMarkerClick: ((Marker) -> Unit)? = null,
-    onCircleClick: ((Circle) -> Unit)? = null,
-    onPolygonClick: ((Polygon) -> Unit)? = null,
-    onPolylineClick: ((Polyline) -> Unit)? = null,
-    onMapClick: ((Coordinates) -> Unit)? = null,
-    onMapLongClick: ((Coordinates) -> Unit)? = null,
-    onPOIClick: ((Coordinates) -> Unit)? = null,
-    onMapLoaded: (() -> Unit)? = null,
-    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
-    customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
-    webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
-) {
-    when (mapProvider) {
-        MapProvider.NATIVE ->
-            CoreMap(
-                modifier = modifier,
-                cameraPosition = cameraPosition,
-                properties = properties,
-                uiSettings = uiSettings,
-                clusterSettings = clusterSettings,
-                markers = markers,
-                circles = circles,
-                polygons = polygons,
-                polylines = polylines,
-                onCameraMove = onCameraMove,
-                onMarkerClick = onMarkerClick,
-                onCircleClick = onCircleClick,
-                onPolygonClick = onPolygonClick,
-                onPolylineClick = onPolylineClick,
-                onMapClick = onMapClick,
-                onMapLongClick = onMapLongClick,
-                onPOIClick = onPOIClick,
-                onMapLoaded = onMapLoaded,
-                geoJsonLayers = geoJsonLayers,
-                customMarkerContent = customMarkerContent,
-                webCustomMarkerContent = webCustomMarkerContent,
-            )
-        MapProvider.GOOGLE_MAPS ->
-            GoogleMap(
-                modifier = modifier,
-                cameraPosition = cameraPosition,
-                properties = properties,
-                uiSettings = uiSettings,
-                clusterSettings = clusterSettings,
-                markers = markers,
-                circles = circles,
-                polygons = polygons,
-                polylines = polylines,
-                onCameraMove = onCameraMove,
-                onMarkerClick = onMarkerClick,
-                onCircleClick = onCircleClick,
-                onPolygonClick = onPolygonClick,
-                onPolylineClick = onPolylineClick,
-                onMapClick = onMapClick,
-                onMapLongClick = onMapLongClick,
-                onPOIClick = onPOIClick,
-                onMapLoaded = onMapLoaded,
-                geoJsonLayers = geoJsonLayers,
-                customMarkerContent = customMarkerContent,
-                webCustomMarkerContent = webCustomMarkerContent,
-            )
     }
 }
 
