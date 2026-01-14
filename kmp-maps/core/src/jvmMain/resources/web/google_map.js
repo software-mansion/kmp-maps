@@ -1,14 +1,21 @@
 let map;
 let markers = [];
+
+let jsCircles = [];
+let jsPolygons = [];
+let jsPolylines = [];
+
 let markerCluster;
 let trafficLayer = null;
 let AdvancedMarkerElement;
 let PinElement;
 
+const clusterCache = new Map();
+
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement: MarkerClass, PinElement: PinClass } = await google.maps.importLibrary("marker");
-    
+
     AdvancedMarkerElement = MarkerClass;
     PinElement = PinClass;
 
@@ -67,27 +74,47 @@ async function initMap() {
     });
 }
 
-function updateMarkers(jsonString, clusterEnabled) {
+function updateMarkers(data, clusterEnabled, hasCustomClusterContent) {
     if (!map || !AdvancedMarkerElement) {
         console.warn("Map not ready yet.");
         return;
     }
 
     clearMarkers();
+    clusterCache.clear();
 
     try {
-        const data = JSON.parse(jsonString);
         const newMarkers = [];
 
         data.forEach(item => {
+            let contentNode = null;
+            if (item.renderedHtml) {
+                const div = document.createElement('div');
+                div.innerHTML = item.renderedHtml;
+                div.className = `kmp-marker-wrapper ${item.contentId || ''}`;
+
+                contentNode = div;
+            }
+
             const marker = new AdvancedMarkerElement({
                 map,
                 position: item.position,
                 title: item.title || "",
+                content: contentNode
             });
 
+            marker._kmpData = {
+                id: item.id,
+                title: item.title,
+                coordinates: {
+                    latitude: item.position.lat,
+                    longitude: item.position.lng
+                },
+                contentId: item.contentId,
+            };
+
             marker.addListener("click", () => {
-                sendToKotlin("onMarkerClick", String(item.id));
+                sendToKotlin("onMarkerClick", String(marker._kmpData.id));
             });
 
             newMarkers.push(marker);
@@ -97,10 +124,66 @@ function updateMarkers(jsonString, clusterEnabled) {
 
         if (clusterEnabled && markerCluster) {
             markerCluster.clearMarkers();
+
+            if (hasCustomClusterContent) {
+                markerCluster.renderer = {
+                    render: (cluster) => {
+                        const markerIds = cluster.markers.map(m => m._kmpData.id).sort().join(',');
+                        const clusterId = `cluster-${btoa(markerIds)}`;
+                        const container = document.createElement("div");
+                        container.id = clusterId;
+
+                        if (clusterCache.has(clusterId)) {
+                            container.innerHTML = clusterCache.get(clusterId);
+                        } else {
+                            container.innerHTML = `<div style="background: #4285F4; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">${cluster.count}</div>`;
+
+                            const clusterParams = {
+                                id: clusterId,
+                                coordinates: { latitude: cluster.position.lat(), longitude: cluster.position.lng() },
+                                size: cluster.count,
+                                items: cluster.markers.map(m => m._kmpData)
+                            };
+                            sendToKotlin("renderCluster", JSON.stringify(clusterParams));
+                        }
+
+                        return new AdvancedMarkerElement({
+                            position: cluster.position,
+                            content: container
+                        });
+                    }
+                };
+            }
+
             markerCluster.addMarkers(markers);
+
+            google.maps.event.clearListeners(markerCluster, "click");
+
+            google.maps.event.addListener(markerCluster, "click", (cluster) => {
+                const mappedItems = cluster.markers.map(m => m._kmpData);
+
+                const clusterInfo = {
+                    coordinates: {
+                        latitude: cluster.position.lat(),
+                        longitude: cluster.position.lng()
+                    },
+                    size: cluster.count,
+                    items: mappedItems
+                };
+
+                sendToKotlin("onClusterClick", JSON.stringify(clusterInfo));
+            });
         }
     } catch (e) {
         console.error("Error during updateMarkers:", e);
+    }
+}
+
+function applyClusterHtml(clusterId, html) {
+    clusterCache.set(clusterId, html);
+    const element = document.getElementById(clusterId);
+    if (element) {
+        element.innerHTML = html;
     }
 }
 
@@ -194,6 +277,93 @@ function updateMapUISettings(settings) {
     }
 
     map.setOptions(options);
+}
+
+function updateCircles(data) {
+    if (!map) return;
+
+    jsCircles.forEach(c => c.setMap(null));
+    jsCircles = [];
+
+    try {
+        data.forEach((item) => {
+            const circle = new google.maps.Circle({
+                map: map,
+                center: item.center,
+                radius: item.radius,
+                fillColor: item.fillColor || "#000000",
+                fillOpacity: item.fillOpacity !== undefined ? item.fillOpacity : 0.0,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 2
+            });
+
+            circle.addListener("click", () => {
+                window.kmpJsBridge.callNative("onCircleClick", String(item.id));
+            });
+
+            jsCircles.push(circle);
+        });
+    } catch (e) { console.error("Error updating circles:", e); }
+}
+
+function updatePolygons(data) {
+    if (!map) return;
+
+    jsPolygons.forEach(p => p.setMap(null));
+    jsPolygons = [];
+
+    try {
+        data.forEach((item) => {
+            const polygon = new google.maps.Polygon({
+                map: map,
+                paths: item.paths,
+                fillColor: item.fillColor || "#000000",
+                fillOpacity: item.fillOpacity !== undefined ? item.fillOpacity : 0.0,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 2
+            });
+
+            polygon.addListener("click", () => {
+                window.kmpJsBridge.callNative("onPolygonClick", String(item.id));
+            });
+
+            jsPolygons.push(polygon);
+        });
+    } catch (e) { console.error("Error updating polygons:", e); }
+}
+
+
+function updatePolylines(data) {
+    if (!map) return;
+
+    jsPolylines.forEach(p => p.setMap(null));
+    jsPolylines = [];
+
+    try {
+        data.forEach((item) => {
+            const polyline = new google.maps.Polyline({
+                map: map,
+                path: item.path,
+                strokeColor: item.strokeColor || "#000000",
+                strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                strokeWeight: item.strokeWeight || 1,
+                clickable: true,
+                zIndex: 3
+            });
+
+            polyline.addListener("click", () => {
+                window.kmpJsBridge.callNative("onPolylineClick", String(item.id));
+            });
+
+            jsPolylines.push(polyline);
+        });
+    } catch (e) { console.error("Error updating polylines:", e); }
 }
 
 function clearMarkers() {

@@ -38,6 +38,7 @@ public actual fun Map(
     onMapLoaded: (() -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
+    webCustomMarkerContent: Map<String, (Marker) -> String>,
 ) {
     var htmlContent by remember { mutableStateOf<String?>(null) }
 
@@ -58,20 +59,49 @@ public actual fun Map(
             registerMapEvents(
                 jsBridge = jsBridge,
                 markers = markers,
+                circles = circles,
+                polygons = polygons,
+                polylines = polylines,
+                clusterSettings = clusterSettings,
                 onCameraMove = onCameraMove,
                 onMarkerClick = onMarkerClick,
+                onCircleClick = onCircleClick,
+                onPolygonClick = onPolygonClick,
+                onPolylineClick = onPolylineClick,
                 onMapClick = onMapClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
             )
         }
 
-        LaunchedEffect(markers, clusterSettings.enabled, loadingState) {
+        LaunchedEffect(markers, webCustomMarkerContent, clusterSettings.enabled, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val markersJson = markers.map { it.toJson() }.toJsonString()
+                val json = markers.toJson(webCustomMarkerContent).toString()
+                val hasCustomCluster = clusterSettings.webClusterContent != null
                 navigator.evaluateJavaScript(
-                    "updateMarkers('$markersJson', ${clusterSettings.enabled})"
+                    "updateMarkers($json, ${clusterSettings.enabled}, $hasCustomCluster)"
                 )
+            }
+        }
+
+        LaunchedEffect(circles, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = circles.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updateCircles($json)")
+            }
+        }
+
+        LaunchedEffect(polygons, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = polygons.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updatePolygons($json)")
+            }
+        }
+
+        LaunchedEffect(polylines, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = polylines.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updatePolylines($json)")
             }
         }
 

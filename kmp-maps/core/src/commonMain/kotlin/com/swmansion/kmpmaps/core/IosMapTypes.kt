@@ -45,7 +45,10 @@ public data class IosUISettings(
  *
  * @property tintColor The tint color for the marker (Apple Maps only)
  */
-public data class IosMarkerOptions(val tintColor: Color? = null)
+@Serializable
+public data class IosMarkerOptions(
+    val tintColor: @Serializable(with = ColorSerializer::class) Color? = null
+)
 
 /**
  * iOS-specific options for the camera position and orientation of the map.

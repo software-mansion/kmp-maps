@@ -63,4 +63,5 @@ public expect fun Map(
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
     customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
+    webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
 )

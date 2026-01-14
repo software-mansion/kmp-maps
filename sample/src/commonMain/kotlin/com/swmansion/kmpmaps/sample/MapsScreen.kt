@@ -144,6 +144,7 @@ internal fun MapsScreen() {
                         )
                         false
                     },
+                    webClusterContent = webClusterContent,
                 ),
             circles = if (showAllComponents) getExampleCircles() else emptyList(),
             polygons = if (showAllComponents) getExamplePolygons() else emptyList(),
@@ -159,6 +160,7 @@ internal fun MapsScreen() {
             onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
             geoJsonLayers = geoJsonLayers,
             customMarkerContent = customMarkerContent,
+            webCustomMarkerContent = customWebMarkerContent,
         )
     }
 
@@ -316,6 +318,7 @@ private fun Map(
     onMapLoaded: (() -> Unit)? = null,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
     customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
+    webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
 ) {
     when (mapProvider) {
         MapProvider.NATIVE ->
@@ -340,6 +343,7 @@ private fun Map(
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
+                webCustomMarkerContent = webCustomMarkerContent,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -363,6 +367,7 @@ private fun Map(
                 onMapLoaded = onMapLoaded,
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
+                webCustomMarkerContent = webCustomMarkerContent,
             )
     }
 }

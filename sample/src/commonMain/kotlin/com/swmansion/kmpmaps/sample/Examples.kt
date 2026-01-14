@@ -62,7 +62,7 @@ val exampleMarkers =
             coordinates = jewishQuarterPin,
             title = "Kazimierz",
             androidMarkerOptions = AndroidMarkerOptions(snippet = "Jewish quarter"),
-            contentId = "colored_pin_marker",
+            contentId = "web_shop_marker",
         ),
         Marker(
             coordinates = Coordinates(50.0540, 19.9354),
@@ -167,6 +167,71 @@ val customMarkerContent =
                 }
             },
     )
+
+val customWebMarkerContent =
+    mapOf<String, (Marker) -> String>(
+        "web_shop_marker" to
+            { _ ->
+                val iconColor = "#FFFFFF"
+                """
+            <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            ">
+                <div style="
+                    background: #4285F4;
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                ">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="$iconColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+                </div>
+                
+                <div style="
+                    width: 0; 
+                    height: 0; 
+                    border-left: 6px solid transparent;
+                    border-right: 6px solid transparent;
+                    border-top: 6px solid white;
+                    margin-top: -1px;
+                "></div>
+            </div>
+            """
+            }
+    )
+
+val webClusterContent = { cluster: Cluster ->
+    """
+    <div style="
+        background-color: #4285F4;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        border: 2px solid white;
+    ">
+        ${cluster.size}
+    </div>
+    """
+        .trimIndent()
+}
 
 val customClusterContent =
     @Composable { cluster: Cluster ->

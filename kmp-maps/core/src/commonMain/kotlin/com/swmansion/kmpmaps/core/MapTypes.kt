@@ -2,9 +2,15 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 /**
  * Theme options for map appearance.
@@ -78,7 +84,7 @@ public data class MapUISettings(
  *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
  *   null or not found, the marker uses the default native rendering
  */
-@OptIn(ExperimentalUuidApi::class)
+@Serializable
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
@@ -86,7 +92,7 @@ public data class Marker(
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
 ) {
-    internal val id: String = Uuid.random().toString()
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
 }
 
 /**
@@ -104,7 +110,9 @@ public data class Circle(
     val color: Color? = null,
     val lineColor: Color? = null,
     val lineWidth: Float? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents a polygon overlay on the map.
@@ -119,7 +127,9 @@ public data class Polygon(
     val lineWidth: Float,
     val color: Color? = null,
     val lineColor: Color? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents a polyline overlay on the map.
@@ -132,7 +142,9 @@ public data class Polyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,
-)
+) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Represents geographical coordinates (latitude and longitude).
@@ -165,7 +177,10 @@ public data class CameraPosition(
  * @property size The number of markers contained within this cluster
  * @property items The list of [Marker] that make up this cluster
  */
-public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
+@Serializable
+public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>) {
+    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+}
 
 /**
  * Configuration options for marker clustering.
@@ -179,4 +194,15 @@ public data class ClusterSettings(
     val enabled: Boolean = false,
     val onClusterClick: ((Cluster) -> Boolean)? = null,
     val clusterContent: (@Composable (Cluster) -> Unit)? = null,
+    val webClusterContent: ((Cluster) -> String)? = null,
 )
+
+internal object ColorSerializer : KSerializer<Color> {
+    override val descriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
+
+    override fun serialize(encoder: Encoder, value: Color) {
+        encoder.encodeInt(value.toArgb())
+    }
+
+    override fun deserialize(decoder: Decoder) = Color(decoder.decodeInt())
+}
