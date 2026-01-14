@@ -23,7 +23,9 @@ fun App() {
         MapConfiguration.initialize(googleMapsApiKey = BuildKonfig.MAPS_API_KEY)
     }
 
-    MaterialTheme(if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
+    MaterialTheme(
+        if (isSystemInDarkTheme() && !isJvm()) darkColorScheme() else lightColorScheme()
+    ) {
         var options by remember { mutableStateOf(MapOptions()) }
         val updateOptions: (MapOptions.() -> MapOptions) -> Unit = { transform ->
             options = options.transform()
