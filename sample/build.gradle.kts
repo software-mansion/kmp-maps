@@ -14,7 +14,7 @@ plugins {
     kotlin("native.cocoapods")
 }
 
-val googleMapsApiKey: String = gradleLocalProperties(rootDir, providers).getProperty("MAPS_API_KEY")
+val googleMapsApiKey = gradleLocalProperties(rootDir, providers).getProperty("MAPS_API_KEY") ?: ""
 
 kotlin {
     jvmToolchain(17)
