@@ -34,16 +34,20 @@ fun App() {
                 options.showLineGeoJson,
             ) {
                 buildList {
-                    if (options.showPointGeoJson)
+                    if (options.showPointGeoJson) {
                         add(
                             GeoJsonLayer(
                                 geoJson = EXAMPLE_POINT_GEO_JSON,
                                 pointStyle = PointStyle(snippet = "Recommended food places"),
                             )
                         )
-                    if (options.showPolygonGeoJson)
+                    }
+                    if (options.showPolygonGeoJson) {
                         add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
-                    if (options.showLineGeoJson) add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+                    }
+                    if (options.showLineGeoJson) {
+                        add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+                    }
                 }
             }
 
