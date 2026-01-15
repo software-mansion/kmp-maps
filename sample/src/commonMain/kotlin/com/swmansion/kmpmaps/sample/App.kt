@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.MapConfiguration
 import com.swmansion.kmpmaps.core.PointStyle
@@ -19,6 +18,8 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
+    var options by remember { mutableStateOf(MapOptions()) }
+
     LaunchedEffect(Unit) {
         MapConfiguration.initialize(googleMapsApiKey = BuildKonfig.MAPS_API_KEY)
     }
@@ -26,10 +27,6 @@ fun App() {
     MaterialTheme(
         if (isSystemInDarkTheme() && !isJvm()) darkColorScheme() else lightColorScheme()
     ) {
-        var options by remember { mutableStateOf(MapOptions()) }
-        val updateOptions: (MapOptions.() -> MapOptions) -> Unit = { transform ->
-            options = options.transform()
-        }
         val geoJsonLayers =
             remember(
                 options.showPointGeoJson,
@@ -50,10 +47,9 @@ fun App() {
                 }
             }
 
-        val mapContent: @Composable (Modifier) -> Unit = { modifier ->
-            MapWrapper(modifier = modifier, options = options, geoJsonLayers = geoJsonLayers)
-        }
-
-        MapsScreen(map = mapContent, options = options, updateOptions = updateOptions)
+        MapsScreen(
+            map = { MapWrapper(modifier = it, options = options, geoJsonLayers = geoJsonLayers) },
+            controls = { MapSettingsControls(options) { options = options.it() } },
+        )
     }
 }

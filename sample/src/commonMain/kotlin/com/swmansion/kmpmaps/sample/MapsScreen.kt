@@ -36,11 +36,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun MapsScreen(
-    map: @Composable (Modifier) -> Unit,
-    options: MapOptions,
-    updateOptions: (MapOptions.() -> MapOptions) -> Unit,
-) {
+internal fun MapsScreen(map: @Composable (Modifier) -> Unit, controls: @Composable () -> Unit) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -56,7 +52,7 @@ internal fun MapsScreen(
                 Alignment.CenterHorizontally,
             ) {
                 Text("Settings", style = MaterialTheme.typography.headlineSmall)
-                MapSettingsControls(options, updateOptions)
+                controls()
             }
         }
     } else {
@@ -83,7 +79,7 @@ internal fun MapsScreen(
                     Arrangement.spacedBy(8.dp),
                     Alignment.CenterHorizontally,
                 ) {
-                    MapSettingsControls(options, updateOptions)
+                    controls()
                 }
             }
         }
