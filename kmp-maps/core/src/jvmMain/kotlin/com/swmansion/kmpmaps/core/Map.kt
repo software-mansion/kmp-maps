@@ -16,6 +16,7 @@ import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 
+/** JVM implementation of the Map composable using Google Maps. */
 @Composable
 public actual fun Map(
     modifier: Modifier,

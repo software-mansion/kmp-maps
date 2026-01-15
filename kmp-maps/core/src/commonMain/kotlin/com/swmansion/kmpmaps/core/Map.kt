@@ -4,14 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 /**
- * A cross-platform map component that provides access to native map APIs on Android and iOS.
+ * A cross-platform map component that provides a unified interface for native map APIs across
+ * Android, iOS, and Desktop (JVM).
  *
- * This composable renders Google Maps on Android and Apple Maps on iOS, providing a unified
- * interface for map functionality across both platforms.
- *
- * ## Platform Support
- * - **Android**: Uses Google Maps SDK
- * - **iOS**: Uses Apple Maps (MapKit)
+ * This composable acts as a bridge between platform-specific map engines:
+ * - **Android**: Renders native **Google Maps SDK**.
+ * - **iOS**: Renders native **Apple Maps (MapKit)**.
+ * - **Desktop (JVM)**: Renders **Google Maps JS API** via an embedded WebView
  *
  * ## Basic Usage
  *
@@ -58,6 +57,14 @@ import androidx.compose.ui.Modifier
  *
  * No additional configuration is required for Apple Maps on iOS.
  *
+ * ### Desktop - Google Maps JS API
+ *
+ * To use Google Maps on Desktop, you need to initialize a valid api key globally before rendering
+ * the map:
+ * ```kotlin
+ * MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
+ * ```
+ *
  * ## Permissions
  *
  * To display the user's location on the map, you need to declare and request location permissions:
@@ -97,6 +104,7 @@ import androidx.compose.ui.Modifier
  * @param onMapLoaded Callback invoked when the map has finished loading
  * @param geoJsonLayers List of GeoJSON layers to display on the map
  * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
  */
 @Composable
 public expect fun Map(
