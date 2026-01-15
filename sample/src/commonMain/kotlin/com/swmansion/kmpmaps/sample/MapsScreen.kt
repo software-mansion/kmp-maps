@@ -13,13 +13,17 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,21 +37,25 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MapsScreen(
+    map: @Composable (Modifier) -> Unit,
     options: MapOptions,
     updateOptions: (MapOptions.() -> MapOptions) -> Unit,
-    mapContent: @Composable (Modifier) -> Unit,
 ) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (isJvm()) {
         Row(Modifier.fillMaxSize()) {
-            mapContent(Modifier.fillMaxSize().weight(1f))
+            map(Modifier.weight(1f).fillMaxHeight())
             Column(
-                Modifier.width(350.dp).fillMaxHeight().padding(16.dp),
+                Modifier.width(350.dp)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
                 Arrangement.spacedBy(8.dp),
                 Alignment.CenterHorizontally,
             ) {
+                Text("Settings", style = MaterialTheme.typography.headlineSmall)
                 MapSettingsControls(options, updateOptions)
             }
         }
@@ -59,7 +67,7 @@ internal fun MapsScreen(
                 }
             }
         ) { padding ->
-            mapContent(Modifier.fillMaxSize().padding(padding))
+            map(Modifier.fillMaxSize().padding(padding))
         }
         if (showBottomSheet) {
             ModalBottomSheet(

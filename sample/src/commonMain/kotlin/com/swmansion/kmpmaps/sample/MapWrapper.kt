@@ -38,7 +38,7 @@ internal data class MapOptions(
 
 @Composable
 internal fun MapWrapper(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     options: MapOptions,
     geoJsonLayers: List<GeoJsonLayer>,
 ) {
