@@ -5,6 +5,8 @@ let jsCircles = [];
 let jsPolygons = [];
 let jsPolylines = [];
 
+let geoJsonLayers = new Map();
+
 let markerCluster;
 let trafficLayer = null;
 let AdvancedMarkerElement;
@@ -364,6 +366,56 @@ function updatePolylines(data) {
             jsPolylines.push(polyline);
         });
     } catch (e) { console.error("Error updating polylines:", e); }
+}
+
+function updateGeoJsonLayers(layersData) {
+    if (!map) return;
+
+    geoJsonLayers.forEach(layer => {
+        layer.features.forEach(f => map.data.remove(f));
+    });
+    geoJsonLayers.clear();
+
+    layersData.forEach((layer, index) => {
+        try {
+            const geoJsonObject = typeof layer.geoJson === 'string'
+                ? JSON.parse(layer.geoJson)
+                : layer.geoJson;
+
+            const features = map.data.addGeoJson(geoJsonObject);
+
+            features.forEach(feature => {
+                feature.setProperty('_layerIndex', index);
+                applyStyleToFeature(feature, layer);
+            });
+
+            geoJsonLayers.set(index, { features, config: layer });
+        } catch (e) {
+            console.error("GeoJSON parsing error at layer " + index, e);
+        }
+    });
+}
+
+function applyStyleToFeature(feature, config) {
+    map.data.overrideStyle(feature, {
+        visible: config.visible,
+        zIndex: config.zIndex,
+        clickable: config.isClickable,
+        ...(config.polygonStyle && {
+            fillColor: config.polygonStyle.fillColor,
+            fillOpacity: config.polygonStyle.fillOpacity,
+            strokeColor: config.polygonStyle.strokeColor,
+            strokeWeight: config.polygonStyle.strokeWeight
+        }),
+        ...(config.lineStringStyle && {
+            strokeColor: config.lineStringStyle.strokeColor,
+            strokeWeight: config.lineStringStyle.strokeWeight
+        }),
+        ...(config.pointStyle && {
+            title: config.pointStyle.title,
+            opacity: config.pointStyle.opacity,
+        })
+    });
 }
 
 function clearMarkers() {

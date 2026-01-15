@@ -7,6 +7,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -143,5 +144,62 @@ internal fun Polyline.toJson(): JsonObject = buildJsonObject {
     lineColor?.let {
         put("strokeColor", it.toHex())
         put("strokeOpacity", it.alpha)
+    }
+}
+
+internal fun GeoJsonLayer.toJson(): JsonObject = buildJsonObject {
+    put("geoJson", geoJson)
+    put("visible", visible ?: true)
+    put("zIndex", zIndex)
+    put("isClickable", isClickable ?: false)
+    put("isGeodesic", isGeodesic ?: false)
+
+    lineStringStyle?.let { put("lineStringStyle", it.toJson()) }
+    polygonStyle?.let { put("polygonStyle", it.toJson()) }
+    pointStyle?.let { put("pointStyle", it.toJson()) }
+}
+
+internal fun LineStringStyle.toJson(): JsonObject = buildJsonObject {
+    lineWidth?.let { put("strokeWeight", it) }
+    lineColor?.let { put("strokeColor", it.toHex()) }
+
+    pattern?.let { items ->
+        put(
+            "dashArray",
+            buildJsonArray {
+                items.forEach { item ->
+                    when (item) {
+                        is StrokePatternItem.Dot -> {
+                            add(lineWidth ?: 2f)
+                            add(lineWidth ?: 2f)
+                        }
+                        is StrokePatternItem.Dash -> add(item.lengthPx)
+                        is StrokePatternItem.Gap -> add(item.lengthPx)
+                    }
+                }
+            },
+        )
+    }
+}
+
+internal fun PolygonStyle.toJson(): JsonObject = buildJsonObject {
+    fillColor?.let {
+        put("fillColor", it.toHex())
+        put("fillOpacity", it.alpha)
+    }
+    strokeColor?.let { put("strokeColor", it.toHex()) }
+    strokeWidth?.let { put("strokeWeight", it) }
+}
+
+internal fun PointStyle.toJson(): JsonObject = buildJsonObject {
+    put("opacity", alpha)
+    put("draggable", isDraggable)
+    put("flat", isFlat)
+    pointTitle?.let { put("title", it) }
+    snippet?.let { put("snippet", it) }
+    put("rotation", rotation)
+    putJsonObject("anchor") {
+        put("x", anchorU)
+        put("y", anchorV)
     }
 }

@@ -119,6 +119,13 @@ public actual fun Map(
             }
         }
 
+        LaunchedEffect(geoJsonLayers, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = geoJsonLayers.map { it.toJson() }.toJsonString()
+                navigator.evaluateJavaScript("updateGeoJsonLayers($json)")
+            }
+        }
+
         WebView(
             modifier = modifier,
             state = state,
