@@ -122,10 +122,8 @@ public actual fun Map(
         LaunchedEffect(geoJsonLayers, clusterSettings.enabled, loadingState) {
             if (loadingState is LoadingState.Finished) {
                 val json = geoJsonLayers.map { it.toJson() }.toJsonString()
-                val hasCustomCluster = clusterSettings.webClusterContent != null
-
                 navigator.evaluateJavaScript(
-                    "updateGeoJsonLayers($json, ${clusterSettings.enabled}, $hasCustomCluster)"
+                    "updateGeoJsonLayers($json, ${clusterSettings.enabled})"
                 )
             }
         }

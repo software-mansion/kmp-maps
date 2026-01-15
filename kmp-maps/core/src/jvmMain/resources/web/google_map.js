@@ -368,7 +368,7 @@ function updatePolylines(data) {
     } catch (e) { console.error("Error updating polylines:", e); }
 }
 
-function updateGeoJsonLayers(layersData, clusterEnabled, hasCustomClusterContent) {
+function updateGeoJsonLayers(layersData, clusterEnabled) {
     if (!map) return;
 
     map.data.forEach(f => map.data.remove(f));
@@ -378,23 +378,33 @@ function updateGeoJsonLayers(layersData, clusterEnabled, hasCustomClusterContent
     });
     geoJsonMarkers = [];
 
-    layersData.forEach((layer, index) => {
+    layersData.forEach((layer, layerIndex) => {
         try {
             const features = map.data.addGeoJson(JSON.parse(layer.geoJson));
 
-            features.forEach(feature => {
-                feature.setProperty('_layerIndex', index);
+            features.forEach((feature, featureIndex) => {
+                feature.setProperty('_layerIndex', layerIndex);
 
-                if (feature.getGeometry().getType() === 'Point' && clusterEnabled) {
-                    const coords = feature.getGeometry().get();
+                const geometry = feature.getGeometry();
+                if (!geometry) {
+                    applyStyleToFeature(feature, layer);
+                    return;
+                }
+
+                if (geometry.getType() === 'Point' && clusterEnabled) {
+                    const coords = geometry.get();
 
                     const marker = new google.maps.Marker({
                         position: coords,
                         map: null,
                     });
 
+                    const featureId = feature.getId() !== undefined
+                        ? feature.getId()
+                        : `layer-${layerIndex}-f-${featureIndex}`;
+
                     marker._kmpData = {
-                       id: String(feature.getId() !== undefined ? feature.getId() : `geojson-p-${index}-${Math.random()}`),
+                       id: String(featureId),
                         title: feature.getProperty('title') || "",
                         coordinates: {
                             latitude: coords.lat(),
@@ -418,12 +428,6 @@ function updateGeoJsonLayers(layersData, clusterEnabled, hasCustomClusterContent
     }
 }
 
-function getFeatureProperties(feature) {
-    const props = {};
-    feature.forEachProperty((v, k) => { if(!k.startsWith('_')) props[k] = v; });
-    return props;
-}
-
 function applyStyleToFeature(feature, config) {
     map.data.overrideStyle(feature, {
         visible: config.visible,
@@ -442,6 +446,7 @@ function applyStyleToFeature(feature, config) {
         ...(config.pointStyle && {
             title: config.pointStyle.title,
             opacity: config.pointStyle.opacity,
+            draggable: config.pointStyle.draggable,
         })
     });
 }

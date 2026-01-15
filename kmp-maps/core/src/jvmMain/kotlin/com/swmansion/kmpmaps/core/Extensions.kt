@@ -162,24 +162,6 @@ internal fun GeoJsonLayer.toJson(): JsonObject = buildJsonObject {
 internal fun LineStringStyle.toJson(): JsonObject = buildJsonObject {
     lineWidth?.let { put("strokeWeight", it) }
     lineColor?.let { put("strokeColor", it.toHex()) }
-
-    pattern?.let { items ->
-        put(
-            "dashArray",
-            buildJsonArray {
-                items.forEach { item ->
-                    when (item) {
-                        is StrokePatternItem.Dot -> {
-                            add(lineWidth ?: 2f)
-                            add(lineWidth ?: 2f)
-                        }
-                        is StrokePatternItem.Dash -> add(item.lengthPx)
-                        is StrokePatternItem.Gap -> add(item.lengthPx)
-                    }
-                }
-            },
-        )
-    }
 }
 
 internal fun PolygonStyle.toJson(): JsonObject = buildJsonObject {
@@ -194,12 +176,5 @@ internal fun PolygonStyle.toJson(): JsonObject = buildJsonObject {
 internal fun PointStyle.toJson(): JsonObject = buildJsonObject {
     put("opacity", alpha)
     put("draggable", isDraggable)
-    put("flat", isFlat)
     pointTitle?.let { put("title", it) }
-    snippet?.let { put("snippet", it) }
-    put("rotation", rotation)
-    putJsonObject("anchor") {
-        put("x", anchorU)
-        put("y", anchorV)
-    }
 }
