@@ -5,7 +5,7 @@ let jsCircles = [];
 let jsPolygons = [];
 let jsPolylines = [];
 
-let geoJsonLayers = new Map();
+let geoJsonMarkers = [];
 
 let markerCluster;
 let trafficLayer = null;
@@ -368,32 +368,60 @@ function updatePolylines(data) {
     } catch (e) { console.error("Error updating polylines:", e); }
 }
 
-function updateGeoJsonLayers(layersData) {
+function updateGeoJsonLayers(layersData, clusterEnabled, hasCustomClusterContent) {
     if (!map) return;
 
-    geoJsonLayers.forEach(layer => {
-        layer.features.forEach(f => map.data.remove(f));
+    map.data.forEach(f => map.data.remove(f));
+    geoJsonMarkers.forEach(m => {
+        m.setMap(null);
+        if (markerCluster) markerCluster.removeMarker(m);
     });
-    geoJsonLayers.clear();
+    geoJsonMarkers = [];
 
     layersData.forEach((layer, index) => {
         try {
-            const geoJsonObject = typeof layer.geoJson === 'string'
-                ? JSON.parse(layer.geoJson)
-                : layer.geoJson;
-
-            const features = map.data.addGeoJson(geoJsonObject);
+            const features = map.data.addGeoJson(JSON.parse(layer.geoJson));
 
             features.forEach(feature => {
                 feature.setProperty('_layerIndex', index);
-                applyStyleToFeature(feature, layer);
-            });
 
-            geoJsonLayers.set(index, { features, config: layer });
-        } catch (e) {
-            console.error("GeoJSON parsing error at layer " + index, e);
-        }
+                if (feature.getGeometry().getType() === 'Point' && clusterEnabled) {
+                    const coords = feature.getGeometry().get();
+
+                    const marker = new google.maps.Marker({
+                        position: coords,
+                        map: null,
+                    });
+
+                    marker._kmpData = {
+                       id: String(feature.getId() !== undefined ? feature.getId() : `geojson-p-${index}-${Math.random()}`),
+                        title: feature.getProperty('title') || "",
+                        coordinates: {
+                            latitude: coords.lat(),
+                            longitude: coords.lng()
+                        },
+                        contentId: null
+                    };
+
+                    geoJsonMarkers.push(marker);
+
+                    map.data.overrideStyle(feature, { visible: false });
+                } else {
+                    applyStyleToFeature(feature, layer);
+                }
+            });
+        } catch (e) { console.error("GeoJSON Cluster Error:", e); }
     });
+
+    if (clusterEnabled && markerCluster) {
+        markerCluster.addMarkers(geoJsonMarkers);
+    }
+}
+
+function getFeatureProperties(feature) {
+    const props = {};
+    feature.forEachProperty((v, k) => { if(!k.startsWith('_')) props[k] = v; });
+    return props;
 }
 
 function applyStyleToFeature(feature, config) {
