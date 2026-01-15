@@ -17,7 +17,7 @@ Check out the sample project in the `/sample` directory for complete usage examp
 
 ## ✨ Features
 
-- **Multi-Provider Support:** Android (Google Maps) & iOS (Apple Maps or Google Maps).
+- **Multi-Provider Support:** Android (Google Maps) & iOS (Apple Maps or Google Maps) & JVM/Desktop (Google Maps JS).
 - **Fully Customizable Markers:** Create markers using standard Compose Multiplatform code.
 - **GeoJSON Support:** Easily render GeoJSON layers with customizable styling capabilities.
 - **Native Rendering:** Powered by underlying native SDKs, ensuring smooth performance, correct gesture handling, and native look and feel.
@@ -32,13 +32,13 @@ Check out the sample project in the `/sample` directory for complete usage examp
 
 Choose the appropriate import based on your needs:
 
-- **Native Implementation:** Uses Google Maps on Android and Apple Maps on iOS.
+- **Native Implementation:** Uses native Google Maps on Android, native Apple Maps on iOS, and Google Maps JS API (via WebView) on Desktop.
 
   ```kotlin
   import com.swmansion.kmpmaps.core.Map
   ```
 
-- **Google Maps on Both Platforms:** Uses Google Maps SDK on both Android and iOS.
+- **Universal Google Maps:** Uses Google Maps SDK on Android and iOS, and Google Maps JS API on Desktop.
 
   ```kotlin
   import com.swmansion.kmpmaps.googlemaps.Map
