@@ -9,8 +9,8 @@ import java.io.BufferedReader
  * initial camera coordinates, and map properties.
  *
  * @param apiKey The Google Maps API key to be used in the JS SDK script tag.
- * @param cameraPosition The initial location and zoom level for the map.
- * @param webMapProperties Configuration specific to the Google Maps JS API, such as Map ID.
+ * @param cameraPosition The camera position to be set in the map.
+ * @param properties The configuration properties for the map.
  * @return A complete HTML string with embedded JavaScript, ready to be loaded into a WebView.
  */
 internal fun loadHTMLContent(

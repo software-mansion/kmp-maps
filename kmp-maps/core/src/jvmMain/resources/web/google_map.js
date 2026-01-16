@@ -26,9 +26,9 @@ async function initMap() {
     ColorScheme = ColorSchemeLib;
 
     const selectedMapId = "{{INITIAL_MAP_ID}}";
-    const selectedLat = "{{INITIAL_LAT}}"
-    const selectedLng = "{{INITIAL_LNG}}"
-    const selectedZoom = "{{INITIAL_ZOOM}}"
+    const selectedLat = "{{INITIAL_LAT}}";
+    const selectedLng = "{{INITIAL_LNG}}";
+    const selectedZoom = "{{INITIAL_ZOOM}}";
     const selectedColorScheme = mapColorScheme("{{INITIAL_COLOR_SCHEME}}", ColorSchemeLib);
 
     map = new Map(document.getElementById("map"), {
