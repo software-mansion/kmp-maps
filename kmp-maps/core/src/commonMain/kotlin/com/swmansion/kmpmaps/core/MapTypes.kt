@@ -35,6 +35,7 @@ public enum class MapTheme {
  * @property mapTheme The theme for the map appearance
  * @property androidMapProperties Android-specific map behavior and appearance configuration options
  * @property iosMapProperties iOS-specific map behavior and appearance configuration options
+ * @property webMapProperties Desktop-specific map behavior and appearance configuration options
  */
 public data class MapProperties(
     val isMyLocationEnabled: Boolean = false,
@@ -59,6 +60,7 @@ public data class MapProperties(
  * @property rotateEnabled Whether rotation gestures are enabled
  * @property androidUISettings Android-specific UI settings
  * @property iosUISettings iOS-specific UI settings
+ * @property webUISettings Desktop-specific UI settings
  */
 public data class MapUISettings(
     val compassEnabled: Boolean = false,
@@ -80,9 +82,10 @@ public data class MapUISettings(
  * @property title The title text displayed when the marker is tapped
  * @property androidMarkerOptions Android-specific options for customizing a marker
  * @property iosMarkerOptions iOS-specific options for customizing a marker
- * @property contentId Optional identifier for custom Compose content. When provided, this ID is
- *   used to look up the corresponding Composable from the Map's `customMarkerContent` parameter. If
- *   null or not found, the marker uses the default native rendering
+ * @property contentId Optional identifier for custom content.
+ * - On **Mobile**: Used to look up a Composable in the Map's `customMarkerContent` parameter.
+ * - On **Desktop**: Used to look up an HTML template in the Map's `webCustomMarkerContent`
+ *   parameter.
  */
 @Serializable
 public data class Marker(
@@ -189,6 +192,7 @@ public data class Cluster(val coordinates: Coordinates, val size: Int, val items
  * @property onClusterClick Callback invoked on cluster click. Return `true` to consume the event or
  *   `false` to allow the default platform behavior
  * @property clusterContent Optional Composable to render custom cluster UI
+ * @property webClusterContent Optional function to render custom cluster UI as HTML string
  */
 public data class ClusterSettings(
     val enabled: Boolean = false,

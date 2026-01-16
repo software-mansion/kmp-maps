@@ -14,6 +14,7 @@ import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 
+/** Android implementation of the Map composable using Google Maps. */
 @Composable
 public actual fun Map(
     modifier: Modifier,

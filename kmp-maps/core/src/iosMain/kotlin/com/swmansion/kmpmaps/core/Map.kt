@@ -22,7 +22,7 @@ import platform.MapKit.MKPolyline
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
-/** iOS implementation of the Map composable using Apple Maps or Google Maps. */
+/** iOS implementation of the Map composable using Apple Maps. */
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 public actual fun Map(

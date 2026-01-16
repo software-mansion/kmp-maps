@@ -78,3 +78,10 @@ Add the following key to your `Info.plist`:
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>Allow this app to use your location</string>
 ```
+### 🖥️ Desktop Setup
+
+To use Google Maps on Desktop, you need to initialize a valid api key globally before rendering the map:
+
+```kotlin
+MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
+```

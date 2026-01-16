@@ -14,10 +14,13 @@ import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 
 /**
- * A cross-platform map component that provides access to native map APIs on Android and iOS.
+ * A cross-platform map component that provides a unified interface for native map APIs across
+ * Android, iOS, and Desktop (JVM).
  *
- * This composable renders Google Maps on Android and Apple Maps on iOS, providing a unified
- * interface for map functionality across both platforms.
+ * This composable acts as a bridge between platform-specific map engines:
+ * - **Android**: Renders native **Google Maps SDK for Android**.
+ * - **iOS**: Renders native **Google Maps SDK for iOS**.
+ * - **Desktop (JVM)**: Renders **Google Maps JS** via an embedded WebView
  *
  * @param modifier The modifier to be applied to the map component
  * @param cameraPosition The initial camera position of the map. If null, the map will use default
@@ -40,6 +43,7 @@ import com.swmansion.kmpmaps.core.Polyline
  * @param onMapLoaded Callback invoked when the map has finished loading
  * @param geoJsonLayers List of GeoJSON layers to display on the map
  * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
  */
 @Composable
 public expect fun Map(

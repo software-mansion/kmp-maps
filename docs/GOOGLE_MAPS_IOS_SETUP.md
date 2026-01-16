@@ -68,6 +68,14 @@ Always open the `.xcworkspace`, not the `.xcodeproj`.
 
 ### 🔑 Step 5 — Configure your API Key
 
+### Version 0.8.0 and above (Recommended)
+To use Google Maps on iOS, you need to initialize a valid api key globally before rendering the map:
+
+```kotlin
+MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
+```
+
+### Legacy Versions (Below 0.8.0)
 Add your API key to `Info.plist` of the iOS app target:
 
 ```xml

@@ -34,6 +34,7 @@ import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 
+/** iOS implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
 public actual fun Map(
