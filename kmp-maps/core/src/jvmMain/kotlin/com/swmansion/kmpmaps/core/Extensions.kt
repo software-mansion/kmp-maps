@@ -30,7 +30,7 @@ internal fun List<Marker>.toJson(webCustomMarkerContent: Map<String, (Marker) ->
         }
     }
 
-internal fun Marker.toJson(): JsonObject = buildJsonObject {
+internal fun Marker.toJson() = buildJsonObject {
     put("id", id)
     put("position", coordinates.toJson())
     put("title", title)
@@ -38,18 +38,18 @@ internal fun Marker.toJson(): JsonObject = buildJsonObject {
     contentId?.let { put("contentId", it) }
 }
 
-internal fun Coordinates.toJson(): JsonObject = buildJsonObject {
+internal fun Coordinates.toJson() = buildJsonObject {
     put("lat", latitude)
     put("lng", longitude)
 }
 
-internal fun MapProperties.toJson(): JsonObject = buildJsonObject {
+internal fun MapProperties.toJson() = buildJsonObject {
     put("isTrafficEnabled", isTrafficEnabled)
     put("mapType", mapType.name)
     put("web", webMapProperties.toJson())
 }
 
-internal fun WebMapProperties.toJson(): JsonObject = buildJsonObject {
+internal fun WebMapProperties.toJson() = buildJsonObject {
     put("mapId", mapId)
     put("gestureHandling", gestureHandling.name.lowercase())
     put("disableDoubleClickZoom", disableDoubleClickZoom)
@@ -70,7 +70,7 @@ private fun JsonObjectBuilder.putStyles(options: GoogleMapsMapStyleOptions?) {
     put("styles", element)
 }
 
-internal fun WebMapRestriction.toJson(): JsonObject = buildJsonObject {
+internal fun WebMapRestriction.toJson() = buildJsonObject {
     put("strictBounds", strictBounds)
     putJsonObject("latLngBounds") {
         put("north", north)
@@ -80,13 +80,13 @@ internal fun WebMapRestriction.toJson(): JsonObject = buildJsonObject {
     }
 }
 
-internal fun MapUISettings.toJson(): JsonObject = buildJsonObject {
+internal fun MapUISettings.toJson() = buildJsonObject {
     put("zoomEnabled", zoomEnabled)
     put("scrollEnabled", scrollEnabled)
     put("web", webUISettings.toJson())
 }
 
-internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
+internal fun WebUISettings.toJson() = buildJsonObject {
     put("zoomControl", zoomControl)
     put("mapTypeControl", mapTypeControl)
     put("streetViewControl", streetViewControl)
@@ -104,7 +104,7 @@ internal fun WebUISettings.toJson(): JsonObject = buildJsonObject {
 
 internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())
 
-internal fun Circle.toJson(): JsonObject = buildJsonObject {
+internal fun Circle.toJson() = buildJsonObject {
     put("id", id)
     put("center", center.toJson())
     put("radius", radius)
@@ -121,7 +121,7 @@ internal fun Circle.toJson(): JsonObject = buildJsonObject {
     }
 }
 
-internal fun Polygon.toJson(): JsonObject = buildJsonObject {
+internal fun Polygon.toJson() = buildJsonObject {
     put("id", id)
     put("paths", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", lineWidth)
@@ -136,7 +136,7 @@ internal fun Polygon.toJson(): JsonObject = buildJsonObject {
     }
 }
 
-internal fun Polyline.toJson(): JsonObject = buildJsonObject {
+internal fun Polyline.toJson() = buildJsonObject {
     put("id", id)
     put("path", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", width)
@@ -147,7 +147,7 @@ internal fun Polyline.toJson(): JsonObject = buildJsonObject {
     }
 }
 
-internal fun GeoJsonLayer.toJson(): JsonObject = buildJsonObject {
+internal fun GeoJsonLayer.toJson() = buildJsonObject {
     put("geoJson", geoJson)
     put("visible", visible ?: true)
     put("zIndex", zIndex)
@@ -159,12 +159,12 @@ internal fun GeoJsonLayer.toJson(): JsonObject = buildJsonObject {
     pointStyle?.let { put("pointStyle", it.toJson()) }
 }
 
-internal fun LineStringStyle.toJson(): JsonObject = buildJsonObject {
+internal fun LineStringStyle.toJson() = buildJsonObject {
     lineWidth?.let { put("strokeWeight", it) }
     lineColor?.let { put("strokeColor", it.toHex()) }
 }
 
-internal fun PolygonStyle.toJson(): JsonObject = buildJsonObject {
+internal fun PolygonStyle.toJson() = buildJsonObject {
     fillColor?.let {
         put("fillColor", it.toHex())
         put("fillOpacity", it.alpha)
@@ -173,7 +173,7 @@ internal fun PolygonStyle.toJson(): JsonObject = buildJsonObject {
     strokeWidth?.let { put("strokeWeight", it) }
 }
 
-internal fun PointStyle.toJson(): JsonObject = buildJsonObject {
+internal fun PointStyle.toJson() = buildJsonObject {
     put("opacity", alpha)
     put("draggable", isDraggable)
     pointTitle?.let { put("title", it) }

@@ -405,7 +405,7 @@ function updateGeoJsonLayers(layersData, clusterEnabled) {
 
                     marker._kmpData = {
                        id: String(featureId),
-                        title: feature.getProperty('title') || "",
+                        title: feature.getProperty('title') ?? "",
                         coordinates: {
                             latitude: coords.lat(),
                             longitude: coords.lng()
