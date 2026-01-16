@@ -208,7 +208,40 @@ val customWebMarkerContent =
                 "></div>
             </div>
             """
-            }
+            },
+        "colored_pin_marker" to
+            { marker ->
+                val title = marker.title.orEmpty()
+                val magentaColor = "#FF00FF"
+                """
+            <div style="
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-family: 'Roboto', Arial, sans-serif;
+            ">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="$magentaColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+            
+                ${if (title.isNotEmpty()) """
+                <div style="
+                    background-color: rgba(0, 0, 0, 0.7);
+                    color: white;
+                    padding: 4px 8px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    margin-top: 2px;
+                    white-space: nowrap;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+                ">
+                    $title
+                </div>
+                """ else ""}
+            </div>
+            """
+            },
     )
 
 val webClusterContent = { cluster: Cluster ->
@@ -230,7 +263,6 @@ val webClusterContent = { cluster: Cluster ->
         ${cluster.size}
     </div>
     """
-        .trimIndent()
 }
 
 val customClusterContent =

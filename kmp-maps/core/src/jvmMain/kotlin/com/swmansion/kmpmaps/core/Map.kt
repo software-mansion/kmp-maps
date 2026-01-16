@@ -45,7 +45,7 @@ public actual fun Map(
 
     LaunchedEffect(Unit) {
         val apiKey = MapConfiguration.googleMapsApiKey
-        htmlContent = loadHTMLContent(apiKey, cameraPosition, properties.webMapProperties)
+        htmlContent = loadHTMLContent(apiKey, cameraPosition, properties)
     }
 
     if (htmlContent != null) {

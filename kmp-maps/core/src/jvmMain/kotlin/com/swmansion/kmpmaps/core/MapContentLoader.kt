@@ -16,12 +16,13 @@ import java.io.BufferedReader
 internal fun loadHTMLContent(
     apiKey: String,
     cameraPosition: CameraPosition?,
-    webMapProperties: WebMapProperties?,
+    properties: MapProperties?,
 ): String {
     val html = readResource("web/google_map.html")
     val js =
         readResource("web/google_map.js")
-            .replace("{{INITIAL_MAP_ID}}", webMapProperties?.mapId ?: "DEMO_MAP_ID")
+            .replace("{{INITIAL_MAP_ID}}", properties?.webMapProperties?.mapId ?: "DEMO_MAP_ID")
+            .replace("{{INITIAL_COLOR_SCHEME}}", properties?.mapTheme?.name ?: MapTheme.SYSTEM.name)
             .replace("{{INITIAL_LAT}}", cameraPosition?.coordinates?.latitude.toString())
             .replace("{{INITIAL_LNG}}", cameraPosition?.coordinates?.longitude.toString())
             .replace("{{INITIAL_ZOOM}}", cameraPosition?.zoom.toString())
