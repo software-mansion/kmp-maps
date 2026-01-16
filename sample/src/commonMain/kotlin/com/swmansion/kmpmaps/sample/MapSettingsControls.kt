@@ -116,31 +116,33 @@ internal fun MapSettingsControls(
                 )
             },
         )
-        ListItem(
-            headlineContent = { Text("GeoJSON Layers") },
-            modifier = Modifier.height(48.dp),
-            trailingContent = {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(
-                        selected = options.showPointGeoJson,
-                        onClick = { updateOptions { copy(showPointGeoJson = !showPointGeoJson) } },
-                        label = { Text("Point") },
-                    )
-                    FilterChip(
-                        selected = options.showPolygonGeoJson,
-                        onClick = {
-                            updateOptions { copy(showPolygonGeoJson = !showPolygonGeoJson) }
-                        },
-                        label = { Text("Area") },
-                    )
-                    FilterChip(
-                        selected = options.showLineGeoJson,
-                        onClick = { updateOptions { copy(showLineGeoJson = !showLineGeoJson) } },
-                        label = { Text("Line") },
-                    )
-                }
-            },
-        )
+    }
+
+    ListItem(
+        headlineContent = { Text("GeoJSON") },
+        modifier = Modifier.height(48.dp),
+        trailingContent = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = options.showPointGeoJson,
+                    onClick = { updateOptions { copy(showPointGeoJson = !showPointGeoJson) } },
+                    label = { Text("Point") },
+                )
+                FilterChip(
+                    selected = options.showPolygonGeoJson,
+                    onClick = { updateOptions { copy(showPolygonGeoJson = !showPolygonGeoJson) } },
+                    label = { Text("Area") },
+                )
+                FilterChip(
+                    selected = options.showLineGeoJson,
+                    onClick = { updateOptions { copy(showLineGeoJson = !showLineGeoJson) } },
+                    label = { Text("Line") },
+                )
+            }
+        },
+    )
+
+    if (!isJvm()) {
         Button(
             onClick = { updateOptions { copy(cameraPosition = getRandomPosition()) } },
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),

@@ -44,7 +44,7 @@ internal fun MapsScreen(map: @Composable (Modifier) -> Unit, controls: @Composab
         Row(Modifier.fillMaxSize()) {
             map(Modifier.weight(1f).fillMaxHeight())
             Column(
-                Modifier.width(350.dp)
+                Modifier.width(370.dp)
                     .fillMaxHeight()
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),

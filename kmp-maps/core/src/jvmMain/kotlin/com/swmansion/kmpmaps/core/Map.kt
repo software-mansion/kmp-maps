@@ -86,21 +86,21 @@ public actual fun Map(
 
         LaunchedEffect(circles, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val json = circles.map { it.toJson() }.toJsonString()
+                val json = circles.map(Circle::toJson).toJsonString()
                 navigator.evaluateJavaScript("updateCircles($json)")
             }
         }
 
         LaunchedEffect(polygons, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val json = polygons.map { it.toJson() }.toJsonString()
+                val json = polygons.map(Polygon::toJson).toJsonString()
                 navigator.evaluateJavaScript("updatePolygons($json)")
             }
         }
 
         LaunchedEffect(polylines, loadingState) {
             if (loadingState is LoadingState.Finished) {
-                val json = polylines.map { it.toJson() }.toJsonString()
+                val json = polylines.map(Polyline::toJson).toJsonString()
                 navigator.evaluateJavaScript("updatePolylines($json)")
             }
         }
@@ -116,6 +116,15 @@ public actual fun Map(
             if (loadingState is LoadingState.Finished) {
                 val json = uiSettings.toJson().toString()
                 navigator.evaluateJavaScript("updateMapUISettings($json)")
+            }
+        }
+
+        LaunchedEffect(geoJsonLayers, clusterSettings.enabled, loadingState) {
+            if (loadingState is LoadingState.Finished) {
+                val json = geoJsonLayers.map(GeoJsonLayer::toJson).toJsonString()
+                navigator.evaluateJavaScript(
+                    "updateGeoJsonLayers($json, ${clusterSettings.enabled})"
+                )
             }
         }
 

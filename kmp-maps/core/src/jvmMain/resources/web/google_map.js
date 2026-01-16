@@ -5,6 +5,8 @@ let jsCircles = [];
 let jsPolygons = [];
 let jsPolylines = [];
 
+let geoJsonMarkers = [];
+
 let markerCluster;
 let trafficLayer = null;
 let AdvancedMarkerElement;
@@ -364,6 +366,89 @@ function updatePolylines(data) {
             jsPolylines.push(polyline);
         });
     } catch (e) { console.error("Error updating polylines:", e); }
+}
+
+function updateGeoJsonLayers(layersData, clusterEnabled) {
+    if (!map) return;
+
+    map.data.forEach(f => map.data.remove(f));
+    geoJsonMarkers.forEach(m => {
+        m.setMap(null);
+        if (markerCluster) markerCluster.removeMarker(m);
+    });
+    geoJsonMarkers = [];
+
+    layersData.forEach((layer, layerIndex) => {
+        try {
+            const features = map.data.addGeoJson(JSON.parse(layer.geoJson));
+
+            features.forEach((feature, featureIndex) => {
+                feature.setProperty('_layerIndex', layerIndex);
+
+                const geometry = feature.getGeometry();
+                if (!geometry) {
+                    applyStyleToFeature(feature, layer);
+                    return;
+                }
+
+                if (geometry.getType() === 'Point' && clusterEnabled) {
+                    const coords = geometry.get();
+
+                    const marker = new google.maps.Marker({
+                        position: coords,
+                        map: null,
+                    });
+
+                    const featureId = feature.getId() !== undefined
+                        ? feature.getId()
+                        : `layer-${layerIndex}-f-${featureIndex}`;
+
+                    marker._kmpData = {
+                       id: String(featureId),
+                        title: feature.getProperty('title') ?? "",
+                        coordinates: {
+                            latitude: coords.lat(),
+                            longitude: coords.lng()
+                        },
+                        contentId: null
+                    };
+
+                    geoJsonMarkers.push(marker);
+
+                    map.data.overrideStyle(feature, { visible: false });
+                } else {
+                    applyStyleToFeature(feature, layer);
+                }
+            });
+        } catch (e) { console.error("GeoJSON Cluster Error:", e); }
+    });
+
+    if (clusterEnabled && markerCluster) {
+        markerCluster.addMarkers(geoJsonMarkers);
+    }
+}
+
+function applyStyleToFeature(feature, config) {
+    map.data.overrideStyle(feature, {
+        visible: config.visible,
+        zIndex: config.zIndex,
+        clickable: config.isClickable,
+        ...(config.polygonStyle && {
+            fillColor: config.polygonStyle.fillColor,
+            fillOpacity: config.polygonStyle.fillOpacity,
+            strokeColor: config.polygonStyle.strokeColor,
+            strokeWeight: config.polygonStyle.strokeWeight
+        }),
+        ...(config.lineStringStyle && {
+            strokeColor: config.lineStringStyle.strokeColor,
+            strokeWeight: config.lineStringStyle.strokeWeight
+        }),
+        ...(config.pointStyle && {
+            title: config.pointStyle.title,
+            opacity: config.pointStyle.opacity,
+            draggable: config.pointStyle.draggable,
+        })
+    });
 }
 
 function clearMarkers() {
