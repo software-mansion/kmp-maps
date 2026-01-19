@@ -13,11 +13,11 @@ Check out the sample project in the `/sample` directory for complete usage examp
 |                                                                  iOS (Apple Maps)                                                                   |                                                                  Android (Google Maps)                                                                  |                                                                  Desktop (Google Maps)                                                                  |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------: |:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
 | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/ios_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/android_preview.png" height="600" style="display: block; margin: 0 auto;"> | <img src="https://github.com/software-mansion/kmp-maps/blob/main/docs/images/desktop_preview.png" height="600" style="display: block; margin: 0 auto;"> |
-|                                           _Map view with circles, polygon, polylines and markers on iOS_                                            |                                           _Map view with circles, polygon, polylines and markers on Android_                                            |                                           _Map view with circles, polygon, polylines and markers on Desktop_                                            |
+|                                           _Map view with circles, polygon, polylines and markers on iOS_                                            |                                           _Map view with circles, polygon, polylines and markers on Android_                                            |                                           _Map view with circles, polygon, polylines and markers on desktop_                                            |
 
 ## ✨ Features
 
-- **Multi-Provider Support:** Android (Google Maps) & iOS (Apple Maps or Google Maps) & JVM/Desktop (Google Maps JS).
+- **Multi-Provider Support:** Android (Google Maps), iOS (Apple Maps or Google Maps), and JVM/desktop (Google Maps JS).
 - **Fully Customizable Markers:** Create markers using standard Compose Multiplatform code.
 - **GeoJSON Support:** Easily render GeoJSON layers with customizable styling capabilities.
 - **Native Rendering:** Powered by underlying native SDKs, ensuring smooth performance, correct gesture handling, and native look and feel.
@@ -32,13 +32,13 @@ Check out the sample project in the `/sample` directory for complete usage examp
 
 Choose the appropriate import based on your needs:
 
-- **Native Implementation:** Uses native Google Maps on Android, native Apple Maps on iOS, and Google Maps JS API (via WebView) on Desktop.
+- **Native Implementation:** Uses native Google Maps on Android, native Apple Maps on iOS, and Google Maps JS API (via WebView) on desktop.
 
   ```kotlin
   import com.swmansion.kmpmaps.core.Map
   ```
 
-- **Universal Google Maps:** Uses Google Maps SDK on Android and iOS, and Google Maps JS API on Desktop.
+- **Universal Google Maps:** Uses Google Maps SDK on Android and iOS, and Google Maps JS API on desktop.
 
   ```kotlin
   import com.swmansion.kmpmaps.googlemaps.Map

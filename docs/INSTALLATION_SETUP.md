@@ -80,7 +80,7 @@ Add the following key to your `Info.plist`:
 ```
 ### 🖥️ Desktop Setup
 
-To use Google Maps on Desktop, you need to initialize a valid api key globally before rendering the map:
+To use Google Maps on desktop, you need to initialize a valid API key globally before rendering the map:
 
 ```kotlin
 MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
