@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
@@ -22,6 +23,7 @@ import platform.MapKit.MKPolylineRenderer
 import platform.MapKit.MKUserLocation
 import platform.UIKit.UIColor
 import platform.UIKit.UIGestureRecognizerStateBegan
+import platform.UIKit.UIImage
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 import platform.darwin.NSObject
@@ -29,6 +31,7 @@ import platform.darwin.NSObject
 /** iOS map delegate for handling Apple Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
+    private val mapView: MKMapView,
     private val properties: MapProperties,
     private val circleStyles: MutableMap<MKCircle, Circle>,
     private val polygonStyles: MutableMap<MKPolygon, Polygon>,
@@ -48,6 +51,8 @@ internal class MapDelegate(
     private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private val clusterSettings: ClusterSettings,
 ) : NSObject(), MKMapViewDelegateProtocol {
+    private val imageCache = mutableMapOf<String, UIImage>()
+    val clustersToRender = mutableStateMapOf<String, Cluster>()
 
     /**
      * Provides renderers for map overlays (circles, polygons, polylines).
@@ -167,102 +172,22 @@ internal class MapDelegate(
      * @param mapView The map view whose region changed
      * @param viewForAnnotation The annotation view that was selected
      */
-    override fun mapView(
-        mapView: MKMapView,
-        viewForAnnotation: MKAnnotationProtocol,
-    ): MKAnnotationView? {
-        if (viewForAnnotation is MKUserLocation) return null
-
-        if (viewForAnnotation is MKClusterAnnotation) {
-            if (clusterSettings.clusterContent == null) return null
-
-            val reuseId = "kmp_cluster_view"
-            val clusterView =
-                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers)
-                    ?.apply { annotation = viewForAnnotation }
-                    ?: CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
-
-            val memberAnnotations = viewForAnnotation.memberAnnotations
-            val markers =
-                memberAnnotations.filterIsInstance<MKPointAnnotation>().mapNotNull {
-                    markerMapping[it]
+    override fun mapView(mapView: MKMapView, viewForAnnotation: MKAnnotationProtocol) =
+        when (viewForAnnotation) {
+            is MKUserLocation -> null
+            is MKClusterAnnotation -> createClusterView(mapView, viewForAnnotation)
+            is MKPointAnnotation -> {
+                val marker = markerMapping[viewForAnnotation]
+                when {
+                    marker?.contentId != null &&
+                        customMarkerContent.containsKey(marker.contentId) ->
+                        createCustomMarkerView(mapView, viewForAnnotation, marker)
+                    marker != null -> createStandardMarkerView(mapView, viewForAnnotation, marker)
+                    else -> createGeoJsonMarkerView(mapView, viewForAnnotation)
                 }
-
-            val clusterCoordinate =
-                viewForAnnotation.coordinate.useContents { Coordinates(latitude, longitude) }
-
-            val cluster =
-                Cluster(coordinates = clusterCoordinate, size = markers.size, items = markers)
-
-            clusterView.updateContent { clusterSettings.clusterContent.invoke(cluster) }
-
-            return clusterView
+            }
+            else -> null
         }
-
-        val point = viewForAnnotation as? MKPointAnnotation ?: return null
-        val marker = markerMapping[point]
-
-        val clusterId = if (clusterSettings.enabled) "kmp_marker_cluster_group" else null
-
-        if (
-            marker != null &&
-                marker.contentId != null &&
-                customMarkerContent.containsKey(marker.contentId)
-        ) {
-            val reuseId = "kmp_custom_marker_${marker.contentId}"
-            val content = customMarkerContent[marker.contentId] ?: return null
-
-            val annotationView =
-                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers
-                    ?: CustomMarkers(annotation = viewForAnnotation, reuseIdentifier = reuseId)
-
-            annotationView.annotation = viewForAnnotation
-            annotationView.canShowCallout = false
-            annotationView.updateContent { content(marker) }
-
-            annotationView.clusteringIdentifier = clusterId
-
-            return annotationView
-        }
-
-        if (marker != null) {
-            val reuseId = "kmp_standard_marker"
-            val view =
-                (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
-                        as? MKMarkerAnnotationView)
-                    ?.apply { annotation = viewForAnnotation }
-                    ?: MKMarkerAnnotationView(
-                        annotation = viewForAnnotation,
-                        reuseIdentifier = reuseId,
-                    )
-
-            view.canShowCallout = true
-            view.markerTintColor = marker.iosMarkerOptions?.tintColor?.toAppleMapsColor()
-
-            view.clusteringIdentifier = clusterId
-
-            return view
-        }
-
-        geoJsonPointStyles[point]?.let { style ->
-            val reuseId = "kmp_geojson_marker"
-            val view =
-                mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
-                    as? MKMarkerAnnotationView
-                    ?: MKMarkerAnnotationView(
-                        annotation = viewForAnnotation,
-                        reuseIdentifier = reuseId,
-                    )
-
-            view.annotation = viewForAnnotation
-            view.canShowCallout = true
-            view.hidden = !style.visible
-
-            return view
-        }
-
-        return null
-    }
 
     /**
      * Handles tap gestures on the map to detect clicks on overlays and map.
@@ -331,5 +256,132 @@ internal class MapDelegate(
                 onMapLongClick?.invoke(coordinates)
             }
         }
+    }
+
+    fun onBitmapReady(id: String, image: UIImage) {
+        imageCache[id] = image
+        clustersToRender.remove(id)
+
+        val annotation = findAnnotationById(id)
+        if (annotation != null) {
+            (mapView.viewForAnnotation(annotation) as? CustomMarkers)?.setMarkerImage(image)
+        }
+    }
+
+    private fun queueClusterRender(id: String, cluster: Cluster) {
+        if (!imageCache.containsKey(id) && !clustersToRender.containsKey(id)) {
+            clustersToRender[id] = cluster
+        }
+    }
+
+    private fun findAnnotationById(id: String): MKAnnotationProtocol? {
+        val markerAnn = markerMapping.entries.find { it.value.id == id }?.key
+        if (markerAnn != null) return markerAnn
+
+        return mapView.annotations.filterIsInstance<MKClusterAnnotation>().find { clusterAnn ->
+            val markers =
+                clusterAnn.memberAnnotations.filterIsInstance<MKPointAnnotation>().mapNotNull {
+                    markerMapping[it]
+                }
+            generateClusterId(markers) == id
+        }
+    }
+
+    private fun generateClusterId(markers: List<Marker>): String {
+        val size = markers.size
+        val contentHash = markers.map { it.id }.sorted().hashCode()
+
+        return "cluster_${size}_$contentHash"
+    }
+
+    private fun createClusterView(
+        mapView: MKMapView,
+        annotation: MKClusterAnnotation,
+    ): MKAnnotationView? {
+        if (clusterSettings.clusterContent == null) return null
+        val reuseId = "kmp_cluster_view"
+        val view =
+            mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers
+                ?: CustomMarkers(annotation = annotation, reuseIdentifier = reuseId)
+
+        view.setMarkerImage(null)
+        view.annotation = annotation
+
+        val markers =
+            annotation.memberAnnotations.filterIsInstance<MKPointAnnotation>().mapNotNull {
+                markerMapping[it]
+            }
+
+        val clusterId = generateClusterId(markers)
+        val cluster =
+            Cluster(
+                coordinates =
+                    annotation.coordinate.useContents { Coordinates(latitude, longitude) },
+                size = markers.size,
+                items = markers,
+            )
+
+        val cached = imageCache[clusterId]
+        if (cached != null) {
+            view.setMarkerImage(cached)
+        } else {
+            queueClusterRender(clusterId, cluster)
+        }
+        return view
+    }
+
+    private fun createCustomMarkerView(
+        mapView: MKMapView,
+        annotation: MKPointAnnotation,
+        marker: Marker,
+    ): MKAnnotationView {
+        val reuseId = "kmp_custom_marker_${marker.contentId}"
+        val view =
+            mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId) as? CustomMarkers
+                ?: CustomMarkers(annotation = annotation, reuseIdentifier = reuseId)
+
+        view.annotation = annotation
+        view.clusteringIdentifier =
+            if (clusterSettings.enabled) "kmp_marker_cluster_group" else null
+        view.setMarkerImage(imageCache[marker.id])
+
+        return view
+    }
+
+    private fun createStandardMarkerView(
+        mapView: MKMapView,
+        annotation: MKPointAnnotation,
+        marker: Marker,
+    ): MKAnnotationView {
+        val reuseId = "kmp_standard_marker"
+        val view =
+            (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
+                    as? MKMarkerAnnotationView)
+                ?.apply { this.annotation = annotation }
+                ?: MKMarkerAnnotationView(annotation = annotation, reuseIdentifier = reuseId)
+
+        view.canShowCallout = true
+        view.markerTintColor = marker.iosMarkerOptions?.tintColor?.toAppleMapsColor()
+        view.clusteringIdentifier =
+            if (clusterSettings.enabled) "kmp_marker_cluster_group" else null
+
+        return view
+    }
+
+    private fun createGeoJsonMarkerView(
+        mapView: MKMapView,
+        annotation: MKPointAnnotation,
+    ): MKAnnotationView? {
+        val style = geoJsonPointStyles[annotation] ?: return null
+        val reuseId = "kmp_geojson_marker"
+        val view =
+            (mapView.dequeueReusableAnnotationViewWithIdentifier(reuseId)
+                as? MKMarkerAnnotationView)
+                ?: MKMarkerAnnotationView(annotation = annotation, reuseIdentifier = reuseId)
+
+        view.annotation = annotation
+        view.canShowCallout = true
+        view.hidden = !style.visible
+        return view
     }
 }

@@ -1,21 +1,30 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.annotation.RestrictTo
+import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asSkiaBitmap
 import androidx.compose.ui.graphics.toArgb
 import kotlin.collections.set
 import kotlin.math.ln
 import kotlin.math.min
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.useContents
+import kotlinx.cinterop.usePinned
+import org.jetbrains.skia.EncodedImageFormat
+import org.jetbrains.skia.Image
 import platform.CoreGraphics.CGPoint
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
+import platform.Foundation.NSData
+import platform.Foundation.dataWithBytes
 import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKCircle
 import platform.MapKit.MKCoordinateRegion
@@ -109,6 +118,8 @@ import platform.MapKit.overlays
 import platform.MapKit.removeOverlays
 import platform.MapKit.rendererForOverlay
 import platform.UIKit.UIColor
+import platform.UIKit.UIImage
+import platform.UIKit.UIScreen
 import platform.UIKit.UIUserInterfaceStyle
 import platform.posix.memcpy
 
@@ -524,4 +535,17 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
     }
 
     return renderedGeoJsonLayers to allExtractedMarkers
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun ImageBitmap.toUIImage(): UIImage? {
+    val skiaBitmap = this.asSkiaBitmap()
+    val image = Image.makeFromBitmap(skiaBitmap)
+    val encoded = image.encodeToData(EncodedImageFormat.PNG) ?: return null
+    val bytes = encoded.bytes
+    val nsData =
+        bytes.usePinned { pinned ->
+            NSData.dataWithBytes(pinned.addressOf(0), bytes.size.toULong())
+        }
+    return UIImage.imageWithData(nsData, scale = UIScreen.mainScreen.scale)
 }

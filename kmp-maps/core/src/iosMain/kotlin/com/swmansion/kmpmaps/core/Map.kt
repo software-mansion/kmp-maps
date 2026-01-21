@@ -1,14 +1,17 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -142,6 +145,7 @@ public actual fun Map(
 
             val delegate =
                 MapDelegate(
+                    mapView = mkMapView,
                     properties = properties,
                     circleStyles = circleStyles,
                     polygonStyles = polygonStyles,
@@ -245,6 +249,38 @@ public actual fun Map(
         properties =
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
+    Box(modifier = Modifier.alpha(0f)) {
+        allMarkers.forEach { marker ->
+            val content = customMarkerContent[marker.contentId]
+            if (content != null) {
+                key(marker.id) {
+                    MarkerSnapshotter(
+                        content = { content(marker) },
+                        onSnapshotReady = { bitmap ->
+                            val uiImage = bitmap.toUIImage()
+                            if (uiImage != null) {
+                                mapDelegate?.onBitmapReady(marker.id, uiImage)
+                            }
+                        },
+                    )
+                }
+            }
+        }
+
+        mapDelegate?.clustersToRender?.forEach { (clusterId, cluster) ->
+            key(clusterId) {
+                MarkerSnapshotter(
+                    content = { clusterSettings.clusterContent?.invoke(cluster) },
+                    onSnapshotReady = { bitmap ->
+                        val uiImage = bitmap.toUIImage()
+                        if (uiImage != null) {
+                            mapDelegate?.onBitmapReady(clusterId, uiImage)
+                        }
+                    },
+                )
+            }
+        }
+    }
 
     LaunchedEffect(mapView) { mapView?.let { mkMapView -> onMapLoaded?.invoke() } }
 }
