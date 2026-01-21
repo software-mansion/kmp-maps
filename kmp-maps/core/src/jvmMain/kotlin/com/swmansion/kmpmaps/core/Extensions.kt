@@ -14,14 +14,14 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 
 /**
- * Converts a list of JsonObjects to a single JSON array string.
+ * Converts a list of [JsonObject]s to a single JSON array string.
  *
  * @return A string representation of the JSON array.
  */
 internal fun List<JsonObject>.toJsonString() = JsonArray(this).toString()
 
 /**
- * Converts a list of Markers to a JSON array.
+ * Converts a list of [Marker]s to a JSON array.
  *
  * @param webCustomMarkerContent Map of content IDs to HTML rendering functions.
  * @return A [JsonArray] containing serialized markers with optional injected HTML.

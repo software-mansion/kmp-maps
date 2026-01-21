@@ -5,12 +5,12 @@ import androidx.compose.ui.Modifier
 
 /**
  * A cross-platform map component that provides a unified interface for native map APIs across
- * Android, iOS, and Desktop (JVM).
+ * Android, iOS, and desktop (JVM).
  *
  * This composable acts as a bridge between platform-specific map engines:
  * - **Android**: Renders native **Google Maps SDK**.
  * - **iOS**: Renders native **Apple Maps (MapKit)**.
- * - **Desktop (JVM)**: Renders **Google Maps JS API** via an embedded WebView
+ * - **Desktop (JVM)**: Renders **Google Maps JS API** via an embedded WebView.
  *
  * ## Basic Usage
  *
@@ -59,7 +59,7 @@ import androidx.compose.ui.Modifier
  *
  * ### Desktop - Google Maps JS API
  *
- * To use Google Maps on Desktop, you need to initialize a valid api key globally before rendering
+ * To use Google Maps on desktop, you need to initialize a valid API key globally before rendering
  * the map:
  * ```kotlin
  * MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
