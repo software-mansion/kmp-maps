@@ -1,15 +1,18 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
 import cocoapods.GoogleMaps.GMSCircle
@@ -23,13 +26,16 @@ import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.DefaultPin
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.MarkerSnapshotter
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.toUIImage
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -84,6 +90,7 @@ public actual fun Map(
             mapView?.let { map ->
                 MarkerClusterManagerDelegate(
                     mapView = map,
+                    mapDelegate = mapDelegate,
                     clusterSettings = clusterSettings,
                     onMarkerClick = onMarkerClick,
                     customMarkerContent = customMarkerContent,
@@ -130,6 +137,8 @@ public actual fun Map(
 
             val delegate =
                 MapDelegate(
+                    clusterManager = clusterManager,
+                    customMarkerContent = customMarkerContent,
                     onCameraMove = onCameraMove,
                     onMarkerClick = onMarkerClick,
                     onCircleClick = onCircleClick,
@@ -241,6 +250,32 @@ public actual fun Map(
         properties =
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
+
+    Box(modifier = Modifier.alpha(0f)) {
+        allMarkers.forEach { marker ->
+            key(marker.id) {
+                MarkerSnapshotter(
+                    content = {
+                        val content = customMarkerContent[marker.contentId]
+                        if (content != null) content(marker) else DefaultPin(marker)
+                              },
+                    onSnapshotReady = { bitmap ->
+                        bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(marker.id, it) }
+                    },
+                )
+            }
+        }
+        mapDelegate?.renderingQueue?.forEach { (id, content) ->
+            key(id) {
+                MarkerSnapshotter(
+                    content = content,
+                    onSnapshotReady = { bitmap ->
+                        bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(id, it) }
+                    },
+                )
+            }
+        }
+    }
 
     LaunchedEffect(mapView) { if (mapView != null) onMapLoaded?.invoke() }
 }

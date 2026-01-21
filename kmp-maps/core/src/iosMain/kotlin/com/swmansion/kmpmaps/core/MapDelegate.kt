@@ -287,13 +287,6 @@ internal class MapDelegate(
         }
     }
 
-    private fun generateClusterId(markers: List<Marker>): String {
-        val size = markers.size
-        val contentHash = markers.map { it.id }.sorted().hashCode()
-
-        return "cluster_${size}_$contentHash"
-    }
-
     private fun createClusterView(
         mapView: MKMapView,
         annotation: MKClusterAnnotation,

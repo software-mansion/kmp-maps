@@ -538,7 +538,7 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
 }
 
 @OptIn(ExperimentalForeignApi::class)
-internal fun ImageBitmap.toUIImage(): UIImage? {
+public fun ImageBitmap.toUIImage(): UIImage? {
     val skiaBitmap = this.asSkiaBitmap()
     val image = Image.makeFromBitmap(skiaBitmap)
     val encoded = image.encodeToData(EncodedImageFormat.PNG) ?: return null

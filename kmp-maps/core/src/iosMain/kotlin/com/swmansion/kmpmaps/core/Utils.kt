@@ -205,3 +205,10 @@ private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Do
 
     return EARTH_RADIUS * c
 }
+
+public fun generateClusterId(markers: List<Marker>): String {
+    val size = markers.size
+    val contentHash = markers.map { it.id }.sorted().hashCode()
+
+    return "cluster_${size}_$contentHash"
+}

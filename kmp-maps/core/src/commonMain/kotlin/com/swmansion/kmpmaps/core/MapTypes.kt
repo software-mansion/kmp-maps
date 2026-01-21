@@ -88,15 +88,15 @@ public data class MapUISettings(
  *   parameter.
  */
 @Serializable
+@OptIn(ExperimentalUuidApi::class)
 public data class Marker(
+    val id: String = Uuid.random().toString(),
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
-) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
-}
+)
 
 /**
  * Represents a circle overlay on the map.
