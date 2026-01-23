@@ -119,6 +119,23 @@ public actual fun Map(
         }
     }
 
+    LaunchedEffect(mapView, properties, uiSettings, hasLocationPermission, isDarkModeEnabled) {
+        val view = mapView ?: return@LaunchedEffect
+
+        view.setMapType(properties.mapType.toGoogleMapsMapType())
+        view.switchTheme(isDarkModeEnabled)
+        view.setMyLocationEnabled(properties.isMyLocationEnabled && hasLocationPermission)
+        view.setTrafficEnabled(properties.isTrafficEnabled)
+        view.setBuildingsEnabled(properties.isBuildingEnabled)
+        view.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
+        view.setMapStyle(properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions())
+        view.setMinZoom(
+            properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
+            properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
+        )
+        uiSettings.toGoogleMapsSettings(view)
+    }
+
     DisposableEffect(mapView) {
         mapView?.let(geoJsonManager::attach)
         onDispose(geoJsonManager::clear)
@@ -129,12 +146,62 @@ public actual fun Map(
         geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers, clusterSettings)
     }
 
+    LaunchedEffect(cameraPosition) {
+        val view = mapView ?: return@LaunchedEffect
+        val newPos = cameraPosition ?: return@LaunchedEffect
+
+        if (newPos != lastCameraPosition.value) {
+            view.setUpGMSCameraPosition(newPos)
+            lastCameraPosition.value = newPos
+        }
+    }
+
+    LaunchedEffect(
+        allMarkers,
+        circles,
+        polygons,
+        polylines,
+        clusterManager,
+        clusterRenderer,
+        clusterSettings.enabled,
+    ) {
+        val view = mapView ?: return@LaunchedEffect
+        val manager = clusterManager
+        val renderer = clusterRenderer
+
+        if (
+            manager != null &&
+                renderer != null &&
+                clusterSettings.enabled &&
+                clusteringDelegate != null
+        ) {
+            updateClusteringMarkers(
+                manager = manager,
+                renderer = renderer,
+                mapDelegate = mapDelegate,
+                clusteringDelegate = clusteringDelegate,
+                markers = allMarkers,
+                markerMapping = markerMapping,
+            )
+        } else {
+            disableClusteringAndUpdateMarkers(
+                manager = manager,
+                mapView = view,
+                mapDelegate = mapDelegate,
+                markers = allMarkers,
+                markerMapping = markerMapping,
+                customMarkerContent = customMarkerContent,
+            )
+        }
+        updateGoogleMapsCircles(view, circles, circleMapping)
+        updateGoogleMapsPolygons(view, polygons, polygonMapping)
+        updateGoogleMapsPolylines(view, polylines, polylineMapping)
+    }
+
     UIKitView(
         factory = {
             ensureInitialized()
-
             val utilsMapView = UtilsGMSMapView()
-
             val delegate =
                 MapDelegate(
                     clusterManager = clusterManager,
@@ -165,24 +232,6 @@ public actual fun Map(
             clusterManager = clusteringComponents.manager
             clusterRenderer = clusteringComponents.renderer
 
-            utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
-            utilsMapView.switchTheme(isDarkModeEnabled)
-            utilsMapView.setMyLocationEnabled(
-                properties.isMyLocationEnabled && hasLocationPermission
-            )
-            utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
-            utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
-            utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
-            utilsMapView.setMapStyle(
-                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
-            )
-            utilsMapView.setMinZoom(
-                properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
-                properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
-            )
-
-            uiSettings.toGoogleMapsSettings(utilsMapView)
-
             cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
 
             utilsMapView.setDelegate(delegate)
@@ -191,62 +240,7 @@ public actual fun Map(
             utilsMapView
         },
         modifier = modifier.fillMaxSize(),
-        update = { utilsMapView ->
-            val manager = clusterManager
-            val renderer = clusterRenderer
-
-            utilsMapView.setMapType(properties.mapType.toGoogleMapsMapType())
-            utilsMapView.switchTheme(isDarkModeEnabled)
-            utilsMapView.setMyLocationEnabled(
-                properties.isMyLocationEnabled && hasLocationPermission
-            )
-            utilsMapView.setTrafficEnabled(properties.isTrafficEnabled)
-            utilsMapView.setBuildingsEnabled(properties.isBuildingEnabled)
-            utilsMapView.setIndoorEnabled(properties.iosMapProperties.gmsIsIndoorEnabled)
-            utilsMapView.setMapStyle(
-                properties.iosMapProperties.gmsMapStyleOptions.toNativeStyleOptions()
-            )
-            utilsMapView.setMinZoom(
-                properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
-                properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
-            )
-
-            uiSettings.toGoogleMapsSettings(utilsMapView)
-            utilsMapView.setDelegate(mapDelegate)
-
-            if (cameraPosition != lastCameraPosition.value) {
-                cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
-                lastCameraPosition.value = cameraPosition
-            }
-
-            if (
-                manager != null &&
-                    renderer != null &&
-                    clusterSettings.enabled &&
-                    clusteringDelegate != null
-            ) {
-                updateClusteringMarkers(
-                    manager = manager,
-                    renderer = renderer,
-                    mapDelegate = mapDelegate,
-                    clusteringDelegate = clusteringDelegate,
-                    markers = allMarkers,
-                    markerMapping = markerMapping,
-                )
-            } else {
-                disableClusteringAndUpdateMarkers(
-                    manager = manager,
-                    mapView = utilsMapView,
-                    mapDelegate = mapDelegate,
-                    markers = allMarkers,
-                    markerMapping = markerMapping,
-                    customMarkerContent = customMarkerContent,
-                )
-            }
-            updateGoogleMapsCircles(utilsMapView, circles, circleMapping)
-            updateGoogleMapsPolygons(utilsMapView, polygons, polygonMapping)
-            updateGoogleMapsPolylines(utilsMapView, polylines, polylineMapping)
-        },
+        update = { _ -> },
         properties =
             UIKitInteropProperties(isInteractive = true, isNativeAccessibilityEnabled = true),
     )
