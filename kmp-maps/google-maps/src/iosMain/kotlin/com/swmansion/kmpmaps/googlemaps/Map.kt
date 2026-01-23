@@ -258,7 +258,7 @@ public actual fun Map(
                     content = {
                         val content = customMarkerContent[marker.contentId]
                         if (content != null) content(marker) else DefaultPin(marker)
-                              },
+                    },
                     onSnapshotReady = { bitmap ->
                         bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(marker.id, it) }
                     },
