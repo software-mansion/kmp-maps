@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -171,35 +172,37 @@ public actual fun Map(
             )
         } else {
             markers.forEach { marker ->
-                val content = customMarkerContent[marker.contentId]
+                key(marker.id, marker.contentId) {
+                    val content = customMarkerContent[marker.contentId]
 
-                if (content != null) {
-                    MarkerComposable(
-                        state = marker.toGoogleMapsMarkerState(),
-                        title = marker.title,
-                        anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                        draggable = marker.androidMarkerOptions.draggable,
-                        snippet = marker.androidMarkerOptions.snippet,
-                        zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                        onClick = {
-                            onMarkerClick?.invoke(marker)
-                            onMarkerClick == null
-                        },
-                        content = { content(marker) },
-                    )
-                } else {
-                    Marker(
-                        state = marker.toGoogleMapsMarkerState(),
-                        title = marker.title,
-                        anchor = marker.androidMarkerOptions.anchor.toOffset(),
-                        draggable = marker.androidMarkerOptions.draggable,
-                        snippet = marker.androidMarkerOptions.snippet,
-                        zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
-                        onClick = {
-                            onMarkerClick?.invoke(marker)
-                            onMarkerClick == null
-                        },
-                    )
+                    if (content != null) {
+                        MarkerComposable(
+                            state = marker.toGoogleMapsMarkerState(),
+                            title = marker.title,
+                            anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                            draggable = marker.androidMarkerOptions.draggable,
+                            snippet = marker.androidMarkerOptions.snippet,
+                            zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                            onClick = {
+                                onMarkerClick?.invoke(marker)
+                                onMarkerClick == null
+                            },
+                            content = { content(marker) },
+                        )
+                    } else {
+                        Marker(
+                            state = marker.toGoogleMapsMarkerState(),
+                            title = marker.title,
+                            anchor = marker.androidMarkerOptions.anchor.toOffset(),
+                            draggable = marker.androidMarkerOptions.draggable,
+                            snippet = marker.androidMarkerOptions.snippet,
+                            zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                            onClick = {
+                                onMarkerClick?.invoke(marker)
+                                onMarkerClick == null
+                            },
+                        )
+                    }
                 }
             }
         }
