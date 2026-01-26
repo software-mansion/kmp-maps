@@ -9,25 +9,36 @@ let geoJsonMarkers = [];
 
 let markerCluster;
 let trafficLayer = null;
+
 let AdvancedMarkerElement;
 let PinElement;
+let ColorScheme;
 
 const clusterCache = new Map();
 
 async function initMap() {
     const { Map } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement: MarkerClass, PinElement: PinClass } = await google.maps.importLibrary("marker");
+    const { ColorScheme: ColorSchemeLib } = await google.maps.importLibrary("core");
 
     AdvancedMarkerElement = MarkerClass;
     PinElement = PinClass;
+    ColorScheme = ColorSchemeLib;
+
+    const selectedMapId = "{{INITIAL_MAP_ID}}";
+    const selectedLat = "{{INITIAL_LAT}}";
+    const selectedLng = "{{INITIAL_LNG}}";
+    const selectedZoom = "{{INITIAL_ZOOM}}";
+    const selectedColorScheme = mapColorScheme("{{INITIAL_COLOR_SCHEME}}", ColorSchemeLib);
 
     map = new Map(document.getElementById("map"), {
-        mapId: "{{INITIAL_MAP_ID}}",
+        mapId: selectedMapId,
+        colorScheme: selectedColorScheme,
         center: {
-            lat: {{INITIAL_LAT}},
-            lng: {{INITIAL_LNG}}
+            lat: Number(selectedLat),
+            lng: Number(selectedLng)
         },
-        zoom: {{INITIAL_ZOOM}},
+        zoom: Number(selectedZoom),
         disableDefaultUI: true,
     });
 
@@ -74,6 +85,18 @@ async function initMap() {
             }
         }
     });
+}
+
+function mapColorScheme(themeName, ColorSchemeLib) {
+    switch (themeName) {
+        case 'DARK':
+            return ColorSchemeLib.DARK;
+        case 'LIGHT':
+            return ColorSchemeLib.LIGHT;
+        case 'SYSTEM':
+        default:
+            return ColorSchemeLib.FOLLOW_SYSTEM;
+    }
 }
 
 function updateMarkers(data, clusterEnabled, hasCustomClusterContent) {

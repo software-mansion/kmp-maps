@@ -62,8 +62,8 @@ internal fun MapsScreen(map: @Composable (Modifier) -> Unit, controls: @Composab
                     Icon(imageVector = Icons.Filled.Settings, contentDescription = "Settings")
                 }
             }
-        ) { padding ->
-            map(Modifier.fillMaxSize().padding(padding))
+        ) {
+            map(Modifier.fillMaxSize())
         }
         if (showBottomSheet) {
             ModalBottomSheet(

@@ -6,6 +6,26 @@ import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.web.WebViewNavigator
 import kotlinx.serialization.json.Json
 
+/**
+ * Registers various map event handlers to the JavaScript bridge. This function facilitates
+ * communication from the WebView (JavaScript) back to Kotlin, allowing the map to respond to user
+ * interactions such as clicks, camera movements, and cluster rendering requests.
+ *
+ * @param jsBridge The bridge used for JS-Kotlin communication.
+ * @param markers Current list of markers for click lookup.
+ * @param circles Current list of circles for click lookup.
+ * @param polygons Current list of polygons for click lookup.
+ * @param polylines Current list of polylines for click lookup.
+ * @param clusterSettings Settings for handling cluster clicks and custom web rendering.
+ * @param onCameraMove Callback for camera position updates.
+ * @param onMarkerClick Callback for marker interactions.
+ * @param onCircleClick Callback for circle interactions.
+ * @param onPolygonClick Callback for polygon interactions.
+ * @param onPolylineClick Callback for polyline interactions.
+ * @param onMapClick Callback for general map clicks.
+ * @param onPOIClick Callback for Point of Interest interactions.
+ * @param onMapLoaded Callback invoked when the JS map is ready.
+ */
 internal fun registerMapEvents(
     jsBridge: WebViewJsBridge,
     markers: List<Marker>,

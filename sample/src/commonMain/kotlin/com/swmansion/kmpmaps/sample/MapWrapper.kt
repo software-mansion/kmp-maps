@@ -17,6 +17,7 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.WebMapProperties
 import com.swmansion.kmpmaps.googlemaps.Map as GoogleMap
 
 internal data class MapOptions(
@@ -60,6 +61,7 @@ internal fun MapWrapper(
                         minZoomPreference = 3f,
                         maxZoomPreference = 21f,
                     ),
+                webMapProperties = WebMapProperties(mapId = "ee04f651cb7da64943cba589"),
             ),
         uiSettings =
             MapUISettings(
