@@ -55,7 +55,7 @@ internal fun Marker.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes geographic [Coordinates] to a JsonObject.
+ * Serializes geographic [Coordinates] to a [JsonObject].
  *
  * @return [JsonObject] with "lat" and "lng" keys.
  */
@@ -65,7 +65,7 @@ internal fun Coordinates.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [MapProperties] to a JsonObject.
+ * Serializes [MapProperties] to a [JsonObject].
  *
  * @return [JsonObject] including traffic status, map type, and web-specific properties.
  */
@@ -76,7 +76,7 @@ internal fun MapProperties.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [WebMapProperties] to a JsonObject.
+ * Serializes [WebMapProperties] to a [JsonObject].
  *
  * @return [JsonObject] containing map ID, gesture handling, and styling options.
  */
@@ -102,7 +102,7 @@ private fun JsonObjectBuilder.putStyles(options: GoogleMapsMapStyleOptions?) {
 }
 
 /**
- * Serializes [WebMapRestriction] to a JsonObject.
+ * Serializes [WebMapRestriction] to a [JsonObject].
  *
  * @return [JsonObject] defining strict bounds and coordinate ranges.
  */
@@ -117,7 +117,7 @@ internal fun WebMapRestriction.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [MapUISettings] to a JsonObject.
+ * Serializes [MapUISettings] to a [JsonObject].
  *
  * @return [JsonObject] containing zoom/scroll toggles and web UI control positions.
  */
@@ -128,7 +128,7 @@ internal fun MapUISettings.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [WebUISettings] to a JsonObject.
+ * Serializes [WebUISettings] to a [JsonObject].
  *
  * @return [JsonObject] for JS API control visibility and placement.
  */
@@ -149,14 +149,14 @@ internal fun WebUISettings.toJson() = buildJsonObject {
 }
 
 /**
- * Converts a Color object to a HEX string.
+ * Converts a [Color] object to a hex string.
  *
  * @return A string in "#RRGGBB" format.
  */
 internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())
 
 /**
- * Serializes a [Circle] object to a JsonObject.
+ * Serializes a [Circle] object to a [JsonObject].
  *
  * @return [JsonObject] with center, radius, and stroke/fill styles.
  */
@@ -178,7 +178,7 @@ internal fun Circle.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes a [Polygon] object to a JsonObject.
+ * Serializes a [Polygon] object to a [JsonObject].
  *
  * @return [JsonObject] containing the list of paths and styling properties.
  */
@@ -198,7 +198,7 @@ internal fun Polygon.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes a [Polyline] object to a JsonObject.
+ * Serializes a [Polyline] object to a [JsonObject].
  *
  * @return [JsonObject] containing the path coordinates and line styles.
  */
@@ -214,7 +214,7 @@ internal fun Polyline.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes a [GeoJsonLayer] to a JsonObject.
+ * Serializes a [GeoJsonLayer] to a [JsonObject].
  *
  * @return [JsonObject] containing raw GeoJSON string and associated feature styles.
  */
@@ -231,7 +231,7 @@ internal fun GeoJsonLayer.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [LineStringStyle] to a JsonObject.
+ * Serializes [LineStringStyle] to a [JsonObject].
  *
  * @return [JsonObject] including strokeWeight, strokeColor, and dashArray patterns.
  */
@@ -241,7 +241,7 @@ internal fun LineStringStyle.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [PolygonStyle] to a JsonObject.
+ * Serializes [PolygonStyle] to a [JsonObject].
  *
  * @return [JsonObject] with fill and stroke color/opacity/weight.
  */
@@ -255,7 +255,7 @@ internal fun PolygonStyle.toJson() = buildJsonObject {
 }
 
 /**
- * Serializes [PointStyle] to a JsonObject.
+ * Serializes [PointStyle] to a [JsonObject].
  *
  * @return [JsonObject] containing marker opacity, rotation, and anchor offsets.
  */

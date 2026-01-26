@@ -61,6 +61,7 @@ import androidx.compose.ui.Modifier
  *
  * To use Google Maps on desktop, you need to initialize a valid API key globally before rendering
  * the map:
+ *
  * ```kotlin
  * MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
  * ```

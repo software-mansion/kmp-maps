@@ -20,7 +20,7 @@ import com.swmansion.kmpmaps.core.Polyline
  * This composable acts as a bridge between platform-specific map engines:
  * - **Android**: Renders native **Google Maps SDK for Android**.
  * - **iOS**: Renders native **Google Maps SDK for iOS**.
- * - **Desktop (JVM)**: Renders **Google Maps JS** via an embedded WebView
+ * - **Desktop (JVM)**: Renders **Google Maps JS** via an embedded WebView.
  *
  * @param modifier The modifier to be applied to the map component
  * @param cameraPosition The initial camera position of the map. If null, the map will use default
