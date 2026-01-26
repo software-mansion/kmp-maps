@@ -71,7 +71,7 @@ internal fun updateGoogleMapsMarkers(
         )
 
         if (marker.contentId != null && customMarkerContent.containsKey(marker.contentId)) {
-            val cachedImage = mapDelegate?.imageCache[marker.id]
+            val cachedImage = mapDelegate?.getCachedImage(marker.id)
 
             if (cachedImage != null) {
                 gmsMarker.setIcon(cachedImage)

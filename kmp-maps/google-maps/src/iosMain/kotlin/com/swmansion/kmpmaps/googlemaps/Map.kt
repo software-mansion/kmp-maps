@@ -166,6 +166,10 @@ public actual fun Map(
         clusterSettings.enabled,
     ) {
         val view = mapView ?: return@LaunchedEffect
+
+        val activeIds = allMarkers.map { it.id }.toSet()
+        mapDelegate?.pruneCache(activeIds)
+
         val manager = clusterManager
         val renderer = clusterRenderer
 
@@ -205,7 +209,6 @@ public actual fun Map(
             val delegate =
                 MapDelegate(
                     clusterManager = clusterManager,
-                    customMarkerContent = customMarkerContent,
                     onCameraMove = onCameraMove,
                     onMarkerClick = onMarkerClick,
                     onCircleClick = onCircleClick,
@@ -247,26 +250,30 @@ public actual fun Map(
 
     Box(modifier = Modifier.alpha(0f)) {
         allMarkers.forEach { marker ->
-            key(marker.id) {
-                MarkerSnapshotter(
-                    content = {
-                        val content = customMarkerContent[marker.contentId]
-                        if (content != null) content(marker) else DefaultPin(marker)
-                    },
-                    onSnapshotReady = { bitmap ->
-                        bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(marker.id, it) }
-                    },
-                )
+            if (mapDelegate?.getCachedImage(marker.id) == null) {
+                key(marker.id) {
+                    MarkerSnapshotter(
+                        content = {
+                            val content = customMarkerContent[marker.contentId]
+                            if (content != null) content(marker) else DefaultPin(marker)
+                        },
+                        onSnapshotReady = { bitmap ->
+                            bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(marker.id, it) }
+                        },
+                    )
+                }
             }
         }
         mapDelegate?.renderingQueue?.forEach { (id, content) ->
-            key(id) {
-                MarkerSnapshotter(
-                    content = content,
-                    onSnapshotReady = { bitmap ->
-                        bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(id, it) }
-                    },
-                )
+            if (mapDelegate?.getCachedImage(id) == null) {
+                key(id) {
+                    MarkerSnapshotter(
+                        content = content,
+                        onSnapshotReady = { bitmap ->
+                            bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(id, it) }
+                        },
+                    )
+                }
             }
         }
     }

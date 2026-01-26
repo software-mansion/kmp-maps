@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.annotation.RestrictTo
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -206,6 +207,13 @@ private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Do
     return EARTH_RADIUS * c
 }
 
+/**
+ * Generates a unique identifier for a cluster of markers.
+ *
+ * @param markers The list of clustered markers
+ * @return A unique identifier for the cluster
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun generateClusterId(markers: List<Marker>): String {
     val size = markers.size
     val contentHash = markers.map { it.id }.sorted().hashCode()

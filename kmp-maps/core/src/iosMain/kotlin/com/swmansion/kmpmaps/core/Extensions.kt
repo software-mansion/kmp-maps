@@ -537,6 +537,15 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
     return renderedGeoJsonLayers to allExtractedMarkers
 }
 
+/**
+ * Converts an [ImageBitmap] to a native iOS [UIImage].
+ *
+ * This is primarily used to prepare Compose-rendered marker contents for display in MapKit's
+ * annotation views.
+ *
+ * @return A [UIImage] representation of the bitmap, or null if encoding fails.
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalForeignApi::class)
 public fun ImageBitmap.toUIImage(): UIImage? {
     val skiaBitmap = this.asSkiaBitmap()

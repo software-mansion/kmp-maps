@@ -25,14 +25,15 @@ import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
 import platform.UIKit.UIImage
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 /** iOS map delegate for handling Google Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
-    private var clusterManager: GMUClusterManager?,
-    val imageCache: MutableMap<String, UIImage> = mutableMapOf(),
+    var clusterManager: GMUClusterManager? = null,
+    private var imageCache: MutableMap<String, UIImage> = mutableMapOf(),
     val renderingQueue: SnapshotStateMap<String, @Composable () -> Unit> = mutableStateMapOf(),
-    private var customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private var onCameraMove: ((CameraPosition) -> Unit)?,
     private var onMarkerClick: ((Marker) -> Unit)?,
     private var onCircleClick: ((Circle) -> Unit)?,
@@ -157,17 +158,26 @@ internal class MapDelegate(
     }
 
     fun onBitmapReady(id: String, image: UIImage) {
-        imageCache[id] = image
-        renderingQueue.remove(id)
+        dispatch_async(dispatch_get_main_queue()) {
+            imageCache[id] = image
+            renderingQueue.remove(id)
 
-        val gmsMarker = markerMapping.entries.find { it.value.id == id }?.key
-        gmsMarker?.let {
-            it.setIcon(image)
-            it.setTracksViewChanges(false)
-        }
+            val gmsMarker = markerMapping.entries.find { it.value.id == id }?.key
+            gmsMarker?.let {
+                it.setIcon(image)
+                it.setTracksViewChanges(false)
+            }
 
-        if (id.startsWith("cluster_")) {
-            clusterManager?.cluster()
+            if (id.startsWith("cluster_")) {
+                clusterManager?.cluster()
+            }
         }
+    }
+
+    fun getCachedImage(id: String): UIImage? = imageCache[id]
+
+    fun pruneCache(activeIds: Set<String>) {
+        val keysToRemove = imageCache.keys.filter { it !in activeIds }
+        keysToRemove.forEach { imageCache.remove(it) }
     }
 }

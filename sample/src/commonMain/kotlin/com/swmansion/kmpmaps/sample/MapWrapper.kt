@@ -27,10 +27,10 @@ internal data class MapOptions(
     val cameraPosition: CameraPosition =
         CameraPosition(
             coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
-            zoom = 13f,
+            zoom = 10f,
         ),
     val showAllComponents: Boolean = true,
-    val useGoogleMapsMapView: Boolean = false,
+    val useGoogleMapsMapView: Boolean = true,
     val showPointGeoJson: Boolean = false,
     val showPolygonGeoJson: Boolean = false,
     val showLineGeoJson: Boolean = false,

@@ -146,6 +146,10 @@ public actual fun Map(
 
     LaunchedEffect(allMarkers, circles, polygons, polylines, mapDelegate) {
         val view = mapView ?: return@LaunchedEffect
+
+        val activeIds = allMarkers.map { it.id }.toSet()
+        mapDelegate?.pruneCache(activeIds)
+
         markerMapping.clear()
         markerMapping.putAll(view.updateAppleMapsMarkers(allMarkers))
         view.updateAppleMapsCircles(circles, circleStyles)
@@ -211,8 +215,8 @@ public actual fun Map(
     Box(modifier = Modifier.alpha(0f)) {
         allMarkers.forEach { marker ->
             val content = customMarkerContent[marker.contentId]
-            if (content != null) {
-                key(marker.id) {
+            if (content != null && mapDelegate?.getCachedImage(marker.id) == null) {
+                key(marker.id, marker.contentId) {
                     MarkerSnapshotter(
                         content = { content(marker) },
                         onSnapshotReady = { bitmap ->
@@ -225,18 +229,19 @@ public actual fun Map(
                 }
             }
         }
-
         mapDelegate?.clustersToRender?.forEach { (clusterId, cluster) ->
-            key(clusterId) {
-                MarkerSnapshotter(
-                    content = { clusterSettings.clusterContent?.invoke(cluster) },
-                    onSnapshotReady = { bitmap ->
-                        val uiImage = bitmap.toUIImage()
-                        if (uiImage != null) {
-                            mapDelegate?.onBitmapReady(clusterId, uiImage)
-                        }
-                    },
-                )
+            if (mapDelegate?.getCachedImage(clusterId) == null) {
+                key(clusterId) {
+                    MarkerSnapshotter(
+                        content = { clusterSettings.clusterContent?.invoke(cluster) },
+                        onSnapshotReady = { bitmap ->
+                            val uiImage = bitmap.toUIImage()
+                            if (uiImage != null) {
+                                mapDelegate?.onBitmapReady(clusterId, uiImage)
+                            }
+                        },
+                    )
+                }
             }
         }
     }

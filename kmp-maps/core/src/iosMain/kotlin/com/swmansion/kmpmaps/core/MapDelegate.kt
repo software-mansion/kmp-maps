@@ -27,11 +27,15 @@ import platform.UIKit.UIImage
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 /** iOS map delegate for handling Apple Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
     private val mapView: MKMapView,
+    private val imageCache: MutableMap<String, UIImage> = mutableMapOf(),
+    val clustersToRender: MutableMap<String, Cluster> = mutableStateMapOf(),
     private val properties: MapProperties,
     private val circleStyles: MutableMap<MKCircle, Circle>,
     private val polygonStyles: MutableMap<MKPolygon, Polygon>,
@@ -51,8 +55,6 @@ internal class MapDelegate(
     private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private val clusterSettings: ClusterSettings,
 ) : NSObject(), MKMapViewDelegateProtocol {
-    private val imageCache = mutableMapOf<String, UIImage>()
-    val clustersToRender = mutableStateMapOf<String, Cluster>()
 
     /**
      * Provides renderers for map overlays (circles, polygons, polylines).
@@ -259,14 +261,23 @@ internal class MapDelegate(
     }
 
     fun onBitmapReady(id: String, image: UIImage) {
-        imageCache[id] = image
-        clustersToRender.remove(id)
+        dispatch_async(dispatch_get_main_queue()) {
+            imageCache[id] = image
+            clustersToRender.remove(id)
 
-        val annotation = findAnnotationById(id)
-        if (annotation != null) {
-            (mapView.viewForAnnotation(annotation) as? CustomMarkers)?.setMarkerImage(image)
+            val annotation = findAnnotationById(id)
+            if (annotation != null) {
+                (mapView.viewForAnnotation(annotation) as? CustomMarkers)?.setMarkerImage(image)
+            }
         }
     }
+
+    fun pruneCache(activeIds: Set<String>) {
+        val keysToRemove = imageCache.keys.filter { it !in activeIds }
+        keysToRemove.forEach { imageCache.remove(it) }
+    }
+
+    fun getCachedImage(id: String?): UIImage? = imageCache[id ?: ""]
 
     private fun queueClusterRender(id: String, cluster: Cluster) {
         if (!imageCache.containsKey(id) && !clustersToRender.containsKey(id)) {

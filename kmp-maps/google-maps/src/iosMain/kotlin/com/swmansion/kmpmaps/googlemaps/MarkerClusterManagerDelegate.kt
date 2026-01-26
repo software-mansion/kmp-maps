@@ -38,7 +38,7 @@ internal class MarkerClusterManagerDelegate(
         when (userData) {
             is MarkerClusterItem -> {
                 val marker = userData.marker
-                val cached = mapDelegate?.imageCache[marker.id]
+                val cached = mapDelegate?.getCachedImage(marker.id)
 
                 if (cached != null) {
                     willRenderMarker.setIcon(cached)
@@ -57,7 +57,7 @@ internal class MarkerClusterManagerDelegate(
                 val count = userData.count.toInt()
 
                 val clusterId = generateClusterId(markers)
-                val cached = mapDelegate?.imageCache[clusterId]
+                val cached = mapDelegate?.getCachedImage(clusterId)
 
                 if (cached != null) {
                     willRenderMarker.setIcon(cached)
