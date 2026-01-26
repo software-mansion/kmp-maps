@@ -80,7 +80,45 @@ Add the following key to your `Info.plist`:
 ```
 ### 🖥️ Desktop Setup
 
-To use Google Maps on desktop, you need to initialize a valid API key globally before rendering the map:
+The JVM desktop implementation uses `compose-webview-multiplatform` (v1.7.0+), which requires [KCEF](https://github.com/DatL4g/KCEF/tree/master). We recommend following the setup guide in the official [compose-webview-multiplatform repository](https://github.com/KevinnZou/compose-webview-multiplatform/blob/main/README.desktop.md).
+
+KCEF must be initialized before the map is displayed. Here is a basic example:
+
+```kotlin
+import dev.datlag.kcef.KCEF
+import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+fun main() = application {
+    Window(title = "KMP Maps - Desktop", onCloseRequest = ::exitApplication) {
+        var initialized by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                KCEF.init(
+                    builder = {
+                        installDir(File("kcef-bundle"))
+                        progress { onInitialized { initialized = true } }
+                        settings { noSandbox = true }
+                    },
+                    onError = { it?.printStackTrace() },
+                )
+            }
+        }
+
+        if (initialized) {
+            App()
+        } else {
+            Text("Initializing Map Engine...")
+        }
+    }
+}
+```
+
+For a full example, refer to [main.kt](https://github.com/software-mansion/kmp-maps/blob/main/sample/src/jvmMain/kotlin/com/swmansion/kmpmaps/sample/main.kt).
+
+To use Google Maps on desktop, you also need to initialize a valid API key globally before rendering the map:
 
 ```kotlin
 MapConfiguration.initialize(googleMapsApiKey = "YOUR_API_KEY")
