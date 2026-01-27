@@ -14,7 +14,12 @@ import platform.MapKit.MKClusterAnnotation
 import platform.MapKit.MKMapView
 import platform.MapKit.MKMapViewDelegateProtocol
 import platform.MapKit.MKMarkerAnnotationView
+import platform.MapKit.MKMultiPolygon
+import platform.MapKit.MKMultiPolygonRenderer
+import platform.MapKit.MKMultiPolyline
+import platform.MapKit.MKMultiPolylineRenderer
 import platform.MapKit.MKOverlayProtocol
+import platform.MapKit.MKOverlayRenderer
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolygonRenderer
@@ -49,8 +54,8 @@ internal class MapDelegate(
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
     private var onCameraMove: ((CameraPosition) -> Unit)?,
-    private val geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
-    private val geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    private val geoJsonPolygonStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>,
+    private val geoJsonPolylineStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>,
     private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private val clusterSettings: ClusterSettings,
@@ -74,9 +79,16 @@ internal class MapDelegate(
                 renderer.fillColor = circleStyle?.color?.toAppleMapsColor()
                 renderer
             }
-            is MKPolygon -> {
+            is MKPolygon,
+            is MKMultiPolygon -> {
                 val core = polygonStyles[rendererForOverlay]
-                val renderer = MKPolygonRenderer(rendererForOverlay)
+                val renderer =
+                    if (rendererForOverlay is MKMultiPolygon) {
+                        MKMultiPolygonRenderer(rendererForOverlay)
+                    } else {
+                        MKPolygonRenderer(rendererForOverlay as MKPolygon)
+                    }
+
                 if (core != null) {
                     renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
                     renderer.lineWidth = core.lineWidth.toDouble()
@@ -95,9 +107,16 @@ internal class MapDelegate(
                 }
                 renderer
             }
-            is MKPolyline -> {
+            is MKPolyline,
+            is MKMultiPolyline -> {
                 val core = polylineStyles[rendererForOverlay]
-                val renderer = MKPolylineRenderer(rendererForOverlay)
+                val renderer =
+                    if (rendererForOverlay is MKMultiPolyline) {
+                        MKMultiPolylineRenderer(rendererForOverlay)
+                    } else {
+                        MKPolylineRenderer(rendererForOverlay as MKPolyline)
+                    }
+
                 if (core != null) {
                     renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
                     renderer.lineWidth = core.width.toDouble()
@@ -113,7 +132,7 @@ internal class MapDelegate(
                 }
                 renderer
             }
-            else -> MKCircleRenderer(rendererForOverlay)
+            else -> MKOverlayRenderer(rendererForOverlay)
         }
 
     /**

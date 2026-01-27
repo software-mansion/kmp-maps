@@ -1,7 +1,6 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.annotation.RestrictTo
-import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asSkiaBitmap
@@ -34,6 +33,7 @@ import platform.MapKit.MKMapTypeHybrid
 import platform.MapKit.MKMapTypeSatellite
 import platform.MapKit.MKMapTypeStandard
 import platform.MapKit.MKMapView
+import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPointOfInterestCategory
 import platform.MapKit.MKPointOfInterestCategoryATM
@@ -481,8 +481,8 @@ internal fun MKMapView.reapplyCorePolylineStyles(polylineStyles: Map<MKPolyline,
 internal fun MKMapView.updateRenderedGeoJsonLayers(
     geoJsonLayers: List<GeoJsonLayer>,
     currentRendered: Map<Int, MKGeoJsonRenderedLayer>,
-    geoJsonPolygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
-    geoJsonPolylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
+    geoJsonPolygonStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>,
+    geoJsonPolylineStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>,
     geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     polylineStyles: Map<MKPolyline, Polyline>,
     clusterSettings: ClusterSettings,
@@ -515,7 +515,7 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             return@forEachIndexed
         }
 
-        val rendered = renderGeoJson(layer.geoJson, clusterSettings)
+        val rendered = renderGeoJson(layer, clusterSettings)
         if (rendered != null) {
             rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
             rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }

@@ -49,8 +49,8 @@ public class MKGeoJsonRenderedLayer(
     internal val overlays: List<MKOverlayProtocol>,
     internal val annotations: List<MKAnnotationProtocol>,
     internal val extractedMarkers: List<Marker>,
-    internal val polylineStyles: Map<MKPolyline, AppleMapsGeoJsonLineStyle> = emptyMap(),
-    internal val polygonStyles: Map<MKPolygon, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
+    internal val polylineStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonLineStyle> = emptyMap(),
+    internal val polygonStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
     internal val pointStyles: Map<MKPointAnnotation, AppleMapsGeoJsonPointStyle> = emptyMap(),
 ) {
     @OptIn(ExperimentalForeignApi::class)
@@ -63,15 +63,16 @@ public class MKGeoJsonRenderedLayer(
 /**
  * Renders a single GeoJSON document on an MKMapView.
  *
- * @param geoJson A UTF‑8 encoded GeoJSON string.
+ * @param layer GeoJSON layer to render.
+ * @param clusterSettings Settings for cluster rendering.
  * @return A handle to the rendered layer, or null if decoding fails.
  */
 @OptIn(ExperimentalForeignApi::class)
 public fun MKMapView.renderGeoJson(
-    geoJson: String,
+    layer: GeoJsonLayer,
     clusterSettings: ClusterSettings,
 ): MKGeoJsonRenderedLayer? {
-    val data = (geoJson as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return null
+    val data = (layer.geoJson as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return null
     val decoder = MKGeoJSONDecoder()
     val objects = decoder.geoJSONObjectsWithData(data, error = null) ?: return null
 
@@ -79,8 +80,8 @@ public fun MKMapView.renderGeoJson(
     val overlays = mutableListOf<MKOverlayProtocol>()
     val extractedMarkers = mutableListOf<Marker>()
 
-    val polylineStyles = mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>()
-    val polygonStyles = mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>()
+    val polylineStyles = mutableMapOf<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>()
+    val polygonStyles = mutableMapOf<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>()
     val pointStyles = mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
 
     objects.forEach { obj ->
@@ -93,7 +94,7 @@ public fun MKMapView.renderGeoJson(
             polylineStyles = polylineStyles,
             polygonStyles = polygonStyles,
             pointStyles = pointStyles,
-            defaults = null,
+            defaults = layer,
             featureProps = null,
             clusterSettings = clusterSettings,
         )
@@ -130,8 +131,8 @@ private fun collectAndAdd(
     overlays: MutableList<MKOverlayProtocol>,
     annotations: MutableList<MKAnnotationProtocol>,
     extractedMarkers: MutableList<Marker>,
-    polylineStyles: MutableMap<MKPolyline, AppleMapsGeoJsonLineStyle>,
-    polygonStyles: MutableMap<MKPolygon, AppleMapsGeoJsonPolygonStyle>,
+    polylineStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>,
+    polygonStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>,
     pointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     defaults: GeoJsonLayer?,
     featureProps: Map<String, Any?>?,
@@ -156,17 +157,15 @@ private fun collectAndAdd(
                 )
             }
         }
-        is MKPolygon -> {
+        is MKPolygon,
+        is MKMultiPolygon -> {
             overlays += obj
             polygonStyles[obj] = buildPolygonStyle(defaults, featureProps)
         }
-        is MKPolyline -> {
-            overlays += obj
-            polylineStyles[obj] = buildLineStyle(defaults, featureProps)
-        }
-        is MKMultiPolygon,
+        is MKPolyline,
         is MKMultiPolyline -> {
             overlays += obj
+            polylineStyles[obj] = buildLineStyle(defaults, featureProps)
         }
         is MKPointAnnotation -> {
             if (clusterSettings.enabled) {
@@ -284,29 +283,33 @@ private fun buildPolygonStyle(
     defaults: GeoJsonLayer?,
     props: Map<String, Any?>?,
 ): AppleMapsGeoJsonPolygonStyle {
-    val defaultStroke =
-        defaults?.polygonStyle?.strokeColor?.toAppleMapsColor() ?: UIColor.blackColor
-    val defaultStrokeWidth =
-        (defaults?.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH_FALLBACK).toDouble()
-    val defaultFill = defaults?.polygonStyle?.fillColor?.toAppleMapsColor()
+    val jsonStrokeHex = props?.string("stroke")
+    val jsonStrokeWidth = props?.double("stroke-width")
+    val jsonFillHex = props?.string("fill")
+    val jsonFillOpacity = props?.double("fill-opacity")?.coerceIn(0.0, 1.0)
 
-    val strokeHex = props?.string("stroke")
-    val strokeWidth = props?.double("stroke-width")
-    val fillHex = props?.string("fill")
-    val fillOpacity = props?.double("fill-opacity")?.coerceIn(0.0, 1.0)
+    val strokeColor =
+        jsonStrokeHex?.toUIColor()
+            ?: defaults?.polygonStyle?.strokeColor?.toAppleMapsColor()
+            ?: UIColor.blackColor
 
-    val strokeColor = strokeHex?.toUIColor() ?: defaultStroke
-    val fillBase = fillHex?.toUIColor() ?: defaultFill
+    val strokeWidth =
+        jsonStrokeWidth
+            ?: defaults?.polygonStyle?.strokeWidth?.toDouble()
+            ?: DEFAULT_STROKE_WIDTH_FALLBACK
+
+    val fillBase = jsonFillHex?.toUIColor() ?: defaults?.polygonStyle?.fillColor?.toAppleMapsColor()
+
     val fillColor =
-        if (fillOpacity != null && fillBase != null) {
-            fillBase.colorWithAlphaComponent(fillOpacity)
+        if (jsonFillOpacity != null && fillBase != null) {
+            fillBase.colorWithAlphaComponent(jsonFillOpacity)
         } else {
             fillBase
         }
 
     return AppleMapsGeoJsonPolygonStyle(
         strokeColor = strokeColor,
-        strokeWidth = strokeWidth ?: defaultStrokeWidth,
+        strokeWidth = strokeWidth,
         fillColor = fillColor,
     )
 }

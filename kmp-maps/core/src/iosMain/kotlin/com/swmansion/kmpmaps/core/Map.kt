@@ -19,6 +19,7 @@ import platform.Foundation.NSSelectorFromString
 import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKCircle
 import platform.MapKit.MKMapView
+import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
@@ -70,8 +71,12 @@ public actual fun Map(
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
     val markerMapping = remember { mutableMapOf<MKAnnotationProtocol, Marker>() }
 
-    val geoJsonPolygonStyles = remember { mutableMapOf<MKPolygon, AppleMapsGeoJsonPolygonStyle>() }
-    val geoJsonPolylineStyles = remember { mutableMapOf<MKPolyline, AppleMapsGeoJsonLineStyle>() }
+    val geoJsonPolygonStyles = remember {
+        mutableMapOf<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>()
+    }
+    val geoJsonPolylineStyles = remember {
+        mutableMapOf<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>()
+    }
     val geoJsonPointStyles = remember {
         mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
     }

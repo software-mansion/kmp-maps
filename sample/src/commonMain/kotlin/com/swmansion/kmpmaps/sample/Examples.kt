@@ -490,6 +490,38 @@ const val EXAMPLE_POLYGON_GEO_JSON =
         ],
         "type": "Polygon"
       }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Multi-part complex",
+        "stroke": "#FF0000",
+        "stroke-width": 4,
+        "fill-opacity": 0.3
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [19.9670, 50.0495],
+              [19.9675, 50.0495],
+              [19.9675, 50.0498],
+              [19.9670, 50.0498],
+              [19.9670, 50.0495]
+            ]
+          ],
+          [
+            [
+              [19.9680, 50.0495],
+              [19.9685, 50.0495],
+              [19.9685, 50.0498],
+              [19.9680, 50.0498],
+              [19.9680, 50.0495]
+            ]
+          ]
+        ]
+      }
     }
   ]
 }
@@ -529,6 +561,30 @@ const val EXAMPLE_LINE_GEO_JSON =
         "type": "LineString"
       },
       "id": 0
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "stroke-width": 5,
+        "stroke": "#00FF00",
+        "name": "Multi-segment bicycle path"
+      },
+      "geometry": {
+        "type": "MultiLineString",
+        "coordinates": [
+          [
+            [19.9660, 50.0498],
+            [19.9665, 50.0498],
+            [19.9665, 50.0495]
+          ],
+          [
+            [19.9670, 50.0492],
+            [19.9675, 50.0492],
+            [19.9675, 50.0489]
+          ]
+        ]
+      },
+      "id": 1
     }
   ]
 }
