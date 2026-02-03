@@ -106,8 +106,11 @@ internal class GeoJsonRendererManager {
                     isLine -> {
                         val strokeUIColor =
                             (parseHexToUIColor(strokeHex) ?: lineStrokeColor).let { c ->
-                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
-                                else c
+                                if (strokeOpacity != null) {
+                                    c.colorWithAlphaComponent(strokeOpacity)
+                                } else {
+                                    c
+                                }
                             }
                         feature.style =
                             GMUStyle(
