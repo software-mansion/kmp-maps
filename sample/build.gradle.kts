@@ -3,7 +3,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-version = "0.7.0"
+version = "0.8.0"
 
 plugins {
     alias(libs.plugins.android.application)
@@ -33,7 +33,7 @@ kotlin {
     cocoapods {
         summary = "Universal map component for Compose Multiplatform."
         homepage = "https://github.com/software-mansion/kmp-maps"
-        version = "0.7.0"
+        version = "0.8.0"
         ios.deploymentTarget = "16.0"
         framework {
             baseName = "Sample"
