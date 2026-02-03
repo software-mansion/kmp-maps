@@ -91,6 +91,7 @@ internal class GeoJsonRendererManager {
                 val strokeWidthJson = getDouble(dict, "stroke-width")
                 val fillHex = getString(dict, "fill")
                 val fillOpacity = getDouble(dict, "fill-opacity")?.coerceIn(0.0, 1.0)
+                val title = getString(dict, "title")
 
                 val isLine =
                     geometry is GMULineString ||
@@ -164,7 +165,7 @@ internal class GeoJsonRendererManager {
                                 heading = rotation,
                                 anchor = CGPointMake(anchorU, anchorV),
                                 iconUrl = null,
-                                title = getString(dict, "title") ?: getString(dict, "name"),
+                                title = title,
                                 hasFill = false,
                                 hasStroke = false,
                             )

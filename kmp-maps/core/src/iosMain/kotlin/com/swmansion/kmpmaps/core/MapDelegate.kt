@@ -81,7 +81,7 @@ internal class MapDelegate(
             }
             is MKPolygon,
             is MKMultiPolygon -> {
-                val core = polygonStyles[rendererForOverlay]
+                val core = (rendererForOverlay as? MKPolygon)?.let { polygonStyles[it] }
                 val renderer =
                     if (rendererForOverlay is MKMultiPolygon) {
                         MKMultiPolygonRenderer(rendererForOverlay)
@@ -109,7 +109,7 @@ internal class MapDelegate(
             }
             is MKPolyline,
             is MKMultiPolyline -> {
-                val core = polylineStyles[rendererForOverlay]
+                val core = (rendererForOverlay as? MKPolyline)?.let { polylineStyles[it] }
                 val renderer =
                     if (rendererForOverlay is MKMultiPolyline) {
                         MKMultiPolylineRenderer(rendererForOverlay)
