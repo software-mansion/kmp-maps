@@ -131,13 +131,19 @@ internal class GeoJsonRendererManager {
                     isPolygon -> {
                         val strokeUIColor =
                             (parseHexToUIColor(strokeHex) ?: polygonStrokeColor).let { c ->
-                                if (strokeOpacity != null) c.colorWithAlphaComponent(strokeOpacity)
-                                else c
+                                if (strokeOpacity != null) {
+                                    c.colorWithAlphaComponent(strokeOpacity)
+                                } else {
+                                    c
+                                }
                             }
                         val finalFill =
                             (parseHexToUIColor(fillHex) ?: fillColor).let { c ->
-                                if (fillOpacity != null) c.colorWithAlphaComponent(fillOpacity)
-                                else c
+                                if (fillOpacity != null) {
+                                    c.colorWithAlphaComponent(fillOpacity)
+                                } else {
+                                    c
+                                }
                             }
                         feature.style =
                             GMUStyle(
