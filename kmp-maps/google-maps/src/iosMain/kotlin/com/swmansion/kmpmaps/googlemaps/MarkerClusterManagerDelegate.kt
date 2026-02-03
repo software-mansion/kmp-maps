@@ -16,15 +16,17 @@ import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.DefaultCluster
-import com.swmansion.kmpmaps.core.DefaultPin
 import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.generateClusterId
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import platform.UIKit.UIImage
 import platform.darwin.NSObject
 
 @OptIn(ExperimentalForeignApi::class)
 internal class MarkerClusterManagerDelegate(
     private val mapView: UtilsGMSMapView,
+    private val mapDelegate: MapDelegate?,
     private val clusterSettings: ClusterSettings,
     private val onMarkerClick: ((Marker) -> Unit)?,
     private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
@@ -36,25 +38,30 @@ internal class MarkerClusterManagerDelegate(
         when (userData) {
             is MarkerClusterItem -> {
                 val marker = userData.marker
-                val iconView =
-                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
-                val content = customMarkerContent[marker.contentId]
+                val cached = mapDelegate?.getCachedImage(marker.id)
 
-                iconView.setContent { content?.invoke(marker) ?: DefaultPin(marker) }
-                willRenderMarker.setIconView(iconView)
-                willRenderMarker.setTracksViewChanges(true)
+                if (cached != null) {
+                    willRenderMarker.setIcon(cached)
+                } else {
+                    val content = customMarkerContent[marker.contentId]
+                    if (content != null) {
+                        mapDelegate?.renderingQueue[marker.id] = { content(marker) }
+                        willRenderMarker.setIcon(UIImage())
+                    }
+                }
                 willRenderMarker.setTitle(marker.title)
                 willRenderMarker.setZIndex(marker.androidMarkerOptions.zIndex?.toInt() ?: 0)
             }
             is GMUClusterProtocol -> {
-                val itemsList = userData.items
-                val markers = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
+                val markers = userData.items.mapNotNull { (it as? MarkerClusterItem)?.marker }
                 val count = userData.count.toInt()
-                val iconView =
-                    willRenderMarker.iconView() as? CustomMarkers ?: CustomMarkers(willRenderMarker)
 
-                if (clusterSettings.clusterContent != null) {
+                val clusterId = generateClusterId(markers)
+                val cached = mapDelegate?.getCachedImage(clusterId)
 
+                if (cached != null) {
+                    willRenderMarker.setIcon(cached)
+                } else {
                     val kmpCluster =
                         Cluster(
                             coordinates =
@@ -66,12 +73,16 @@ internal class MarkerClusterManagerDelegate(
                             items = markers,
                         )
 
-                    clusterSettings.clusterContent?.let { iconView.setContent { it(kmpCluster) } }
-                } else {
-                    iconView.setContent { DefaultCluster(size = count) }
+                    mapDelegate?.renderingQueue[clusterId] =
+                        @Composable {
+                            if (clusterSettings.clusterContent != null) {
+                                clusterSettings.clusterContent?.invoke(kmpCluster)
+                            } else {
+                                DefaultCluster(size = count)
+                            }
+                        }
+                    willRenderMarker.setIcon(UIImage())
                 }
-                willRenderMarker.setIconView(iconView)
-                willRenderMarker.setTracksViewChanges(true)
             }
             else -> return
         }
@@ -82,9 +93,7 @@ internal class MarkerClusterManagerDelegate(
         didTapCluster: GMUClusterProtocol,
     ): Boolean {
         val itemsList = didTapCluster.items
-
         val items = itemsList.mapNotNull { item -> (item as? MarkerClusterItem)?.marker }
-
         val count = didTapCluster.count.toInt()
 
         val kmpCluster =

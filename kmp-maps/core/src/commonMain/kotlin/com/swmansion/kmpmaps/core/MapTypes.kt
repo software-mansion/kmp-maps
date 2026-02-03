@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -95,7 +96,9 @@ public data class Marker(
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
 ) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
+    @OptIn(ExperimentalUuidApi::class)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    val id: String = Uuid.random().toString()
 }
 
 /**

@@ -32,6 +32,7 @@ import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.core.toAppleMapsColor
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.CoreGraphics.CGPointMake
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.Foundation.NSDictionary
 import platform.Foundation.NSNumber
@@ -51,6 +52,7 @@ import platform.UIKit.UIUserInterfaceStyle
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsMarkers(
     mapView: UtilsGMSMapView,
+    mapDelegate: MapDelegate?,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
@@ -68,10 +70,17 @@ internal fun updateGoogleMapsMarkers(
             )
         )
 
-        customMarkerContent[marker.contentId]?.let { content ->
-            val iconView = CustomMarkers(gmsMarker)
-            iconView.setContent { content(marker) }
-            gmsMarker.setIconView(iconView)
+        if (marker.contentId != null && customMarkerContent.containsKey(marker.contentId)) {
+            val cachedImage = mapDelegate?.getCachedImage(marker.id)
+
+            if (cachedImage != null) {
+                gmsMarker.setIcon(cachedImage)
+                gmsMarker.setTracksViewChanges(false)
+            } else {
+                gmsMarker.setIcon(null)
+            }
+
+            gmsMarker.setGroundAnchor(CGPointMake(0.5, 1.0))
         }
 
         gmsMarker.setTitle(marker.title)
@@ -439,5 +448,5 @@ internal fun disableClusteringAndUpdateMarkers(
 ) {
     manager?.clearItems()
     mapView.setDelegate(mapDelegate)
-    updateGoogleMapsMarkers(mapView, markers, markerMapping, customMarkerContent)
+    updateGoogleMapsMarkers(mapView, mapDelegate, markers, markerMapping, customMarkerContent)
 }

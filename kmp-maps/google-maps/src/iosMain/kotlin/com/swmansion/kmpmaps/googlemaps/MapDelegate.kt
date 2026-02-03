@@ -1,5 +1,8 @@
 package com.swmansion.kmpmaps.googlemaps
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import cocoapods.GoogleMaps.GMSCircle
 import cocoapods.GoogleMaps.GMSPolygon
 import cocoapods.GoogleMaps.GMSPolyline
@@ -8,6 +11,7 @@ import cocoapods.Google_Maps_iOS_Utils.GMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
+import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -19,11 +23,17 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
+import platform.UIKit.UIImage
 import platform.darwin.NSObject
+import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 /** iOS map delegate for handling Google Maps interactions and rendering. */
 @OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
+    var clusterManager: GMUClusterManager? = null,
+    private var imageCache: MutableMap<String, UIImage> = mutableMapOf(),
+    val renderingQueue: SnapshotStateMap<String, @Composable () -> Unit> = mutableStateMapOf(),
     private var onCameraMove: ((CameraPosition) -> Unit)?,
     private var onMarkerClick: ((Marker) -> Unit)?,
     private var onCircleClick: ((Circle) -> Unit)?,
@@ -37,7 +47,6 @@ internal class MapDelegate(
     private val polygonMapping: MutableMap<GMSPolygon, Polygon>,
     private val polylineMapping: MutableMap<GMSPolyline, Polyline>,
 ) : NSObject(), GMSMapViewDelegateProtocol {
-
     /**
      * Handles camera movement events when the map region changes.
      *
@@ -146,5 +155,29 @@ internal class MapDelegate(
             is GMSPolygon -> polygonMapping[didTapOverlay]?.let { onPolygonClick?.invoke(it) }
             is GMSPolyline -> polylineMapping[didTapOverlay]?.let { onPolylineClick?.invoke(it) }
         }
+    }
+
+    fun onBitmapReady(id: String, image: UIImage) {
+        dispatch_async(dispatch_get_main_queue()) {
+            imageCache[id] = image
+            renderingQueue.remove(id)
+
+            val gmsMarker = markerMapping.entries.find { it.value.id == id }?.key
+            gmsMarker?.let {
+                it.setIcon(image)
+                it.setTracksViewChanges(false)
+            }
+
+            if (id.startsWith("cluster_")) {
+                clusterManager?.cluster()
+            }
+        }
+    }
+
+    fun getCachedImage(id: String): UIImage? = imageCache[id]
+
+    fun pruneCache(activeIds: Set<String>) {
+        val keysToRemove = imageCache.keys.filter { it !in activeIds }
+        keysToRemove.forEach { imageCache.remove(it) }
     }
 }
