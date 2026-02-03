@@ -96,7 +96,9 @@ public data class Marker(
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
 ) {
-    @OptIn(ExperimentalUuidApi::class) val id: String = Uuid.random().toString()
+    @OptIn(ExperimentalUuidApi::class)
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    val id: String = Uuid.random().toString()
 }
 
 /**
