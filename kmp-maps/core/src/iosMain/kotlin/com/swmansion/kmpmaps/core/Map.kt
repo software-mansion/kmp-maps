@@ -221,9 +221,7 @@ public actual fun Map(
                         content = { content(marker) },
                         onSnapshotReady = { bitmap ->
                             val uiImage = bitmap.toUIImage()
-                            if (uiImage != null) {
-                                mapDelegate?.onBitmapReady(marker.id, uiImage)
-                            }
+                            if (uiImage != null) mapDelegate?.onBitmapReady(marker.id, uiImage)
                         },
                     )
                 }
@@ -236,9 +234,7 @@ public actual fun Map(
                         content = { clusterSettings.clusterContent?.invoke(cluster) },
                         onSnapshotReady = { bitmap ->
                             val uiImage = bitmap.toUIImage()
-                            if (uiImage != null) {
-                                mapDelegate?.onBitmapReady(clusterId, uiImage)
-                            }
+                            if (uiImage != null) mapDelegate?.onBitmapReady(clusterId, uiImage)
                         },
                     )
                 }
