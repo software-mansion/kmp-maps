@@ -25,8 +25,8 @@ public data class GeoJsonLayer(
     val pointStyle: PointStyle? = null,
 )
 
-internal val DEFAULT_STROKE_COLOR = Color.Black
-internal val DEFAULT_FILL_COLOR = Color.Transparent
+internal const val DEFAULT_STROKE_COLOR = "#000000"
+internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
 internal const val DEFAULT_STROKE_WIDTH = 2f
 
 /**

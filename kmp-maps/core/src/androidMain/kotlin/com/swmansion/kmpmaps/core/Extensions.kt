@@ -27,6 +27,8 @@ import com.google.maps.android.data.geojson.GeoJsonFeature
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 import com.google.maps.android.data.geojson.GeoJsonLineString
 import com.google.maps.android.data.geojson.GeoJsonLineStringStyle
+import com.google.maps.android.data.geojson.GeoJsonMultiLineString
+import com.google.maps.android.data.geojson.GeoJsonMultiPolygon
 import com.google.maps.android.data.geojson.GeoJsonPoint
 import com.google.maps.android.data.geojson.GeoJsonPointStyle
 import com.google.maps.android.data.geojson.GeoJsonPolygon
@@ -268,16 +270,16 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
     defaultLineStringStyle.isClickable = geo.isClickable == true
     defaultLineStringStyle.color =
-        geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+        geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
     defaultLineStringStyle.width = geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH
     defaultLineStringStyle.zIndex = geo.zIndex
     defaultLineStringStyle.isVisible = geo.visible != false
     defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
 
     defaultPolygonStyle.fillColor =
-        geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toArgb()
+        geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
     defaultPolygonStyle.strokeColor =
-        geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toArgb()
+        geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
     defaultPolygonStyle.strokeWidth = geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH
     defaultPolygonStyle.zIndex = geo.zIndex
     defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
@@ -299,16 +301,19 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
     defaultPointStyle.setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
 
     features.forEach { feature ->
-        val strokeHex = feature.getProperty("stroke")
-        val strokeWidthJson = feature.getProperty("stroke-width")?.toFloatOrNull()
-
-        val fillHex = feature.getProperty("fill")
-        val fillOpacity = feature.getProperty("fill-opacity")?.toFloatOrNull()
+        val jsonStroke = feature.getProperty("stroke")
+        val jsonFill = feature.getProperty("fill")
+        val jsonFillOpacity = feature.getProperty("fill-opacity")
+        val jsonWidth = feature.getProperty("stroke-width")?.toFloatOrNull()
+        val width = jsonWidth ?: DEFAULT_STROKE_WIDTH
 
         when (feature.geometry) {
-            is GeoJsonLineString -> {
-                val strokeColor = strokeHex.toColorInt()
-                val width = strokeWidthJson ?: DEFAULT_STROKE_WIDTH
+            is GeoJsonLineString,
+            is GeoJsonMultiLineString -> {
+                val strokeColor =
+                    jsonStroke?.toColorInt()
+                        ?: geo.lineStringStyle?.lineColor?.toArgb()
+                        ?: DEFAULT_STROKE_COLOR.toColorInt()
 
                 feature.setLineStringStyle(
                     GeoJsonLineStringStyle().apply {
@@ -322,13 +327,18 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                     }
                 )
             }
-            is GeoJsonPolygon -> {
-                val strokeColor = strokeHex.toColorInt()
-                val strokeWidth = strokeWidthJson ?: DEFAULT_STROKE_WIDTH
+            is GeoJsonPolygon,
+            is GeoJsonMultiPolygon -> {
+                val strokeColor =
+                    jsonStroke?.toColorInt()
+                        ?: geo.polygonStyle?.strokeColor?.toArgb()
+                        ?: DEFAULT_STROKE_COLOR.toColorInt()
+
                 val fillColor =
-                    fillHex.toColorInt().let { c ->
-                        if (fillOpacity != null) applyAlpha(c, fillOpacity) else c
-                    }
+                    jsonFill?.toColorInt()?.let { c ->
+                        val opacity = jsonFillOpacity?.toFloatOrNull()
+                        if (opacity != null) applyAlpha(c, opacity) else c
+                    } ?: geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
 
                 feature.setPolygonStyle(
                     GeoJsonPolygonStyle().apply {
