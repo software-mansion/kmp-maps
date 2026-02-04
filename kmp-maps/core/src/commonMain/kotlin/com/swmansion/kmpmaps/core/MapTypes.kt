@@ -105,10 +105,7 @@ public data class Marker(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Marker.getId(): String {
-    val result = arrayOf(coordinates, title, contentId).contentDeepHashCode()
-    return "marker_$result"
-}
+public fun Marker.getId() = "marker_${hashCode()}"
 
 /**
  * Represents a circle overlay on the map.
@@ -133,10 +130,7 @@ public data class Circle(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Circle.getId(): String {
-    val result = arrayOf(center, radius, color, lineColor, lineWidth).contentDeepHashCode()
-    return "circle_$result"
-}
+public fun Circle.getId() = "circle_${hashCode()}"
 
 /**
  * Represents a polygon overlay on the map.
@@ -159,10 +153,7 @@ public data class Polygon(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Polygon.getId(): String {
-    val result = arrayOf(coordinates, lineWidth, color, lineColor).contentDeepHashCode()
-    return "polygon_$result"
-}
+public fun Polygon.getId() = "polygon_${hashCode()}"
 
 /**
  * Represents a polyline overlay on the map.
@@ -183,10 +174,7 @@ public data class Polyline(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Polyline.getId(): String {
-    val result = arrayOf(coordinates, width, lineColor).contentDeepHashCode()
-    return "polyline_$result"
-}
+public fun Polyline.getId() = "polyline_${hashCode()}"
 
 /**
  * Represents geographical coordinates (latitude and longitude).
