@@ -305,7 +305,7 @@ internal class MapDelegate(
     }
 
     private fun findAnnotationById(id: String): MKAnnotationProtocol? {
-        val markerAnn = markerMapping.entries.find { it.value.id == id }?.key
+        val markerAnn = markerMapping.entries.find { it.value.getId() == id }?.key
         if (markerAnn != null) return markerAnn
 
         return mapView.annotations.filterIsInstance<MKClusterAnnotation>().find { clusterAnn ->
@@ -366,7 +366,7 @@ internal class MapDelegate(
         view.annotation = annotation
         view.clusteringIdentifier =
             if (clusterSettings.enabled) "kmp_marker_cluster_group" else null
-        view.setMarkerImage(imageCache[marker.id])
+        view.setMarkerImage(imageCache[marker.getId()])
 
         return view
     }

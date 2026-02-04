@@ -29,6 +29,7 @@ import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.getId
 import com.swmansion.kmpmaps.core.toAppleMapsColor
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -71,7 +72,7 @@ internal fun updateGoogleMapsMarkers(
         )
 
         if (marker.contentId != null && customMarkerContent.containsKey(marker.contentId)) {
-            val cachedImage = mapDelegate?.getCachedImage(marker.id)
+            val cachedImage = mapDelegate?.getCachedImage(marker.getId())
 
             if (cachedImage != null) {
                 gmsMarker.setIcon(cachedImage)

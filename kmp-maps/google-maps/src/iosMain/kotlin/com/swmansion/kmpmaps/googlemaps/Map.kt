@@ -35,6 +35,7 @@ import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.MarkerSnapshotter
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.getId
 import com.swmansion.kmpmaps.core.toUIImage
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
@@ -167,7 +168,7 @@ public actual fun Map(
     ) {
         val view = mapView ?: return@LaunchedEffect
 
-        val activeIds = allMarkers.map { it.id }.toSet()
+        val activeIds = allMarkers.map { it.getId() }.toSet()
         mapDelegate?.pruneCache(activeIds)
 
         val manager = clusterManager
@@ -250,15 +251,17 @@ public actual fun Map(
 
     Box(modifier = Modifier.alpha(0f)) {
         allMarkers.forEach { marker ->
-            if (mapDelegate?.getCachedImage(marker.id) == null) {
-                key(marker.id) {
+            if (mapDelegate?.getCachedImage(marker.getId()) == null) {
+                key(marker.getId()) {
                     MarkerSnapshotter(
                         content = {
                             val content = customMarkerContent[marker.contentId]
                             if (content != null) content(marker) else DefaultPin(marker)
                         },
                         onSnapshotReady = { bitmap ->
-                            bitmap.toUIImage()?.let { mapDelegate?.onBitmapReady(marker.id, it) }
+                            bitmap.toUIImage()?.let {
+                                mapDelegate?.onBitmapReady(marker.getId(), it)
+                            }
                         },
                     )
                 }
