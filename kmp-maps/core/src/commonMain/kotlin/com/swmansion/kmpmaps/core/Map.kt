@@ -95,6 +95,7 @@ import androidx.compose.ui.Modifier
  * @param polylines List of polylines to display on the map
  * @param onCameraMove Callback invoked when the map camera position changes due to user interaction
  * @param onMarkerClick Callback invoked when a marker is clicked
+ * @param onMarkerDragEnd Callback invoked when a marker is dragged
  * @param onCircleClick Callback invoked when a circle is clicked
  * @param onPolygonClick Callback invoked when a polygon is clicked
  * @param onPolylineClick Callback invoked when a polyline is clicked
@@ -103,8 +104,8 @@ import androidx.compose.ui.Modifier
  * @param onPOIClick Callback invoked when the user clicks on a Point of Interest
  * @param onMapLoaded Callback invoked when the map has finished loading
  * @param geoJsonLayers List of GeoJSON layers to display on the map
- * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
- * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
+ * @param customMarkerContent Map of content IDs to Composable functions for custom marker content
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string
  */
 @Composable
 public expect fun Map(
@@ -119,6 +120,7 @@ public expect fun Map(
     polylines: List<Polyline> = emptyList(),
     onCameraMove: ((CameraPosition) -> Unit)? = null,
     onMarkerClick: ((Marker) -> Unit)? = null,
+    onMarkerDragEnd: ((Marker, Coordinates) -> Unit)? = null,
     onCircleClick: ((Circle) -> Unit)? = null,
     onPolygonClick: ((Polygon) -> Unit)? = null,
     onPolylineClick: ((Polyline) -> Unit)? = null,
