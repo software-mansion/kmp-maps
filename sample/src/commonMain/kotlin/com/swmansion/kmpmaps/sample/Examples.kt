@@ -49,7 +49,8 @@ val exampleMarkers =
         Marker(
             coordinates = softwareMansionPin,
             title = "Software Mansion",
-            androidMarkerOptions = AndroidMarkerOptions(snippet = "Software house"),
+            androidMarkerOptions =
+                AndroidMarkerOptions(snippet = "Software house", draggable = true),
             contentId = "swmansion_marker",
         ),
         Marker(

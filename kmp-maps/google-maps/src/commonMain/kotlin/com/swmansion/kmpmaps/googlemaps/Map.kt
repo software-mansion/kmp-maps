@@ -34,7 +34,7 @@ import com.swmansion.kmpmaps.core.Polyline
  * @param polylines List of polylines to display on the map
  * @param onCameraMove Callback invoked when the map camera position changes due to user interaction
  * @param onMarkerClick Callback invoked when a marker is clicked
- * @param onMarkerDragEnd Callback invoked when a marker is dragged
+ * @param onMarkerDragEnd Callback invoked when a marker drag operation ends
  * @param onCircleClick Callback invoked when a circle is clicked
  * @param onPolygonClick Callback invoked when a polygon is clicked
  * @param onPolylineClick Callback invoked when a polyline is clicked
@@ -59,7 +59,7 @@ public expect fun Map(
     polylines: List<Polyline> = emptyList(),
     onCameraMove: ((CameraPosition) -> Unit)? = null,
     onMarkerClick: ((Marker) -> Unit)? = null,
-    onMarkerDragEnd: ((Marker, Coordinates) -> Unit)? = null,
+    onMarkerDragEnd: ((Marker) -> Unit)? = null,
     onCircleClick: ((Circle) -> Unit)? = null,
     onPolygonClick: ((Polygon) -> Unit)? = null,
     onPolylineClick: ((Polyline) -> Unit)? = null,

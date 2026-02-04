@@ -47,7 +47,7 @@ public actual fun Map(
     polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
     onMarkerClick: ((Marker) -> Unit)?,
-    onMarkerDragEnd: ((Marker, Coordinates) -> Unit)?,
+    onMarkerDragEnd: ((Marker) -> Unit)?,
     onCircleClick: ((Circle) -> Unit)?,
     onPolygonClick: ((Polygon) -> Unit)?,
     onPolylineClick: ((Polyline) -> Unit)?,
@@ -179,15 +179,21 @@ public actual fun Map(
                         remember(marker.getId()) {
                             MarkerState(marker.coordinates.toGoogleMapsLatLng())
                         }
+
+                    LaunchedEffect(marker.coordinates) {
+                        val newLatLng = marker.coordinates.toGoogleMapsLatLng()
+                        if (markerState.position != newLatLng) {
+                            markerState.position = newLatLng
+                        }
+                    }
+
                     val content = customMarkerContent[marker.contentId]
 
                     if (marker.androidMarkerOptions.draggable) {
                         LaunchedEffect(markerState.isDragging) {
                             if (!markerState.isDragging) {
-                                onMarkerDragEnd?.invoke(
-                                    marker,
-                                    markerState.position.toCoordinates(),
-                                )
+                                marker.coordinates = markerState.position.toCoordinates()
+                                onMarkerDragEnd?.invoke(marker)
                             }
                         }
                     }
@@ -201,9 +207,7 @@ public actual fun Map(
                             snippet = marker.androidMarkerOptions.snippet,
                             zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
                             onClick = {
-                                onMarkerClick?.invoke(
-                                    marker.copy(coordinates = markerState.position.toCoordinates())
-                                )
+                                onMarkerClick?.invoke(marker)
                                 onMarkerClick == null
                             },
                             content = { content(marker) },
@@ -217,9 +221,7 @@ public actual fun Map(
                             snippet = marker.androidMarkerOptions.snippet,
                             zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
                             onClick = {
-                                onMarkerClick?.invoke(
-                                    marker.copy(coordinates = markerState.position.toCoordinates())
-                                )
+                                onMarkerClick?.invoke(marker)
                                 onMarkerClick == null
                             },
                         )

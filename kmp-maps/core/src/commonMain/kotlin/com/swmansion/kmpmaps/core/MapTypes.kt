@@ -92,7 +92,7 @@ public data class MapUISettings(
 @JsonIgnoreUnknownKeys
 @OptIn(ExperimentalSerializationApi::class)
 public data class Marker(
-    val coordinates: Coordinates,
+    var coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
