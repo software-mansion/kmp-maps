@@ -105,7 +105,7 @@ public data class Marker(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Marker.getId() = "marker_${hashCode()}"
+public fun Marker.getId(): String = "marker_${hashCode()}"
 
 /**
  * Represents a circle overlay on the map.
@@ -130,7 +130,7 @@ public data class Circle(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Circle.getId() = "circle_${hashCode()}"
+public fun Circle.getId(): String = "circle_${hashCode()}"
 
 /**
  * Represents a polygon overlay on the map.
@@ -153,7 +153,7 @@ public data class Polygon(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Polygon.getId() = "polygon_${hashCode()}"
+public fun Polygon.getId(): String = "polygon_${hashCode()}"
 
 /**
  * Represents a polyline overlay on the map.
@@ -174,7 +174,7 @@ public data class Polyline(
  * @return A unique identifier as a string
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Polyline.getId() = "polyline_${hashCode()}"
+public fun Polyline.getId(): String = "polyline_${hashCode()}"
 
 /**
  * Represents geographical coordinates (latitude and longitude).
