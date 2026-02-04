@@ -41,6 +41,7 @@ public actual fun Map(
     polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
     onMarkerClick: ((Marker) -> Unit)?,
+    onMarkerDragEnd: ((Marker, Coordinates) -> Unit)?,
     onCircleClick: ((Circle) -> Unit)?,
     onPolygonClick: ((Polygon) -> Unit)?,
     onPolylineClick: ((Polyline) -> Unit)?,

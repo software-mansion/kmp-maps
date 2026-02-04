@@ -41,6 +41,9 @@ public data class AndroidUISettings(
  * @property draggable Whether the marker can be dragged by the user
  * @property snippet Additional text displayed below the title
  * @property zIndex The z-index for layering markers
+ *
+ * Note: In the current Android implementation, draggability is only supported when
+ * [ClusterSettings.enabled] is set to `false`.
  */
 @Serializable
 public data class AndroidMarkerOptions(
