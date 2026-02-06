@@ -99,11 +99,7 @@ public data class Marker(
     val contentId: String? = null,
 )
 
-/**
- * Generates a unique identifier for a marker based on its properties.
- *
- * @return A unique identifier as a string
- */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Marker.getId(): String = "marker_${hashCode()}"
 
@@ -124,11 +120,7 @@ public data class Circle(
     val lineWidth: Float? = null,
 )
 
-/**
- * Generates a unique identifier for a circle based on its properties.
- *
- * @return A unique identifier as a string
- */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Circle.getId(): String = "circle_${hashCode()}"
 
@@ -147,11 +139,7 @@ public data class Polygon(
     val lineColor: Color? = null,
 )
 
-/**
- * Generates a unique identifier for a polygon based on its properties.
- *
- * @return A unique identifier as a string
- */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Polygon.getId(): String = "polygon_${hashCode()}"
 
@@ -168,11 +156,7 @@ public data class Polyline(
     val lineColor: Color? = null,
 )
 
-/**
- * Generates a unique identifier for a polyline based on its properties.
- *
- * @return A unique identifier as a string
- */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Polyline.getId(): String = "polyline_${hashCode()}"
 
