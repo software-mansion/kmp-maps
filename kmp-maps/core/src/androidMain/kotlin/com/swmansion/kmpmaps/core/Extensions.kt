@@ -64,7 +64,7 @@ internal fun GoogleCameraPosition.toCameraPosition() =
  *
  * @return LatLng with latitude and longitude
  */
-internal fun Coordinates.toGoogleMapsLatLng(): LatLng = LatLng(latitude, longitude)
+internal fun Coordinates.toGoogleMapsLatLng() = LatLng(latitude, longitude)
 
 /**
  * Converts Google Maps LatLng back to [Coordinates].
