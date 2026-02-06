@@ -24,6 +24,7 @@ import com.google.maps.android.compose.MapEffect
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerComposable
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.clustering.Clustering
@@ -46,6 +47,7 @@ public actual fun Map(
     polylines: List<Polyline>,
     onCameraMove: ((CameraPosition) -> Unit)?,
     onMarkerClick: ((Marker) -> Unit)?,
+    onMarkerDragEnd: ((Marker) -> Unit)?,
     onCircleClick: ((Circle) -> Unit)?,
     onPolygonClick: ((Polygon) -> Unit)?,
     onPolylineClick: ((Polyline) -> Unit)?,
@@ -173,11 +175,32 @@ public actual fun Map(
         } else {
             markers.forEach { marker ->
                 key(marker.getId(), marker.contentId) {
+                    val markerState =
+                        remember(marker.getId()) {
+                            MarkerState(marker.coordinates.toGoogleMapsLatLng())
+                        }
+
+                    LaunchedEffect(marker.coordinates) {
+                        val newLatLng = marker.coordinates.toGoogleMapsLatLng()
+                        if (markerState.position != newLatLng) {
+                            markerState.position = newLatLng
+                        }
+                    }
+
                     val content = customMarkerContent[marker.contentId]
+
+                    if (marker.androidMarkerOptions.draggable) {
+                        LaunchedEffect(markerState.isDragging) {
+                            if (!markerState.isDragging) {
+                                marker.coordinates = markerState.position.toCoordinates()
+                                onMarkerDragEnd?.invoke(marker)
+                            }
+                        }
+                    }
 
                     if (content != null) {
                         MarkerComposable(
-                            state = marker.toGoogleMapsMarkerState(),
+                            state = markerState,
                             title = marker.title,
                             anchor = marker.androidMarkerOptions.anchor.toOffset(),
                             draggable = marker.androidMarkerOptions.draggable,
@@ -191,7 +214,7 @@ public actual fun Map(
                         )
                     } else {
                         Marker(
-                            state = marker.toGoogleMapsMarkerState(),
+                            state = markerState,
                             title = marker.title,
                             anchor = marker.androidMarkerOptions.anchor.toOffset(),
                             draggable = marker.androidMarkerOptions.draggable,
