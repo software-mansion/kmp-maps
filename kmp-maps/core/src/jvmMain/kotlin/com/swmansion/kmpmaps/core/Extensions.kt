@@ -47,7 +47,7 @@ internal fun List<Marker>.toJson(webCustomMarkerContent: Map<String, (Marker) ->
  * @return [JsonObject] containing marker ID, position, title, and metadata.
  */
 internal fun Marker.toJson() = buildJsonObject {
-    put("id", id)
+    put("id", getId())
     put("position", coordinates.toJson())
     put("title", title)
     put("opacity", 1.0f)
@@ -161,7 +161,7 @@ internal fun Color.toHex() = "#%06X".format(0xFFFFFF and toArgb())
  * @return [JsonObject] with center, radius, and stroke/fill styles.
  */
 internal fun Circle.toJson() = buildJsonObject {
-    put("id", id)
+    put("id", getId())
     put("center", center.toJson())
     put("radius", radius)
 
@@ -183,7 +183,7 @@ internal fun Circle.toJson() = buildJsonObject {
  * @return [JsonObject] containing the list of paths and styling properties.
  */
 internal fun Polygon.toJson() = buildJsonObject {
-    put("id", id)
+    put("id", getId())
     put("paths", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", lineWidth)
 
@@ -203,7 +203,7 @@ internal fun Polygon.toJson() = buildJsonObject {
  * @return [JsonObject] containing the path coordinates and line styles.
  */
 internal fun Polyline.toJson() = buildJsonObject {
-    put("id", id)
+    put("id", getId())
     put("path", JsonArray(coordinates.map(Coordinates::toJson)))
     put("strokeWeight", width)
 

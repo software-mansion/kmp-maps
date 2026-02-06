@@ -18,6 +18,7 @@ import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.DefaultCluster
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.generateClusterId
+import com.swmansion.kmpmaps.core.getId
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIImage
@@ -38,14 +39,14 @@ internal class MarkerClusterManagerDelegate(
         when (userData) {
             is MarkerClusterItem -> {
                 val marker = userData.marker
-                val cached = mapDelegate?.getCachedImage(marker.id)
+                val cached = mapDelegate?.getCachedImage(marker.getId())
 
                 if (cached != null) {
                     willRenderMarker.setIcon(cached)
                 } else {
                     val content = customMarkerContent[marker.contentId]
                     if (content != null) {
-                        mapDelegate?.renderingQueue[marker.id] = { content(marker) }
+                        mapDelegate?.renderingQueue[marker.getId()] = { content(marker) }
                         willRenderMarker.setIcon(UIImage())
                     }
                 }

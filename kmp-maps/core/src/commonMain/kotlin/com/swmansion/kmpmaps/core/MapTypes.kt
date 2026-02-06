@@ -4,14 +4,14 @@ import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 /**
  * Theme options for map appearance.
@@ -89,17 +89,19 @@ public data class MapUISettings(
  *   parameter.
  */
 @Serializable
+@JsonIgnoreUnknownKeys
+@OptIn(ExperimentalSerializationApi::class)
 public data class Marker(
     val coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
-) {
-    @OptIn(ExperimentalUuidApi::class)
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    val id: String = Uuid.random().toString()
-}
+)
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Marker.getId(): String = "marker_${hashCode()}"
 
 /**
  * Represents a circle overlay on the map.
@@ -116,9 +118,11 @@ public data class Circle(
     val color: Color? = null,
     val lineColor: Color? = null,
     val lineWidth: Float? = null,
-) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
-}
+)
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Circle.getId(): String = "circle_${hashCode()}"
 
 /**
  * Represents a polygon overlay on the map.
@@ -133,9 +137,11 @@ public data class Polygon(
     val lineWidth: Float,
     val color: Color? = null,
     val lineColor: Color? = null,
-) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
-}
+)
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Polygon.getId(): String = "polygon_${hashCode()}"
 
 /**
  * Represents a polyline overlay on the map.
@@ -148,9 +154,11 @@ public data class Polyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,
-) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
-}
+)
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun Polyline.getId(): String = "polyline_${hashCode()}"
 
 /**
  * Represents geographical coordinates (latitude and longitude).
@@ -184,9 +192,7 @@ public data class CameraPosition(
  * @property items The list of [Marker] that make up this cluster
  */
 @Serializable
-public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>) {
-    @OptIn(ExperimentalUuidApi::class) internal val id: String = Uuid.random().toString()
-}
+public data class Cluster(val coordinates: Coordinates, val size: Int, val items: List<Marker>)
 
 /**
  * Configuration options for marker clustering.

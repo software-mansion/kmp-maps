@@ -172,7 +172,7 @@ public actual fun Map(
             )
         } else {
             markers.forEach { marker ->
-                key(marker.id, marker.contentId) {
+                key(marker.getId(), marker.contentId) {
                     val content = customMarkerContent[marker.contentId]
 
                     if (content != null) {

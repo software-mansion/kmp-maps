@@ -18,6 +18,7 @@ import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
+import com.swmansion.kmpmaps.core.getId
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
@@ -162,7 +163,7 @@ internal class MapDelegate(
             imageCache[id] = image
             renderingQueue.remove(id)
 
-            val gmsMarker = markerMapping.entries.find { it.value.id == id }?.key
+            val gmsMarker = markerMapping.entries.find { it.value.getId() == id }?.key
             gmsMarker?.let {
                 it.setIcon(image)
                 it.setTracksViewChanges(false)
