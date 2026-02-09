@@ -152,7 +152,7 @@ public actual fun Map(
     LaunchedEffect(allMarkers, circles, polygons, polylines, mapDelegate) {
         val view = mapView ?: return@LaunchedEffect
 
-        val activeIds = allMarkers.map { it.id }.toSet()
+        val activeIds = allMarkers.map { it.getId() }.toSet()
         mapDelegate?.pruneCache(activeIds)
 
         markerMapping.clear()
@@ -220,13 +220,13 @@ public actual fun Map(
     Box(modifier = Modifier.alpha(0f)) {
         allMarkers.forEach { marker ->
             val content = customMarkerContent[marker.contentId]
-            if (content != null && mapDelegate?.getCachedImage(marker.id) == null) {
-                key(marker.id, marker.contentId) {
+            if (content != null && mapDelegate?.getCachedImage(marker.getId()) == null) {
+                key(marker.getId(), marker.contentId) {
                     MarkerSnapshotter(
                         content = { content(marker) },
                         onSnapshotReady = { bitmap ->
                             val uiImage = bitmap.toUIImage()
-                            if (uiImage != null) mapDelegate?.onBitmapReady(marker.id, uiImage)
+                            if (uiImage != null) mapDelegate?.onBitmapReady(marker.getId(), uiImage)
                         },
                     )
                 }
