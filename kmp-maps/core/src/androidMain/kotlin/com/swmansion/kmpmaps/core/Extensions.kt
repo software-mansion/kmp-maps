@@ -22,7 +22,6 @@ import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.data.geojson.GeoJsonFeature
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 import com.google.maps.android.data.geojson.GeoJsonLineString
@@ -61,19 +60,18 @@ internal fun GoogleCameraPosition.toCameraPosition() =
     )
 
 /**
- * Converts MapMarker to Google Maps MarkerState.
- *
- * @return MarkerState with position coordinates
- */
-internal fun Marker.toGoogleMapsMarkerState() =
-    MarkerState(position = LatLng(coordinates.latitude, coordinates.longitude))
-
-/**
  * Converts Coordinates to Google Maps LatLng.
  *
  * @return LatLng with latitude and longitude
  */
-internal fun Coordinates.toGoogleMapsLatLng(): LatLng = LatLng(latitude, longitude)
+internal fun Coordinates.toGoogleMapsLatLng() = LatLng(latitude, longitude)
+
+/**
+ * Converts Google Maps LatLng back to [Coordinates].
+ *
+ * @return Coordinates with latitude and longitude
+ */
+internal fun LatLng.toCoordinates() = Coordinates(latitude, longitude)
 
 /**
  * Converts MapTheme to native ComposeMapColorScheme.

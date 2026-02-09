@@ -79,7 +79,14 @@ public data class MapUISettings(
 /**
  * Represents a marker on the map.
  *
- * @property coordinates The geographical coordinates where the marker should be placed
+ * @property coordinates The geographical coordinates where the marker should be placed.
+ *
+ * Note on Mutability: Although this is a `var` to allow the library to update positions during
+ * dragging, you should treat it as immutable. To move the marker programmatically, pass a new
+ * [Marker] instance to the map.
+ *
+ * Directly mutating this field may not trigger UI updates, especially on iOS.
+ *
  * @property title The title text displayed when the marker is tapped
  * @property androidMarkerOptions Android-specific options for customizing a marker
  * @property iosMarkerOptions iOS-specific options for customizing a marker
@@ -92,7 +99,7 @@ public data class MapUISettings(
 @JsonIgnoreUnknownKeys
 @OptIn(ExperimentalSerializationApi::class)
 public data class Marker(
-    val coordinates: Coordinates,
+    var coordinates: Coordinates,
     val title: String? = "No title was provided",
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,

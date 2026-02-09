@@ -27,14 +27,14 @@ internal data class MapOptions(
     val cameraPosition: CameraPosition =
         CameraPosition(
             coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
-            zoom = 10f,
+            zoom = 14f,
         ),
     val showAllComponents: Boolean = true,
     val useGoogleMapsMapView: Boolean = true,
     val showPointGeoJson: Boolean = false,
     val showPolygonGeoJson: Boolean = false,
     val showLineGeoJson: Boolean = false,
-    val clusteringEnabled: Boolean = true,
+    val clusteringEnabled: Boolean = false,
 )
 
 @Composable
@@ -91,7 +91,9 @@ internal fun MapWrapper(
         onPOIClick = { println("POI clicked: $it") },
         onMapLoaded = { println("Map loaded") },
         onMapLongClick = { println("Map long clicked: $it") },
-        onMarkerClick = { marker -> println("Marker clicked: ${marker.title}") },
+        onMarkerClick = { marker ->
+            println("Marker clicked: ${marker.title} ${marker.coordinates}")
+        },
         onMapClick = { coordinates -> println("Map clicked at: $coordinates") },
         geoJsonLayers = geoJsonLayers,
         customMarkerContent = customMarkerContent,
@@ -118,6 +120,7 @@ private fun Map(
     polylines: List<Polyline> = emptyList(),
     onCameraMove: ((CameraPosition) -> Unit)? = null,
     onMarkerClick: ((Marker) -> Unit)? = null,
+    onMarkerDragEnd: ((Marker) -> Unit)? = null,
     onCircleClick: ((Circle) -> Unit)? = null,
     onPolygonClick: ((Polygon) -> Unit)? = null,
     onPolylineClick: ((Polyline) -> Unit)? = null,
@@ -143,6 +146,7 @@ private fun Map(
                 polylines = polylines,
                 onCameraMove = onCameraMove,
                 onMarkerClick = onMarkerClick,
+                onMarkerDragEnd = onMarkerDragEnd,
                 onCircleClick = onCircleClick,
                 onPolygonClick = onPolygonClick,
                 onPolylineClick = onPolylineClick,
@@ -167,6 +171,7 @@ private fun Map(
                 polylines = polylines,
                 onCameraMove = onCameraMove,
                 onMarkerClick = onMarkerClick,
+                onMarkerDragEnd = onMarkerDragEnd,
                 onCircleClick = onCircleClick,
                 onPolygonClick = onPolygonClick,
                 onPolylineClick = onPolylineClick,
