@@ -82,7 +82,7 @@ public data class MapUISettings(
  * @property coordinates The geographical coordinates where the marker should be placed.
  *
  * Note on Mutability: Although this is a `var` to allow the library to update positions during
- * dragging, you should treat it as **immutable**. To move the marker programmatically, pass a new
+ * dragging, you should treat it as immutable. To move the marker programmatically, pass a new
  * [Marker] instance to the map.
  *
  * Directly mutating this field may not trigger UI updates, especially on iOS.
