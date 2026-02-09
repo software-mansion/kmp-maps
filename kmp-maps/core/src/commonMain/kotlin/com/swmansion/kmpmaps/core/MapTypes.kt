@@ -85,7 +85,7 @@ public data class MapUISettings(
  * dragging, you should treat it as **immutable**. To move the marker programmatically, pass a new
  * [Marker] instance to the map.
  *
- * *Directly mutating this field may not trigger UI updates, especially on iOS.*
+ * Directly mutating this field may not trigger UI updates, especially on iOS.
  *
  * @property title The title text displayed when the marker is tapped
  * @property androidMarkerOptions Android-specific options for customizing a marker
