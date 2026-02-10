@@ -130,7 +130,7 @@ public actual fun Map(
 
                         androidGeoJsonLayers[index]?.removeLayerFromMap()
 
-                        map.renderGeoJsonLayer(geo, clusterSettings)?.let {
+                        map.renderGeoJsonLayer(geo, clusterSettings, onMarkerClick)?.let {
                             androidGeoJsonLayers = androidGeoJsonLayers + (index to it.layer)
                             geoJsonExtractedMarkers =
                                 geoJsonExtractedMarkers + (index to it.extractedMarkers)
