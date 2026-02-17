@@ -522,8 +522,6 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
 
             rendered.overlays.forEach(this::addOverlay)
-            rendered.annotations.forEach(this::addAnnotation)
-
             allExtractedMarkers.addAll(rendered.extractedMarkers)
 
             this.reapplyCorePolylineStyles(polylineStyles)
