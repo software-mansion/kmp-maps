@@ -145,7 +145,7 @@ public actual fun Map(
 
     LaunchedEffect(mapView, geoJsonLayers) {
         if (mapView == null) return@LaunchedEffect
-        geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers, clusterSettings)
+        geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers)
     }
 
     LaunchedEffect(cameraPosition) {

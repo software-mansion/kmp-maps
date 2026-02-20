@@ -9,7 +9,6 @@ import cocoapods.Google_Maps_iOS_Utils.GMULineString
 import cocoapods.Google_Maps_iOS_Utils.GMUPoint
 import cocoapods.Google_Maps_iOS_Utils.GMUPolygon
 import cocoapods.Google_Maps_iOS_Utils.GMUStyle
-import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Marker
@@ -40,7 +39,7 @@ internal class GeoJsonRendererManager {
         renderers = emptyMap()
     }
 
-    fun render(layers: List<GeoJsonLayer>, clusterSettings: ClusterSettings): List<Marker> {
+    fun render(layers: List<GeoJsonLayer>): List<Marker> {
         val view = mapView ?: return emptyList()
         val allExtractedMarkers = mutableListOf<Marker>()
 
@@ -78,7 +77,7 @@ internal class GeoJsonRendererManager {
                 val dict = feature.properties as? NSDictionary
                 val geometry = feature.geometry
 
-                if (geometry is GMUPoint && clusterSettings.enabled) {
+                if (geometry is GMUPoint) {
                     val coordinates =
                         geometry.coordinate.useContents { Coordinates(latitude, longitude) }
                     val title = getString(dict, "title")
