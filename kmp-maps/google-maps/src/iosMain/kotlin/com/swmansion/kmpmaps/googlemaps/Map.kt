@@ -28,6 +28,7 @@ import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.DefaultPin
 import com.swmansion.kmpmaps.core.GeoJsonLayer
+import com.swmansion.kmpmaps.core.MapContentPadding
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapUISettings
@@ -40,6 +41,7 @@ import com.swmansion.kmpmaps.core.toUIImage
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.UIKit.UIEdgeInsetsMake
 
 /** iOS implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -134,6 +136,15 @@ public actual fun Map(
         view.setMinZoom(
             properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
             properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
+        )
+        val contentPadding = properties.contentPadding ?: MapContentPadding()
+        view.setPadding(
+            UIEdgeInsetsMake(
+                contentPadding.top.toDouble(),
+                contentPadding.start.toDouble(),
+                contentPadding.bottom.toDouble(),
+                contentPadding.end.toDouble(),
+            )
         )
         uiSettings.toGoogleMapsSettings(view)
     }

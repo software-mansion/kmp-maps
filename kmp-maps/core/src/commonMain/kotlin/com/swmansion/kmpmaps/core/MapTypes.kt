@@ -27,6 +27,21 @@ public enum class MapTheme {
 }
 
 /**
+ * Insets that define map content padding in platform pixels.
+ *
+ * @property top Top inset
+ * @property bottom Bottom inset
+ * @property start Start inset (left in LTR layout)
+ * @property end End inset (right in LTR layout)
+ */
+public data class MapContentPadding(
+    val top: Float = 0f,
+    val bottom: Float = 0f,
+    val start: Float = 0f,
+    val end: Float = 0f,
+)
+
+/**
  * Configuration properties for map behavior and appearance.
  *
  * @property isMyLocationEnabled Whether to show the user's current location on the map
@@ -34,6 +49,7 @@ public enum class MapTheme {
  * @property isBuildingEnabled Whether to show 3D buildings on the map
  * @property mapType The type of map to display
  * @property mapTheme The theme for the map appearance
+ * @property contentPadding Padding applied to map content (top, bottom, start, end). Does not apply to JVM
  * @property androidMapProperties Android-specific map behavior and appearance configuration options
  * @property iosMapProperties iOS-specific map behavior and appearance configuration options
  * @property webMapProperties Desktop-specific map behavior and appearance configuration options
@@ -44,6 +60,7 @@ public data class MapProperties(
     val isBuildingEnabled: Boolean = true,
     val mapType: MapType = MapType.NORMAL,
     val mapTheme: MapTheme = MapTheme.SYSTEM,
+    val contentPadding: MapContentPadding? = null,
     val androidMapProperties: AndroidMapProperties = AndroidMapProperties(),
     val iosMapProperties: IosMapProperties = IosMapProperties(),
     val webMapProperties: WebMapProperties = WebMapProperties(),
