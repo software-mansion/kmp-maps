@@ -25,6 +25,7 @@ import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
+import platform.UIKit.UIEdgeInsetsMake
 
 /** iOS implementation of the Map composable using Apple Maps. */
 @OptIn(ExperimentalForeignApi::class)
@@ -122,6 +123,15 @@ public actual fun Map(
         view.scrollEnabled = uiSettings.scrollEnabled
         view.rotateEnabled = uiSettings.rotateEnabled
         view.pitchEnabled = uiSettings.togglePitchEnabled
+        val contentPadding = properties.contentPadding ?: MapContentPadding()
+        view.setLayoutMargins(
+            UIEdgeInsetsMake(
+                contentPadding.top.toDouble(),
+                contentPadding.start.toDouble(),
+                contentPadding.bottom.toDouble(),
+                contentPadding.end.toDouble(),
+            )
+        )
     }
 
     LaunchedEffect(cameraPosition) {

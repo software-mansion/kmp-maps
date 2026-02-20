@@ -102,6 +102,16 @@ public actual fun Map(
             onMapLoaded?.invoke()
         },
     ) {
+        MapEffect(properties.contentPadding) { map ->
+            val padding = properties.contentPadding ?: MapContentPadding()
+            map.setPadding(
+                padding.start.toInt(),
+                padding.top.toInt(),
+                padding.end.toInt(),
+                padding.bottom.toInt(),
+            )
+        }
+
         var androidGeoJsonLayers by remember {
             mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
         }

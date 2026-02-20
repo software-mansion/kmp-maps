@@ -72,6 +72,7 @@ internal fun Coordinates.toJson() = buildJsonObject {
 internal fun MapProperties.toJson() = buildJsonObject {
     put("isTrafficEnabled", isTrafficEnabled)
     put("mapType", mapType.name)
+    contentPadding?.let { put("contentPadding", it.toJson()) }
     put("web", webMapProperties.toJson())
 }
 
@@ -91,6 +92,13 @@ internal fun WebMapProperties.toJson() = buildJsonObject {
     put("backgroundColor", backgroundColor?.toHex())
     restriction?.let { put("restriction", it.toJson()) }
     putStyles(styles)
+}
+
+internal fun MapContentPadding.toJson() = buildJsonObject {
+    put("top", top)
+    put("bottom", bottom)
+    put("left", start)
+    put("right", end)
 }
 
 private fun JsonObjectBuilder.putStyles(options: GoogleMapsMapStyleOptions?) {
