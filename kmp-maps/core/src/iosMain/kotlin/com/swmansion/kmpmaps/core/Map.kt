@@ -23,9 +23,9 @@ import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.UIKit.UIEdgeInsetsMake
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
-import platform.UIKit.UIEdgeInsetsMake
 
 /** iOS implementation of the Map composable using Apple Maps. */
 @OptIn(ExperimentalForeignApi::class)

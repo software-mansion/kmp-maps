@@ -49,7 +49,7 @@ public data class MapContentPadding(
  * @property isBuildingEnabled Whether to show 3D buildings on the map
  * @property mapType The type of map to display
  * @property mapTheme The theme for the map appearance
- * @property contentPadding Padding applied to map content (top, bottom, start, end) on all platforms
+ * @property contentPadding Padding applied to map content (top, bottom, start, end). Does not apply to JVM
  * @property androidMapProperties Android-specific map behavior and appearance configuration options
  * @property iosMapProperties iOS-specific map behavior and appearance configuration options
  * @property webMapProperties Desktop-specific map behavior and appearance configuration options

@@ -253,15 +253,6 @@ function updateMapProperties(props) {
 
         map.setOptions(options);
     }
-
-    if (props.contentPadding != null) {
-        map.setPadding(
-            props.contentPadding.left ?? 0,
-            props.contentPadding.top ?? 0,
-            props.contentPadding.right ?? 0,
-            props.contentPadding.bottom ?? 0
-        );
-    }
 }
 
 function updateMapUISettings(settings) {
