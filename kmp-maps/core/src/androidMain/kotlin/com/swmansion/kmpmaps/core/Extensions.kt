@@ -244,7 +244,7 @@ private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
     val snippet = feature.getProperty("snippet")
 
     val anchor = feature.parseGeoJsonAnchor()
-    val draggable = feature.getProperty("draggable")?.toBoolean() ?: false
+    val draggable = feature.getProperty("draggable")?.toBoolean() == true
     val zIndex = feature.getProperty("zIndex")?.toFloatOrNull()
 
     return Marker(
