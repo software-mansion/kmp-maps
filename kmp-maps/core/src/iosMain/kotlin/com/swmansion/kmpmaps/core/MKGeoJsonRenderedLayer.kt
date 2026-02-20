@@ -47,7 +47,6 @@ public data class AppleMapsGeoJsonPointStyle(val visible: Boolean = true)
  */
 public class MKGeoJsonRenderedLayer(
     internal val overlays: List<MKOverlayProtocol>,
-    internal val annotations: List<MKAnnotationProtocol>,
     internal val extractedMarkers: List<Marker>,
     internal val polylineStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonLineStyle> = emptyMap(),
     internal val polygonStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
@@ -56,7 +55,6 @@ public class MKGeoJsonRenderedLayer(
     @OptIn(ExperimentalForeignApi::class)
     public fun clear(from: MKMapView) {
         if (overlays.isNotEmpty()) from.removeOverlays(overlays)
-        if (annotations.isNotEmpty()) from.removeAnnotations(annotations)
     }
 }
 
@@ -76,7 +74,6 @@ public fun MKMapView.renderGeoJson(
     val decoder = MKGeoJSONDecoder()
     val objects = decoder.geoJSONObjectsWithData(data, error = null) ?: return null
 
-    val annotations = mutableListOf<MKAnnotationProtocol>()
     val overlays = mutableListOf<MKOverlayProtocol>()
     val extractedMarkers = mutableListOf<Marker>()
 
@@ -89,7 +86,6 @@ public fun MKMapView.renderGeoJson(
             obj = obj,
             mapView = this,
             overlays = overlays,
-            annotations = annotations,
             extractedMarkers = extractedMarkers,
             polylineStyles = polylineStyles,
             polygonStyles = polygonStyles,
@@ -102,7 +98,6 @@ public fun MKMapView.renderGeoJson(
 
     return MKGeoJsonRenderedLayer(
         overlays = overlays,
-        annotations = annotations,
         extractedMarkers = extractedMarkers,
         polylineStyles = polylineStyles,
         polygonStyles = polygonStyles,
@@ -117,7 +112,6 @@ public fun MKMapView.renderGeoJson(
  * @param obj GeoJSON object (feature, geometry, or array of geometries).
  * @param mapView Target map view (passed for API parity if needed).
  * @param overlays Destination list for overlays.
- * @param annotations Destination list for annotations.
  * @param polylineStyles Destination map for polyline styles.
  * @param polygonStyles Destination map for polygon styles.
  * @param pointStyles Destination map for point styles.
@@ -129,7 +123,6 @@ private fun collectAndAdd(
     obj: Any?,
     mapView: MKMapView,
     overlays: MutableList<MKOverlayProtocol>,
-    annotations: MutableList<MKAnnotationProtocol>,
     extractedMarkers: MutableList<Marker>,
     polylineStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>,
     polygonStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>,
@@ -146,7 +139,6 @@ private fun collectAndAdd(
                     g,
                     mapView,
                     overlays,
-                    annotations,
                     extractedMarkers,
                     polylineStyles,
                     polygonStyles,
@@ -168,29 +160,11 @@ private fun collectAndAdd(
             polylineStyles[obj] = buildLineStyle(defaults, featureProps)
         }
         is MKPointAnnotation -> {
-            if (clusterSettings.enabled) {
-                val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
-                val title = featureProps?.string("title")
+            val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
+            val title = featureProps?.string("title")
 
-                val marker = Marker(coordinates = coordinates, title = title)
-                extractedMarkers.add(marker)
-            } else {
-                val title =
-                    featureProps?.string("title")
-                        ?: featureProps?.string("name")
-                        ?: defaults?.pointStyle?.pointTitle
-                val subtitle =
-                    featureProps?.string("snippet")
-                        ?: featureProps?.string("description")
-                        ?: defaults?.pointStyle?.snippet
-                if (title != null) obj.setTitle(title)
-                if (subtitle != null) obj.setSubtitle(subtitle)
-
-                val style = buildPointStyle(defaults, featureProps)
-                pointStyles[obj] = style
-
-                annotations += obj
-            }
+            val marker = Marker(coordinates = coordinates, title = title)
+            extractedMarkers.add(marker)
         }
         is NSArray -> {
             val n = obj.count.toInt()
@@ -200,7 +174,6 @@ private fun collectAndAdd(
                     any,
                     mapView,
                     overlays,
-                    annotations,
                     extractedMarkers,
                     polylineStyles,
                     polygonStyles,

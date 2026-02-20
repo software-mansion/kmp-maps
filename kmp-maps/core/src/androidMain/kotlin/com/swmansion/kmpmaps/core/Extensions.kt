@@ -198,6 +198,7 @@ internal data class RenderedGeoJson(
 internal fun GoogleMap.renderGeoJsonLayer(
     layerData: GeoJsonLayer,
     clusterSettings: ClusterSettings,
+    onMarkerClick: ((Marker) -> Unit)?,
 ): RenderedGeoJson? {
     val json =
         runCatching { JSONObject(layerData.geoJson) }
@@ -213,40 +214,50 @@ internal fun GoogleMap.renderGeoJsonLayer(
 
     if (clusterSettings.enabled) {
         for (feature in layer.features) {
-            if (feature.geometry !is GeoJsonPoint) continue
+            if (feature.geometry is GeoJsonPoint) {
+                val point = feature.geometry as GeoJsonPoint
+                val marker = point.toMarker(feature)
 
-            val point = feature.geometry as GeoJsonPoint
+                extractedMarkers.add(marker)
 
-            val title = feature.getProperty("title")
-            val snippet = feature.getProperty("snippet")
-
-            val anchor = feature.parseGeoJsonAnchor()
-            val draggable = feature.getProperty("draggable")?.toBoolean() ?: false
-            val zIndex = feature.getProperty("zIndex")?.toFloatOrNull()
-
-            val marker =
-                Marker(
-                    coordinates =
-                        Coordinates(point.coordinates.latitude, point.coordinates.longitude),
-                    title = title,
-                    androidMarkerOptions =
-                        AndroidMarkerOptions(
-                            snippet = snippet,
-                            anchor = anchor,
-                            draggable = draggable,
-                            zIndex = zIndex,
-                        ),
-                )
-            extractedMarkers.add(marker)
-
-            val hiddenStyle = GeoJsonPointStyle()
-            hiddenStyle.isVisible = false
-            feature.pointStyle = hiddenStyle
+                val hiddenStyle = GeoJsonPointStyle()
+                hiddenStyle.isVisible = false
+                feature.pointStyle = hiddenStyle
+            }
+        }
+    } else {
+        layer.setOnFeatureClickListener { feature ->
+            if (feature.geometry is GeoJsonPoint) {
+                val point = feature.geometry as GeoJsonPoint
+                val marker = point.toMarker(feature as GeoJsonFeature)
+                onMarkerClick?.invoke(marker)
+            }
         }
     }
     layer.addLayerToMap()
 
     return RenderedGeoJson(layer, extractedMarkers)
+}
+
+private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
+    val title = feature.getProperty("title")
+    val snippet = feature.getProperty("snippet")
+
+    val anchor = feature.parseGeoJsonAnchor()
+    val draggable = feature.getProperty("draggable")?.toBoolean() == true
+    val zIndex = feature.getProperty("zIndex")?.toFloatOrNull()
+
+    return Marker(
+        coordinates = Coordinates(coordinates.latitude, coordinates.longitude),
+        title = title,
+        androidMarkerOptions =
+            AndroidMarkerOptions(
+                snippet = snippet,
+                anchor = anchor,
+                draggable = draggable,
+                zIndex = zIndex,
+            ),
+    )
 }
 
 private fun GeoJsonFeature.parseGeoJsonAnchor(): GoogleMapsAnchor? {
