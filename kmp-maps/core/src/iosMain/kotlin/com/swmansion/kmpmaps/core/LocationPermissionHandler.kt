@@ -4,6 +4,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLAuthorizationStatus
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
+import platform.CoreLocation.kCLAuthorizationStatusAuthorizedAlways
 import platform.CoreLocation.kCLAuthorizationStatusAuthorizedWhenInUse
 import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.darwin.NSObject
@@ -33,7 +34,8 @@ internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegate
      * @return true if permission is granted, false otherwise
      */
     fun checkPermission() =
-        locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse
+        locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse ||
+            locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways
 
     /**
      * Requests location permission from the user if not yet determined.
