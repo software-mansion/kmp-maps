@@ -79,6 +79,7 @@ public actual fun Map(
         }
     }
 
+    // test
     GoogleMap(
         mapColorScheme = properties.mapTheme.toGoogleMapsTheme(),
         modifier = modifier.fillMaxSize(),
