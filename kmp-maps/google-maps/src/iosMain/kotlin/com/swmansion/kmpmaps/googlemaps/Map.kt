@@ -40,6 +40,7 @@ import com.swmansion.kmpmaps.core.toUIImage
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.UIKit.UIEdgeInsetsMake
 
 /** iOS implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
@@ -135,6 +136,16 @@ public actual fun Map(
             properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
             properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
         )
+        properties.contentPadding?.run {
+            view.setPadding(
+                UIEdgeInsetsMake(
+                    top.toDouble(),
+                    start.toDouble(),
+                    bottom.toDouble(),
+                    end.toDouble(),
+                )
+            )
+        }
         uiSettings.toGoogleMapsSettings(view)
     }
 

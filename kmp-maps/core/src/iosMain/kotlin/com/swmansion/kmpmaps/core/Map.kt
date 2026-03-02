@@ -23,6 +23,7 @@ import platform.MapKit.MKOverlayProtocol
 import platform.MapKit.MKPointAnnotation
 import platform.MapKit.MKPolygon
 import platform.MapKit.MKPolyline
+import platform.UIKit.UIEdgeInsetsMake
 import platform.UIKit.UILongPressGestureRecognizer
 import platform.UIKit.UITapGestureRecognizer
 
@@ -122,6 +123,17 @@ public actual fun Map(
         view.scrollEnabled = uiSettings.scrollEnabled
         view.rotateEnabled = uiSettings.rotateEnabled
         view.pitchEnabled = uiSettings.togglePitchEnabled
+
+        properties.contentPadding?.run {
+            view.setLayoutMargins(
+                UIEdgeInsetsMake(
+                    top.toDouble(),
+                    start.toDouble(),
+                    bottom.toDouble(),
+                    end.toDouble(),
+                )
+            )
+        }
     }
 
     LaunchedEffect(cameraPosition) {
