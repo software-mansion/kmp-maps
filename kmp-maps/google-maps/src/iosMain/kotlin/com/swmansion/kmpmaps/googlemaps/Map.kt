@@ -28,7 +28,6 @@ import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.DefaultPin
 import com.swmansion.kmpmaps.core.GeoJsonLayer
-import com.swmansion.kmpmaps.core.MapContentPadding
 import com.swmansion.kmpmaps.core.MapProperties
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapUISettings
@@ -137,15 +136,16 @@ public actual fun Map(
             properties.iosMapProperties.gmsMinZoomPreference ?: 0f,
             properties.iosMapProperties.gmsMaxZoomPreference ?: 20f,
         )
-        val contentPadding = properties.contentPadding ?: MapContentPadding()
-        view.setPadding(
-            UIEdgeInsetsMake(
-                contentPadding.top.toDouble(),
-                contentPadding.start.toDouble(),
-                contentPadding.bottom.toDouble(),
-                contentPadding.end.toDouble(),
+        properties.contentPadding?.run {
+            view.setPadding(
+                UIEdgeInsetsMake(
+                    top.toDouble(),
+                    start.toDouble(),
+                    bottom.toDouble(),
+                    end.toDouble(),
+                )
             )
-        )
+        }
         uiSettings.toGoogleMapsSettings(view)
     }
 

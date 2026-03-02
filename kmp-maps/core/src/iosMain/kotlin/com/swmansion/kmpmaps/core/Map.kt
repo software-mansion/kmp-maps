@@ -123,15 +123,17 @@ public actual fun Map(
         view.scrollEnabled = uiSettings.scrollEnabled
         view.rotateEnabled = uiSettings.rotateEnabled
         view.pitchEnabled = uiSettings.togglePitchEnabled
-        val contentPadding = properties.contentPadding ?: MapContentPadding()
-        view.setLayoutMargins(
-            UIEdgeInsetsMake(
-                contentPadding.top.toDouble(),
-                contentPadding.start.toDouble(),
-                contentPadding.bottom.toDouble(),
-                contentPadding.end.toDouble(),
+
+        properties.contentPadding?.run {
+            view.setLayoutMargins(
+                UIEdgeInsetsMake(
+                    top.toDouble(),
+                    start.toDouble(),
+                    bottom.toDouble(),
+                    end.toDouble(),
+                )
             )
-        )
+        }
     }
 
     LaunchedEffect(cameraPosition) {

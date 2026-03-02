@@ -103,13 +103,9 @@ public actual fun Map(
         },
     ) {
         MapEffect(properties.contentPadding) { map ->
-            val padding = properties.contentPadding ?: MapContentPadding()
-            map.setPadding(
-                padding.start.toInt(),
-                padding.top.toInt(),
-                padding.end.toInt(),
-                padding.bottom.toInt(),
-            )
+            properties.contentPadding?.run {
+                map.setPadding(start.toInt(), top.toInt(), end.toInt(), bottom.toInt())
+            }
         }
 
         var androidGeoJsonLayers by remember {
