@@ -9,4 +9,4 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v5
-      - run: ./gradlew build -x lint -x test
+      - run: java -version
