@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Coordinates
-import com.swmansion.kmpmaps.core.MapBounds
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
 import kotlin.random.Random
