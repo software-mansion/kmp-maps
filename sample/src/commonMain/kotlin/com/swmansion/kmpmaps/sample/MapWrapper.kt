@@ -29,10 +29,11 @@ internal data class MapOptions(
         CameraPosition(
             coordinates = Coordinates(latitude = 50.0619, longitude = 19.9373),
             zoom = 14f,
-            bounds = MapBounds(
-                northeast = Coordinates(latitude = 40.9176, longitude = -73.7004),
-                southwest = Coordinates(latitude = 40.4774, longitude = -74.2591)
-            )
+            bounds =
+                MapBounds(
+                    northeast = Coordinates(latitude = 40.9176, longitude = -73.7004),
+                    southwest = Coordinates(latitude = 40.4774, longitude = -74.2591),
+                ),
         ),
     val showAllComponents: Boolean = true,
     val useGoogleMapsMapView: Boolean = true,
