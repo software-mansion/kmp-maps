@@ -288,7 +288,8 @@ public actual fun Map(
         }
 
         LaunchedEffect(cameraPositionState.position) {
-            onCameraMove?.invoke(cameraPositionState.position.toCameraPosition())
+            val bounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+            onCameraMove?.invoke(cameraPositionState.position.toCameraPosition(bounds))
         }
     }
 }

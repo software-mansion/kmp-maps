@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.MapBounds
 import com.swmansion.kmpmaps.core.MapTheme
 import com.swmansion.kmpmaps.core.MapType
 import kotlin.random.Random
@@ -159,5 +160,15 @@ private fun getRandomPosition() =
                 latitude = Random.nextDouble(50.0, 52.0),
                 longitude = Random.nextDouble(50.0, 52.0),
             ),
+        bounds = MapBounds(
+            northeast = Coordinates(
+                latitude = Random.nextDouble(50.0, 52.0),
+                longitude = Random.nextDouble(50.0, 52.0),
+            ),
+            southwest = Coordinates(
+                latitude = Random.nextDouble(50.0, 52.0),
+                longitude = Random.nextDouble(50.0, 52.0),
+            ),
+        ),
         zoom = 13f,
     )

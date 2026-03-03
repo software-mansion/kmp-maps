@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.Dash
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PatternItem
 import com.google.maps.android.clustering.Cluster as GoogleMapCluster
@@ -50,12 +51,19 @@ internal fun CameraPosition.toGoogleMapsCameraPosition() =
 /**
  * Converts Google Maps CameraPosition back to CameraPosition.
  *
- * @return CameraPosition with coordinates, zoom, bearing, and tilt
+ * @param latLngBounds Optional visible region bounds to include in the result
+ * @return CameraPosition with coordinates, zoom, bearing, tilt, and optional bounds
  */
-internal fun GoogleCameraPosition.toCameraPosition() =
+internal fun GoogleCameraPosition.toCameraPosition(latLngBounds: LatLngBounds? = null) =
     CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
+        bounds = latLngBounds?.let {
+            MapBounds(
+                northeast = Coordinates(it.northeast.latitude, it.northeast.longitude),
+                southwest = Coordinates(it.southwest.latitude, it.southwest.longitude),
+            )
+        },
         androidCameraPosition = AndroidCameraPosition(bearing = bearing, tilt = tilt),
     )
 
