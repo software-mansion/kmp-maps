@@ -142,7 +142,7 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
 /**
  * Converts Apple MapKit's MKCoordinateRegion back to CameraPosition.
  *
- * @return CameraPosition with calculated zoom level and coordinates
+ * @return CameraPosition with calculated zoom level, coordinates, and visible bounds
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
@@ -150,7 +150,18 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
     val lngZoom = ln(360.0 / span.longitudeDelta) / ln(2.0)
     val zoom = min(latZoom, lngZoom).toFloat()
 
-    CameraPosition(coordinates = Coordinates(center.latitude, center.longitude), zoom = zoom)
+    val halfLat = span.latitudeDelta / 2.0
+    val halfLng = span.longitudeDelta / 2.0
+    val bounds = MapBounds(
+        northeast = Coordinates(center.latitude + halfLat, center.longitude + halfLng),
+        southwest = Coordinates(center.latitude - halfLat, center.longitude - halfLng),
+    )
+
+    CameraPosition(
+        coordinates = Coordinates(center.latitude, center.longitude),
+        zoom = zoom,
+        bounds = bounds,
+    )
 }
 
 /**

@@ -67,14 +67,22 @@ async function initMap() {
     map.addListener("idle", () => {
         const center = map.getCenter();
         const zoom = map.getZoom();
+        const mapBounds = map.getBounds();
 
         if (center) {
+            const ne = mapBounds ? mapBounds.getNorthEast() : null;
+            const sw = mapBounds ? mapBounds.getSouthWest() : null;
+
             const cameraState = {
                 coordinates: {
                     latitude: center.lat(),
                     longitude: center.lng(),
                 },
-                zoom
+                zoom,
+                bounds: (ne && sw) ? {
+                    northeast: { latitude: ne.lat(), longitude: ne.lng() },
+                    southwest: { latitude: sw.lat(), longitude: sw.lng() }
+                } : null
             };
 
             if (window.kmpJsBridge) {
