@@ -199,11 +199,7 @@ public fun Polyline.getId(): String = "polyline_${hashCode()}"
  * @property northeast The northeast corner coordinates of the visible region
  * @property southwest The southwest corner coordinates of the visible region
  */
-@Serializable
-public data class MapBounds(
-    val northeast: Coordinates,
-    val southwest: Coordinates,
-)
+@Serializable public data class MapBounds(val northeast: Coordinates, val southwest: Coordinates)
 
 /**
  * Represents the camera position and orientation of the map.
