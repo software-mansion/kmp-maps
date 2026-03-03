@@ -126,10 +126,23 @@ import platform.posix.memcpy
 /**
  * Converts a CameraPosition to Apple MapKit's MKCoordinateRegion.
  *
+ * When [CameraPosition.bounds] is set, the region is derived from the bounds (center and span are
+ * computed from northeast/southwest corners). Otherwise, [CameraPosition.coordinates] and
+ * [CameraPosition.zoom] are used.
+ *
  * @return MKCoordinateRegion representing the camera's view area
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
+    if (bounds != null) {
+        val centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2.0
+        val centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2.0
+        val latDelta = kotlin.math.abs(bounds.northeast.latitude - bounds.southwest.latitude)
+        val lngDelta = kotlin.math.abs(bounds.northeast.longitude - bounds.southwest.longitude)
+        val coordinate = CLLocationCoordinate2DMake(centerLat, centerLng)
+        val span = MKCoordinateSpanMake(latDelta, lngDelta)
+        return MKCoordinateRegionMake(coordinate, span)
+    }
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
     val span =
         MKCoordinateSpanMake(
@@ -152,10 +165,11 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
 
     val halfLat = span.latitudeDelta / 2.0
     val halfLng = span.longitudeDelta / 2.0
-    val bounds = MapBounds(
-        northeast = Coordinates(center.latitude + halfLat, center.longitude + halfLng),
-        southwest = Coordinates(center.latitude - halfLat, center.longitude - halfLng),
-    )
+    val bounds =
+        MapBounds(
+            northeast = Coordinates(center.latitude + halfLat, center.longitude + halfLng),
+            southwest = Coordinates(center.latitude - halfLat, center.longitude - halfLng),
+        )
 
     CameraPosition(
         coordinates = Coordinates(center.latitude, center.longitude),

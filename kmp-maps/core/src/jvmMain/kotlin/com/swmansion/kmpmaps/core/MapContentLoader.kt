@@ -19,12 +19,25 @@ internal fun loadHTMLContent(
     properties: MapProperties?,
 ): String {
     val html = readResource("web/google_map.html")
+    val bounds = cameraPosition?.bounds
+    val initialLat =
+        if (bounds != null) {
+            (bounds.northeast.latitude + bounds.southwest.latitude) / 2.0
+        } else {
+            cameraPosition?.coordinates?.latitude
+        }
+    val initialLng =
+        if (bounds != null) {
+            (bounds.northeast.longitude + bounds.southwest.longitude) / 2.0
+        } else {
+            cameraPosition?.coordinates?.longitude
+        }
     val js =
         readResource("web/google_map.js")
             .replace("{{INITIAL_MAP_ID}}", properties?.webMapProperties?.mapId ?: "DEMO_MAP_ID")
             .replace("{{INITIAL_COLOR_SCHEME}}", properties?.mapTheme?.name ?: MapTheme.SYSTEM.name)
-            .replace("{{INITIAL_LAT}}", cameraPosition?.coordinates?.latitude.toString())
-            .replace("{{INITIAL_LNG}}", cameraPosition?.coordinates?.longitude.toString())
+            .replace("{{INITIAL_LAT}}", initialLat.toString())
+            .replace("{{INITIAL_LNG}}", initialLng.toString())
             .replace("{{INITIAL_ZOOM}}", cameraPosition?.zoom.toString())
 
     return html.replace("{{API_KEY}}", apiKey).replace("{{LOCAL_JS_CONTENT}}", js)

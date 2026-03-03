@@ -57,10 +57,12 @@ internal class MapDelegate(
     override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition) {
         onCameraMove?.let {
             didChangeCameraPosition.target().useContents {
+                val visibleBounds = mapView.getVisibleMapBounds()
                 val cameraPosition =
                     CameraPosition(
                         coordinates = Coordinates(latitude = latitude, longitude = longitude),
                         zoom = didChangeCameraPosition.zoom(),
+                        bounds = visibleBounds,
                     )
                 it(cameraPosition)
             }

@@ -9,6 +9,7 @@ import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.Dash
@@ -36,17 +37,49 @@ import com.google.maps.android.data.geojson.GeoJsonPolygonStyle
 import org.json.JSONObject
 
 /**
- * Converts CameraPosition to Google Maps CameraPosition.
+ * Converts [MapBounds] to Google Maps [LatLngBounds].
  *
- * @return GoogleCameraPosition with coordinates, zoom, bearing, and tilt
+ * @return [LatLngBounds] built from northeast and southwest corners
  */
-internal fun CameraPosition.toGoogleMapsCameraPosition() =
-    GoogleCameraPosition.Builder()
-        .target(LatLng(coordinates.latitude, coordinates.longitude))
+internal fun MapBounds.toLatLngBounds() =
+    LatLngBounds.Builder()
+        .include(LatLng(northeast.latitude, northeast.longitude))
+        .include(LatLng(southwest.latitude, southwest.longitude))
+        .build()
+
+/**
+ * Converts [CameraPosition] to [GoogleCameraPosition].
+ *
+ * When [CameraPosition.bounds] is set, the center of the bounds is used as the camera target.
+ * Otherwise, [CameraPosition.coordinates] is used.
+ *
+ * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt
+ */
+internal fun CameraPosition.toGoogleMapsCameraPosition(): GoogleCameraPosition {
+    val target =
+        bounds?.toLatLngBounds()?.center ?: LatLng(coordinates.latitude, coordinates.longitude)
+    return GoogleCameraPosition.Builder()
+        .target(target)
         .zoom(zoom)
         .bearing(androidCameraPosition?.bearing ?: 0f)
         .tilt(androidCameraPosition?.tilt ?: 0f)
         .build()
+}
+
+/**
+ * Returns a CameraUpdate for this position.
+ *
+ * When [CameraPosition.bounds] is set, uses [CameraUpdateFactory.newLatLngBounds] so the camera
+ * zooms to fit the entire region. Otherwise, falls back to [CameraUpdateFactory.newCameraPosition].
+ *
+ * @param padding Padding in pixels around the bounds (only used when bounds is set)
+ */
+internal fun CameraPosition.toCameraUpdate(padding: Int = 0) =
+    if (bounds != null) {
+        CameraUpdateFactory.newLatLngBounds(bounds.toLatLngBounds(), padding)
+    } else {
+        CameraUpdateFactory.newCameraPosition(toGoogleMapsCameraPosition())
+    }
 
 /**
  * Converts Google Maps CameraPosition back to CameraPosition.
@@ -58,12 +91,13 @@ internal fun GoogleCameraPosition.toCameraPosition(latLngBounds: LatLngBounds? =
     CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
-        bounds = latLngBounds?.let {
-            MapBounds(
-                northeast = Coordinates(it.northeast.latitude, it.northeast.longitude),
-                southwest = Coordinates(it.southwest.latitude, it.southwest.longitude),
-            )
-        },
+        bounds =
+            latLngBounds?.let {
+                MapBounds(
+                    northeast = Coordinates(it.northeast.latitude, it.northeast.longitude),
+                    southwest = Coordinates(it.southwest.latitude, it.southwest.longitude),
+                )
+            },
         androidCameraPosition = AndroidCameraPosition(bearing = bearing, tilt = tilt),
     )
 

@@ -160,15 +160,5 @@ private fun getRandomPosition() =
                 latitude = Random.nextDouble(50.0, 52.0),
                 longitude = Random.nextDouble(50.0, 52.0),
             ),
-        bounds = MapBounds(
-            northeast = Coordinates(
-                latitude = Random.nextDouble(50.0, 52.0),
-                longitude = Random.nextDouble(50.0, 52.0),
-            ),
-            southwest = Coordinates(
-                latitude = Random.nextDouble(50.0, 52.0),
-                longitude = Random.nextDouble(50.0, 52.0),
-            ),
-        ),
         zoom = 13f,
     )
