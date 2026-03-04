@@ -134,21 +134,33 @@ import platform.posix.memcpy
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
-    if (bounds != null) {
-        val centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2.0
-        val centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2.0
-        val latDelta = kotlin.math.abs(bounds.northeast.latitude - bounds.southwest.latitude)
-        val lngDelta = kotlin.math.abs(bounds.northeast.longitude - bounds.southwest.longitude)
-        val coordinate = CLLocationCoordinate2DMake(centerLat, centerLng)
-        val span = MKCoordinateSpanMake(latDelta, lngDelta)
-        return MKCoordinateRegionMake(coordinate, span)
-    }
+    if (bounds != null) return bounds.toMKCoordinateRegion()
     val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
     val span =
         MKCoordinateSpanMake(
             calculateLatitudeDelta(zoom),
             calculateLongitudeDelta(zoom, coordinates.latitude),
         )
+    return MKCoordinateRegionMake(coordinate, span)
+}
+
+/**
+ * Converts [MapBounds] to [MKCoordinateRegion]
+ */
+@OptIn(ExperimentalForeignApi::class)
+private fun MapBounds.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
+    val centerLat = (northeast.latitude + southwest.latitude) / 2.0
+    val rawDiff = northeast.longitude - southwest.longitude
+    val lngDelta =
+        when {
+            rawDiff > 180.0 -> rawDiff - 360.0
+            rawDiff < -180.0 -> rawDiff + 360.0
+            else -> rawDiff
+        }
+    val centerLng = wrapLng(southwest.longitude + lngDelta / 2.0)
+    val latDelta = kotlin.math.abs(northeast.latitude - southwest.latitude)
+    val coordinate = CLLocationCoordinate2DMake(centerLat, centerLng)
+    val span = MKCoordinateSpanMake(latDelta, kotlin.math.abs(lngDelta))
     return MKCoordinateRegionMake(coordinate, span)
 }
 
@@ -165,10 +177,12 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
 
     val halfLat = span.latitudeDelta / 2.0
     val halfLng = span.longitudeDelta / 2.0
+    val neLng = wrapLng(center.longitude + halfLng)
+    val swLng = wrapLng(center.longitude - halfLng)
     val bounds =
         MapBounds(
-            northeast = Coordinates(center.latitude + halfLat, center.longitude + halfLng),
-            southwest = Coordinates(center.latitude - halfLat, center.longitude - halfLng),
+            northeast = Coordinates(center.latitude + halfLat, neLng),
+            southwest = Coordinates(center.latitude - halfLat, swLng),
         )
 
     CameraPosition(
@@ -177,6 +191,9 @@ internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
         bounds = bounds,
     )
 }
+
+/** Normalizes [lng] to the range [-180, 180]. */
+private fun wrapLng(lng: Double): Double = ((lng + 180.0) % 360.0 + 360.0) % 360.0 - 180.0
 
 /**
  * Updates Apple Maps markers by removing existing annotations and adding new ones.
