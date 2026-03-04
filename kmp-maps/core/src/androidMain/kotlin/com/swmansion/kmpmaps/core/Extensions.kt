@@ -39,13 +39,18 @@ import org.json.JSONObject
 /**
  * Converts [MapBounds] to Google Maps [LatLngBounds].
  *
- * @return [LatLngBounds] built from northeast and southwest corners
+ * Uses the direct [LatLngBounds] constructor rather than [LatLngBounds.Builder] to preserve
+ * antimeridian-crossing semantics: when
+ * [MapBounds.southwest].longitude > [MapBounds.northeast].longitude the bounds cross the
+ * antimeridian, and the Builder would silently widen them to go the other way round instead.
+ *
+ * @return [LatLngBounds] with the original southwest and northeast corners intact
  */
 internal fun MapBounds.toLatLngBounds() =
-    LatLngBounds.Builder()
-        .include(LatLng(northeast.latitude, northeast.longitude))
-        .include(LatLng(southwest.latitude, southwest.longitude))
-        .build()
+    LatLngBounds(
+        LatLng(southwest.latitude, southwest.longitude),
+        LatLng(northeast.latitude, northeast.longitude),
+    )
 
 /**
  * Converts [CameraPosition] to [GoogleCameraPosition].
@@ -53,19 +58,19 @@ internal fun MapBounds.toLatLngBounds() =
  * When [CameraPosition.bounds] is set and viewport dimensions are provided, computes the zoom level
  * to fit the bounds using the Mercator projection formula. Otherwise, uses [CameraPosition.zoom].
  *
- * @param viewportWidth Map viewport width in pixels (used to compute zoom for bounds)
- * @param viewportHeight Map viewport height in pixels (used to compute zoom for bounds)
+ * @param viewportWidthPx Map viewport width in pixels (used to compute zoom for bounds)
+ * @param viewportHeightPx Map viewport height in pixels (used to compute zoom for bounds)
  * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt
  */
 internal fun CameraPosition.toGoogleMapsCameraPosition(
-    viewportWidth: Int = 0,
-    viewportHeight: Int = 0,
+    viewportWidthPx: Int = 0,
+    viewportHeightPx: Int = 0,
 ): GoogleCameraPosition {
     val target =
         bounds?.toLatLngBounds()?.center ?: LatLng(coordinates.latitude, coordinates.longitude)
     val computedZoom =
-        if (bounds != null && viewportWidth > 0 && viewportHeight > 0) {
-            calculateZoomFromViewport(viewportWidth, viewportHeight, bounds)
+        if (bounds != null && viewportWidthPx > 0 && viewportHeightPx > 0) {
+            calculateZoomFromViewport(viewportWidthPx, viewportHeightPx, bounds)
         } else {
             zoom
         }

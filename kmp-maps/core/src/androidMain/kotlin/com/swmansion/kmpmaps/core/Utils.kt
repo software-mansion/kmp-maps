@@ -14,22 +14,23 @@ import kotlin.math.sin
  * taken so that the entire bounds are visible. Latitude uses the Mercator (non-linear) projection,
  * longitude is linear.
  *
- * @param viewportWidth Viewport width in dp
- * @param viewportHeight Viewport height in dp
+ * @param viewportWidthPx Viewport width in pixels
+ * @param viewportHeightPx Viewport height in pixels
  * @param bounds Geographic bounds to fit
  * @return Zoom level in [0, 21] that fits the bounds within the viewport
  */
 internal fun calculateZoomFromViewport(
-    viewportWidth: Int,
-    viewportHeight: Int,
+    viewportWidthPx: Int,
+    viewportHeightPx: Int,
     bounds: MapBounds,
 ): Float {
     val latFraction = (latRad(bounds.northeast.latitude) - latRad(bounds.southwest.latitude)) / PI
     val lngDiff = bounds.northeast.longitude - bounds.southwest.longitude
     val lngFraction = if (lngDiff < 0) (lngDiff + 360.0) / 360.0 else lngDiff / 360.0
     val latZoom =
-        if (latFraction > 0.0) ln(viewportHeight / 256.0 / latFraction) / ln(2.0) else 21.0
-    val lngZoom = if (lngFraction > 0.0) ln(viewportWidth / 256.0 / lngFraction) / ln(2.0) else 21.0
+        if (latFraction > 0.0) ln(viewportHeightPx / 256.0 / latFraction) / ln(2.0) else 21.0
+    val lngZoom =
+        if (lngFraction > 0.0) ln(viewportWidthPx / 256.0 / lngFraction) / ln(2.0) else 21.0
     return min(latZoom, lngZoom).toFloat().coerceIn(0f, 21f)
 }
 
