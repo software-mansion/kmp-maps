@@ -309,8 +309,9 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
 /**
  * Returns the current visible geographic bounds of the map view.
  *
- * Uses the map's projection to read the visible region, mapping [farRight] to the northeast corner
- * and [nearLeft] to the southwest corner of the returned [MapBounds].
+ * Uses [GMSCoordinateBounds] built from all four corners of the visible region so that
+ * antimeridian-crossing regions are handled correctly by the SDK rather than by naive longitude
+ * min/max arithmetic.
  *
  * @return The current visible geographic bounds of the map.
  */
@@ -318,19 +319,22 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
 internal fun UtilsGMSMapView.getVisibleMapBounds(): MapBounds =
     projection().let { proj ->
         proj.visibleRegion().useContents {
-            val lats =
-                listOf(nearLeft.latitude, nearRight.latitude, farLeft.latitude, farRight.latitude)
-            val lngs =
-                listOf(
-                    nearLeft.longitude,
-                    nearRight.longitude,
-                    farLeft.longitude,
-                    farRight.longitude,
-                )
-            MapBounds(
-                northeast = Coordinates(lats.maxOrNull()!!, lngs.maxOrNull()!!),
-                southwest = Coordinates(lats.minOrNull()!!, lngs.minOrNull()!!),
-            )
+            val gmsBounds =
+                GMSCoordinateBounds(
+                        CLLocationCoordinate2DMake(nearLeft.latitude, nearLeft.longitude),
+                        CLLocationCoordinate2DMake(nearRight.latitude, nearRight.longitude),
+                    )
+                    .includingCoordinate(
+                        CLLocationCoordinate2DMake(farLeft.latitude, farLeft.longitude)
+                    )
+                    .includingCoordinate(
+                        CLLocationCoordinate2DMake(farRight.latitude, farRight.longitude)
+                    )
+            val neLat = gmsBounds.northEast().useContents { latitude }
+            val neLon = gmsBounds.northEast().useContents { longitude }
+            val swLat = gmsBounds.southWest().useContents { latitude }
+            val swLon = gmsBounds.southWest().useContents { longitude }
+            MapBounds(northeast = Coordinates(neLat, neLon), southwest = Coordinates(swLat, swLon))
         }
     }
 
