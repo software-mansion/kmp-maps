@@ -317,9 +317,18 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
 internal fun UtilsGMSMapView.getVisibleMapBounds(): MapBounds =
     projection().let { proj ->
         proj.visibleRegion().useContents {
+            val lats =
+                listOf(nearLeft.latitude, nearRight.latitude, farLeft.latitude, farRight.latitude)
+            val lngs =
+                listOf(
+                    nearLeft.longitude,
+                    nearRight.longitude,
+                    farLeft.longitude,
+                    farRight.longitude,
+                )
             MapBounds(
-                northeast = Coordinates(farRight.latitude, farRight.longitude),
-                southwest = Coordinates(nearLeft.latitude, nearLeft.longitude),
+                northeast = Coordinates(lats.max(), lngs.max()),
+                southwest = Coordinates(lats.min(), lngs.min()),
             )
         }
     }
