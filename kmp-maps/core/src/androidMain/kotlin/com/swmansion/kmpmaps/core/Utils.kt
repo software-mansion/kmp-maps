@@ -7,8 +7,8 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Calculates the zoom level required to fit [bounds] within the given viewport using the
- * Mercator projection formula. Returns a value clamped to [0, 21].
+ * Calculates the zoom level required to fit [bounds] within the given viewport using the Mercator
+ * projection formula. Returns a value clamped to [0, 21].
  *
  * The zoom is computed independently for latitude and longitude, then the minimum of the two is
  * taken so that the entire bounds are visible. Latitude uses the Mercator (non-linear) projection,
@@ -34,8 +34,8 @@ internal fun calculateZoomFromViewport(
 }
 
 /**
- * Converts a latitude in decimal degrees to its Mercator projection radian value, clamped to
- * the valid Mercator range [-π/2, π/2].
+ * Converts a latitude in decimal degrees to its Mercator projection radian value, clamped to the
+ * valid Mercator range [-π/2, π/2].
  *
  * @param lat Latitude in decimal degrees
  * @return Mercator radian value
