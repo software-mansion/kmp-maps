@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -69,12 +70,13 @@ public actual fun Map(
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val viewportWidthDp = maxWidth.value.toInt()
-        val viewportHeightDp = maxHeight.value.toInt()
+        val density = LocalDensity.current
+        val viewportWidthPx = with(density) { maxWidth.roundToPx() }
+        val viewportHeightPx = with(density) { maxHeight.roundToPx() }
 
         val cameraPositionState = rememberCameraPositionState {
             cameraPosition?.let {
-                position = it.toGoogleMapsCameraPosition(viewportWidthDp, viewportHeightDp)
+                position = it.toGoogleMapsCameraPosition(viewportWidthPx, viewportHeightPx)
             }
         }
 

@@ -286,7 +286,8 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
                         bounds.southwest.latitude,
                         bounds.southwest.longitude,
                     ),
-                )
+                ),
+                withPadding = 0.0,
             )
         )
     } else {
