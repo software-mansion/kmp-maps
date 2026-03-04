@@ -204,16 +204,20 @@ public fun Polyline.getId(): String = "polyline_${hashCode()}"
 /**
  * Represents the camera position and orientation of the map.
  *
- * @property coordinates The center coordinates of the camera view
- * @property zoom The zoom level of the map (typically 0-20)
- * @property bounds The visible geographic bounds of the map, or null if not available
+ * At least one of [coordinates] or [bounds] should be provided to position the camera:
+ * - When [bounds] is set, the camera zooms to fit the entire region regardless of [zoom].
+ * - When only [coordinates] is set, [zoom] controls the zoom level (defaults to 0 if null).
+ *
+ * @property coordinates The center coordinates of the camera view, or null to use [bounds] center
+ * @property zoom The zoom level of the map (typically 0–20), or null to use default (0)
+ * @property bounds The geographic bounds to fit in the viewport, or null if not used
  * @property androidCameraPosition Android-specific options for the camera position and orientation
  * @property iosCameraPosition iOS-specific options for the camera position and orientation
  */
 @Serializable
 public data class CameraPosition(
-    val coordinates: Coordinates,
-    val zoom: Float,
+    val coordinates: Coordinates? = null,
+    val zoom: Float? = null,
     val bounds: MapBounds? = null,
     val androidCameraPosition: AndroidCameraPosition? = null,
     val iosCameraPosition: IosCameraPosition? = null,
