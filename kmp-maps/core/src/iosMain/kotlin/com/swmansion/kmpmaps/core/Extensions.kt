@@ -144,9 +144,7 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     return MKCoordinateRegionMake(coordinate, span)
 }
 
-/**
- * Converts [MapBounds] to [MKCoordinateRegion]
- */
+/** Converts [MapBounds] to [MKCoordinateRegion] */
 @OptIn(ExperimentalForeignApi::class)
 private fun MapBounds.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val centerLat = (northeast.latitude + southwest.latitude) / 2.0
