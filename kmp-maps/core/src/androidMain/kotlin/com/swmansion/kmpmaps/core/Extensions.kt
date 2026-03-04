@@ -39,11 +39,6 @@ import org.json.JSONObject
 /**
  * Converts [MapBounds] to Google Maps [LatLngBounds].
  *
- * Uses the direct [LatLngBounds] constructor rather than [LatLngBounds.Builder] to preserve
- * antimeridian-crossing semantics: when
- * [MapBounds.southwest].longitude > [MapBounds.northeast].longitude the bounds cross the
- * antimeridian, and the Builder would silently widen them to go the other way round instead.
- *
  * @return [LatLngBounds] with the original southwest and northeast corners intact
  */
 internal fun MapBounds.toLatLngBounds() =
@@ -83,12 +78,9 @@ internal fun CameraPosition.toGoogleMapsCameraPosition(
 }
 
 /**
- * Returns a CameraUpdate for this position.
+ * Fits bounds if available; otherwise uses coordinates and zoom.
  *
- * When [CameraPosition.bounds] is set, uses [CameraUpdateFactory.newLatLngBounds] so the camera
- * zooms to fit the entire region. Otherwise, falls back to [CameraUpdateFactory.newCameraPosition].
- *
- * @param padding Padding in pixels around the bounds (only used when bounds is set)
+ * @param padding Bounds padding (px).
  */
 internal fun CameraPosition.toCameraUpdate(padding: Int = 0) =
     if (bounds != null) {
