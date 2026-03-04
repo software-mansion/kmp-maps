@@ -328,8 +328,8 @@ internal fun UtilsGMSMapView.getVisibleMapBounds(): MapBounds =
                     farRight.longitude,
                 )
             MapBounds(
-                northeast = Coordinates(lats.max(), lngs.max()),
-                southwest = Coordinates(lats.min(), lngs.min()),
+                northeast = Coordinates(lats.maxOrNull()!!, lngs.maxOrNull()!!),
+                southwest = Coordinates(lats.minOrNull()!!, lngs.minOrNull()!!),
             )
         }
     }
