@@ -14,6 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -58,10 +60,18 @@ public actual fun Map(
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
 ) {
+    val density = LocalDensity.current
+    val containerSize = LocalWindowInfo.current.containerSize
+
+    val viewportWidthDp = with(density) { containerSize.width.toDp().value.toInt() }
+    val viewportHeightDp = with(density) { containerSize.height.toDp().value.toInt() }
+
     var mapLoaded by remember { mutableStateOf(false) }
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val cameraPositionState = rememberCameraPositionState {
-        cameraPosition?.let { position = it.toGoogleMapsCameraPosition() }
+        cameraPosition?.let {
+            position = it.toGoogleMapsCameraPosition(viewportWidthDp, viewportHeightDp)
+        }
     }
 
     LaunchedEffect(properties.isMyLocationEnabled) {

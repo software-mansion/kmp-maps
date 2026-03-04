@@ -50,17 +50,28 @@ internal fun MapBounds.toLatLngBounds() =
 /**
  * Converts [CameraPosition] to [GoogleCameraPosition].
  *
- * When [CameraPosition.bounds] is set, the center of the bounds is used as the camera target.
- * Otherwise, [CameraPosition.coordinates] is used.
+ * When [CameraPosition.bounds] is set and viewport dimensions are provided, computes the zoom level
+ * to fit the bounds using the Mercator projection formula. Otherwise, uses [CameraPosition.zoom].
  *
+ * @param viewportWidth Map viewport width in pixels (used to compute zoom for bounds)
+ * @param viewportHeight Map viewport height in pixels (used to compute zoom for bounds)
  * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt
  */
-internal fun CameraPosition.toGoogleMapsCameraPosition(): GoogleCameraPosition {
+internal fun CameraPosition.toGoogleMapsCameraPosition(
+    viewportWidth: Int = 0,
+    viewportHeight: Int = 0,
+): GoogleCameraPosition {
     val target =
         bounds?.toLatLngBounds()?.center ?: LatLng(coordinates.latitude, coordinates.longitude)
+    val computedZoom =
+        if (bounds != null && viewportWidth > 0 && viewportHeight > 0) {
+            calculateZoomFromViewport(viewportWidth, viewportHeight, bounds)
+        } else {
+            zoom
+        }
     return GoogleCameraPosition.Builder()
         .target(target)
-        .zoom(zoom)
+        .zoom(computedZoom)
         .bearing(androidCameraPosition?.bearing ?: 0f)
         .tilt(androidCameraPosition?.tilt ?: 0f)
         .build()
