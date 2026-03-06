@@ -135,11 +135,12 @@ import platform.posix.memcpy
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     if (bounds != null) return bounds.toMKCoordinateRegion()
-    val coordinate = CLLocationCoordinate2DMake(coordinates.latitude, coordinates.longitude)
+    val coordinate =
+        CLLocationCoordinate2DMake(coordinates?.latitude ?: 0.0, coordinates?.longitude ?: 0.0)
     val span =
         MKCoordinateSpanMake(
-            calculateLatitudeDelta(zoom),
-            calculateLongitudeDelta(zoom, coordinates.latitude),
+            calculateLatitudeDelta(zoom ?: 0.0f),
+            calculateLongitudeDelta(zoom ?: 0.0f, coordinates?.latitude ?: 0.0),
         )
     return MKCoordinateRegionMake(coordinate, span)
 }
