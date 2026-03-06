@@ -194,10 +194,19 @@ public fun Polyline.getId(): String = "polyline_${hashCode()}"
 @Serializable public data class Coordinates(val latitude: Double, val longitude: Double)
 
 /**
+ * Represents the visible geographic bounds of the map.
+ *
+ * @property northeast The northeast corner coordinates of the visible region
+ * @property southwest The southwest corner coordinates of the visible region
+ */
+@Serializable public data class MapBounds(val northeast: Coordinates, val southwest: Coordinates)
+
+/**
  * Represents the camera position and orientation of the map.
  *
  * @property coordinates The center coordinates of the camera view
  * @property zoom The zoom level of the map (typically 0-20)
+ * @property bounds The visible geographic bounds of the map, or null if not available
  * @property androidCameraPosition Android-specific options for the camera position and orientation
  * @property iosCameraPosition iOS-specific options for the camera position and orientation
  */
@@ -205,6 +214,7 @@ public fun Polyline.getId(): String = "polyline_${hashCode()}"
 public data class CameraPosition(
     val coordinates: Coordinates,
     val zoom: Float,
+    val bounds: MapBounds? = null,
     val androidCameraPosition: AndroidCameraPosition? = null,
     val iosCameraPosition: IosCameraPosition? = null,
 )

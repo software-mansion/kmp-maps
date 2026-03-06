@@ -42,6 +42,8 @@ async function initMap() {
         disableDefaultUI: true,
     });
 
+    {{FIT_BOUNDS_CALL}}
+
     if (window.markerClusterer) {
         markerCluster = new markerClusterer.MarkerClusterer({ map, markers: [] });
     }

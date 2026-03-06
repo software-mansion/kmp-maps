@@ -9,12 +9,14 @@ import androidx.core.graphics.toColorInt
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.CameraPosition as GoogleCameraPosition
 import com.google.android.gms.maps.model.Dash
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.PatternItem
 import com.google.maps.android.clustering.Cluster as GoogleMapCluster
@@ -35,27 +37,75 @@ import com.google.maps.android.data.geojson.GeoJsonPolygonStyle
 import org.json.JSONObject
 
 /**
- * Converts CameraPosition to Google Maps CameraPosition.
+ * Converts [MapBounds] to Google Maps [LatLngBounds].
  *
- * @return GoogleCameraPosition with coordinates, zoom, bearing, and tilt
+ * @return [LatLngBounds] with the original southwest and northeast corners intact
  */
-internal fun CameraPosition.toGoogleMapsCameraPosition() =
-    GoogleCameraPosition.Builder()
-        .target(LatLng(coordinates.latitude, coordinates.longitude))
-        .zoom(zoom)
+internal fun MapBounds.toLatLngBounds() =
+    LatLngBounds(
+        LatLng(southwest.latitude, southwest.longitude),
+        LatLng(northeast.latitude, northeast.longitude),
+    )
+
+/**
+ * Converts [CameraPosition] to [GoogleCameraPosition].
+ *
+ * When [CameraPosition.bounds] is set and viewport dimensions are provided, computes the zoom level
+ * to fit the bounds using the Mercator projection formula. Otherwise, uses [CameraPosition.zoom].
+ *
+ * @param viewportWidthPx Map viewport width in pixels (used to compute zoom for bounds)
+ * @param viewportHeightPx Map viewport height in pixels (used to compute zoom for bounds)
+ * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt
+ */
+internal fun CameraPosition.toGoogleMapsCameraPosition(
+    viewportWidthPx: Int = 0,
+    viewportHeightPx: Int = 0,
+): GoogleCameraPosition {
+    val target =
+        bounds?.toLatLngBounds()?.center ?: LatLng(coordinates.latitude, coordinates.longitude)
+    val computedZoom =
+        if (bounds != null && viewportWidthPx > 0 && viewportHeightPx > 0) {
+            calculateZoomFromViewport(viewportWidthPx, viewportHeightPx, bounds)
+        } else {
+            zoom
+        }
+    return GoogleCameraPosition.Builder()
+        .target(target)
+        .zoom(computedZoom)
         .bearing(androidCameraPosition?.bearing ?: 0f)
         .tilt(androidCameraPosition?.tilt ?: 0f)
         .build()
+}
+
+/**
+ * Fits bounds if available; otherwise uses coordinates and zoom.
+ *
+ * @param padding Bounds padding (px).
+ */
+internal fun CameraPosition.toCameraUpdate(padding: Int = 0) =
+    if (bounds != null) {
+        CameraUpdateFactory.newLatLngBounds(bounds.toLatLngBounds(), padding)
+    } else {
+        CameraUpdateFactory.newCameraPosition(toGoogleMapsCameraPosition())
+    }
 
 /**
  * Converts Google Maps CameraPosition back to CameraPosition.
  *
- * @return CameraPosition with coordinates, zoom, bearing, and tilt
+ * @param latLngBounds Optional visible region bounds to include in the result
+ * @return CameraPosition with coordinates, zoom, bearing, tilt, and optional bounds
  */
-internal fun GoogleCameraPosition.toCameraPosition() =
+internal fun GoogleCameraPosition.toCameraPosition(latLngBounds: LatLngBounds? = null) =
     CameraPosition(
         coordinates = Coordinates(latitude = target.latitude, longitude = target.longitude),
         zoom = zoom,
+        bounds =
+            latLngBounds?.let {
+                MapBounds(
+                    northeast = Coordinates(it.northeast.latitude, it.northeast.longitude),
+                    southwest = Coordinates(it.southwest.latitude, it.southwest.longitude),
+                )
+            },
         androidCameraPosition = AndroidCameraPosition(bearing = bearing, tilt = tilt),
     )
 
