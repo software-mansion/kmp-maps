@@ -13,7 +13,7 @@ kotlin {
     jvmToolchain(17)
     androidTarget { publishLibraryVariants("release") }
 
-    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "core"
             isStatic = true
