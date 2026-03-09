@@ -12,6 +12,8 @@ import cocoapods.GoogleMaps.kGMSTypeNormal
 import cocoapods.GoogleMaps.kGMSTypeSatellite
 import cocoapods.GoogleMaps.kGMSTypeTerrain
 import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
+import cocoapods.Google_Maps_iOS_Utils.GMSCameraUpdate
+import cocoapods.Google_Maps_iOS_Utils.GMSCoordinateBounds
 import cocoapods.Google_Maps_iOS_Utils.GMSMapStyle
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
@@ -23,7 +25,9 @@ import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
 import cocoapods.Google_Maps_iOS_Utils.GMUNonHierarchicalDistanceBasedAlgorithm
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GoogleMapsMapStyleOptions
+import com.swmansion.kmpmaps.core.MapBounds
 import com.swmansion.kmpmaps.core.MapType
 import com.swmansion.kmpmaps.core.MapUISettings
 import com.swmansion.kmpmaps.core.Marker
@@ -33,6 +37,7 @@ import com.swmansion.kmpmaps.core.getId
 import com.swmansion.kmpmaps.core.toAppleMapsColor
 import kotlin.collections.set
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPointMake
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.Foundation.NSDictionary
@@ -259,25 +264,79 @@ public fun UtilsGMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? 
 }
 
 /**
- * Converts the [CameraPosition] to a native [GMSCameraPosition] and applies it to this map view.
+ * Converts the [CameraPosition] to a native camera update and applies it to this map view.
  *
- * @param position The camera position to convert
+ * When [CameraPosition.bounds] is set, uses [GMSCameraUpdate.fitBounds] so the camera zooms to fit
+ * the entire region. Otherwise, falls back to a direct [GMSCameraPosition].
+ *
+ * @param position The camera position to apply
  */
 @OptIn(ExperimentalForeignApi::class)
 public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
-    setCamera(
-        GMSCameraPosition.cameraWithTarget(
-            target =
-                CLLocationCoordinate2DMake(
-                    position.coordinates.latitude,
-                    position.coordinates.longitude,
+    val bounds = position.bounds
+    if (bounds != null) {
+        moveCamera(
+            GMSCameraUpdate.fitBounds(
+                GMSCoordinateBounds(
+                    CLLocationCoordinate2DMake(
+                        bounds.northeast.latitude,
+                        bounds.northeast.longitude,
+                    ),
+                    CLLocationCoordinate2DMake(
+                        bounds.southwest.latitude,
+                        bounds.southwest.longitude,
+                    ),
                 ),
-            zoom = position.zoom,
-            bearing = (position.iosCameraPosition?.gmsBearing ?: 0f).toDouble(),
-            viewingAngle = (position.iosCameraPosition?.gmsViewingAngle ?: 0f).toDouble(),
+                withPadding = 0.0,
+            )
         )
-    )
+    } else {
+        setCamera(
+            GMSCameraPosition.cameraWithTarget(
+                target =
+                    CLLocationCoordinate2DMake(
+                        position.coordinates.latitude,
+                        position.coordinates.longitude,
+                    ),
+                zoom = position.zoom,
+                bearing = position.iosCameraPosition?.gmsBearing?.toDouble() ?: 0.0,
+                viewingAngle = position.iosCameraPosition?.gmsViewingAngle?.toDouble() ?: 0.0,
+            )
+        )
+    }
 }
+
+/**
+ * Returns the current visible geographic bounds of the map view.
+ *
+ * Uses [GMSCoordinateBounds] built from all four corners of the visible region so that
+ * antimeridian-crossing regions are handled correctly by the SDK rather than by naive longitude
+ * min/max arithmetic.
+ *
+ * @return The current visible geographic bounds of the map.
+ */
+@OptIn(ExperimentalForeignApi::class)
+internal fun UtilsGMSMapView.getVisibleMapBounds(): MapBounds =
+    projection().let { proj ->
+        proj.visibleRegion().useContents {
+            val gmsBounds =
+                GMSCoordinateBounds(
+                        CLLocationCoordinate2DMake(nearLeft.latitude, nearLeft.longitude),
+                        CLLocationCoordinate2DMake(nearRight.latitude, nearRight.longitude),
+                    )
+                    .includingCoordinate(
+                        CLLocationCoordinate2DMake(farLeft.latitude, farLeft.longitude)
+                    )
+                    .includingCoordinate(
+                        CLLocationCoordinate2DMake(farRight.latitude, farRight.longitude)
+                    )
+            val neLat = gmsBounds.northEast().useContents { latitude }
+            val neLon = gmsBounds.northEast().useContents { longitude }
+            val swLat = gmsBounds.southWest().useContents { latitude }
+            val swLon = gmsBounds.southWest().useContents { longitude }
+            MapBounds(northeast = Coordinates(neLat, neLon), southwest = Coordinates(swLat, swLon))
+        }
+    }
 
 /**
  * Converts an optional Compose Color to a UIColor, using the provided fallback when null.
