@@ -2,7 +2,7 @@ plugins { alias(libs.plugins.jetBrains.dokka) }
 
 subprojects {
     group = "com.swmansion.kmpmaps"
-    version = "0.8.1"
+    version = "0.9.0"
 }
 
 dependencies {
