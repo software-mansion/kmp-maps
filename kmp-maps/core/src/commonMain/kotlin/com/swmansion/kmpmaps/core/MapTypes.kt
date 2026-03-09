@@ -204,9 +204,9 @@ public fun Polyline.getId(): String = "polyline_${hashCode()}"
 /**
  * Represents the camera position and orientation of the map.
  *
- * At least one of [coordinates] or [bounds] should be provided to position the camera:
- * - When [bounds] is set, the camera zooms to fit the entire region regardless of [zoom].
- * - When only [coordinates] is set, [zoom] controls the zoom level (defaults to 0 if null).
+ * **Configuration Rules:** To successfully initialize, you must provide either:
+ * 1. Both [coordinates] **and** [zoom].
+ * 2. Or [bounds] (which takes precedence for positioning).
  *
  * @property coordinates The center coordinates of the camera view, or null to use [bounds] center
  * @property zoom The zoom level of the map (typically 0–20), or null to use default (0)
@@ -221,7 +221,13 @@ public data class CameraPosition(
     val bounds: MapBounds? = null,
     val androidCameraPosition: AndroidCameraPosition? = null,
     val iosCameraPosition: IosCameraPosition? = null,
-)
+) {
+    init {
+        require((coordinates != null && zoom != null) || bounds != null) {
+            "CameraPosition requires at least one of 'coordinates' or 'bounds' to be set."
+        }
+    }
+}
 
 /**
  * Represents a group of markers that have been combined into a single cluster.
