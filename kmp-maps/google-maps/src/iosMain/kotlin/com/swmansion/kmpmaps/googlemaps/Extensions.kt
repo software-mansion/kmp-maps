@@ -299,8 +299,8 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
                         position.coordinates.longitude,
                     ),
                 zoom = position.zoom,
-                bearing = (position.iosCameraPosition?.gmsBearing ?: 0f).toDouble(),
-                viewingAngle = (position.iosCameraPosition?.gmsViewingAngle ?: 0f).toDouble(),
+                bearing = position.iosCameraPosition?.gmsBearing?.toDouble() ?: 0.0,
+                viewingAngle = position.iosCameraPosition?.gmsViewingAngle?.toDouble() ?: 0.0,
             )
         )
     }
