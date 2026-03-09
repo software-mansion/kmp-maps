@@ -295,10 +295,10 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
             GMSCameraPosition.cameraWithTarget(
                 target =
                     CLLocationCoordinate2DMake(
-                        position.coordinates.latitude,
-                        position.coordinates.longitude,
+                        position.coordinates?.latitude ?: 0.0,
+                        position.coordinates?.longitude ?: 0.0,
                     ),
-                zoom = position.zoom,
+                zoom = position.zoom ?: 0.0f,
                 bearing = position.iosCameraPosition?.gmsBearing?.toDouble() ?: 0.0,
                 viewingAngle = position.iosCameraPosition?.gmsViewingAngle?.toDouble() ?: 0.0,
             )

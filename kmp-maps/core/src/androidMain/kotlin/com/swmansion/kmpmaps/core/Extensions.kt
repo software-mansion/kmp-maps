@@ -62,12 +62,13 @@ internal fun CameraPosition.toGoogleMapsCameraPosition(
     viewportHeightPx: Int = 0,
 ): GoogleCameraPosition {
     val target =
-        bounds?.toLatLngBounds()?.center ?: LatLng(coordinates.latitude, coordinates.longitude)
+        bounds?.toLatLngBounds()?.center
+            ?: LatLng(coordinates?.latitude ?: 0.0, coordinates?.longitude ?: 0.0)
     val computedZoom =
         if (bounds != null && viewportWidthPx > 0 && viewportHeightPx > 0) {
             calculateZoomFromViewport(viewportWidthPx, viewportHeightPx, bounds)
         } else {
-            zoom
+            zoom ?: 0f
         }
     return GoogleCameraPosition.Builder()
         .target(target)
