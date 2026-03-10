@@ -1,0 +1,73 @@
+package com.swmansion.kmpmaps.applemaps
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.swmansion.kmpmaps.core.CameraPosition
+import com.swmansion.kmpmaps.core.Circle
+import com.swmansion.kmpmaps.core.ClusterSettings
+import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonLayer
+import com.swmansion.kmpmaps.core.MapProperties
+import com.swmansion.kmpmaps.core.MapUISettings
+import com.swmansion.kmpmaps.core.Marker
+import com.swmansion.kmpmaps.core.Polygon
+import com.swmansion.kmpmaps.core.Polyline
+
+/**
+ * A cross-platform map component that provides a unified interface for native map APIs across
+ * Android, iOS, and Desktop (JVM).
+ *
+ * This composable acts as a bridge between platform-specific map engines:
+ * - **Android**: Renders native **Google Maps SDK for Android** (delegates to core).
+ * - **iOS**: Renders native **Apple MapKit** (delegates to core).
+ * - **Desktop (JVM)**: Renders **Apple MapKit JS** via an embedded WebView.
+ *
+ * @param modifier The modifier to be applied to the map component
+ * @param cameraPosition The initial camera position of the map. If null, the map will use default
+ *   position
+ * @param properties Configuration properties for the map behavior and appearance
+ * @param uiSettings UI settings that control interactive elements and gestures
+ * @param clusterSettings Configuration settings for marker clustering behavior
+ * @param markers List of markers to display on the map
+ * @param circles List of circles to display on the map
+ * @param polygons List of polygons to display on the map
+ * @param polylines List of polylines to display on the map
+ * @param onCameraMove Callback invoked when the map camera position changes due to user interaction
+ * @param onMarkerClick Callback invoked when a marker is clicked
+ * @param onMarkerDragEnd Callback invoked when a marker drag operation ends
+ * @param onCircleClick Callback invoked when a circle is clicked
+ * @param onPolygonClick Callback invoked when a polygon is clicked
+ * @param onPolylineClick Callback invoked when a polyline is clicked
+ * @param onMapClick Callback invoked when the user clicks on the map (not on POI or markers)
+ * @param onMapLongClick Callback invoked when the user long-clicks on the map
+ * @param onPOIClick Callback invoked when the user clicks on a Point of Interest
+ * @param onMapLoaded Callback invoked when the map has finished loading
+ * @param geoJsonLayers List of GeoJSON layers to display on the map
+ * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
+ */
+@Composable
+public expect fun Map(
+    modifier: Modifier = Modifier,
+    cameraPosition: CameraPosition? = null,
+    properties: MapProperties = MapProperties(),
+    uiSettings: MapUISettings = MapUISettings(),
+    clusterSettings: ClusterSettings = ClusterSettings(),
+    markers: List<Marker> = emptyList(),
+    circles: List<Circle> = emptyList(),
+    polygons: List<Polygon> = emptyList(),
+    polylines: List<Polyline> = emptyList(),
+    onCameraMove: ((CameraPosition) -> Unit)? = null,
+    onMarkerClick: ((Marker) -> Unit)? = null,
+    onMarkerDragEnd: ((Marker) -> Unit)? = null,
+    onCircleClick: ((Circle) -> Unit)? = null,
+    onPolygonClick: ((Polygon) -> Unit)? = null,
+    onPolylineClick: ((Polyline) -> Unit)? = null,
+    onMapClick: ((Coordinates) -> Unit)? = null,
+    onMapLongClick: ((Coordinates) -> Unit)? = null,
+    onPOIClick: ((Coordinates) -> Unit)? = null,
+    onMapLoaded: (() -> Unit)? = null,
+    geoJsonLayers: List<GeoJsonLayer> = emptyList(),
+    customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
+    webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
+)

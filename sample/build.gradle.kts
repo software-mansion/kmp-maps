@@ -64,6 +64,7 @@ kotlin {
             implementation(compose.materialIconsExtended)
             implementation(project(":kmp-maps:core"))
             implementation(project(":kmp-maps:google-maps"))
+            implementation(project(":kmp-maps:apple-maps"))
         }
         commonTest.dependencies { implementation(libs.jetBrains.kotlin.test) }
         jvmMain.dependencies {

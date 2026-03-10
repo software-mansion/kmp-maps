@@ -38,7 +38,7 @@ internal fun loadHTMLContent(
  * @param path The relative path to the resource (e.g., "web/google_map.html").
  * @return The content of the resource as a string.
  */
-private fun readResource(path: String): String {
+public fun readResource(path: String): String {
     val stream =
         object {}.javaClass.getResourceAsStream("/$path")
             ?: object {}.javaClass.getResourceAsStream(path)
