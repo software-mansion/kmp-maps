@@ -240,8 +240,7 @@ internal fun GoogleMap.renderCombinedGeoJsonLayers(
     layers: List<GeoJsonLayer>,
     clusterSettings: ClusterSettings,
     onMarkerClick: ((Marker) -> Unit)?,
-    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
-    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
 ): RenderedGeoJson? {
     val combinedJson = buildCombinedGeoJson(layers) ?: return null
 
@@ -250,8 +249,7 @@ internal fun GoogleMap.renderCombinedGeoJsonLayers(
         originalLayers = layers,
         clusterSettings = clusterSettings,
         onMarkerClick = onMarkerClick,
-        onGeoJsonAreaClick = onGeoJsonAreaClick,
-        onGeoJsonLineClick = onGeoJsonLineClick,
+        onGeoJsonFeatureClick = onGeoJsonFeatureClick,
     )
 }
 
@@ -310,8 +308,7 @@ private fun GoogleMap.renderGeoJsonLayer(
     originalLayers: List<GeoJsonLayer>,
     clusterSettings: ClusterSettings,
     onMarkerClick: ((Marker) -> Unit)?,
-    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
-    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
 ): RenderedGeoJson {
     val googleLayer = GoogleGeoJsonLayer(this, combinedJson)
     val extractedMarkers = mutableListOf<Marker>()
@@ -350,13 +347,8 @@ private fun GoogleMap.renderGeoJsonLayer(
                     onMarkerClick?.invoke(marker)
                 }
             }
-            is GeoJsonPolygon,
-            is GeoJsonMultiPolygon -> {
-                onGeoJsonAreaClick?.invoke(featureClicked)
-            }
-            is GeoJsonLineString,
-            is GeoJsonMultiLineString -> {
-                onGeoJsonLineClick?.invoke(featureClicked)
+            else -> {
+                onGeoJsonFeatureClick?.invoke(featureClicked)
             }
         }
     }
