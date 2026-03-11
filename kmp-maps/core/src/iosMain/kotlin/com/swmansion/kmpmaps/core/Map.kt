@@ -69,6 +69,10 @@ public actual fun Map(
     val allMarkers =
         remember(markers, geoJsonExtractedMarkers) { markers + geoJsonExtractedMarkers }
 
+    val geoJsonFeatures = remember { mutableMapOf<MKOverlayProtocol, GeoJsonFeatureClicked>() }
+    val geoJsonHitTestPolygons = remember { mutableMapOf<MKOverlayProtocol, Polygon>() }
+    val geoJsonHitTestPolylines = remember { mutableMapOf<MKOverlayProtocol, Polyline>() }
+
     val circleStyles = remember { mutableMapOf<MKCircle, Circle>() }
     val polygonStyles = remember { mutableMapOf<MKPolygon, Polygon>() }
     val polylineStyles = remember { mutableMapOf<MKPolyline, Polyline>() }
@@ -156,6 +160,9 @@ public actual fun Map(
                 geoJsonPolygonStyles = geoJsonPolygonStyles,
                 geoJsonPolylineStyles = geoJsonPolylineStyles,
                 geoJsonPointStyles = geoJsonPointStyles,
+                geoJsonFeatures = geoJsonFeatures,
+                geoJsonHitTestPolygons = geoJsonHitTestPolygons,
+                geoJsonHitTestPolylines = geoJsonHitTestPolylines,
                 polylineStyles = polylineStyles,
                 clusterSettings = clusterSettings,
             )
@@ -200,9 +207,13 @@ public actual fun Map(
                     onMapLongClick = onMapLongClick,
                     onPOIClick = onPOIClick,
                     onCameraMove = onCameraMove,
+                    onGeoJsonFeatureClick = onGeoJsonFeatureClick,
                     geoJsonPolygonStyles = geoJsonPolygonStyles,
                     geoJsonPolylineStyles = geoJsonPolylineStyles,
                     geoJsonPointStyles = geoJsonPointStyles,
+                    geoJsonFeatures = geoJsonFeatures,
+                    geoJsonHitTestPolygons = geoJsonHitTestPolygons,
+                    geoJsonHitTestPolylines = geoJsonHitTestPolylines,
                     customMarkerContent = customMarkerContent,
                     clusterSettings = clusterSettings,
                 )
