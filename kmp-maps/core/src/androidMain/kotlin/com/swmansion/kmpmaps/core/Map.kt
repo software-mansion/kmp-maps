@@ -56,6 +56,8 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
@@ -144,7 +146,7 @@ public actual fun Map(
 
                             androidGeoJsonLayers[index]?.removeLayerFromMap()
 
-                            map.renderGeoJsonLayer(geo, clusterSettings, onMarkerClick)?.let {
+                            map.renderGeoJsonLayer(geo, clusterSettings, onMarkerClick, onGeoJsonAreaClick, onGeoJsonLineClick)?.let {
                                 androidGeoJsonLayers = androidGeoJsonLayers + (index to it.layer)
                                 geoJsonExtractedMarkers =
                                     geoJsonExtractedMarkers + (index to it.extractedMarkers)

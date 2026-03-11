@@ -128,6 +128,8 @@ public expect fun Map(
     onMapLongClick: ((Coordinates) -> Unit)? = null,
     onPOIClick: ((Coordinates) -> Unit)? = null,
     onMapLoaded: (() -> Unit)? = null,
+    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
     customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
     webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
