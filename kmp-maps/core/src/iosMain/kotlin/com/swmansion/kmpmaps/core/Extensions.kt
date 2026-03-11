@@ -527,6 +527,9 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
     geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     polylineStyles: Map<MKPolyline, Polyline>,
     clusterSettings: ClusterSettings,
+    geoJsonFeatures: MutableMap<MKOverlayProtocol, GeoJsonFeatureClicked>,
+    geoJsonHitTestPolygons: MutableMap<MKOverlayProtocol, Polygon>,
+    geoJsonHitTestPolylines: MutableMap<MKOverlayProtocol, Polyline>,
 ): Pair<Map<Int, MKGeoJsonRenderedLayer>, List<Marker>> {
     var renderedGeoJsonLayers = currentRendered
     val allExtractedMarkers = mutableListOf<Marker>()
@@ -539,6 +542,9 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             rendered.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
             rendered.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
             rendered.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+            rendered.featureData.keys.forEach(geoJsonFeatures::remove)
+            rendered.hitTestPolygons.keys.forEach(geoJsonHitTestPolygons::remove)
+            rendered.hitTestPolylines.keys.forEach(geoJsonHitTestPolylines::remove)
         }
     }
     renderedGeoJsonLayers = renderedGeoJsonLayers.filterKeys { it in desiredKeys }
@@ -549,6 +555,9 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             prev.polygonStyles.keys.forEach(geoJsonPolygonStyles::remove)
             prev.polylineStyles.keys.forEach(geoJsonPolylineStyles::remove)
             prev.pointStyles.keys.forEach(geoJsonPointStyles::remove)
+            prev.featureData.keys.forEach(geoJsonFeatures::remove)
+            prev.hitTestPolygons.keys.forEach(geoJsonHitTestPolygons::remove)
+            prev.hitTestPolylines.keys.forEach(geoJsonHitTestPolylines::remove)
         }
 
         if (layer.visible == false) {
@@ -561,6 +570,9 @@ internal fun MKMapView.updateRenderedGeoJsonLayers(
             rendered.polygonStyles.forEach { (poly, s) -> geoJsonPolygonStyles[poly] = s }
             rendered.polylineStyles.forEach { (pl, s) -> geoJsonPolylineStyles[pl] = s }
             rendered.pointStyles.forEach { (pt, s) -> geoJsonPointStyles[pt] = s }
+            rendered.featureData.forEach { (k, v) -> geoJsonFeatures[k] = v }
+            rendered.hitTestPolygons.forEach { (k, v) -> geoJsonHitTestPolygons[k] = v }
+            rendered.hitTestPolylines.forEach { (k, v) -> geoJsonHitTestPolylines[k] = v }
 
             rendered.overlays.forEach(this::addOverlay)
             allExtractedMarkers.addAll(rendered.extractedMarkers)
