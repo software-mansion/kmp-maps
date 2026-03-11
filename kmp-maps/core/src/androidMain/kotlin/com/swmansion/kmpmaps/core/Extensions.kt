@@ -24,6 +24,7 @@ import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
+import com.google.maps.android.data.Feature
 import com.google.maps.android.data.geojson.GeoJsonFeature
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 import com.google.maps.android.data.geojson.GeoJsonLineString
@@ -250,6 +251,8 @@ internal fun GoogleMap.renderGeoJsonLayer(
     layerData: GeoJsonLayer,
     clusterSettings: ClusterSettings,
     onMarkerClick: ((Marker) -> Unit)?,
+    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
 ): RenderedGeoJson? {
     val json =
         runCatching { JSONObject(layerData.geoJson) }
@@ -276,18 +279,44 @@ internal fun GoogleMap.renderGeoJsonLayer(
                 feature.pointStyle = hiddenStyle
             }
         }
-    } else {
-        layer.setOnFeatureClickListener { feature ->
-            if (feature.geometry is GeoJsonPoint) {
-                val point = feature.geometry as GeoJsonPoint
-                val marker = point.toMarker(feature as GeoJsonFeature)
-                onMarkerClick?.invoke(marker)
+    }
+
+    layer.setOnFeatureClickListener { feature ->
+        val featureClicked =
+            GeoJsonFeatureClicked(
+                id = feature.id,
+                geometryType = feature.geometry?.geometryType ?: "Unknown",
+                properties = feature.getPropertiesMap(),
+            )
+
+        when (feature.geometry) {
+            is GeoJsonPoint -> {
+                if (!clusterSettings.enabled) {
+                    val point = feature.geometry as GeoJsonPoint
+                    val marker = point.toMarker(feature as GeoJsonFeature)
+                    onMarkerClick?.invoke(marker)
+                }
+            }
+            is GeoJsonPolygon,
+            is GeoJsonMultiPolygon -> {
+                onGeoJsonAreaClick?.invoke(featureClicked)
+            }
+            is GeoJsonLineString,
+            is GeoJsonMultiLineString -> {
+                onGeoJsonLineClick?.invoke(featureClicked)
             }
         }
     }
+
     layer.addLayerToMap()
 
     return RenderedGeoJson(layer, extractedMarkers)
+}
+
+private fun Feature.getPropertiesMap(): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    this.propertyKeys?.forEach { key -> this.getProperty(key)?.let { value -> map[key] = value } }
+    return map
 }
 
 private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {

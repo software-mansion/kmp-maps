@@ -2,6 +2,10 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.ui.graphics.Color
 
+internal const val DEFAULT_STROKE_COLOR = "#000000"
+internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
+internal const val DEFAULT_STROKE_WIDTH = 2f
+
 /**
  * Represents a layer of GeoJSON data to be displayed on the map.
  *
@@ -25,9 +29,11 @@ public data class GeoJsonLayer(
     val pointStyle: PointStyle? = null,
 )
 
-internal const val DEFAULT_STROKE_COLOR = "#000000"
-internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
-internal const val DEFAULT_STROKE_WIDTH = 2f
+public data class GeoJsonFeatureClicked(
+    val id: String?,
+    val geometryType: String,
+    val properties: Map<String, String>,
+)
 
 /**
  * Represents a style of GeoJSON line.

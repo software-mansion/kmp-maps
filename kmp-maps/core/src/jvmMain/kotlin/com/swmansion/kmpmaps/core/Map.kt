@@ -38,6 +38,8 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    onGeoJsonAreaClick: ((GeoJsonFeatureClicked) -> Unit)?,
+    onGeoJsonLineClick: ((GeoJsonFeatureClicked) -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
