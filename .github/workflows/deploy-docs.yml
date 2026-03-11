@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-docs:
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -36,7 +36,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     needs: build-docs
     steps:
       - name: Deploy to GitHub Pages
