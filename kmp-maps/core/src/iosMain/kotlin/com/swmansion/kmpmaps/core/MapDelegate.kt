@@ -231,6 +231,27 @@ internal class MapDelegate(
             val tapLon = longitude
             val tapCoord = Coordinates(tapLat, tapLon)
 
+            for ((overlay, mapPolygon) in geoJsonHitTestPolygons) {
+                if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
+                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
+                    return@useContents
+                }
+            }
+
+            for ((overlay, mapPolyline) in geoJsonHitTestPolylines) {
+                if (
+                    isPointNearPolyline(
+                        tapLat,
+                        tapLon,
+                        properties.iosMapProperties.polylineTapThreshold,
+                        mapPolyline,
+                    )
+                ) {
+                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
+                    return@useContents
+                }
+            }
+
             for (mapCircle in circleStyles.values) {
                 if (isPointInCircle(tapLat, tapLon, mapCircle)) {
                     onCircleClick?.invoke(mapCircle)
@@ -255,27 +276,6 @@ internal class MapDelegate(
                     )
                 ) {
                     onPolylineClick?.invoke(mapPolyline)
-                    return@useContents
-                }
-            }
-
-            for ((overlay, mapPolygon) in geoJsonHitTestPolygons) {
-                if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
-                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
-                    return@useContents
-                }
-            }
-
-            for ((overlay, mapPolyline) in geoJsonHitTestPolylines) {
-                if (
-                    isPointNearPolyline(
-                        tapLat,
-                        tapLon,
-                        properties.iosMapProperties.polylineTapThreshold,
-                        mapPolyline,
-                    )
-                ) {
-                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
                     return@useContents
                 }
             }
