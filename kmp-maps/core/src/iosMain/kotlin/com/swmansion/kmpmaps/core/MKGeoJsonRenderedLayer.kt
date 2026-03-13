@@ -218,25 +218,34 @@ private fun collectAndAdd(
         is MKMultiPolygon -> {
             val protocol = obj as MKOverlayProtocol
             overlays += protocol
-            polygonStyles[protocol] = buildPolygonStyle(defaults, featureProps)
+
+            val style = buildPolygonStyle(defaults, featureProps)
+            polygonStyles[protocol] = style
 
             val type = if (protocol is MKMultiPolygon) "MultiPolygon" else "Polygon"
             featureData[protocol] =
                 GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
+
             hitTestPolygons[protocol] =
-                Polygon(coordinates = extractCoordinates(protocol), lineWidth = 0f)
+                Polygon(
+                    coordinates = extractCoordinates(protocol),
+                    lineWidth = style.strokeWidth.toFloat(),
+                )
         }
         is MKPolyline,
         is MKMultiPolyline -> {
             val protocol = obj as MKOverlayProtocol
             overlays += protocol
-            polylineStyles[protocol] = buildLineStyle(defaults, featureProps)
+
+            val style = buildLineStyle(defaults, featureProps)
+            polylineStyles[protocol] = style
 
             val type = if (protocol is MKMultiPolyline) "MultiLineString" else "LineString"
             featureData[protocol] =
                 GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
+
             hitTestPolylines[protocol] =
-                Polyline(coordinates = extractCoordinates(protocol), width = 0f)
+                Polyline(coordinates = extractCoordinates(protocol), width = style.width.toFloat())
         }
         is MKPointAnnotation -> {
             val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
