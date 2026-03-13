@@ -191,7 +191,7 @@ private fun collectAndAdd(
     when (obj) {
         is MKGeoJSONFeature -> {
             val props = obj.readProperties()
-            val extractedFeatureId = obj.identifier?.toString()
+            val extractedFeatureId = obj.identifier
             val extractedStringProps =
                 props.entries.mapNotNull { (k, v) -> v?.let { k to it.toString() } }.toMap()
             obj.geometry.forEach { g ->
@@ -378,22 +378,6 @@ private fun buildPolygonStyle(
         strokeWidth = strokeWidth,
         fillColor = fillColor,
     )
-}
-
-/**
- * Builds a point style from layer defaults and feature properties.
- *
- * @param defaults Optional layer‑wide defaults.
- * @param props Optional per‑feature properties.
- * @return Resolved [AppleMapsGeoJsonPointStyle].
- */
-private fun buildPointStyle(
-    defaults: GeoJsonLayer?,
-    props: Map<String, Any?>?,
-): AppleMapsGeoJsonPointStyle {
-    val visible = props?.bool("visible") ?: (defaults?.visible ?: true)
-
-    return AppleMapsGeoJsonPointStyle(visible = visible)
 }
 
 /**
