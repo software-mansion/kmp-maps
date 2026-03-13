@@ -232,6 +232,7 @@ public actual fun Map(
                     onMapClick = onMapClick,
                     onMapLongClick = onMapLongClick,
                     onPOIClick = onPOIClick,
+                    onGeoJsonFeatureClick = onGeoJsonFeatureClick,
                     markerMapping = markerMapping,
                     circleMapping = circleMapping,
                     polygonMapping = polygonMapping,

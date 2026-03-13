@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
+import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
 import cocoapods.Google_Maps_iOS_Utils.GMUFeature
 import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
 import cocoapods.Google_Maps_iOS_Utils.GMUGeometryCollection
@@ -9,6 +10,7 @@ import cocoapods.Google_Maps_iOS_Utils.GMULineString
 import cocoapods.Google_Maps_iOS_Utils.GMUPoint
 import cocoapods.Google_Maps_iOS_Utils.GMUPolygon
 import cocoapods.Google_Maps_iOS_Utils.GMUStyle
+import cocoapods.Google_Maps_iOS_Utils.mapOverlays
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Marker
@@ -28,14 +30,14 @@ import platform.UIKit.UIColor
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal class GeoJsonRendererManager {
     private var mapView: UtilsGMSMapView? = null
-    private var renderers: Map<Int, GMUGeometryRenderer> = emptyMap()
+    private var renderers: Map<Int, List<GMUGeometryRenderer>> = emptyMap()
 
     fun attach(view: UtilsGMSMapView) {
         mapView = view
     }
 
     fun clear() {
-        renderers.values.forEach(GMUGeometryRenderer::clear)
+        renderers.values.forEach { list -> list.forEach(GMUGeometryRenderer::clear) }
         renderers = emptyMap()
     }
 
@@ -45,11 +47,11 @@ internal class GeoJsonRendererManager {
 
         val desired = layers.indices.toSet()
         val toRemove = renderers.keys - desired
-        toRemove.forEach { idx -> renderers[idx]?.clear() }
+        toRemove.forEach { idx -> renderers[idx]?.forEach(GMUGeometryRenderer::clear) }
         renderers = renderers.filterKeys(desired::contains)
 
         layers.forEachIndexed { index, layer ->
-            renderers[index]?.clear()
+            renderers[index]?.forEach(GMUGeometryRenderer::clear)
             if (layer.visible != true) {
                 renderers = renderers - index
                 return@forEachIndexed
@@ -155,7 +157,7 @@ internal class GeoJsonRendererManager {
                                 anchor = CGPointMake(0.5, 1.0),
                                 iconUrl = null,
                                 title = null,
-                                hasFill = fillHex != null || layer.polygonStyle?.fillColor != null,
+                                hasFill = true,
                                 hasStroke = true,
                             )
                     }
@@ -180,14 +182,24 @@ internal class GeoJsonRendererManager {
                 featureIdx++
             }
 
-            val renderer =
-                GMUGeometryRenderer(
-                    map = view,
-                    geometries = featuresToRender,
-                    styles = emptyList<GMUStyle>(),
-                )
-            renderer.render()
-            renderers = renderers + (index to renderer)
+            val layerRenderers = mutableListOf<GMUGeometryRenderer>()
+            featuresToRender.forEach { feature ->
+                val renderer =
+                    GMUGeometryRenderer(
+                        map = view,
+                        geometries = listOf(feature),
+                        styles = emptyList<GMUStyle>(),
+                    )
+                renderer.render()
+                renderer.mapOverlays()?.forEach { overlay ->
+                    val gmsOverlay = overlay as? GMSOverlay ?: return@forEach
+                    gmsOverlay.setTappable(true)
+                    gmsOverlay.setUserData(feature)
+                }
+                layerRenderers.add(renderer)
+            }
+
+            renderers = renderers + (index to layerRenderers)
         }
         return allExtractedMarkers
     }

@@ -12,9 +12,14 @@ import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
 import cocoapods.Google_Maps_iOS_Utils.GMSMarker
 import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
 import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
+import cocoapods.Google_Maps_iOS_Utils.GMUFeature
+import cocoapods.Google_Maps_iOS_Utils.GMUGeometryCollection
+import cocoapods.Google_Maps_iOS_Utils.GMULineString
+import cocoapods.Google_Maps_iOS_Utils.GMUPolygon
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonFeatureClicked
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
@@ -24,6 +29,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
+import platform.Foundation.NSDictionary
 import platform.UIKit.UIImage
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
@@ -43,6 +49,7 @@ internal class MapDelegate(
     private var onMapClick: ((Coordinates) -> Unit)?,
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
+    private var onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
     private val markerMapping: MutableMap<GMSMarker, Marker>,
     private val circleMapping: MutableMap<GMSCircle, Circle>,
     private val polygonMapping: MutableMap<GMSPolygon, Polygon>,
@@ -153,6 +160,35 @@ internal class MapDelegate(
      * @param didTapOverlay The overlay that was tapped
      */
     override fun mapView(mapView: GMSMapView, didTapOverlay: GMSOverlay) {
+        val feature = didTapOverlay.userData() as? GMUFeature
+        if (feature != null) {
+            val propertiesDict = feature.properties as? NSDictionary
+            val propertiesMap = propertiesDict?.toStringMap() ?: emptyMap()
+
+            val id = feature.identifier ?: propertiesMap["id"]
+
+            val geometryType =
+                when (val geometry = feature.geometry) {
+                    is GMUPolygon -> "Polygon"
+                    is GMULineString -> "LineString"
+                    is GMUGeometryCollection ->
+                        when (geometry.geometries.firstOrNull()) {
+                            is GMUPolygon -> "MultiPolygon"
+                            is GMULineString -> "MultiLineString"
+                            else -> "GeometryCollection"
+                        }
+                    else -> "Unknown"
+                }
+
+            val featureClicked =
+                GeoJsonFeatureClicked(
+                    id = id,
+                    geometryType = geometryType,
+                    properties = propertiesMap,
+                )
+            onGeoJsonFeatureClick?.invoke(featureClicked)
+            return
+        }
         when (didTapOverlay) {
             is GMSCircle -> circleMapping[didTapOverlay]?.let { onCircleClick?.invoke(it) }
             is GMSPolygon -> polygonMapping[didTapOverlay]?.let { onPolygonClick?.invoke(it) }
