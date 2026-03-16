@@ -193,7 +193,7 @@ internal class GeoJsonRendererManager {
                 renderer.render()
                 renderer.mapOverlays()?.forEach { overlay ->
                     val gmsOverlay = overlay as? GMSOverlay ?: return@forEach
-                    gmsOverlay.setTappable(true)
+                    gmsOverlay.setTappable(layer.isClickable == true)
                     gmsOverlay.setUserData(feature)
                 }
                 layerRenderers.add(renderer)
