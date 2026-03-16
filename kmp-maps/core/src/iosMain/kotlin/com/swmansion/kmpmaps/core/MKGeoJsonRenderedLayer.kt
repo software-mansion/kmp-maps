@@ -1,10 +1,15 @@
 package com.swmansion.kmpmaps.core
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.useContents
+import platform.CoreLocation.CLLocationCoordinate2D
 import platform.Foundation.NSArray
 import platform.Foundation.NSDictionary
 import platform.Foundation.NSJSONSerialization
+import platform.Foundation.NSMakeRange
 import platform.Foundation.NSNumber
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
@@ -51,6 +56,9 @@ public class MKGeoJsonRenderedLayer(
     internal val polylineStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonLineStyle> = emptyMap(),
     internal val polygonStyles: Map<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle> = emptyMap(),
     internal val pointStyles: Map<MKPointAnnotation, AppleMapsGeoJsonPointStyle> = emptyMap(),
+    internal val featureData: Map<MKOverlayProtocol, GeoJsonFeatureClicked> = emptyMap(),
+    internal val hitTestPolygons: Map<MKOverlayProtocol, Polygon> = emptyMap(),
+    internal val hitTestPolylines: Map<MKOverlayProtocol, Polyline> = emptyMap(),
 ) {
     @OptIn(ExperimentalForeignApi::class)
     public fun clear(from: MKMapView) {
@@ -81,6 +89,10 @@ public fun MKMapView.renderGeoJson(
     val polygonStyles = mutableMapOf<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>()
     val pointStyles = mutableMapOf<MKPointAnnotation, AppleMapsGeoJsonPointStyle>()
 
+    val featureData = mutableMapOf<MKOverlayProtocol, GeoJsonFeatureClicked>()
+    val hitTestPolygons = mutableMapOf<MKOverlayProtocol, Polygon>()
+    val hitTestPolylines = mutableMapOf<MKOverlayProtocol, Polyline>()
+
     objects.forEach { obj ->
         collectAndAdd(
             obj = obj,
@@ -92,6 +104,11 @@ public fun MKMapView.renderGeoJson(
             pointStyles = pointStyles,
             defaults = layer,
             featureProps = null,
+            featureData = featureData,
+            hitTestPolygons = hitTestPolygons,
+            hitTestPolylines = hitTestPolylines,
+            featureId = null,
+            stringProps = null,
             clusterSettings = clusterSettings,
         )
     }
@@ -102,7 +119,42 @@ public fun MKMapView.renderGeoJson(
         polylineStyles = polylineStyles,
         polygonStyles = polygonStyles,
         pointStyles = pointStyles,
+        featureData = featureData,
+        hitTestPolygons = hitTestPolygons,
+        hitTestPolylines = hitTestPolylines,
     )
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun extractCoordinates(overlay: MKOverlayProtocol): List<Coordinates> {
+    val list = mutableListOf<Coordinates>()
+    when (overlay) {
+        is MKMultiPoint -> {
+            memScoped {
+                val count = overlay.pointCount
+                if (count > 0uL) {
+                    val coordsPtr = allocArray<CLLocationCoordinate2D>(count.toInt())
+                    overlay.getCoordinates(coordsPtr, NSMakeRange(0uL, count))
+
+                    for (i in 0 until count.toInt()) {
+                        val coord = coordsPtr[i]
+                        list.add(Coordinates(coord.latitude, coord.longitude))
+                    }
+                }
+            }
+        }
+        is MKMultiPolygon -> {
+            overlay.polygons.forEach { poly ->
+                if (poly is MKPolygon) list.addAll(extractCoordinates(poly))
+            }
+        }
+        is MKMultiPolyline -> {
+            overlay.polylines.forEach { line ->
+                if (line is MKPolyline) list.addAll(extractCoordinates(line))
+            }
+        }
+    }
+    return list
 }
 
 /**
@@ -129,11 +181,19 @@ private fun collectAndAdd(
     pointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
     defaults: GeoJsonLayer?,
     featureProps: Map<String, Any?>?,
+    featureData: MutableMap<MKOverlayProtocol, GeoJsonFeatureClicked>,
+    hitTestPolygons: MutableMap<MKOverlayProtocol, Polygon>,
+    hitTestPolylines: MutableMap<MKOverlayProtocol, Polyline>,
+    featureId: String?,
+    stringProps: Map<String, String>?,
     clusterSettings: ClusterSettings,
 ) {
     when (obj) {
         is MKGeoJSONFeature -> {
             val props = obj.readProperties()
+            val extractedFeatureId = obj.identifier
+            val extractedStringProps =
+                props.entries.mapNotNull { (k, v) -> v?.let { k to it.toString() } }.toMap()
             obj.geometry.forEach { g ->
                 collectAndAdd(
                     g,
@@ -145,19 +205,54 @@ private fun collectAndAdd(
                     pointStyles,
                     defaults,
                     props,
+                    featureData,
+                    hitTestPolygons,
+                    hitTestPolylines,
+                    extractedFeatureId,
+                    extractedStringProps,
                     clusterSettings,
                 )
             }
         }
         is MKPolygon,
         is MKMultiPolygon -> {
-            overlays += obj
-            polygonStyles[obj] = buildPolygonStyle(defaults, featureProps)
+            val protocol = obj as MKOverlayProtocol
+            overlays += protocol
+
+            val style = buildPolygonStyle(defaults, featureProps)
+            polygonStyles[protocol] = style
+
+            val type = if (protocol is MKMultiPolygon) "MultiPolygon" else "Polygon"
+            featureData[protocol] =
+                GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
+
+            if (defaults?.isClickable == true) {
+                hitTestPolygons[protocol] =
+                    Polygon(
+                        coordinates = extractCoordinates(protocol),
+                        lineWidth = style.strokeWidth.toFloat(),
+                    )
+            }
         }
         is MKPolyline,
         is MKMultiPolyline -> {
-            overlays += obj
-            polylineStyles[obj] = buildLineStyle(defaults, featureProps)
+            val protocol = obj as MKOverlayProtocol
+            overlays += protocol
+
+            val style = buildLineStyle(defaults, featureProps)
+            polylineStyles[protocol] = style
+
+            val type = if (protocol is MKMultiPolyline) "MultiLineString" else "LineString"
+            featureData[protocol] =
+                GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
+
+            if (defaults?.isClickable == true) {
+                hitTestPolylines[protocol] =
+                    Polyline(
+                        coordinates = extractCoordinates(protocol),
+                        width = style.width.toFloat(),
+                    )
+            }
         }
         is MKPointAnnotation -> {
             val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
@@ -180,6 +275,11 @@ private fun collectAndAdd(
                     pointStyles,
                     defaults,
                     featureProps,
+                    featureData,
+                    hitTestPolygons,
+                    hitTestPolylines,
+                    featureId,
+                    stringProps,
                     clusterSettings,
                 )
             }
@@ -285,22 +385,6 @@ private fun buildPolygonStyle(
         strokeWidth = strokeWidth,
         fillColor = fillColor,
     )
-}
-
-/**
- * Builds a point style from layer defaults and feature properties.
- *
- * @param defaults Optional layer‑wide defaults.
- * @param props Optional per‑feature properties.
- * @return Resolved [AppleMapsGeoJsonPointStyle].
- */
-private fun buildPointStyle(
-    defaults: GeoJsonLayer?,
-    props: Map<String, Any?>?,
-): AppleMapsGeoJsonPointStyle {
-    val visible = props?.bool("visible") ?: (defaults?.visible ?: true)
-
-    return AppleMapsGeoJsonPointStyle(visible = visible)
 }
 
 /**

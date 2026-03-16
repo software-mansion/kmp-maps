@@ -54,9 +54,13 @@ internal class MapDelegate(
     private var onMapLongClick: ((Coordinates) -> Unit)?,
     private var onPOIClick: ((Coordinates) -> Unit)?,
     private var onCameraMove: ((CameraPosition) -> Unit)?,
+    private var onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
     private val geoJsonPolygonStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonPolygonStyle>,
     private val geoJsonPolylineStyles: MutableMap<MKOverlayProtocol, AppleMapsGeoJsonLineStyle>,
     private val geoJsonPointStyles: MutableMap<MKPointAnnotation, AppleMapsGeoJsonPointStyle>,
+    private val geoJsonFeatures: Map<MKOverlayProtocol, GeoJsonFeatureClicked>,
+    private val geoJsonHitTestPolygons: Map<MKOverlayProtocol, Polygon>,
+    private val geoJsonHitTestPolylines: Map<MKOverlayProtocol, Polyline>,
     private val customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     private val clusterSettings: ClusterSettings,
 ) : NSObject(), MKMapViewDelegateProtocol {
@@ -226,6 +230,27 @@ internal class MapDelegate(
             val tapLat = latitude
             val tapLon = longitude
             val tapCoord = Coordinates(tapLat, tapLon)
+
+            for ((overlay, mapPolygon) in geoJsonHitTestPolygons) {
+                if (isPointInPolygon(tapLat, tapLon, mapPolygon)) {
+                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
+                    return@useContents
+                }
+            }
+
+            for ((overlay, mapPolyline) in geoJsonHitTestPolylines) {
+                if (
+                    isPointNearPolyline(
+                        tapLat,
+                        tapLon,
+                        properties.iosMapProperties.polylineTapThreshold,
+                        mapPolyline,
+                    )
+                ) {
+                    geoJsonFeatures[overlay]?.let { onGeoJsonFeatureClick?.invoke(it) }
+                    return@useContents
+                }
+            }
 
             for (mapCircle in circleStyles.values) {
                 if (isPointInCircle(tapLat, tapLon, mapCircle)) {
