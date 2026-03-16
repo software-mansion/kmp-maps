@@ -248,7 +248,10 @@ private fun collectAndAdd(
 
             if (defaults?.isClickable == true) {
                 hitTestPolylines[protocol] =
-                    Polyline(coordinates = extractCoordinates(protocol), width = style.width.toFloat())
+                    Polyline(
+                        coordinates = extractCoordinates(protocol),
+                        width = style.width.toFloat(),
+                    )
             }
         }
         is MKPointAnnotation -> {
