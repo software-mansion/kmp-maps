@@ -2,6 +2,11 @@ package com.swmansion.kmpmaps.core
 
 import androidx.compose.ui.graphics.Color
 
+internal const val DEFAULT_STROKE_COLOR = "#000000"
+internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
+internal const val DEFAULT_STROKE_WIDTH = 2f
+internal const val DEFAULT_LAYER_ID = "__kmp_layer_index"
+
 /**
  * Represents a layer of GeoJSON data to be displayed on the map.
  *
@@ -25,9 +30,11 @@ public data class GeoJsonLayer(
     val pointStyle: PointStyle? = null,
 )
 
-internal const val DEFAULT_STROKE_COLOR = "#000000"
-internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
-internal const val DEFAULT_STROKE_WIDTH = 2f
+public data class GeoJsonFeatureClicked(
+    val id: String?,
+    val geometryType: String,
+    val properties: Map<String, String>,
+)
 
 /**
  * Represents a style of GeoJSON line.
@@ -93,4 +100,14 @@ public sealed interface StrokePatternItem {
     public data class Dash(val lengthPx: Float) : StrokePatternItem
 
     public data class Gap(val lengthPx: Float) : StrokePatternItem
+}
+
+internal enum class GeoJsonType(val value: String) {
+    FEATURE_COLLECTION("FeatureCollection"),
+    FEATURE("Feature"),
+    GEOMETRY("Geometry");
+
+    companion object {
+        fun fromString(type: String?): GeoJsonType = entries.find { it.value == type } ?: GEOMETRY
+    }
 }
