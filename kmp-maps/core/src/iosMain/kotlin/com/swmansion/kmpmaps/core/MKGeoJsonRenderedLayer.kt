@@ -226,11 +226,13 @@ private fun collectAndAdd(
             featureData[protocol] =
                 GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
 
-            hitTestPolygons[protocol] =
-                Polygon(
-                    coordinates = extractCoordinates(protocol),
-                    lineWidth = style.strokeWidth.toFloat(),
-                )
+            if (defaults?.isClickable == true) {
+                hitTestPolygons[protocol] =
+                    Polygon(
+                        coordinates = extractCoordinates(protocol),
+                        lineWidth = style.strokeWidth.toFloat(),
+                    )
+            }
         }
         is MKPolyline,
         is MKMultiPolyline -> {
@@ -244,8 +246,10 @@ private fun collectAndAdd(
             featureData[protocol] =
                 GeoJsonFeatureClicked(featureId, type, stringProps ?: emptyMap())
 
-            hitTestPolylines[protocol] =
-                Polyline(coordinates = extractCoordinates(protocol), width = style.width.toFloat())
+            if (defaults?.isClickable == true) {
+                hitTestPolylines[protocol] =
+                    Polyline(coordinates = extractCoordinates(protocol), width = style.width.toFloat())
+            }
         }
         is MKPointAnnotation -> {
             val coordinates = obj.coordinate.useContents { Coordinates(latitude, longitude) }
