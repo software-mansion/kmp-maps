@@ -45,6 +45,7 @@ import platform.Foundation.NSNumber
 import platform.Foundation.NSString
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.dataUsingEncoding
+import platform.Foundation.enumerateKeysAndObjectsUsingBlock
 import platform.UIKit.UIColor
 import platform.UIKit.UIUserInterfaceStyle
 
@@ -509,4 +510,15 @@ internal fun disableClusteringAndUpdateMarkers(
     manager?.clearItems()
     mapView.setDelegate(mapDelegate)
     updateGoogleMapsMarkers(mapView, mapDelegate, markers, markerMapping, customMarkerContent)
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun NSDictionary?.toStringMap(): Map<String, String> {
+    val out = mutableMapOf<String, String>()
+    this?.enumerateKeysAndObjectsUsingBlock { k, v, _ ->
+        val key = k?.toString() ?: return@enumerateKeysAndObjectsUsingBlock
+        val value = v?.toString() ?: ""
+        out[key] = value
+    }
+    return out
 }
