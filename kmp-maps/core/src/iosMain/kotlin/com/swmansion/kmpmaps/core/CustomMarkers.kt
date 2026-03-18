@@ -8,10 +8,15 @@ import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
 import platform.UIKit.UIImage
 
+/** Custom [MKAnnotationView] that displays a [UIImage]. */
 @OptIn(ExperimentalForeignApi::class)
 internal class CustomMarkers(annotation: MKAnnotationProtocol, reuseIdentifier: String?) :
     MKAnnotationView(annotation = annotation, reuseIdentifier = reuseIdentifier) {
 
+    /**
+     * Sets [uiImage] as the annotation icon and adjusts [centerOffset] so the pin base aligns with
+     * the coordinate.
+     */
     @OptIn(ExperimentalComposeUiApi::class)
     fun setMarkerImage(uiImage: UIImage?) {
         this.image = uiImage

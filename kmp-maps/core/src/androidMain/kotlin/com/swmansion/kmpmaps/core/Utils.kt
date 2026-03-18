@@ -14,10 +14,10 @@ import kotlin.math.sin
  * taken so that the entire bounds are visible. Latitude uses the Mercator (non-linear) projection,
  * longitude is linear.
  *
- * @param viewportWidthPx Viewport width in pixels
- * @param viewportHeightPx Viewport height in pixels
- * @param bounds Geographic bounds to fit
- * @return Zoom level in [0, 21] that fits the bounds within the viewport
+ * @param viewportWidthPx Viewport width in pixels.
+ * @param viewportHeightPx Viewport height in pixels.
+ * @param bounds Geographic bounds to fit.
+ * @return Zoom level in [0, 21] that fits the bounds within the viewport.
  */
 internal fun calculateZoomFromViewport(
     viewportWidthPx: Int,
@@ -38,8 +38,8 @@ internal fun calculateZoomFromViewport(
  * Converts a latitude in decimal degrees to its Mercator projection radian value, clamped to the
  * valid Mercator range [-π/2, π/2].
  *
- * @param lat Latitude in decimal degrees
- * @return Mercator radian value
+ * @param lat Latitude in decimal degrees.
+ * @return Mercator radian value.
  */
 private fun latRad(lat: Double): Double {
     val s = sin(lat * PI / 180.0)

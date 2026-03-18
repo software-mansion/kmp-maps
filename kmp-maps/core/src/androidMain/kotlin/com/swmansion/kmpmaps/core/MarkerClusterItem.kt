@@ -3,6 +3,7 @@ package com.swmansion.kmpmaps.core
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
+/** @suppress */
 internal data class MarkerClusterItem(val marker: Marker) : ClusterItem {
     override fun getPosition(): LatLng =
         LatLng(marker.coordinates.latitude, marker.coordinates.longitude)

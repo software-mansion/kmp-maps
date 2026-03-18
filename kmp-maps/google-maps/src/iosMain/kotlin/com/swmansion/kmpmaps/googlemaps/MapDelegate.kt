@@ -58,8 +58,8 @@ internal class MapDelegate(
     /**
      * Handles camera movement events when the map region changes.
      *
-     * @param mapView The map view whose region changed
-     * @param didChangeCameraPosition The new camera position
+     * @param mapView The map view whose region changed.
+     * @param didChangeCameraPosition The new camera position.
      */
     override fun mapView(mapView: GMSMapView, didChangeCameraPosition: GMSCameraPosition) {
         onCameraMove?.let {
@@ -79,9 +79,9 @@ internal class MapDelegate(
     /**
      * Handles marker selection events when user taps on annotations.
      *
-     * @param mapView The map view containing the annotation
-     * @param didTapMarker The annotation that was selected
-     * @return Whether the event was handled
+     * @param mapView The map view containing the annotation.
+     * @param didTapMarker The annotation that was selected.
+     * @return Whether the event was handled.
      */
     override fun mapView(mapView: GMSMapView, didTapMarker: GMSMarker): Boolean {
         return onMarkerClick?.let {
@@ -99,8 +99,8 @@ internal class MapDelegate(
     /**
      * Handles tap gestures on the map to detect clicks on overlays and map.
      *
-     * @param mapView The map view containing the annotation
-     * @param didTapAtCoordinate The coordinate that was tapped
+     * @param mapView The map view containing the annotation.
+     * @param didTapAtCoordinate The coordinate that was tapped.
      */
     @ObjCSignatureOverride
     override fun mapView(mapView: GMSMapView, didTapAtCoordinate: CValue<CLLocationCoordinate2D>) {
@@ -115,8 +115,8 @@ internal class MapDelegate(
     /**
      * Handles long press gestures on the map.
      *
-     * @param mapView The map view containing the annotation
-     * @param didLongPressAtCoordinate The coordinate that was long pressed
+     * @param mapView The map view containing the annotation.
+     * @param didLongPressAtCoordinate The coordinate that was long pressed.
      */
     @ObjCSignatureOverride
     override fun mapView(
@@ -134,10 +134,10 @@ internal class MapDelegate(
     /**
      * Handles POI tap events on the map.
      *
-     * @param mapView The map view containing the annotation
-     * @param didTapPOIWithPlaceID The place ID of the POI that was tapped
-     * @param name The name of the POI
-     * @param location The location of the POI
+     * @param mapView The map view containing the annotation.
+     * @param didTapPOIWithPlaceID The place ID of the POI that was tapped.
+     * @param name The name of the POI.
+     * @param location The location of the POI.
      */
     override fun mapView(
         mapView: GMSMapView,
@@ -156,8 +156,8 @@ internal class MapDelegate(
     /**
      * Handles overlay tap events on the map.
      *
-     * @param mapView The map view containing the annotation
-     * @param didTapOverlay The overlay that was tapped
+     * @param mapView The map view containing the annotation.
+     * @param didTapOverlay The overlay that was tapped.
      */
     override fun mapView(mapView: GMSMapView, didTapOverlay: GMSOverlay) {
         val feature = didTapOverlay.userData() as? GMUFeature
@@ -196,6 +196,10 @@ internal class MapDelegate(
         }
     }
 
+    /**
+     * Stores [image] in the cache, updates the matching [GMSMarker] icon, and re-clusters if the id
+     * belongs to a cluster.
+     */
     fun onBitmapReady(id: String, image: UIImage) {
         dispatch_async(dispatch_get_main_queue()) {
             imageCache[id] = image
@@ -213,8 +217,10 @@ internal class MapDelegate(
         }
     }
 
+    /** Returns the cached [UIImage] for [id], or `null` if not yet loaded. */
     fun getCachedImage(id: String): UIImage? = imageCache[id]
 
+    /** Removes all cached images whose ids are not in [activeIds]. */
     fun pruneCache(activeIds: Set<String>) {
         val keysToRemove = imageCache.keys.filter { it !in activeIds }
         keysToRemove.forEach { imageCache.remove(it) }
