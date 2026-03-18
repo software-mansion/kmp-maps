@@ -12,14 +12,15 @@ internal const val DEFAULT_LAYER_ID = "__kmp_layer_index"
 /**
  * Represents a layer of GeoJSON data to be displayed on the map.
  *
- * @property geoJson Raw GeoJSON document (UTF-8). Supports Geometry, Feature, and FeatureCollection
- * @property visible Whether the layer is visible. Default: true
- * @property zIndex Drawing order relative to other layers (higher draws on top)
- * @property isClickable If true, features from this layer can emit click events when supported
- * @property isGeodesic If true, lines/polygon edges are rendered as geodesics when supported
- * @property lineStringStyle Style for LineString features
- * @property polygonStyle Style for Polygon features
- * @property pointStyle Style for Point features
+ * @property geoJson Raw GeoJSON document (UTF-8). Supports Geometry, Feature, and
+ *   FeatureCollection.
+ * @property visible Whether the layer is visible. Default: true.
+ * @property zIndex Drawing order relative to other layers (higher draws on top).
+ * @property isClickable If true, features from this layer can emit click events when supported.
+ * @property isGeodesic If true, lines/polygon edges are rendered as geodesics when supported.
+ * @property lineStringStyle Style for LineString features.
+ * @property polygonStyle Style for Polygon features.
+ * @property pointStyle Style for Point features.
  */
 public data class GeoJsonLayer(
     val geoJson: String,
@@ -42,10 +43,10 @@ public data class GeoJsonFeatureClicked(
 /**
  * Represents a style of GeoJSON line.
  *
- * @property lineWidth Stroke width for LineString
- * @property lineColor Stroke color for LineString features
+ * @property lineWidth Stroke width for LineString.
+ * @property lineColor Stroke color for LineString features.
  * @property pattern Dash pattern for strokes. See StrokePatternItem for available pattern items
- *   (Android only)
+ *   (Android only).
  */
 public data class LineStringStyle(
     val lineWidth: Float? = null,
@@ -56,9 +57,9 @@ public data class LineStringStyle(
 /**
  * Represents a style of GeoJSON polygon.
  *
- * @property fillColor Fill color for polygon interiors
- * @property strokeColor Stroke color for polygon outlines
- * @property strokeWidth Stroke width for polygon outlines
+ * @property fillColor Fill color for polygon interiors.
+ * @property strokeColor Stroke color for polygon outlines.
+ * @property strokeWidth Stroke width for polygon outlines.
  */
 public data class PolygonStyle(
     val fillColor: Color? = null,
@@ -69,16 +70,16 @@ public data class PolygonStyle(
 /**
  * Represents a style of GeoJSON point.
  *
- * @property alpha Opacity for point symbols/markers in the range [0f, 1f]
- * @property isDraggable Whether point markers are draggable (when supported)
- * @property isFlat Whether the marker icon is flat against the map surface (when supported)
- * @property pointTitle Title used for marker info windows where supported
- * @property snippet Subtitle/description used for marker info windows
- * @property rotation Marker/icon rotation in degrees
- * @property infoWindowAnchorU Horizontal info window anchor relative to the marker (0..1)
- * @property infoWindowAnchorV Vertical info window anchor relative to the marker (0..1)
- * @property anchorU Horizontal marker icon anchor relative to the icon (0..1)
- * @property anchorV Vertical marker icon anchor relative to the icon (0..1)
+ * @property alpha Opacity for point symbols/markers in the range [0f, 1f].
+ * @property isDraggable Whether point markers are draggable (when supported).
+ * @property isFlat Whether the marker icon is flat against the map surface (when supported).
+ * @property pointTitle Title used for marker info windows where supported.
+ * @property snippet Subtitle/description used for marker info windows.
+ * @property rotation Marker/icon rotation in degrees.
+ * @property infoWindowAnchorU Horizontal info window anchor relative to the marker (0..1).
+ * @property infoWindowAnchorV Vertical info window anchor relative to the marker (0..1).
+ * @property anchorU Horizontal marker icon anchor relative to the icon (0..1).
+ * @property anchorV Vertical marker icon anchor relative to the icon (0..1).
  */
 public data class PointStyle(
     val alpha: Float = 1f,
@@ -113,6 +114,7 @@ public enum class GeoJsonType(public val value: String) {
     GEOMETRY("Geometry");
 
     public companion object {
-        public fun fromString(type: String?): GeoJsonType = entries.find { it.value == type } ?: GEOMETRY
+        public fun fromString(type: String?): GeoJsonType =
+            entries.find { it.value == type } ?: GEOMETRY
     }
 }

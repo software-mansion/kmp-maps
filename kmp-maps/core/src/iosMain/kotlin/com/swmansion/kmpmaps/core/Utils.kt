@@ -13,8 +13,8 @@ private const val EARTH_RADIUS = 6371000.0
 /**
  * Calculates latitude delta for a given zoom level.
  *
- * @param zoom The zoom level
- * @return Latitude delta in degrees
+ * @param zoom The zoom level.
+ * @return Latitude delta in degrees.
  */
 internal fun calculateLatitudeDelta(zoom: Float): Double {
     return 360.0 / pow(2.0, zoom.toDouble())
@@ -23,9 +23,9 @@ internal fun calculateLatitudeDelta(zoom: Float): Double {
 /**
  * Calculates longitude delta for a given zoom level and latitude.
  *
- * @param zoom The zoom level
- * @param latitude The latitude coordinate
- * @return Longitude delta in degrees
+ * @param zoom The zoom level.
+ * @param latitude The latitude coordinate.
+ * @return Longitude delta in degrees.
  */
 internal fun calculateLongitudeDelta(zoom: Float, latitude: Double): Double {
     val latRad = latitude / 180.0 * PI
@@ -36,10 +36,10 @@ internal fun calculateLongitudeDelta(zoom: Float, latitude: Double): Double {
 /**
  * Checks if a point is inside a polygon using ray casting algorithm.
  *
- * @param pointLat The latitude of the point to test
- * @param pointLon The longitude of the point to test
- * @param polygon The polygon to test against
- * @return true if the point is inside the polygon, false otherwise
+ * @param pointLat The latitude of the point to test.
+ * @param pointLon The longitude of the point to test.
+ * @param polygon The polygon to test against.
+ * @return true if the point is inside the polygon, false otherwise.
  */
 internal fun isPointInPolygon(pointLat: Double, pointLon: Double, polygon: Polygon): Boolean {
     val coordinates = polygon.coordinates
@@ -70,10 +70,10 @@ internal fun isPointInPolygon(pointLat: Double, pointLon: Double, polygon: Polyg
 /**
  * Checks if a point is inside a circle using Haversine distance calculation.
  *
- * @param pointLat The latitude of the point to test
- * @param pointLon The longitude of the point to test
- * @param circle The circle to test against
- * @return true if the point is inside the circle, false otherwise
+ * @param pointLat The latitude of the point to test.
+ * @param pointLon The longitude of the point to test.
+ * @param circle The circle to test against.
+ * @return true if the point is inside the circle, false otherwise.
  */
 internal fun isPointInCircle(pointLat: Double, pointLon: Double, circle: Circle): Boolean {
     val centerLat = circle.center.latitude
@@ -97,11 +97,11 @@ internal fun isPointInCircle(pointLat: Double, pointLon: Double, circle: Circle)
 /**
  * Checks if a point is near a polyline within a given threshold.
  *
- * @param pointLat The latitude of the point to test
- * @param pointLon The longitude of the point to test
- * @param threshold The distance threshold in meters (if null, uses polyline width * 2)
- * @param polyline The polyline to test against
- * @return true if the point is near the polyline, false otherwise
+ * @param pointLat The latitude of the point to test.
+ * @param pointLon The longitude of the point to test.
+ * @param threshold The distance threshold in meters (if null, uses polyline width * 2).
+ * @param polyline The polyline to test against.
+ * @return true if the point is near the polyline, false otherwise.
  */
 internal fun isPointNearPolyline(
     pointLat: Double,
@@ -137,13 +137,13 @@ internal fun isPointNearPolyline(
 /**
  * Calculates the distance from a point to a line segment.
  *
- * @param pointLat The latitude of the point
- * @param pointLon The longitude of the point
- * @param lineStartLat The latitude of the line start
- * @param lineStartLon The longitude of the line start
- * @param lineEndLat The latitude of the line end
- * @param lineEndLon The longitude of the line end
- * @return Distance in meters
+ * @param pointLat The latitude of the point.
+ * @param pointLon The longitude of the point.
+ * @param lineStartLat The latitude of the line start.
+ * @param lineStartLon The longitude of the line start.
+ * @param lineEndLat The latitude of the line end.
+ * @param lineEndLon The longitude of the line end.
+ * @return Distance in meters.
  */
 private fun distanceToLineSegment(
     pointLat: Double,
@@ -187,11 +187,11 @@ private fun distanceToLineSegment(
 /**
  * Calculates the distance between two geographical points using Haversine formula.
  *
- * @param lat1 The latitude of the first point
- * @param lon1 The longitude of the first point
- * @param lat2 The latitude of the second point
- * @param lon2 The longitude of the second point
- * @return Distance in meters
+ * @param lat1 The latitude of the first point.
+ * @param lon1 The longitude of the first point.
+ * @param lat2 The latitude of the second point.
+ * @param lon2 The longitude of the second point.
+ * @return Distance in meters.
  */
 private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
     val lat1Rad = lat1 * PI / 180.0
@@ -210,8 +210,8 @@ private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Do
 /**
  * Generates a unique identifier for a cluster of markers.
  *
- * @param markers The list of clustered markers
- * @return A unique identifier for the cluster
+ * @param markers The list of clustered markers.
+ * @return A unique identifier for the cluster.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun generateClusterId(markers: List<Marker>): String {

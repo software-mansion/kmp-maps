@@ -83,30 +83,31 @@ import androidx.compose.ui.Modifier
  * <string>Allow this app to use your location</string>
  * ```
  *
- * @param modifier The modifier to be applied to the map component
+ * @param modifier The modifier to be applied to the map component.
  * @param cameraPosition The initial camera position of the map. If null, the map will use default
- *   position
- * @param properties Configuration properties for the map behavior and appearance
- * @param uiSettings UI settings that control interactive elements and gestures
- * @param clusterSettings Configuration settings for marker clustering behavior
- * @param markers List of markers to display on the map
- * @param circles List of circles to display on the map
- * @param polygons List of polygons to display on the map
- * @param polylines List of polylines to display on the map
- * @param onCameraMove Callback invoked when the map camera position changes due to user interaction
- * @param onMarkerClick Callback invoked when a marker is clicked
- * @param onMarkerDragEnd Callback invoked when dragging a marker completes (drag operation ends)
- * @param onCircleClick Callback invoked when a circle is clicked
- * @param onPolygonClick Callback invoked when a polygon is clicked
- * @param onPolylineClick Callback invoked when a polyline is clicked
- * @param onMapClick Callback invoked when the user clicks on the map (not on POI or markers)
- * @param onMapLongClick Callback invoked when the user long-clicks on the map
- * @param onPOIClick Callback invoked when the user clicks on a Point of Interest
- * @param onMapLoaded Callback invoked when the map has finished loading
- * @param geoJsonLayers List of GeoJSON layers to display on the map
- * @param onGeoJsonFeatureClick Callback invoked when a GeoJSON object is clicked (excluding Point)
- * @param customMarkerContent Map of content IDs to Composable functions for custom marker content
- * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string
+ *   position.
+ * @param properties Configuration properties for the map behavior and appearance.
+ * @param uiSettings UI settings that control interactive elements and gestures.
+ * @param clusterSettings Configuration settings for marker clustering behavior.
+ * @param markers List of markers to display on the map.
+ * @param circles List of circles to display on the map.
+ * @param polygons List of polygons to display on the map.
+ * @param polylines List of polylines to display on the map.
+ * @param onCameraMove Callback invoked when the map camera position changes due to user
+ *   interaction.
+ * @param onMarkerClick Callback invoked when a marker is clicked.
+ * @param onMarkerDragEnd Callback invoked when dragging a marker completes (drag operation ends).
+ * @param onCircleClick Callback invoked when a circle is clicked.
+ * @param onPolygonClick Callback invoked when a polygon is clicked.
+ * @param onPolylineClick Callback invoked when a polyline is clicked.
+ * @param onMapClick Callback invoked when the user clicks on the map (not on POI or markers).
+ * @param onMapLongClick Callback invoked when the user long-clicks on the map.
+ * @param onPOIClick Callback invoked when the user clicks on a Point of Interest.
+ * @param onMapLoaded Callback invoked when the map has finished loading.
+ * @param geoJsonLayers List of GeoJSON layers to display on the map.
+ * @param onGeoJsonFeatureClick Callback invoked when a GeoJSON object is clicked (excluding Point).
+ * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
  */
 @Composable
 public expect fun Map(

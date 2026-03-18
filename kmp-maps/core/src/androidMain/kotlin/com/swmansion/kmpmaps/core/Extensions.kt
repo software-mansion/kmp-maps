@@ -40,7 +40,7 @@ import org.json.JSONObject
 /**
  * Converts [MapBounds] to Google Maps [LatLngBounds].
  *
- * @return [LatLngBounds] with the original southwest and northeast corners intact
+ * @return [LatLngBounds] with the original southwest and northeast corners intact.
  */
 internal fun MapBounds.toLatLngBounds() =
     LatLngBounds(
@@ -54,9 +54,9 @@ internal fun MapBounds.toLatLngBounds() =
  * When [CameraPosition.bounds] is set and viewport dimensions are provided, computes the zoom level
  * to fit the bounds using the Mercator projection formula. Otherwise, uses [CameraPosition.zoom].
  *
- * @param viewportWidthPx Map viewport width in pixels (used to compute zoom for bounds)
- * @param viewportHeightPx Map viewport height in pixels (used to compute zoom for bounds)
- * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt
+ * @param viewportWidthPx Map viewport width in pixels (used to compute zoom for bounds).
+ * @param viewportHeightPx Map viewport height in pixels (used to compute zoom for bounds).
+ * @return [GoogleCameraPosition] with coordinates, zoom, bearing, and tilt.
  */
 internal fun CameraPosition.toGoogleMapsCameraPosition(
     viewportWidthPx: Int = 0,
@@ -94,8 +94,8 @@ internal fun CameraPosition.toCameraUpdate(padding: Int = 0) =
 /**
  * Converts Google Maps CameraPosition back to CameraPosition.
  *
- * @param latLngBounds Optional visible region bounds to include in the result
- * @return CameraPosition with coordinates, zoom, bearing, tilt, and optional bounds
+ * @param latLngBounds Optional visible region bounds to include in the result.
+ * @return CameraPosition with coordinates, zoom, bearing, tilt, and optional bounds.
  */
 internal fun GoogleCameraPosition.toCameraPosition(latLngBounds: LatLngBounds? = null) =
     CameraPosition(
@@ -114,21 +114,21 @@ internal fun GoogleCameraPosition.toCameraPosition(latLngBounds: LatLngBounds? =
 /**
  * Converts Coordinates to Google Maps LatLng.
  *
- * @return LatLng with latitude and longitude
+ * @return LatLng with latitude and longitude.
  */
 internal fun Coordinates.toGoogleMapsLatLng() = LatLng(latitude, longitude)
 
 /**
  * Converts Google Maps LatLng back to [Coordinates].
  *
- * @return Coordinates with latitude and longitude
+ * @return Coordinates with latitude and longitude.
  */
 internal fun LatLng.toCoordinates() = Coordinates(latitude, longitude)
 
 /**
  * Converts MapTheme to native ComposeMapColorScheme.
  *
- * @return ComposeMapColorScheme corresponding to the enum value
+ * @return ComposeMapColorScheme corresponding to the enum value.
  */
 internal fun MapTheme.toGoogleMapsTheme() =
     when (this) {
@@ -140,7 +140,7 @@ internal fun MapTheme.toGoogleMapsTheme() =
 /**
  * Converts MapProperties to Google Maps Properties.
  *
- * @return GoogleMapProperties with map configuration
+ * @return GoogleMapProperties with map configuration.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 internal fun MapProperties.toGoogleMapsProperties(locationPermissionState: PermissionState) =
@@ -158,7 +158,7 @@ internal fun MapProperties.toGoogleMapsProperties(locationPermissionState: Permi
 /**
  * Converts MapUISettings to Google Maps UI Settings.
  *
- * @return GoogleMapUiSettings with UI configuration
+ * @return GoogleMapUiSettings with UI configuration.
  */
 internal fun MapUISettings.toGoogleMapsUiSettings() =
     GoogleMapUiSettings(
@@ -178,7 +178,7 @@ internal fun MapUISettings.toGoogleMapsUiSettings() =
 /**
  * Converts MapType enum to Google Maps MapType.
  *
- * @return Google Maps MapType corresponding to the enum value
+ * @return Google Maps MapType corresponding to the enum value.
  */
 internal fun com.swmansion.kmpmaps.core.MapType?.toGoogleMapsMapType() =
     when (this) {
@@ -192,14 +192,14 @@ internal fun com.swmansion.kmpmaps.core.MapType?.toGoogleMapsMapType() =
 /**
  * Converts GoogleMapsMapStyleOptions to native MapStyleOptions.
  *
- * @return MapStyleOptions from JSON string, or null if no JSON provided
+ * @return MapStyleOptions from JSON string, or null if no JSON provided.
  */
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() = this?.json?.let(::MapStyleOptions)
 
 /**
  * Converts GoogleMapsAnchor to Compose Offset.
  *
- * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null)
+ * @return Offset with x and y coordinates (defaults to 0.5f, 1.0f if null).
  */
 internal fun GoogleMapsAnchor?.toOffset() = Offset(this?.x ?: 0.5f, this?.y ?: 1.0f)
 
@@ -220,7 +220,7 @@ internal fun List<StrokePatternItem>.toGooglePattern(): List<PatternItem> = map 
 /**
  * Converts Google Maps [GoogleMapCluster] to native [Cluster].
  *
- * @return Cluster with coordinates, size, and list of markers
+ * @return Cluster with coordinates, size, and list of markers.
  */
 internal fun GoogleMapCluster<MarkerClusterItem>.toNativeCluster() =
     Cluster(
@@ -236,6 +236,15 @@ internal data class RenderedGeoJson(
     val extractedMarkers: List<Marker>,
 )
 
+/**
+ * Merges all [layers] into a single GeoJSON object and renders it on this [GoogleMap].
+ *
+ * @param layers GeoJSON layers to combine and render.
+ * @param clusterSettings Clustering configuration applied to Point features.
+ * @param onMarkerClick Callback invoked when a GeoJSON Point marker is clicked.
+ * @param onGeoJsonFeatureClick Callback invoked when a non-Point GeoJSON feature is clicked.
+ * @return A [RenderedGeoJson] handle for the rendered layer, or `null` if rendering was skipped.
+ */
 internal fun GoogleMap.renderCombinedGeoJsonLayers(
     layers: List<GeoJsonLayer>,
     clusterSettings: ClusterSettings,
@@ -253,6 +262,13 @@ internal fun GoogleMap.renderCombinedGeoJsonLayers(
     )
 }
 
+/**
+ * Merges all visible [layers] into a single GeoJSON FeatureCollection [JSONObject].
+ *
+ * @param layers Source layers to merge.
+ * @return A FeatureCollection [JSONObject] containing all extracted features, or `null` if no
+ *   visible features were found.
+ */
 private fun buildCombinedGeoJson(layers: List<GeoJsonLayer>): JSONObject? {
     val combinedFeaturesArray = JSONArray()
 
@@ -303,6 +319,16 @@ private fun buildCombinedGeoJson(layers: List<GeoJsonLayer>): JSONObject? {
     }
 }
 
+/**
+ * Renders a pre-built combined GeoJSON [JSONObject] onto this [GoogleMap].
+ *
+ * @param combinedJson A GeoJSON FeatureCollection produced by [buildCombinedGeoJson].
+ * @param originalLayers The original layers list used to look up per-layer style configuration.
+ * @param clusterSettings Clustering configuration.
+ * @param onMarkerClick Callback invoked when a Point feature is clicked and clustering is disabled.
+ * @param onGeoJsonFeatureClick Callback invoked when a non-Point GeoJSON feature is clicked.
+ * @return A [RenderedGeoJson] containing the active layer and any extracted cluster markers.
+ */
 private fun GoogleMap.renderGeoJsonLayer(
     combinedJson: JSONObject,
     originalLayers: List<GeoJsonLayer>,
@@ -357,12 +383,22 @@ private fun GoogleMap.renderGeoJsonLayer(
     return RenderedGeoJson(googleLayer, extractedMarkers)
 }
 
+/**
+ * Returns all properties of this [Feature] as a [Map] of String keys to String values.
+ *
+ * @return A map of property key-value pairs.
+ */
 private fun Feature.getPropertiesMap(): Map<String, String> {
     val map = mutableMapOf<String, String>()
     this.propertyKeys?.forEach { key -> this.getProperty(key)?.let { value -> map[key] = value } }
     return map
 }
 
+/**
+ * Applies the visual style from a [GeoJsonLayer] configuration to this [Feature].
+ *
+ * @param geo The layer configuration providing fallback style values.
+ */
 private fun Feature.applyExplicitStyle(geo: GeoJsonLayer) {
     val jsonStroke = this.getProperty("stroke")
     val jsonFill = this.getProperty("fill")
@@ -446,6 +482,14 @@ private fun Feature.applyExplicitStyle(geo: GeoJsonLayer) {
     }
 }
 
+/**
+ * Applies an [opacity] alpha component to a packed ARGB [color].
+ *
+ * @param color The source ARGB color integer.
+ * @param opacity Opacity in the range `0.0` (transparent) to `1.0` (opaque), or `null` to leave
+ *   alpha unchanged.
+ * @return The color with the updated alpha component.
+ */
 private fun applyAlpha(color: Int, opacity: Float?) =
     if (opacity != null) {
         ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
@@ -453,6 +497,12 @@ private fun applyAlpha(color: Int, opacity: Float?) =
         color
     }
 
+/**
+ * Converts this [GeoJsonPoint] to a KMP [Marker].
+ *
+ * @param feature The GeoJSON feature providing property values for the marker.
+ * @return A [Marker] positioned at this point's coordinates.
+ */
 private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
     val title = feature.getProperty("title")
     val snippet = feature.getProperty("snippet")
@@ -474,6 +524,11 @@ private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
     )
 }
 
+/**
+ * Parses a [GoogleMapsAnchor] from the `anchor` property of this [GeoJsonFeature].
+ *
+ * @return A [GoogleMapsAnchor] with the parsed U/V coordinates, or `null` if parsing fails.
+ */
 private fun GeoJsonFeature.parseGeoJsonAnchor(): GoogleMapsAnchor? {
     val anchorStr = getProperty("anchor")
 

@@ -68,9 +68,9 @@ internal class MapDelegate(
     /**
      * Provides renderers for map overlays (circles, polygons, polylines).
      *
-     * @param mapView The map view requesting the renderer
-     * @param rendererForOverlay The overlay that needs a renderer
-     * @return Appropriate renderer with styling applied
+     * @param mapView The map view requesting the renderer.
+     * @param rendererForOverlay The overlay that needs a renderer.
+     * @return Appropriate renderer with styling applied.
      */
     override fun mapView(mapView: MKMapView, rendererForOverlay: MKOverlayProtocol) =
         when (rendererForOverlay) {
@@ -142,8 +142,8 @@ internal class MapDelegate(
     /**
      * Handles marker selection events when user taps on annotations.
      *
-     * @param mapView The map view containing the annotation
-     * @param didSelectAnnotationView The annotation view that was selected
+     * @param mapView The map view containing the annotation.
+     * @param didSelectAnnotationView The annotation view that was selected.
      */
     override fun mapView(mapView: MKMapView, didSelectAnnotationView: MKAnnotationView) {
         val annotation = didSelectAnnotationView.annotation ?: return
@@ -182,8 +182,8 @@ internal class MapDelegate(
     /**
      * Handles camera movement events when the map region changes.
      *
-     * @param mapView The map view whose region changed
-     * @param regionDidChangeAnimated Whether the change was animated
+     * @param mapView The map view whose region changed.
+     * @param regionDidChangeAnimated Whether the change was animated.
      */
     override fun mapView(mapView: MKMapView, regionDidChangeAnimated: Boolean) {
         val region = mapView.region
@@ -194,8 +194,8 @@ internal class MapDelegate(
     /**
      * Handles GeoJSON annotations and custom markers.
      *
-     * @param mapView The map view whose region changed
-     * @param viewForAnnotation The annotation view that was selected
+     * @param mapView The map view whose region changed.
+     * @param viewForAnnotation The annotation view that was selected.
      */
     override fun mapView(mapView: MKMapView, viewForAnnotation: MKAnnotationProtocol) =
         when (viewForAnnotation) {
@@ -217,7 +217,7 @@ internal class MapDelegate(
     /**
      * Handles tap gestures on the map to detect clicks on overlays and map.
      *
-     * @param gestureRecognizer The tap gesture recognizer
+     * @param gestureRecognizer The tap gesture recognizer.
      */
     @ObjCAction
     @OptIn(BetaInteropApi::class)
@@ -287,7 +287,7 @@ internal class MapDelegate(
     /**
      * Handles long press gestures on the map.
      *
-     * @param gestureRecognizer The long press gesture recognizer
+     * @param gestureRecognizer The long press gesture recognizer.
      */
     @ObjCAction
     @OptIn(BetaInteropApi::class)
@@ -304,6 +304,10 @@ internal class MapDelegate(
         }
     }
 
+    /**
+     * Stores [image] in the cache and updates the visible annotation view for [id] on the main
+     * thread.
+     */
     fun onBitmapReady(id: String, image: UIImage) {
         dispatch_async(dispatch_get_main_queue()) {
             imageCache[id] = image
@@ -316,19 +320,23 @@ internal class MapDelegate(
         }
     }
 
+    /** Removes all cached images whose ids are not in [activeIds]. */
     fun pruneCache(activeIds: Set<String>) {
         val keysToRemove = imageCache.keys.filter { it !in activeIds }
         keysToRemove.forEach { imageCache.remove(it) }
     }
 
+    /** Returns the cached [UIImage] for [id], or `null` if not yet loaded. */
     fun getCachedImage(id: String?): UIImage? = imageCache[id ?: ""]
 
+    /** Enqueues [cluster] for rendering if it is not already cached or pending. */
     private fun queueClusterRender(id: String, cluster: Cluster) {
         if (!imageCache.containsKey(id) && !clustersToRender.containsKey(id)) {
             clustersToRender[id] = cluster
         }
     }
 
+    /** Finds a marker annotation or cluster annotation matching [id], or returns `null`. */
     private fun findAnnotationById(id: String): MKAnnotationProtocol? {
         val markerAnn = markerMapping.entries.find { it.value.getId() == id }?.key
         if (markerAnn != null) return markerAnn
@@ -342,6 +350,9 @@ internal class MapDelegate(
         }
     }
 
+    /**
+     * Creates a [CustomMarkers] view for a cluster annotation, applying a cached or pending image.
+     */
     private fun createClusterView(
         mapView: MKMapView,
         annotation: MKClusterAnnotation,
@@ -378,6 +389,9 @@ internal class MapDelegate(
         return view
     }
 
+    /**
+     * Creates a [CustomMarkers] view for a marker with custom content, restoring its cached image.
+     */
     private fun createCustomMarkerView(
         mapView: MKMapView,
         annotation: MKPointAnnotation,
@@ -396,6 +410,7 @@ internal class MapDelegate(
         return view
     }
 
+    /** Creates a standard [MKMarkerAnnotationView] with callout and optional tint color. */
     private fun createStandardMarkerView(
         mapView: MKMapView,
         annotation: MKPointAnnotation,
@@ -416,6 +431,10 @@ internal class MapDelegate(
         return view
     }
 
+    /**
+     * Creates an [MKMarkerAnnotationView] for a GeoJSON Point feature, or `null` if no style is
+     * registered.
+     */
     private fun createGeoJsonMarkerView(
         mapView: MKMapView,
         annotation: MKPointAnnotation,

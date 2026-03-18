@@ -52,9 +52,9 @@ import platform.UIKit.UIUserInterfaceStyle
 /**
  * Updates Google Maps markers by removing existing markers and adding new ones.
  *
- * @param mapView Google Maps map view
- * @param markers List of MapMarker objects to display
- * @param markerMapping MutableMap mapping GMSMarker to MapMarker for click handling
+ * @param mapView Google Maps map view.
+ * @param markers List of MapMarker objects to display.
+ * @param markerMapping MutableMap mapping GMSMarker to MapMarker for click handling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsMarkers(
@@ -99,9 +99,9 @@ internal fun updateGoogleMapsMarkers(
 /**
  * Updates Google Maps circles by removing existing circles and adding new ones.
  *
- * @param mapView Google Maps map view
- * @param circles List of MapCircle objects to display
- * @param circleMapping MutableMap mapping GMSCircle to MapCircle for styling
+ * @param mapView Google Maps map view.
+ * @param circles List of MapCircle objects to display.
+ * @param circleMapping MutableMap mapping GMSCircle to MapCircle for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsCircles(
@@ -129,9 +129,9 @@ internal fun updateGoogleMapsCircles(
 /**
  * Updates Google Maps polygons by removing existing polygons and adding new ones.
  *
- * @param mapView Google Maps map view
- * @param polygons List of MapPolygon objects to display
- * @param polygonMapping MutableMap mapping GMSPolygon to MapPolygon for styling
+ * @param mapView Google Maps map view.
+ * @param polygons List of MapPolygon objects to display.
+ * @param polygonMapping MutableMap mapping GMSPolygon to MapPolygon for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolygons(
@@ -161,9 +161,9 @@ internal fun updateGoogleMapsPolygons(
 /**
  * Updates Google Maps polylines by removing existing polylines and adding new ones.
  *
- * @param mapView Google Maps map view
- * @param polylines List of MapPolyline objects to display
- * @param polylineMapping MutableMap mapping GMSPolyline to MapPolyline for styling
+ * @param mapView Google Maps map view.
+ * @param polylines List of MapPolyline objects to display.
+ * @param polylineMapping MutableMap mapping GMSPolyline to MapPolyline for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolylines(
@@ -189,6 +189,10 @@ internal fun updateGoogleMapsPolylines(
     }
 }
 
+/**
+ * Converts a [MapType] to the corresponding Google Maps iOS map type constant. Defaults to
+ * [kGMSTypeNormal].
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MapType?.toGoogleMapsMapType() =
     when (this) {
@@ -218,7 +222,7 @@ internal fun UtilsGMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
 /**
  * Updates Google Maps settings based on MapUISettings.
  *
- * @param mapView Google Maps map view
+ * @param mapView Google Maps map view.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MapUISettings.toGoogleMapsSettings(mapView: UtilsGMSMapView) {
@@ -240,7 +244,7 @@ internal fun MapUISettings.toGoogleMapsSettings(mapView: UtilsGMSMapView) {
 /**
  * Converts GoogleMapsMapStyleOptions to native GMSMapStyle.
  *
- * @return GMSMapStyle from JSON string, or null if no JSON provided
+ * @return GMSMapStyle from JSON string, or null if no JSON provided.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
@@ -270,7 +274,7 @@ public fun UtilsGMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? 
  * When [CameraPosition.bounds] is set, uses [GMSCameraUpdate.fitBounds] so the camera zooms to fit
  * the entire region. Otherwise, falls back to a direct [GMSCameraPosition].
  *
- * @param position The camera position to apply
+ * @param position The camera position to apply.
  */
 @OptIn(ExperimentalForeignApi::class)
 public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
@@ -429,10 +433,10 @@ internal data class ClusteringComponents(
 /**
  * Initializes and configures clustering components for a Google Maps view.
  *
- * @param mapView The map view to configure clustering for
- * @param mapDelegate The map delegate for handling map events
- * @param clusteringDelegate The clustering delegate for handling clustering events
- * @return Configured clustering components
+ * @param mapView The map view to configure clustering for.
+ * @param mapDelegate The map delegate for handling map events.
+ * @param clusteringDelegate The clustering delegate for handling clustering events.
+ * @return Configured clustering components.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun initializeClustering(
@@ -458,12 +462,12 @@ internal fun initializeClustering(
 /**
  * Updates clustering markers on the map.
  *
- * @param manager The cluster manager instance
- * @param renderer The cluster renderer instance
- * @param mapDelegate The map delegate for handling map events
- * @param markers List of markers to cluster
- * @param markerMapping Mutable map to store marker mappings
- * @return The created clustering delegate
+ * @param manager The cluster manager instance.
+ * @param renderer The cluster renderer instance.
+ * @param mapDelegate The map delegate for handling map events.
+ * @param markers List of markers to cluster.
+ * @param markerMapping Mutable map to store marker mappings.
+ * @return The created clustering delegate.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun updateClusteringMarkers(
@@ -491,12 +495,12 @@ internal fun updateClusteringMarkers(
 /**
  * Disables clustering and updates markers normally on the map.
  *
- * @param manager The cluster manager instance (can be null)
- * @param mapView The map view
- * @param mapDelegate The map delegate for handling map events
- * @param markers List of markers to display
- * @param markerMapping Mutable map to store marker mappings
- * @param customMarkerContent Map of custom marker content composables
+ * @param manager The cluster manager instance (can be null).
+ * @param mapView The map view.
+ * @param mapDelegate The map delegate for handling map events.
+ * @param markers List of markers to display.
+ * @param markerMapping Mutable map to store marker mappings.
+ * @param customMarkerContent Map of custom marker content composables.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun disableClusteringAndUpdateMarkers(
@@ -515,7 +519,7 @@ internal fun disableClusteringAndUpdateMarkers(
 /**
  * Converts an [NSDictionary] to a [Map] of String keys and String values.
  *
- * @return A [Map] containing all entries from this dictionary as String pairs
+ * @return A [Map] containing all entries from this dictionary as String pairs.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun NSDictionary?.toStringMap(): Map<String, String> {

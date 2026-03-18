@@ -33,9 +33,9 @@ internal object GoogleMapsInitializer {
     }
 
     /**
-     * Attempts to find the Google Maps API key from [MapConfiguration]
+     * Attempts to find the Google Maps API key from [MapConfiguration].
      *
-     * @return API key if found, null otherwise
+     * @return API key if found, null otherwise.
      */
     private fun findApiKey() = MapConfiguration.googleMapsApiKey
 }

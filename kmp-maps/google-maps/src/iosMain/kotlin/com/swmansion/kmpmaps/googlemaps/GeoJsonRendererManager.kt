@@ -27,20 +27,37 @@ import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIColor
 
+/**
+ * Manages lifecycle and rendering of GeoJSON layers on an iOS Google Maps view.
+ *
+ * Maintains a map of [GMUGeometryRenderer] instances keyed by layer index so that individual layers
+ * can be updated or removed without re-rendering unaffected layers.
+ */
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal class GeoJsonRendererManager {
     private var mapView: UtilsGMSMapView? = null
     private var renderers: Map<Int, List<GMUGeometryRenderer>> = emptyMap()
 
+    /** Attaches this manager to [view] so subsequent [render] calls draw on it. */
     fun attach(view: UtilsGMSMapView) {
         mapView = view
     }
 
+    /** Clears all active renderers and removes their overlays from the map. */
     fun clear() {
         renderers.values.forEach { list -> list.forEach(GMUGeometryRenderer::clear) }
         renderers = emptyMap()
     }
 
+    /**
+     * Renders [layers] onto the attached map view, applying per-layer styles.
+     *
+     * Point features are extracted and returned as [Marker] objects instead of being rendered
+     * directly. Layers with `visible != true` are skipped and their existing renderers cleared.
+     *
+     * @param layers GeoJSON layers to render.
+     * @return List of [Marker] objects extracted from Point features across all layers.
+     */
     fun render(layers: List<GeoJsonLayer>): List<Marker> {
         val view = mapView ?: return emptyList()
         val allExtractedMarkers = mutableListOf<Marker>()

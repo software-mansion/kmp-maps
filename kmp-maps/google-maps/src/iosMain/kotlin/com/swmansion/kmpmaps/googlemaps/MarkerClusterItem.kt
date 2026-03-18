@@ -8,6 +8,7 @@ import platform.CoreLocation.CLLocationCoordinate2D
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.darwin.NSObject
 
+/** @suppress */
 @OptIn(ExperimentalForeignApi::class)
 internal class MarkerClusterItem(val marker: Marker) : NSObject(), GMUClusterItemProtocol {
 

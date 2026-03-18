@@ -130,7 +130,7 @@ import platform.posix.memcpy
  * computed from northeast/southwest corners). Otherwise, [CameraPosition.coordinates] and
  * [CameraPosition.zoom] are used.
  *
- * @return MKCoordinateRegion representing the camera's view area
+ * @return MKCoordinateRegion representing the camera's view area.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
@@ -145,7 +145,7 @@ internal fun CameraPosition.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     return MKCoordinateRegionMake(coordinate, span)
 }
 
-/** Converts [MapBounds] to [MKCoordinateRegion] */
+/** Converts [MapBounds] to [MKCoordinateRegion]. */
 @OptIn(ExperimentalForeignApi::class)
 private fun MapBounds.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
     val centerLat = (northeast.latitude + southwest.latitude) / 2.0
@@ -166,7 +166,7 @@ private fun MapBounds.toMKCoordinateRegion(): CValue<MKCoordinateRegion> {
 /**
  * Converts Apple MapKit's MKCoordinateRegion back to CameraPosition.
  *
- * @return CameraPosition with calculated zoom level, coordinates, and visible bounds
+ * @return CameraPosition with calculated zoom level, coordinates, and visible bounds.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun CValue<MKCoordinateRegion>.toCameraPosition() = useContents {
@@ -197,8 +197,8 @@ private fun wrapLng(lng: Double): Double = ((lng + 180.0) % 360.0 + 360.0) % 360
 /**
  * Updates Apple Maps markers by removing existing annotations and adding new ones.
  *
- * @param markers List of MapMarker objects to display
- * @return MutableMap mapping MKAnnotationProtocol to MapMarker for click handling
+ * @param markers List of MapMarker objects to display.
+ * @return MutableMap mapping MKAnnotationProtocol to MapMarker for click handling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsMarkers(
@@ -225,8 +225,8 @@ internal fun MKMapView.updateAppleMapsMarkers(
 /**
  * Converts geographic coordinates to screen point on MKMapView.
  *
- * @param coordinates The geographic coordinates to convert
- * @return CGPoint representing the screen location, or null if conversion fails
+ * @param coordinates The geographic coordinates to convert.
+ * @return CGPoint representing the screen location, or null if conversion fails.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.coordinateToScreenPoint(coordinates: Coordinates): CValue<CGPoint> {
@@ -237,7 +237,7 @@ internal fun MKMapView.coordinateToScreenPoint(coordinates: Coordinates): CValue
 /**
  * Converts AppleMapsPointOfInterestCategories to Apple MapKit's MKPointOfInterestFilter.
  *
- * @return MKPointOfInterestFilter for including/excluding POI categories, or null if no filtering
+ * @return MKPointOfInterestFilter for including/excluding POI categories, or null if no filtering.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
@@ -259,8 +259,8 @@ internal fun AppleMapsPointOfInterestCategories.toMKPointOfInterestFilter():
 /**
  * Updates Apple Maps circles by removing existing overlays and adding new ones.
  *
- * @param circles List of MapCircle objects to display
- * @param circleStyles MutableMap to store MKCircle to MapCircle mappings for styling
+ * @param circles List of MapCircle objects to display.
+ * @param circleStyles MutableMap to store MKCircle to MapCircle mappings for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsCircles(
@@ -282,8 +282,8 @@ internal fun MKMapView.updateAppleMapsCircles(
 /**
  * Updates Apple Maps polygons by removing existing overlays and adding new ones.
  *
- * @param polygons List of MapPolygon objects to display
- * @param polygonStyles MutableMap to store MKPolygon to MapPolygon mappings for styling
+ * @param polygons List of MapPolygon objects to display.
+ * @param polygonStyles MutableMap to store MKPolygon to MapPolygon mappings for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolygons(
@@ -320,8 +320,8 @@ internal fun MKMapView.updateAppleMapsPolygons(
 /**
  * Updates Apple Maps polylines by removing existing overlays and adding new ones.
  *
- * @param polylines List of MapPolyline objects to display
- * @param polylineStyles MutableMap to store MKPolyline to MapPolyline mappings for styling
+ * @param polylines List of MapPolyline objects to display.
+ * @param polylineStyles MutableMap to store MKPolyline to MapPolyline mappings for styling.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.updateAppleMapsPolylines(
@@ -358,7 +358,7 @@ internal fun MKMapView.updateAppleMapsPolylines(
 /**
  * Converts MapType enum to Apple MapKit's map type constant.
  *
- * @return MKMapType constant corresponding to the MapType enum value
+ * @return MKMapType constant corresponding to the MapType enum value.
  */
 internal fun MapType?.toAppleMapsMapType() =
     when (this) {
@@ -371,7 +371,7 @@ internal fun MapType?.toAppleMapsMapType() =
 /**
  * Converts AppleMapPointOfInterestCategory enum to Apple MapKit's MKPointOfInterestCategory.
  *
- * @return MKPointOfInterestCategory constant corresponding to the enum value
+ * @return MKPointOfInterestCategory constant corresponding to the enum value.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun AppleMapsPointOfInterestCategory.toMKPointOfInterestCategory():
@@ -456,12 +456,7 @@ internal fun AppleMapsPointOfInterestCategory.toMKPointOfInterestCategory():
         AppleMapsPointOfInterestCategory.ZOO -> MKPointOfInterestCategoryZoo
     }
 
-/**
- * Converts androidx Color to Apple UIKit's UIColor.
- *
- * @return UIColor corresponding to the androidx Color object
- * @suppress
- */
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalForeignApi::class)
 public fun Color.toAppleMapsColor(): UIColor {
@@ -477,7 +472,7 @@ public fun Color.toAppleMapsColor(): UIColor {
 /**
  * Switches between light and dark mode for the map.
  *
- * @param isDarkModeEnabled true for dark mode, false for light mode
+ * @param isDarkModeEnabled true for dark mode, false for light mode.
  */
 internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
     overrideUserInterfaceStyle =
@@ -492,7 +487,7 @@ internal fun MKMapView.switchTheme(isDarkModeEnabled: Boolean) {
  * Reapplies stroke color and width to existing MKPolyline renderers based on the provided Polyline
  * styles map.
  *
- * @param polylineStyles Mapping between MKPolyline overlays and their Polyline style models
+ * @param polylineStyles Mapping between MKPolyline overlays and their Polyline style models.
  */
 @OptIn(ExperimentalForeignApi::class)
 internal fun MKMapView.reapplyCorePolylineStyles(polylineStyles: Map<MKPolyline, Polyline>) {
@@ -509,13 +504,13 @@ internal fun MKMapView.reapplyCorePolylineStyles(polylineStyles: Map<MKPolyline,
  * Synchronizes rendered GeoJSON layers with the desired list, updating overlays/annotations and
  * maintaining style maps.
  *
- * @param geoJsonLayers Ordered list of desired GeoJSON layers (index acts as stable key)
- * @param currentRendered Previously rendered layers keyed by their index
- * @param geoJsonPolygonStyles Global style map for GeoJSON polygons
- * @param geoJsonPolylineStyles Global style map for GeoJSON polylines
- * @param geoJsonPointStyles Global style map for GeoJSON points
- * @param polylineStyles Core polyline style mapping used to reapply stroke/render changes
- * @return Updated mapping of indices to rendered GeoJSON layer objects
+ * @param geoJsonLayers Ordered list of desired GeoJSON layers (index acts as stable key).
+ * @param currentRendered Previously rendered layers keyed by their index.
+ * @param geoJsonPolygonStyles Global style map for GeoJSON polygons.
+ * @param geoJsonPolylineStyles Global style map for GeoJSON polylines.
+ * @param geoJsonPointStyles Global style map for GeoJSON points.
+ * @param polylineStyles Core polyline style mapping used to reapply stroke/render changes.
+ * @return Updated mapping of indices to rendered GeoJSON layer objects.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalForeignApi::class)

@@ -24,6 +24,15 @@ import kotlinx.cinterop.useContents
 import platform.UIKit.UIImage
 import platform.darwin.NSObject
 
+/**
+ * Handles cluster rendering and tap events for Google Maps iOS clustering.
+ *
+ * @param mapView The Google Maps view hosting the clusters.
+ * @param mapDelegate The map delegate used to access the image cache and rendering queue.
+ * @param clusterSettings Clustering configuration including click callback and custom content.
+ * @param onMarkerClick Callback invoked when a single marker inside a cluster is tapped.
+ * @param customMarkerContent Map of content-id to Composable used to render custom marker icons.
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal class MarkerClusterManagerDelegate(
     private val mapView: UtilsGMSMapView,
