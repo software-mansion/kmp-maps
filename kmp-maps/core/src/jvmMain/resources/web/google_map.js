@@ -67,6 +67,7 @@ async function initMap() {
     });
 
     map.data.addListener('click', function(event) {
+        event.stop();
         const feature = event.feature;
         const id = feature.getId() !== undefined ? String(feature.getId()) : null;
         const geometryType = feature.getGeometry()?.getType() ?? 'Unknown';
@@ -489,7 +490,7 @@ function applyStyleToFeature(feature, config) {
 
     const style = {
         visible: config.visible,
-        zIndex: config.zIndex,
+        zIndex: config.zIndex + 4,
         clickable: config.isClickable,
     };
 
