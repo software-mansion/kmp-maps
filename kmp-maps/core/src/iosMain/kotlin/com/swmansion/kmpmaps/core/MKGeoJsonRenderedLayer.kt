@@ -125,6 +125,12 @@ public fun MKMapView.renderGeoJson(
     )
 }
 
+/**
+ * Extracts a flat list of [Coordinates] from an [MKOverlayProtocol].
+ *
+ * @param overlay The overlay whose coordinates should be extracted.
+ * @return Flat list of [Coordinates] from the overlay geometry.
+ */
 @OptIn(ExperimentalForeignApi::class)
 private fun extractCoordinates(overlay: MKOverlayProtocol): List<Coordinates> {
     val list = mutableListOf<Coordinates>()

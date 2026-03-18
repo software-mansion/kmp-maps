@@ -44,8 +44,9 @@ import com.swmansion.kmpmaps.core.Polyline
  * @param onPOIClick Callback invoked when the user clicks on a Point of Interest
  * @param onMapLoaded Callback invoked when the map has finished loading
  * @param geoJsonLayers List of GeoJSON layers to display on the map
- * @param customMarkerContent Map of content IDs to Composable functions for custom marker content.
- * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string.
+ * @param onGeoJsonFeatureClick Callback invoked when a GeoJSON object is clicked (excluding Point)
+ * @param customMarkerContent Map of content IDs to Composable functions for custom marker content
+ * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string
  */
 @Composable
 public expect fun Map(

@@ -1,5 +1,6 @@
 package com.swmansion.kmpmaps.core
 
+import androidx.annotation.RestrictTo
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 
@@ -104,12 +105,14 @@ public sealed interface StrokePatternItem {
     public data class Gap(val lengthPx: Float) : StrokePatternItem
 }
 
-internal enum class GeoJsonType(val value: String) {
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public enum class GeoJsonType(public val value: String) {
     FEATURE_COLLECTION("FeatureCollection"),
     FEATURE("Feature"),
     GEOMETRY("Geometry");
 
-    companion object {
-        fun fromString(type: String?): GeoJsonType = entries.find { it.value == type } ?: GEOMETRY
+    public companion object {
+        public fun fromString(type: String?): GeoJsonType = entries.find { it.value == type } ?: GEOMETRY
     }
 }

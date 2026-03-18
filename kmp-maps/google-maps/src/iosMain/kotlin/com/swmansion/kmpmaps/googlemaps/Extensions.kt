@@ -512,6 +512,11 @@ internal fun disableClusteringAndUpdateMarkers(
     updateGoogleMapsMarkers(mapView, mapDelegate, markers, markerMapping, customMarkerContent)
 }
 
+/**
+ * Converts an [NSDictionary] to a [Map] of String keys and String values.
+ *
+ * @return A [Map] containing all entries from this dictionary as String pairs
+ */
 @OptIn(ExperimentalForeignApi::class)
 internal fun NSDictionary?.toStringMap(): Map<String, String> {
     val out = mutableMapOf<String, String>()
