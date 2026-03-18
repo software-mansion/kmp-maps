@@ -1,6 +1,7 @@
 package com.swmansion.kmpmaps.core
 
 import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Serializable
 
 internal const val DEFAULT_STROKE_COLOR = "#000000"
 internal const val DEFAULT_FILL_COLOR = "#00FFFFFF"
@@ -30,6 +31,7 @@ public data class GeoJsonLayer(
     val pointStyle: PointStyle? = null,
 )
 
+@Serializable
 public data class GeoJsonFeatureClicked(
     val id: String?,
     val geometryType: String,

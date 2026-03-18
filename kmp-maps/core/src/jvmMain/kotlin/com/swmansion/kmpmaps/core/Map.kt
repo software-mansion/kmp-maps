@@ -74,6 +74,7 @@ public actual fun Map(
                 onMapClick = onMapClick,
                 onPOIClick = onPOIClick,
                 onMapLoaded = onMapLoaded,
+                onGeoJsonFeatureClick = onGeoJsonFeatureClick,
             )
         }
 

@@ -66,6 +66,22 @@ async function initMap() {
         }
     });
 
+    map.data.addListener('click', function(event) {
+        event.stop();
+        const feature = event.feature;
+        const id = feature.getId() !== undefined ? String(feature.getId()) : null;
+        const geometryType = feature.getGeometry()?.getType() ?? 'Unknown';
+        const props = {};
+        feature.forEachProperty(function(value, name) {
+            if (!name.startsWith('_')) props[name] = String(value);
+        });
+        sendToKotlin('onGeoJsonFeatureClick', JSON.stringify({
+            id: id,
+            geometryType: geometryType,
+            properties: props
+        }));
+    });
+
     map.addListener("idle", () => {
         const center = map.getCenter();
         const zoom = map.getZoom();
@@ -462,26 +478,47 @@ function updateGeoJsonLayers(layersData, clusterEnabled) {
 }
 
 function applyStyleToFeature(feature, config) {
-    map.data.overrideStyle(feature, {
+    const geometryType = feature.getGeometry()?.getType();
+    const isPolygon = geometryType === 'Polygon' || geometryType === 'MultiPolygon';
+    const isLine = geometryType === 'LineString' || geometryType === 'MultiLineString';
+
+    const featureFill = feature.getProperty('fill');
+    const featureFillOpacity = feature.getProperty('fill-opacity');
+    const featureStroke = feature.getProperty('stroke');
+    const featureStrokeOpacity = feature.getProperty('stroke-opacity');
+    const featureStrokeWidth = feature.getProperty('stroke-width');
+
+    const style = {
         visible: config.visible,
-        zIndex: config.zIndex,
+        zIndex: config.zIndex + 4,
         clickable: config.isClickable,
-        ...(config.polygonStyle && {
-            fillColor: config.polygonStyle.fillColor,
-            fillOpacity: config.polygonStyle.fillOpacity,
-            strokeColor: config.polygonStyle.strokeColor,
-            strokeWeight: config.polygonStyle.strokeWeight
-        }),
-        ...(config.lineStringStyle && {
-            strokeColor: config.lineStringStyle.strokeColor,
-            strokeWeight: config.lineStringStyle.strokeWeight
-        }),
-        ...(config.pointStyle && {
-            title: config.pointStyle.title,
-            opacity: config.pointStyle.opacity,
-            draggable: config.pointStyle.draggable,
-        })
-    });
+    };
+
+    if (isPolygon) {
+        const fillColor = config.polygonStyle?.fillColor ?? featureFill;
+        const fillOpacity = config.polygonStyle?.fillOpacity ?? featureFillOpacity ?? 0.5;
+        const strokeColor = config.polygonStyle?.strokeColor ?? featureStroke;
+        const strokeOpacity = featureStrokeOpacity ?? 1.0;
+        const strokeWeight = config.polygonStyle?.strokeWeight ?? featureStrokeWidth ?? 2;
+        if (fillColor) style.fillColor = fillColor;
+        style.fillOpacity = fillOpacity;
+        if (strokeColor) style.strokeColor = strokeColor;
+        style.strokeOpacity = strokeOpacity;
+        style.strokeWeight = strokeWeight;
+    } else if (isLine) {
+        const strokeColor = config.lineStringStyle?.strokeColor ?? featureStroke;
+        const strokeOpacity = featureStrokeOpacity ?? 1.0;
+        const strokeWeight = config.lineStringStyle?.strokeWeight ?? featureStrokeWidth ?? 2;
+        if (strokeColor) style.strokeColor = strokeColor;
+        style.strokeOpacity = strokeOpacity;
+        style.strokeWeight = strokeWeight;
+    } else if (config.pointStyle) {
+        if (config.pointStyle.title) style.title = config.pointStyle.title;
+        style.opacity = config.pointStyle.opacity;
+        style.draggable = config.pointStyle.draggable;
+    }
+
+    map.data.overrideStyle(feature, style);
 }
 
 function clearMarkers() {

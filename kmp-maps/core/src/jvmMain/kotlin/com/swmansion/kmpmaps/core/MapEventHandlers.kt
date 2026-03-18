@@ -26,6 +26,7 @@ import kotlinx.serialization.json.Json
  * @param onMapClick Callback for general map clicks.
  * @param onPOIClick Callback for Point of Interest interactions.
  * @param onMapLoaded Callback invoked when the JS map is ready.
+ * @param onGeoJsonFeatureClick Callback for GeoJSON feature interactions.
  */
 internal fun registerMapEvents(
     jsBridge: WebViewJsBridge,
@@ -42,6 +43,7 @@ internal fun registerMapEvents(
     onMapClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
 ) {
     jsBridge.registerHandler("onCameraMove") { params, _ ->
         val position = Json.decodeFromString<CameraPosition>(params)
@@ -81,6 +83,17 @@ internal fun registerMapEvents(
     jsBridge.registerHandler("onClusterClick") { params, _ ->
         val cluster = Json.decodeFromString<Cluster>(params)
         clusterSettings.onClusterClick?.invoke(cluster)
+    }
+
+    jsBridge.registerHandler("onGeoJsonFeatureClick") { params, _ ->
+        val dto = Json.decodeFromString<GeoJsonFeatureClicked>(params)
+        onGeoJsonFeatureClick?.invoke(
+            GeoJsonFeatureClicked(
+                id = dto.id,
+                geometryType = dto.geometryType,
+                properties = dto.properties,
+            )
+        )
     }
 
     jsBridge.registerHandler("renderCluster") { params, navigator ->
