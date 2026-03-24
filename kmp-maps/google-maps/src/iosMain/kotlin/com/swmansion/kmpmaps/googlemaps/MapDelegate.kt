@@ -15,6 +15,7 @@ import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.IosCameraPosition
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
@@ -63,6 +64,11 @@ internal class MapDelegate(
                         coordinates = Coordinates(latitude = latitude, longitude = longitude),
                         zoom = didChangeCameraPosition.zoom(),
                         bounds = visibleBounds,
+                        iosCameraPosition =
+                            IosCameraPosition(
+                                gmsBearing = didChangeCameraPosition.bearing().toFloat(),
+                                gmsViewingAngle = didChangeCameraPosition.viewingAngle().toFloat(),
+                            ),
                     )
                 it(cameraPosition)
             }
