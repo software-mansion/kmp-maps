@@ -30,7 +30,6 @@ import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.data.Layer
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 
 /** Android implementation of the Map composable using Google Maps. */
@@ -56,6 +55,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
@@ -115,55 +115,37 @@ public actual fun Map(
                 }
             }
 
-            var androidGeoJsonLayers by remember {
-                mutableStateOf<Map<Int, GoogleGeoJsonLayer>>(emptyMap())
-            }
-
-            var geoJsonExtractedMarkers by remember {
-                mutableStateOf<Map<Int, List<Marker>>>(emptyMap())
-            }
+            var androidGeoJsonLayer by remember { mutableStateOf<GoogleGeoJsonLayer?>(null) }
+            var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
 
             MapEffect(geoJsonLayers) { map ->
                 runCatching {
-                        val desiredKeys = geoJsonLayers.indices.toSet()
-                        val keysToRemove = androidGeoJsonLayers.keys - desiredKeys
-                        keysToRemove.forEach { k -> androidGeoJsonLayers[k]?.removeLayerFromMap() }
+                        androidGeoJsonLayer?.removeLayerFromMap()
+                        androidGeoJsonLayer = null
+                        geoJsonExtractedMarkers = emptyList()
 
-                        androidGeoJsonLayers =
-                            androidGeoJsonLayers.filterKeys(desiredKeys::contains)
-                        geoJsonExtractedMarkers =
-                            geoJsonExtractedMarkers.filterKeys(desiredKeys::contains)
+                        if (geoJsonLayers.isEmpty()) return@runCatching
 
-                        geoJsonLayers.forEachIndexed { index, geo ->
-                            if (geo.visible == false) {
-                                androidGeoJsonLayers[index]?.removeLayerFromMap()
-                                androidGeoJsonLayers = androidGeoJsonLayers - index
-                                geoJsonExtractedMarkers = geoJsonExtractedMarkers - index
-                                return@forEachIndexed
+                        map.renderCombinedGeoJsonLayers(
+                                layers = geoJsonLayers,
+                                clusterSettings = clusterSettings,
+                                onMarkerClick = onMarkerClick,
+                                onGeoJsonFeatureClick = onGeoJsonFeatureClick,
+                            )
+                            ?.let { result ->
+                                androidGeoJsonLayer = result.layer
+                                geoJsonExtractedMarkers = result.extractedMarkers
                             }
-
-                            androidGeoJsonLayers[index]?.removeLayerFromMap()
-
-                            map.renderGeoJsonLayer(geo, clusterSettings, onMarkerClick)?.let {
-                                androidGeoJsonLayers = androidGeoJsonLayers + (index to it.layer)
-                                geoJsonExtractedMarkers =
-                                    geoJsonExtractedMarkers + (index to it.extractedMarkers)
-                            }
-                        }
                     }
                     .onFailure { t -> Log.e("KMPMaps", "Failed to render GeoJSON layers", t) }
             }
 
-            DisposableEffect(Unit) {
-                onDispose { androidGeoJsonLayers.values.forEach(Layer::removeLayerFromMap) }
-            }
+            DisposableEffect(Unit) { onDispose { androidGeoJsonLayer?.removeLayerFromMap() } }
 
             if (clusterSettings.enabled) {
                 val clusterItems =
                     remember(markers, geoJsonExtractedMarkers) {
-                        (markers + geoJsonExtractedMarkers.values.flatten()).map(
-                            ::MarkerClusterItem
-                        )
+                        (markers + geoJsonExtractedMarkers).map(::MarkerClusterItem)
                     }
 
                 Clustering(
