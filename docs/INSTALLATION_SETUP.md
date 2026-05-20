@@ -67,7 +67,7 @@ No extra iOS setup is required beyond location permission (if you need user loca
 
 ### Google Maps (Add-on)
 
-Follow the dedicated guide for CocoaPods setup and API key configuration: [Google Maps iOS Setup](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
+Follow the dedicated guide for Google Maps SDK setup and API key configuration: [Google Maps iOS Setup](https://github.com/software-mansion/kmp-maps/blob/main/docs/GOOGLE_MAPS_IOS_SETUP.md)
 
 ### 🔐 Permissions
 
