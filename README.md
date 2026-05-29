@@ -1,4 +1,7 @@
 ![KMP Maps by Software Mansion](https://github.com/software-mansion/kmp-maps/blob/main/docs/images/cover_image.png?raw=true)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-kmp-maps-1?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-kmp-maps-1&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-kmp-maps-2?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-kmp-maps-2&n=1)
+[![Ad](https://swm-delivery.com/www/images/zone-gh-kmp-maps-3?n=1)](https://swm-delivery.com/www/delivery/ck.php?zoneid=zone-gh-kmp-maps-3&n=1)
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
