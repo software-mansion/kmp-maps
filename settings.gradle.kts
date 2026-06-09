@@ -31,4 +31,4 @@ dependencyResolutionManagement {
     }
 }
 
-include("kmp-maps:core", "kmp-maps:google-maps", ":sample")
+include("kmp-maps:core", "kmp-maps:google-maps", "kmp-maps:apple-maps", ":sample")
