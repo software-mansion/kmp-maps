@@ -453,7 +453,8 @@ const val EXAMPLE_POLYGON_GEO_JSON =
           ]
         ],
         "type": "Polygon"
-      }
+      },
+      "id": 0
     },
     {
       "type": "Feature",
@@ -490,7 +491,8 @@ const val EXAMPLE_POLYGON_GEO_JSON =
           ]
         ],
         "type": "Polygon"
-      }
+      },
+      "id": 1
     },
     {
       "type": "Feature",
@@ -522,7 +524,8 @@ const val EXAMPLE_POLYGON_GEO_JSON =
             ]
           ]
         ]
-      }
+      },
+      "id": 2
     }
   ]
 }

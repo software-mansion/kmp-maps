@@ -43,10 +43,10 @@ fun App() {
                         )
                     }
                     if (options.showPolygonGeoJson) {
-                        add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON))
+                        add(GeoJsonLayer(geoJson = EXAMPLE_POLYGON_GEO_JSON, isClickable = true))
                     }
                     if (options.showLineGeoJson) {
-                        add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON))
+                        add(GeoJsonLayer(geoJson = EXAMPLE_LINE_GEO_JSON, isClickable = true))
                     }
                 }
             }

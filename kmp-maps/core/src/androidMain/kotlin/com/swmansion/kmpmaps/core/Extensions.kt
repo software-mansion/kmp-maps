@@ -1,6 +1,5 @@
 package com.swmansion.kmpmaps.core
 
-import android.util.Log
 import androidx.annotation.RestrictTo
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.toArgb
@@ -24,6 +23,7 @@ import com.google.maps.android.compose.ComposeMapColorScheme
 import com.google.maps.android.compose.MapProperties as GoogleMapProperties
 import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings as GoogleMapUiSettings
+import com.google.maps.android.data.Feature
 import com.google.maps.android.data.geojson.GeoJsonFeature
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
 import com.google.maps.android.data.geojson.GeoJsonLineString
@@ -34,6 +34,7 @@ import com.google.maps.android.data.geojson.GeoJsonPoint
 import com.google.maps.android.data.geojson.GeoJsonPointStyle
 import com.google.maps.android.data.geojson.GeoJsonPolygon
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
@@ -235,60 +236,222 @@ internal data class RenderedGeoJson(
     val extractedMarkers: List<Marker>,
 )
 
-/**
- * Renders a GeoJSON layer onto the GoogleMap.
- *
- * If clustering is enabled, points are extracted from the GeoJSON, converted to [Marker] objects
- * for the cluster manager, and hidden on the original layer to prevent duplication.
- *
- * @param layerData The GeoJSON layer configuration and data.
- * @param clusterSettings Settings determining if clustering logic should be applied.
- * @return A [RenderedGeoJson] containing the native layer and extracted markers, or null if JSON
- *   parsing fails.
- */
-internal fun GoogleMap.renderGeoJsonLayer(
-    layerData: GeoJsonLayer,
+internal fun GoogleMap.renderCombinedGeoJsonLayers(
+    layers: List<GeoJsonLayer>,
     clusterSettings: ClusterSettings,
     onMarkerClick: ((Marker) -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
 ): RenderedGeoJson? {
-    val json =
-        runCatching { JSONObject(layerData.geoJson) }
-            .getOrElse {
-                Log.e("KMPMaps", "Invalid GeoJSON JSON", it)
-                return null
+    val combinedJson = buildCombinedGeoJson(layers) ?: return null
+
+    return renderGeoJsonLayer(
+        combinedJson = combinedJson,
+        originalLayers = layers,
+        clusterSettings = clusterSettings,
+        onMarkerClick = onMarkerClick,
+        onGeoJsonFeatureClick = onGeoJsonFeatureClick,
+    )
+}
+
+private fun buildCombinedGeoJson(layers: List<GeoJsonLayer>): JSONObject? {
+    val combinedFeaturesArray = JSONArray()
+
+    layers.forEachIndexed { index, layer ->
+        if (layer.visible != false) {
+            val json =
+                runCatching { JSONObject(layer.geoJson) }.getOrNull() ?: return@forEachIndexed
+
+            val geoJsonType = GeoJsonType.fromString(json.optString("type"))
+            val extractedFeatures = mutableListOf<JSONObject>()
+
+            when (geoJsonType) {
+                GeoJsonType.FEATURE_COLLECTION -> {
+                    json.optJSONArray("features")?.let { jsonArray ->
+                        val features =
+                            (0 until jsonArray.length()).map { i -> jsonArray.getJSONObject(i) }
+                        extractedFeatures.addAll(features)
+                    }
+                }
+                GeoJsonType.FEATURE -> {
+                    extractedFeatures.add(json)
+                }
+                GeoJsonType.GEOMETRY -> {
+                    val feature =
+                        JSONObject().apply {
+                            put("type", "Feature")
+                            put("geometry", json)
+                        }
+                    extractedFeatures.add(feature)
+                }
             }
 
-    val layer = GoogleGeoJsonLayer(this, json)
-    layer.applyStylesFrom(layerData)
+            extractedFeatures.forEach { f ->
+                val props =
+                    f.optJSONObject("properties") ?: JSONObject().also { f.put("properties", it) }
 
-    val extractedMarkers = mutableListOf<Marker>()
-
-    if (clusterSettings.enabled) {
-        for (feature in layer.features) {
-            if (feature.geometry is GeoJsonPoint) {
-                val point = feature.geometry as GeoJsonPoint
-                val marker = point.toMarker(feature)
-
-                extractedMarkers.add(marker)
-
-                val hiddenStyle = GeoJsonPointStyle()
-                hiddenStyle.isVisible = false
-                feature.pointStyle = hiddenStyle
-            }
-        }
-    } else {
-        layer.setOnFeatureClickListener { feature ->
-            if (feature.geometry is GeoJsonPoint) {
-                val point = feature.geometry as GeoJsonPoint
-                val marker = point.toMarker(feature as GeoJsonFeature)
-                onMarkerClick?.invoke(marker)
+                props.put(DEFAULT_LAYER_ID, index)
+                combinedFeaturesArray.put(f)
             }
         }
     }
-    layer.addLayerToMap()
 
-    return RenderedGeoJson(layer, extractedMarkers)
+    if (combinedFeaturesArray.length() == 0) return null
+
+    return JSONObject().apply {
+        put("type", GeoJsonType.FEATURE_COLLECTION.value)
+        put("features", combinedFeaturesArray)
+    }
 }
+
+private fun GoogleMap.renderGeoJsonLayer(
+    combinedJson: JSONObject,
+    originalLayers: List<GeoJsonLayer>,
+    clusterSettings: ClusterSettings,
+    onMarkerClick: ((Marker) -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
+): RenderedGeoJson {
+    val googleLayer = GoogleGeoJsonLayer(this, combinedJson)
+    val extractedMarkers = mutableListOf<Marker>()
+
+    googleLayer.features.forEach { feature ->
+        val layerIndexStr = feature.getProperty(DEFAULT_LAYER_ID)
+        val layerIndex = layerIndexStr?.toIntOrNull() ?: return@forEach
+        val layerData = originalLayers[layerIndex]
+
+        feature.applyExplicitStyle(layerData)
+
+        if (clusterSettings.enabled && feature.geometry is GeoJsonPoint) {
+            val marker = (feature.geometry as GeoJsonPoint).toMarker(feature as GeoJsonFeature)
+            extractedMarkers.add(marker)
+
+            val hiddenStyle = GeoJsonPointStyle().apply { isVisible = false }
+            feature.pointStyle = hiddenStyle
+        }
+    }
+
+    googleLayer.setOnFeatureClickListener { feature ->
+        val geoJsonFeature = feature as GeoJsonFeature
+        val properties = geoJsonFeature.getPropertiesMap().filterKeys { it != DEFAULT_LAYER_ID }
+
+        val featureClicked =
+            GeoJsonFeatureClicked(
+                id = geoJsonFeature.id,
+                geometryType = geoJsonFeature.geometry?.geometryType ?: "Unknown",
+                properties = properties,
+            )
+
+        when (geoJsonFeature.geometry) {
+            is GeoJsonPoint -> {
+                if (!clusterSettings.enabled) {
+                    val marker = (geoJsonFeature.geometry as GeoJsonPoint).toMarker(geoJsonFeature)
+                    onMarkerClick?.invoke(marker)
+                }
+            }
+            else -> {
+                onGeoJsonFeatureClick?.invoke(featureClicked)
+            }
+        }
+    }
+
+    googleLayer.addLayerToMap()
+    return RenderedGeoJson(googleLayer, extractedMarkers)
+}
+
+private fun Feature.getPropertiesMap(): Map<String, String> {
+    val map = mutableMapOf<String, String>()
+    this.propertyKeys?.forEach { key -> this.getProperty(key)?.let { value -> map[key] = value } }
+    return map
+}
+
+private fun Feature.applyExplicitStyle(geo: GeoJsonLayer) {
+    val jsonStroke = this.getProperty("stroke")
+    val jsonFill = this.getProperty("fill")
+    val jsonFillOpacity = this.getProperty("fill-opacity")
+    val jsonWidth = this.getProperty("stroke-width")?.toFloatOrNull()
+
+    val width =
+        jsonWidth
+            ?: geo.lineStringStyle?.lineWidth
+            ?: geo.polygonStyle?.strokeWidth
+            ?: DEFAULT_STROKE_WIDTH
+
+    when (this.geometry) {
+        is GeoJsonLineString,
+        is GeoJsonMultiLineString -> {
+            val strokeColor =
+                jsonStroke?.toColorInt()
+                    ?: geo.lineStringStyle?.lineColor?.toArgb()
+                    ?: DEFAULT_STROKE_COLOR.toColorInt()
+
+            (this as GeoJsonFeature).lineStringStyle =
+                GeoJsonLineStringStyle().apply {
+                    color = strokeColor
+                    this.width = width
+                    isClickable = geo.isClickable == true
+                    isVisible = geo.visible != false
+                    zIndex = geo.zIndex
+                    isGeodesic = geo.isGeodesic == true
+                    pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
+                }
+        }
+        is GeoJsonPolygon,
+        is GeoJsonMultiPolygon -> {
+            val strokeColor =
+                jsonStroke?.toColorInt()
+                    ?: geo.polygonStyle?.strokeColor?.toArgb()
+                    ?: DEFAULT_STROKE_COLOR.toColorInt()
+
+            val fillColor =
+                jsonFill?.toColorInt()?.let { c ->
+                    val opacity = jsonFillOpacity?.toFloatOrNull()
+                    if (opacity != null) applyAlpha(c, opacity) else c
+                } ?: geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
+
+            (this as GeoJsonFeature).polygonStyle =
+                GeoJsonPolygonStyle().apply {
+                    this.strokeColor = strokeColor
+                    this.strokeWidth = width
+                    this.fillColor = fillColor
+                    isClickable = geo.isClickable == true
+                    isVisible = geo.visible != false
+                    zIndex = geo.zIndex
+                    isGeodesic = geo.isGeodesic == true
+                }
+        }
+        is GeoJsonPoint -> {
+            val titleFromJson =
+                this.getProperty("title") ?: this.getProperty("name") ?: geo.pointStyle?.pointTitle
+            val snippetFromJson =
+                this.getProperty("snippet")
+                    ?: this.getProperty("description")
+                    ?: geo.pointStyle?.snippet
+
+            (this as GeoJsonFeature).pointStyle =
+                GeoJsonPointStyle().apply {
+                    alpha = geo.pointStyle?.alpha ?: 1f
+                    isDraggable = geo.pointStyle?.isDraggable ?: true
+                    isFlat = geo.pointStyle?.isFlat ?: false
+                    rotation = geo.pointStyle?.rotation ?: 0f
+                    title = titleFromJson
+                    snippet = snippetFromJson
+                    isVisible = geo.visible != false
+                    zIndex = geo.zIndex
+                    setInfoWindowAnchor(
+                        geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
+                        geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
+                    )
+                    setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
+                }
+        }
+    }
+}
+
+private fun applyAlpha(color: Int, opacity: Float?) =
+    if (opacity != null) {
+        ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
+    } else {
+        color
+    }
 
 private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
     val title = feature.getProperty("title")
@@ -325,129 +488,3 @@ private fun GeoJsonFeature.parseGeoJsonAnchor(): GoogleMapsAnchor? {
 
     return null
 }
-
-private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
-    defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
-    defaultLineStringStyle.isClickable = geo.isClickable == true
-    defaultLineStringStyle.color =
-        geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
-    defaultLineStringStyle.width = geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH
-    defaultLineStringStyle.zIndex = geo.zIndex
-    defaultLineStringStyle.isVisible = geo.visible != false
-    defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
-
-    defaultPolygonStyle.fillColor =
-        geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
-    defaultPolygonStyle.strokeColor =
-        geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
-    defaultPolygonStyle.strokeWidth = geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH
-    defaultPolygonStyle.zIndex = geo.zIndex
-    defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
-    defaultPolygonStyle.isClickable = geo.isClickable == true
-    defaultPolygonStyle.isVisible = geo.visible != false
-
-    defaultPointStyle.alpha = geo.pointStyle?.alpha ?: 1f
-    defaultPointStyle.isDraggable = geo.pointStyle?.isDraggable ?: true
-    defaultPointStyle.isFlat = geo.pointStyle?.isFlat ?: false
-    defaultPointStyle.rotation = geo.pointStyle?.rotation ?: 0f
-    defaultPointStyle.title = geo.pointStyle?.pointTitle
-    defaultPointStyle.snippet = geo.pointStyle?.snippet
-    defaultPointStyle.isVisible = geo.visible != false
-    defaultPointStyle.zIndex = geo.zIndex
-    defaultPointStyle.setInfoWindowAnchor(
-        geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
-        geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
-    )
-    defaultPointStyle.setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
-
-    features.forEach { feature ->
-        val jsonStroke = feature.getProperty("stroke")
-        val jsonFill = feature.getProperty("fill")
-        val jsonFillOpacity = feature.getProperty("fill-opacity")
-        val jsonWidth = feature.getProperty("stroke-width")?.toFloatOrNull()
-        val width = jsonWidth ?: DEFAULT_STROKE_WIDTH
-
-        when (feature.geometry) {
-            is GeoJsonLineString,
-            is GeoJsonMultiLineString -> {
-                val strokeColor =
-                    jsonStroke?.toColorInt()
-                        ?: geo.lineStringStyle?.lineColor?.toArgb()
-                        ?: DEFAULT_STROKE_COLOR.toColorInt()
-
-                feature.setLineStringStyle(
-                    GeoJsonLineStringStyle().apply {
-                        color = strokeColor
-                        this.width = width
-                        isClickable = geo.isClickable == true
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
-                        isGeodesic = geo.isGeodesic == true
-                        pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
-                    }
-                )
-            }
-            is GeoJsonPolygon,
-            is GeoJsonMultiPolygon -> {
-                val strokeColor =
-                    jsonStroke?.toColorInt()
-                        ?: geo.polygonStyle?.strokeColor?.toArgb()
-                        ?: DEFAULT_STROKE_COLOR.toColorInt()
-
-                val fillColor =
-                    jsonFill?.toColorInt()?.let { c ->
-                        val opacity = jsonFillOpacity?.toFloatOrNull()
-                        if (opacity != null) applyAlpha(c, opacity) else c
-                    } ?: geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
-
-                feature.setPolygonStyle(
-                    GeoJsonPolygonStyle().apply {
-                        this.strokeColor = strokeColor
-                        this.strokeWidth = strokeWidth
-                        this.fillColor = fillColor
-                        isClickable = geo.isClickable == true
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
-                        isGeodesic = geo.isGeodesic == true
-                    }
-                )
-            }
-            is GeoJsonPoint -> {
-                val titleFromJson =
-                    feature.getProperty("title")
-                        ?: feature.getProperty("name")
-                        ?: geo.pointStyle?.pointTitle
-                val snippetFromJson =
-                    feature.getProperty("snippet")
-                        ?: feature.getProperty("description")
-                        ?: geo.pointStyle?.snippet
-
-                feature.setPointStyle(
-                    GeoJsonPointStyle().apply {
-                        alpha = geo.pointStyle?.alpha ?: 1f
-                        isDraggable = geo.pointStyle?.isDraggable ?: true
-                        isFlat = geo.pointStyle?.isFlat ?: false
-                        rotation = geo.pointStyle?.rotation ?: 0f
-                        title = titleFromJson
-                        snippet = snippetFromJson
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
-                        setInfoWindowAnchor(
-                            geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
-                            geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
-                        )
-                        setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
-                    }
-                )
-            }
-            else -> Unit
-        }
-    }
-}
-
-private fun applyAlpha(color: Int, opacity: Float?) =
-    if (opacity != null) {
-        ColorUtils.setAlphaComponent(color, (opacity.coerceIn(0f, 1f) * 255f).toInt())
-    } else {
-        color
-    }

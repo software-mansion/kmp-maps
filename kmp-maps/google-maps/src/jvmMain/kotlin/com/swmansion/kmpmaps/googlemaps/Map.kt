@@ -6,6 +6,7 @@ import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
+import com.swmansion.kmpmaps.core.GeoJsonFeatureClicked
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Map as CoreMap
 import com.swmansion.kmpmaps.core.MapProperties
@@ -36,6 +37,7 @@ public actual fun Map(
     onMapLongClick: ((Coordinates) -> Unit)?,
     onPOIClick: ((Coordinates) -> Unit)?,
     onMapLoaded: (() -> Unit)?,
+    onGeoJsonFeatureClick: ((GeoJsonFeatureClicked) -> Unit)?,
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
@@ -60,6 +62,7 @@ public actual fun Map(
         onMapLongClick,
         onPOIClick,
         onMapLoaded,
+        onGeoJsonFeatureClick,
         geoJsonLayers,
         customMarkerContent,
         webCustomMarkerContent,
