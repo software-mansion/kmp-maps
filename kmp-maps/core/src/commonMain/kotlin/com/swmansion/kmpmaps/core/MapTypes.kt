@@ -174,11 +174,18 @@ public fun Polygon.getId(): String = "polygon_${hashCode()}"
  * @property coordinates List of coordinates that define the polyline's path
  * @property width The width of the polyline
  * @property lineColor The color of the polyline
+ * @property dashPattern Optional dash pattern as alternating on/off (drawn/gap) segment lengths in
+ *   screen points, e.g. `[10f, 10f]` for even dashes. `null` (the default) draws a solid line. The
+ *   pattern is applied in screen space, so dash spacing stays constant as the map zooms. The cap
+ *   style of each dash follows the platform's native default (Android and Web render butt-capped
+ *   dashes; iOS/Apple Maps rounds them). On Web, Google Maps has no native dash support, so the
+ *   pattern is approximated with a repeated dash symbol.
  */
 public data class Polyline(
     val coordinates: List<Coordinates>,
     val width: Float,
     val lineColor: Color? = null,
+    val dashPattern: List<Float>? = null,
 )
 
 /** @suppress */

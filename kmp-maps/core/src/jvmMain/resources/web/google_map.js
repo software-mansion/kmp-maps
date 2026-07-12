@@ -382,7 +382,7 @@ function updatePolylines(data) {
 
     try {
         data.forEach((item) => {
-            const polyline = new google.maps.Polyline({
+            const options = {
                 map: map,
                 path: item.path,
                 strokeColor: item.strokeColor || "#000000",
@@ -390,7 +390,30 @@ function updatePolylines(data) {
                 strokeWeight: item.strokeWeight || 1,
                 clickable: true,
                 zIndex: 3
-            });
+            };
+
+            // Google Maps has no native dash support. Approximate the [on, off, ...] pattern by
+            // hiding the solid stroke and repeating a short line symbol along the path: the symbol
+            // length stands in for the "on" segment and the repeat period for "on + off".
+            const dash = item.dashPattern;
+            if (Array.isArray(dash) && dash.length >= 2) {
+                const on = dash[0];
+                const off = dash[1];
+                options.strokeOpacity = 0;
+                options.icons = [{
+                    icon: {
+                        path: "M 0,-1 0,1",
+                        strokeColor: item.strokeColor || "#000000",
+                        strokeOpacity: item.strokeOpacity !== undefined ? item.strokeOpacity : 1.0,
+                        strokeWeight: item.strokeWeight || 1,
+                        scale: Math.max(on / 2, 1)
+                    },
+                    offset: "0",
+                    repeat: (on + off) + "px"
+                }];
+            }
+
+            const polyline = new google.maps.Polyline(options);
 
             polyline.addListener("click", () => {
                 window.kmpJsBridge.callNative("onPolylineClick", String(item.id));
