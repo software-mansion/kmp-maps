@@ -16,6 +16,12 @@ pluginManagement {
     }
 }
 
+// Auto-provisions the JDK required by jvmToolchain(...) so a build works regardless of which JDKs a
+// contributor has installed locally (appfrosch fork addition).
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
