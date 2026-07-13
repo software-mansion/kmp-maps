@@ -122,11 +122,24 @@ public data class Marker(
     val androidMarkerOptions: AndroidMarkerOptions = AndroidMarkerOptions(),
     val iosMarkerOptions: IosMarkerOptions? = null,
     val contentId: String? = null,
+    val id: String? = null,
 )
 
-/** @suppress */
+/**
+ * Stable identity used to key the marker in the Compose tree and native caches.
+ *
+ * When [Marker.id] is provided it is used verbatim, so a marker that only changes its
+ * [Marker.coordinates] keeps the same identity across recompositions — the marker is
+ * repositioned in place instead of being disposed and recreated (which causes flicker on
+ * markers that move every frame, e.g. a live driving puck).
+ *
+ * When [Marker.id] is null it falls back to the structural [hashCode], preserving the
+ * previous behaviour for callers that do not opt in.
+ *
+ * @suppress
+ */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun Marker.getId(): String = "marker_${hashCode()}"
+public fun Marker.getId(): String = id?.let { "marker_$it" } ?: "marker_${hashCode()}"
 
 /**
  * Represents a circle overlay on the map.

@@ -191,7 +191,7 @@ public actual fun Map(
                 )
             } else {
                 markers.forEach { marker ->
-                    key(marker.getId(), marker.contentId) {
+                    key(marker.getId()) {
                         val markerState =
                             remember(marker.getId()) {
                                 MarkerState(marker.coordinates.toGoogleMapsLatLng())
@@ -216,7 +216,13 @@ public actual fun Map(
                         }
 
                         if (content != null) {
+                            // Re-render the cached marker bitmap in place whenever the visual
+                            // content changes (its [contentId]) — WITHOUT changing the marker's
+                            // identity ([getId]). This lets a stable-id marker update its glyph
+                            // (e.g. a driving puck's baked heading) without being disposed and
+                            // recreated, which is what caused flicker on moving markers.
                             MarkerComposable(
+                                marker.contentId ?: marker.getId(),
                                 state = markerState,
                                 title = marker.title,
                                 anchor = marker.androidMarkerOptions.anchor.toOffset(),
