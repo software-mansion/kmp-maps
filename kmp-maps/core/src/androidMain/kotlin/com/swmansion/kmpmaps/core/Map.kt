@@ -229,6 +229,8 @@ public actual fun Map(
                                 draggable = marker.androidMarkerOptions.draggable,
                                 snippet = marker.androidMarkerOptions.snippet,
                                 zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                                rotation = marker.androidMarkerOptions.rotation ?: 0.0f,
+                                flat = marker.androidMarkerOptions.flat,
                                 onClick = {
                                     onMarkerClick?.invoke(marker)
                                     onMarkerClick == null
@@ -243,6 +245,8 @@ public actual fun Map(
                                 draggable = marker.androidMarkerOptions.draggable,
                                 snippet = marker.androidMarkerOptions.snippet,
                                 zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
+                                rotation = marker.androidMarkerOptions.rotation ?: 0.0f,
+                                flat = marker.androidMarkerOptions.flat,
                                 onClick = {
                                     onMarkerClick?.invoke(marker)
                                     onMarkerClick == null
