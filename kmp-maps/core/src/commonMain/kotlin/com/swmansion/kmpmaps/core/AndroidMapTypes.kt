@@ -41,6 +41,11 @@ public data class AndroidUISettings(
  * @property draggable Whether the marker can be dragged by the user
  * @property snippet Additional text displayed below the title
  * @property zIndex The z-index for layering markers
+ * @property rotation The rotation of the marker in degrees, clockwise. Combined with a stable
+ *   [Marker.id] this rotates a marker in place (e.g. a driving puck turning to its heading)
+ *   without re-rendering its bitmap. `null` leaves the marker unrotated.
+ * @property flat When `true` the marker is drawn flat against the map so its [rotation] is
+ *   relative to north and it respects the map's tilt/rotation (billboard behaviour when `false`).
  *
  * Note: In the current Android implementation, draggability is only supported when
  * [ClusterSettings.enabled] is set to `false`.
@@ -51,6 +56,8 @@ public data class AndroidMarkerOptions(
     val draggable: Boolean = false,
     val snippet: String? = null,
     val zIndex: Float? = null,
+    val rotation: Float? = null,
+    val flat: Boolean = false,
 )
 
 /**
