@@ -6,6 +6,7 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCAction
 import kotlinx.cinterop.useContents
+import platform.Foundation.NSNumber
 import platform.MapKit.MKAnnotationProtocol
 import platform.MapKit.MKAnnotationView
 import platform.MapKit.MKCircle
@@ -120,6 +121,9 @@ internal class MapDelegate(
                 if (core != null) {
                     renderer.strokeColor = core.lineColor?.toAppleMapsColor() ?: UIColor.blackColor
                     renderer.lineWidth = core.width.toDouble()
+                    // Screen-space dash pattern (alternating on/off lengths in points); stays
+                    // constant as the map zooms. null leaves the line solid.
+                    renderer.lineDashPattern = core.dashPattern?.map { NSNumber(float = it) }
                 } else {
                     val gj = geoJsonPolylineStyles[rendererForOverlay]
                     if (gj != null) {

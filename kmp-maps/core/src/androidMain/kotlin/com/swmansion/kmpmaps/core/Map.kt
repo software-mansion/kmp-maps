@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalDensity
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Gap
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapEffect
@@ -289,6 +291,12 @@ public actual fun Map(
                     points = polyline.coordinates.map(Coordinates::toGoogleMapsLatLng),
                     color = Color(polyline.lineColor?.toArgb() ?: android.graphics.Color.BLACK),
                     width = polyline.width,
+                    // Screen-space dash pattern: alternating on/off segment lengths map to
+                    // Dash/Gap items so the spacing stays constant as the map zooms. null = solid.
+                    pattern =
+                        polyline.dashPattern?.mapIndexed { index, length ->
+                            if (index % 2 == 0) Dash(length) else Gap(length)
+                        },
                     clickable = true,
                     onClick = {
                         if (onPolylineClick != null) {

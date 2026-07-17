@@ -66,7 +66,7 @@ dokka { dokkaPublications.configureEach { suppressInheritedMembers = true } }
 
 mavenPublishing {
     publishToMavenCentral()
-    signAllPublications()
+    // signAllPublications() // disabled for local fork publish
     pom {
         name = "KMP Maps"
         description = "Universal map component for Compose Multiplatform."
@@ -102,6 +102,22 @@ mavenPublishing {
                 id = "justynagreda"
                 name = "Justyna Gręda"
                 email = "justyna.greda@swmansion.com"
+            }
+        }
+    }
+}
+
+// appfrosch fork: publish to GitHub Packages so teammates + CI can resolve the dashPattern build
+// (com.swmansion.kmpmaps:core:0.9.1-appfrosch.1). Credentials come from gradle properties
+// gpr.user / gpr.token, or the GITHUB_ACTOR / GITHUB_TOKEN env vars.
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/appfrosch/kmp-maps")
+            credentials {
+                username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
+                password = providers.gradleProperty("gpr.token").orNull ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }

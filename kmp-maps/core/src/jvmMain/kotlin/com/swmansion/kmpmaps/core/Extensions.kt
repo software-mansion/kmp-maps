@@ -210,6 +210,8 @@ internal fun Polyline.toJson() = buildJsonObject {
         put("strokeColor", it.toHex())
         put("strokeOpacity", it.alpha)
     }
+
+    dashPattern?.let { put("dashPattern", JsonArray(it.map(::JsonPrimitive))) }
 }
 
 /**
