@@ -247,13 +247,26 @@ public data class Cluster(val coordinates: Coordinates, val size: Int, val items
  *   `false` to allow the default platform behavior
  * @property clusterContent Optional Composable to render custom cluster UI
  * @property webClusterContent Optional function to render custom cluster UI as HTML string
+ * @property minClusterSize How many items have to fall together before they are drawn as a cluster
+ *   rather than as separate markers. Android only: its renderer defaults to
+ *   [DEFAULT_MIN_CLUSTER_SIZE], while iOS and the web already group from two, so lowering this is
+ *   what makes the three behave alike.
  */
 public data class ClusterSettings(
     val enabled: Boolean = false,
     val onClusterClick: ((Cluster) -> Boolean)? = null,
     val clusterContent: (@Composable (Cluster) -> Unit)? = null,
     val webClusterContent: ((Cluster) -> String)? = null,
+    val minClusterSize: Int = DEFAULT_MIN_CLUSTER_SIZE,
 )
+
+/**
+ * Android's own default, kept so that setting nothing behaves exactly as it did before this option
+ * existed. Note that the platforms do not otherwise agree: MapKit on iOS and the web clusterer both
+ * group from two items, so leaving this at the default gives Android visibly fewer clusters than
+ * the same data produces elsewhere.
+ */
+public const val DEFAULT_MIN_CLUSTER_SIZE: Int = 4
 
 internal object ColorSerializer : KSerializer<Color> {
     override val descriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.INT)
