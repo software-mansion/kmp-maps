@@ -28,6 +28,7 @@ import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.Polyline
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.data.Layer
@@ -187,6 +188,14 @@ public actual fun Map(
                         customMarkerContent[clusterItem.marker.contentId]?.invoke(
                             clusterItem.marker
                         ) ?: DefaultPin(clusterItem.marker)
+                    },
+                    // The renderer decides how many items make a cluster, and its own default is 4,
+                    // so smaller groups are silently drawn as separate markers. Reaching it through
+                    // this hook is the only way to say otherwise.
+                    onClusterManager = { manager ->
+                        (manager.renderer as? DefaultClusterRenderer<MarkerClusterItem>)
+                            ?.takeIf { it.minClusterSize != clusterSettings.minClusterSize }
+                            ?.minClusterSize = clusterSettings.minClusterSize
                     },
                 )
             } else {
