@@ -174,7 +174,7 @@ public actual fun Map(
                     },
                     onClusterItemClick = { clusterItem ->
                         onMarkerClick?.invoke(clusterItem.marker)
-                        onMarkerClick == null
+                        true
                     },
                     clusterContent = { androidCluster ->
                         if (clusterSettings.clusterContent != null) {
@@ -225,7 +225,7 @@ public actual fun Map(
                                 zIndex = marker.androidMarkerOptions.zIndex ?: 0.0f,
                                 onClick = {
                                     onMarkerClick?.invoke(marker)
-                                    onMarkerClick == null
+                                    true
                                 },
                                 content = { content(marker) },
                             )
