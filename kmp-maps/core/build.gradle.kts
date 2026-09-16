@@ -13,16 +13,18 @@ kotlin {
     jvmToolchain(17)
     androidTarget { publishLibraryVariants("release") }
 
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "core"
             isStatic = true
+            freeCompilerArgs += "-Xpartial-linkage-loglevel=error"
         }
     }
 
     jvm()
 
     sourceSets {
+        commonTest.dependencies { implementation(kotlin("test")) }
         commonMain.dependencies {
             implementation(compose.components.resources)
             implementation(compose.foundation)
@@ -33,6 +35,7 @@ kotlin {
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             implementation(compose.materialIconsExtended)
             implementation(libs.jetBrains.kotlinX.serialization.json)
+            implementation(libs.jetBrains.kotlinX.coroutinesCore)
         }
 
         androidMain.dependencies {
