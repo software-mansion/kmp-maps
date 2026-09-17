@@ -7,20 +7,21 @@ android-targetSdk = "36"
 androidXActivity = "1.11.0"
 androidXLifecycle = "2.9.4"
 buildkonfig = "0.17.1"
-compose = "1.9.0"
+compose = "1.12.0"
 composeWebViewMultiplatformDesktop = "2.0.3"
 dokka = "2.1.0"
 googleMapsCompose = "6.12.2"
 googleMapsComposeUtils = "6.12.2"
-jetbrainsKotlinJvm = "2.3.0"
+jetbrainsKotlinJvm = "2.4.0"
 kcef = "2024.04.20.4"
-kotlin = "2.3.0"
-kotlinXCoroutines = "1.10.2"
+kotlin = "2.4.0"
+kotlinXCoroutines = "1.11.0"
 kotlinXSerializationJson = "1.9.0"
 mavenPublish = "0.34.0"
 playServicesMaps = "19.2.0"
 
 [libraries]
+jetBrains-kotlinX-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinXCoroutines" }
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 google-android-gms-playServicesMaps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }

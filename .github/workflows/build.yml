@@ -10,3 +10,5 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: ./gradlew build -x lint -x test
+      - name: Test native marker conversion
+        run: ./gradlew :kmp-maps:core:iosSimulatorArm64Test
