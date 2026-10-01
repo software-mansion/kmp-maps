@@ -106,6 +106,13 @@ import androidx.compose.ui.Modifier
  * @param geoJsonLayers List of GeoJSON layers to display on the map
  * @param customMarkerContent Map of content IDs to Composable functions for custom marker content
  * @param webCustomMarkerContent Map of content IDs to a function returning an HTML string
+ * @param animateCameraPosition When `true`, subsequent [cameraPosition] changes animate to the new
+ *   region instead of jumping instantly. The initial camera setup (first paint) remains instant.
+ *   Defaults to `false` for backward compatibility. Desktop (JVM) does not currently apply
+ *   programmatic camera updates after load, so this flag has no effect there.
+ * @param cameraAnimationDurationMs Duration of the animated camera transition in milliseconds when
+ *   [animateCameraPosition] is `true`. Honored on Android and Google Maps for iOS. Apple MapKit
+ *   only supports a boolean animated flag, so duration is ignored there.
  */
 @Composable
 public expect fun Map(
@@ -131,4 +138,6 @@ public expect fun Map(
     geoJsonLayers: List<GeoJsonLayer> = emptyList(),
     customMarkerContent: Map<String, @Composable (Marker) -> Unit> = emptyMap(),
     webCustomMarkerContent: Map<String, (Marker) -> String> = emptyMap(),
+    animateCameraPosition: Boolean = false,
+    cameraAnimationDurationMs: Int = 300,
 )

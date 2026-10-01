@@ -41,7 +41,11 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
+    animateCameraPosition: Boolean,
+    cameraAnimationDurationMs: Int,
 ) {
+    // Desktop does not currently apply programmatic cameraPosition updates after the initial load,
+    // so animateCameraPosition / cameraAnimationDurationMs have no effect here.
     var htmlContent by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {

@@ -39,6 +39,8 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
+    animateCameraPosition: Boolean,
+    cameraAnimationDurationMs: Int,
 ) {
     CoreMap(
         modifier,
@@ -63,5 +65,7 @@ public actual fun Map(
         geoJsonLayers,
         customMarkerContent,
         webCustomMarkerContent,
+        animateCameraPosition,
+        cameraAnimationDurationMs,
     )
 }

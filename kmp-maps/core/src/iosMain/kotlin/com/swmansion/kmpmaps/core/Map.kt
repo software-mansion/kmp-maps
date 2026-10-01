@@ -53,6 +53,8 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
+    animateCameraPosition: Boolean,
+    cameraAnimationDurationMs: Int,
 ) {
     var mapView by remember { mutableStateOf<MKMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
@@ -136,12 +138,12 @@ public actual fun Map(
         }
     }
 
-    LaunchedEffect(cameraPosition) {
+    LaunchedEffect(cameraPosition, animateCameraPosition) {
         val view = mapView ?: return@LaunchedEffect
         val newPos = cameraPosition ?: return@LaunchedEffect
 
         if (newPos != lastCameraPosition.value) {
-            view.setRegion(newPos.toMKCoordinateRegion(), animated = false)
+            view.setRegion(newPos.toMKCoordinateRegion(), animated = animateCameraPosition)
             lastCameraPosition.value = newPos
         }
     }

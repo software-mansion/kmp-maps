@@ -21,6 +21,7 @@ Check out the sample project in the `/sample` directory for complete usage examp
 ## ✨ Features
 
 - **Multi-Provider Support:** Android (Google Maps), iOS (Apple Maps or Google Maps), and JVM/desktop (Google Maps JS).
+- **Animated Camera Transitions:** Opt into smooth camera pan/zoom via `animateCameraPosition` (and optional `cameraAnimationDurationMs`) when updating `cameraPosition`.
 - **Fully Customizable Markers:** Create markers using standard Compose Multiplatform code.
 - **GeoJSON Support:** Easily render GeoJSON layers with customizable styling capabilities.
 - **Native Rendering:** Powered by underlying native SDKs, ensuring smooth performance, correct gesture handling, and native look and feel.

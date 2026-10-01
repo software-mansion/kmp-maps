@@ -68,6 +68,8 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
+    animateCameraPosition: Boolean,
+    cameraAnimationDurationMs: Int,
 ) {
     var mapView by remember { mutableStateOf<UtilsGMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
@@ -159,12 +161,16 @@ public actual fun Map(
         geoJsonExtractedMarkers = geoJsonManager.render(geoJsonLayers)
     }
 
-    LaunchedEffect(cameraPosition) {
+    LaunchedEffect(cameraPosition, animateCameraPosition, cameraAnimationDurationMs) {
         val view = mapView ?: return@LaunchedEffect
         val newPos = cameraPosition ?: return@LaunchedEffect
 
         if (newPos != lastCameraPosition.value) {
-            view.setUpGMSCameraPosition(newPos)
+            view.setUpGMSCameraPosition(
+                position = newPos,
+                animated = animateCameraPosition,
+                durationMs = cameraAnimationDurationMs,
+            )
             lastCameraPosition.value = newPos
         }
     }

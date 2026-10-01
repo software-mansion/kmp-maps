@@ -11,7 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -32,6 +34,10 @@ import com.google.maps.android.compose.clustering.Clustering
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.data.Layer
 import com.google.maps.android.data.geojson.GeoJsonLayer as GoogleGeoJsonLayer
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.withContext
 
 /** Android implementation of the Map composable using Google Maps. */
 @OptIn(ExperimentalPermissionsApi::class, MapsComposeExperimentalApi::class)
@@ -59,6 +65,8 @@ public actual fun Map(
     geoJsonLayers: List<GeoJsonLayer>,
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
+    animateCameraPosition: Boolean,
+    cameraAnimationDurationMs: Int,
 ) {
     var mapLoaded by remember { mutableStateOf(false) }
     val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -80,10 +88,29 @@ public actual fun Map(
             }
         }
 
-        LaunchedEffect(cameraPosition, mapLoaded) {
-            if (mapLoaded && cameraPosition != null) {
-                cameraPositionState.move(cameraPosition.toCameraUpdate())
-            }
+        // cameraPosition is a composable param — must use rememberUpdatedState so snapshotFlow
+        // does not permanently capture the value from when this LaunchedEffect first started
+        // (often null at mapLoaded), which would make all later programmatic moves no-ops.
+        val latestCameraPosition by rememberUpdatedState(cameraPosition)
+        val latestAnimate by rememberUpdatedState(animateCameraPosition)
+        val latestDurationMs by rememberUpdatedState(cameraAnimationDurationMs)
+
+        // filterNotNull: clearing cameraPosition to null must not cancel an in-flight animate().
+        // NonCancellable: one-frame pulses that tear down the collector still finish animate().
+        LaunchedEffect(mapLoaded) {
+            if (!mapLoaded) return@LaunchedEffect
+            snapshotFlow { latestCameraPosition }
+                .filterNotNull()
+                .collectLatest { position ->
+                    val update = position.toCameraUpdate()
+                    if (latestAnimate) {
+                        withContext(NonCancellable) {
+                            cameraPositionState.animate(update, latestDurationMs)
+                        }
+                    } else {
+                        cameraPositionState.move(update)
+                    }
+                }
         }
 
         GoogleMap(

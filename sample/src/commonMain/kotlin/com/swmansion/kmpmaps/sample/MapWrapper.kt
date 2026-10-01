@@ -157,6 +157,7 @@ private fun Map(
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
                 webCustomMarkerContent = webCustomMarkerContent,
+                animateCameraPosition = true,
             )
         MapProvider.GOOGLE_MAPS ->
             GoogleMap(
@@ -182,6 +183,7 @@ private fun Map(
                 geoJsonLayers = geoJsonLayers,
                 customMarkerContent = customMarkerContent,
                 webCustomMarkerContent = webCustomMarkerContent,
+                animateCameraPosition = true,
             )
     }
 }
