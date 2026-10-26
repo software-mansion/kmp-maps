@@ -1,67 +1,66 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
-version = "0.9.1"
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.jetBrains.compose)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.buildkonfig)
-    kotlin("native.cocoapods")
 }
 
-val googleMapsApiKey = gradleLocalProperties(rootDir, providers).getProperty("MAPS_API_KEY") ?: ""
+fun readMapsApiKey(fileName: String): String? =
+    providers
+        .fileContents(rootProject.layout.projectDirectory.file(fileName))
+        .asText
+        .orNull
+        ?.let { Properties().apply { load(it.reader()) }.getProperty("MAPS_API_KEY") }
+
+val googleMapsApiKey: String by
+    extra(readMapsApiKey("local.properties") ?: readMapsApiKey("local.defaults.properties") ?: "")
 
 kotlin {
     jvmToolchain(17)
-    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_11) } }
-
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "Sample"
-            isStatic = true
-            binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
-        }
+    android {
+        namespace = "com.swmansion.kmpmaps.sample"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        androidResources { enable = true }
+        withHostTest {}
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
     }
+
+    iosArm64()
+    iosSimulatorArm64()
+    targets
+        .withType<KotlinNativeTarget>()
+        .matching { it.konanTarget.family.isAppleFamily }
+        .configureEach {
+            binaries {
+                framework {
+                    baseName = "Sample"
+                    isStatic = true
+                    binaryOption("bundleId", "com.swmansion.kmpmaps.sample")
+                }
+            }
+        }
 
     jvm()
 
-    cocoapods {
-        summary = "Universal map component for Compose Multiplatform."
-        homepage = "https://github.com/software-mansion/kmp-maps"
-        version = "0.9.1"
-        ios.deploymentTarget = "16.0"
-        framework {
-            baseName = "Sample"
-            isStatic = true
-        }
-
-        pod("GoogleMaps") { version = "10.4.0" }
-        pod("Google-Maps-iOS-Utils") {
-            version = "6.1.3"
-            moduleName = "GoogleMapsUtils"
-        }
-    }
-
     sourceSets {
-        androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(libs.androidX.activity.compose)
-        }
         commonMain.dependencies {
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.runtime)
-            implementation(compose.ui)
+            implementation(libs.jetBrains.compose.components.resources)
+            implementation(libs.jetBrains.compose.uiToolingPreview)
+            implementation(libs.jetBrains.compose.foundation)
+            implementation(libs.jetBrains.compose.material3)
+            implementation(libs.jetBrains.compose.runtime)
+            implementation(libs.jetBrains.compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.jetBrains.compose.materialIconsExtended)
             implementation(project(":kmp-maps:core"))
             implementation(project(":kmp-maps:google-maps"))
         }
@@ -72,27 +71,6 @@ kotlin {
             implementation(libs.kcef)
         }
     }
-}
-
-android {
-    namespace = "com.swmansion.kmpmaps.sample"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.swmansion.kmpmaps.sample"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-        manifestPlaceholders["MAPS_API_KEY"] = googleMapsApiKey
-    }
-    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
-    buildTypes { getByName("release") { isMinifyEnabled = false } }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    buildFeatures { buildConfig = true }
 }
 
 compose.desktop {
@@ -126,8 +104,6 @@ tasks.withType<JavaExec> {
         "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
     )
 }
-
-dependencies { debugImplementation(compose.uiTooling) }
 
 buildkonfig {
     packageName = "com.swmansion.kmpmaps.sample"

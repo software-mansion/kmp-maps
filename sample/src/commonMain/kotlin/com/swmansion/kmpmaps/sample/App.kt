@@ -10,10 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.MapConfiguration
 import com.swmansion.kmpmaps.core.PointStyle
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview

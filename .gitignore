@@ -17,7 +17,14 @@ captures
 local.properties
 secrets.properties
 xcuserdata
-**/Pods/
 sample/kcef-bundle/
 kmp-maps/core/bin
 .claude
+
+# SwiftPM import: commit only the lock file. The synthetic package next to it is regenerated on every
+# build, and the plugin's own .gitignore excludes the package checkout.
+.swiftpm-locks/*/swiftImport/*
+!.swiftpm-locks/*/swiftImport/Package.resolved
+# SwiftPM and SourceKit-LSP build output
+.build/
+.swiftpm/

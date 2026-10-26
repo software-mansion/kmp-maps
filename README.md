@@ -3,7 +3,7 @@
 [![Ad](https://swm-delivery.com/www/images/zone-gh-kmp-maps-2?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-kmp-maps-2&n=1)
 [![Ad](https://swm-delivery.com/www/images/zone-gh-kmp-maps-3?n=1)](https://swm-delivery.com/www/delivery/ck-slug.php?zoneid=zone-gh-kmp-maps-3&n=1)
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.21-blue.svg)](https://kotlinlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 ![Maven Central](https://img.shields.io/maven-central/v/com.swmansion.kmpmaps/core)
 

@@ -4,12 +4,15 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
 internal data class MarkerClusterItem(val marker: Marker) : ClusterItem {
-    override fun getPosition(): LatLng =
-        LatLng(marker.coordinates.latitude, marker.coordinates.longitude)
+    override val position: LatLng
+        get() = LatLng(marker.coordinates.latitude, marker.coordinates.longitude)
 
-    override fun getTitle(): String? = marker.title
+    override val title: String?
+        get() = marker.title
 
-    override fun getSnippet(): String? = marker.androidMarkerOptions.snippet
+    override val snippet: String?
+        get() = marker.androidMarkerOptions.snippet
 
-    override fun getZIndex(): Float? = marker.androidMarkerOptions.zIndex
+    override val zIndex: Float?
+        get() = marker.androidMarkerOptions.zIndex
 }

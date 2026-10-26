@@ -1,20 +1,10 @@
 package com.swmansion.kmpmaps.googlemaps
 
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMUFeature
-import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
-import cocoapods.Google_Maps_iOS_Utils.GMUGeometryCollection
-import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
-import cocoapods.Google_Maps_iOS_Utils.GMULineString
-import cocoapods.Google_Maps_iOS_Utils.GMUPoint
-import cocoapods.Google_Maps_iOS_Utils.GMUPolygon
-import cocoapods.Google_Maps_iOS_Utils.GMUStyle
 import com.swmansion.kmpmaps.core.Coordinates
 import com.swmansion.kmpmaps.core.GeoJsonLayer
 import com.swmansion.kmpmaps.core.Marker
 import kotlin.collections.emptyList
 import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPointMake
 import platform.Foundation.NSData
@@ -24,13 +14,22 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIColor
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapView
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUFeature
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUGeoJSONParser
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUGeometryCollection
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUGeometryRenderer
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMULineString
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUPoint
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUPolygon
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUStyle
 
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(BetaInteropApi::class)
 internal class GeoJsonRendererManager {
-    private var mapView: UtilsGMSMapView? = null
+    private var mapView: GMSMapView? = null
     private var renderers: Map<Int, GMUGeometryRenderer> = emptyMap()
 
-    fun attach(view: UtilsGMSMapView) {
+    fun attach(view: GMSMapView) {
         mapView = view
     }
 

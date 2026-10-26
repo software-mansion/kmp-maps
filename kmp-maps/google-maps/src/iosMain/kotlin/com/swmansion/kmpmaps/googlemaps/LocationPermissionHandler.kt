@@ -1,6 +1,5 @@
 package com.swmansion.kmpmaps.googlemaps
 
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.CoreLocation.CLAuthorizationStatus
 import platform.CoreLocation.CLLocationManager
 import platform.CoreLocation.CLLocationManagerDelegateProtocol
@@ -10,7 +9,6 @@ import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.darwin.NSObject
 
 /** iOS location permission handler for Apple Maps. */
-@OptIn(ExperimentalForeignApi::class)
 internal class LocationPermissionHandler : NSObject(), CLLocationManagerDelegateProtocol {
     private val locationManager = CLLocationManager()
     private var onPermissionChanged: (() -> Unit)? = null

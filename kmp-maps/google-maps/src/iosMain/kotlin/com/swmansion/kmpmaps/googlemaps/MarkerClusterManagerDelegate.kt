@@ -1,17 +1,6 @@
 package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.runtime.Composable
-import cocoapods.GoogleMaps.GMSCameraUpdate
-import cocoapods.GoogleMaps.GMSMapView
-import cocoapods.GoogleMaps.animateWithCameraUpdate
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMSMarker
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterItemProtocol
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterManagerDelegateProtocol
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterProtocol
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterRendererDelegateProtocol
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterRendererProtocol
 import com.swmansion.kmpmaps.core.Cluster
 import com.swmansion.kmpmaps.core.ClusterSettings
 import com.swmansion.kmpmaps.core.Coordinates
@@ -19,14 +8,22 @@ import com.swmansion.kmpmaps.core.DefaultCluster
 import com.swmansion.kmpmaps.core.Marker
 import com.swmansion.kmpmaps.core.generateClusterId
 import com.swmansion.kmpmaps.core.getId
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIImage
 import platform.darwin.NSObject
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCameraUpdate
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapView
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMarker
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterItemProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterManager
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterManagerDelegateProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterRendererDelegateProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterRendererProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.animateWithCameraUpdate
 
-@OptIn(ExperimentalForeignApi::class)
 internal class MarkerClusterManagerDelegate(
-    private val mapView: UtilsGMSMapView,
+    private val mapView: GMSMapView,
     private val mapDelegate: MapDelegate?,
     private val clusterSettings: ClusterSettings,
     private val onMarkerClick: ((Marker) -> Unit)?,
@@ -113,7 +110,7 @@ internal class MarkerClusterManagerDelegate(
         if (!consumed) {
             val newZoom = mapView.camera().zoom() + 1
             val update = GMSCameraUpdate.setTarget(didTapCluster.position, newZoom)
-            (mapView as GMSMapView).animateWithCameraUpdate(update)
+            mapView.animateWithCameraUpdate(update)
         }
         return true
     }

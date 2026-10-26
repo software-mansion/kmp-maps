@@ -2,27 +2,6 @@ package com.swmansion.kmpmaps.googlemaps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSMapView
-import cocoapods.GoogleMaps.GMSMutablePath
-import cocoapods.GoogleMaps.GMSPolygon
-import cocoapods.GoogleMaps.GMSPolyline
-import cocoapods.GoogleMaps.kGMSTypeHybrid
-import cocoapods.GoogleMaps.kGMSTypeNormal
-import cocoapods.GoogleMaps.kGMSTypeSatellite
-import cocoapods.GoogleMaps.kGMSTypeTerrain
-import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
-import cocoapods.Google_Maps_iOS_Utils.GMSCameraUpdate
-import cocoapods.Google_Maps_iOS_Utils.GMSCoordinateBounds
-import cocoapods.Google_Maps_iOS_Utils.GMSMapStyle
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMSMarker
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
-import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterIconGenerator
-import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer
-import cocoapods.Google_Maps_iOS_Utils.GMUGeoJSONParser
-import cocoapods.Google_Maps_iOS_Utils.GMUGeometryRenderer
-import cocoapods.Google_Maps_iOS_Utils.GMUNonHierarchicalDistanceBasedAlgorithm
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -36,7 +15,6 @@ import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.core.getId
 import com.swmansion.kmpmaps.core.toAppleMapsColor
 import kotlin.collections.set
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGPointMake
 import platform.CoreLocation.CLLocationCoordinate2DMake
@@ -47,6 +25,26 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.dataUsingEncoding
 import platform.UIKit.UIColor
 import platform.UIKit.UIUserInterfaceStyle
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCameraPosition
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCameraUpdate
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCircle
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCoordinateBounds
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapStyle
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapView
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMarker
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMutablePath
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolygon
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolyline
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterManager
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUDefaultClusterIconGenerator
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUDefaultClusterRenderer
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUGeoJSONParser
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUGeometryRenderer
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUNonHierarchicalDistanceBasedAlgorithm
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.kGMSTypeHybrid
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.kGMSTypeNormal
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.kGMSTypeSatellite
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.kGMSTypeTerrain
 
 /**
  * Updates Google Maps markers by removing existing markers and adding new ones.
@@ -55,9 +53,8 @@ import platform.UIKit.UIUserInterfaceStyle
  * @param markers List of MapMarker objects to display
  * @param markerMapping MutableMap mapping GMSMarker to MapMarker for click handling
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsMarkers(
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     mapDelegate: MapDelegate?,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,
@@ -102,9 +99,8 @@ internal fun updateGoogleMapsMarkers(
  * @param circles List of MapCircle objects to display
  * @param circleMapping MutableMap mapping GMSCircle to MapCircle for styling
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsCircles(
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     circles: List<Circle>,
     circleMapping: MutableMap<GMSCircle, Circle>,
 ) {
@@ -119,7 +115,7 @@ internal fun updateGoogleMapsCircles(
         gmsCircle.fillColor = circle.color?.toAppleMapsColor()
         gmsCircle.strokeColor = circle.lineColor?.toAppleMapsColor()
         gmsCircle.strokeWidth = (circle.lineWidth ?: 1).toDouble()
-        gmsCircle.map = mapView as GMSMapView
+        gmsCircle.map = mapView
         gmsCircle.tappable = true
         circleMapping[gmsCircle] = circle
     }
@@ -132,9 +128,8 @@ internal fun updateGoogleMapsCircles(
  * @param polygons List of MapPolygon objects to display
  * @param polygonMapping MutableMap mapping GMSPolygon to MapPolygon for styling
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolygons(
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     polygons: List<Polygon>,
     polygonMapping: MutableMap<GMSPolygon, Polygon>,
 ) {
@@ -151,7 +146,7 @@ internal fun updateGoogleMapsPolygons(
         gmsPolygon.fillColor = polygon.color?.toAppleMapsColor()
         gmsPolygon.strokeColor = polygon.lineColor?.toAppleMapsColor()
         gmsPolygon.strokeWidth = polygon.lineWidth.toDouble()
-        gmsPolygon.map = mapView as GMSMapView
+        gmsPolygon.map = mapView
         gmsPolygon.tappable = true
         polygonMapping[gmsPolygon] = polygon
     }
@@ -164,9 +159,8 @@ internal fun updateGoogleMapsPolygons(
  * @param polylines List of MapPolyline objects to display
  * @param polylineMapping MutableMap mapping GMSPolyline to MapPolyline for styling
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun updateGoogleMapsPolylines(
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     polylines: List<Polyline>,
     polylineMapping: MutableMap<GMSPolyline, Polyline>,
 ) {
@@ -182,13 +176,12 @@ internal fun updateGoogleMapsPolylines(
         gmsPolyline.path = path
         gmsPolyline.strokeWidth = polyline.width.toDouble()
         gmsPolyline.strokeColor = polyline.lineColor?.toAppleMapsColor() ?: UIColor.blackColor()
-        gmsPolyline.map = mapView as GMSMapView
+        gmsPolyline.map = mapView
         gmsPolyline.tappable = true
         polylineMapping[gmsPolyline] = polyline
     }
 }
 
-@OptIn(ExperimentalForeignApi::class)
 internal fun MapType?.toGoogleMapsMapType() =
     when (this) {
         MapType.HYBRID -> kGMSTypeHybrid
@@ -203,8 +196,7 @@ internal fun MapType?.toGoogleMapsMapType() =
  *
  * @param isDarkModeEnabled true for dark mode, false for light mode
  */
-@OptIn(ExperimentalForeignApi::class)
-internal fun UtilsGMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
+internal fun GMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
     setOverrideUserInterfaceStyle(
         if (isDarkModeEnabled) {
             UIUserInterfaceStyle.UIUserInterfaceStyleDark
@@ -219,8 +211,7 @@ internal fun UtilsGMSMapView.switchTheme(isDarkModeEnabled: Boolean) {
  *
  * @param mapView Google Maps map view
  */
-@OptIn(ExperimentalForeignApi::class)
-internal fun MapUISettings.toGoogleMapsSettings(mapView: UtilsGMSMapView) {
+internal fun MapUISettings.toGoogleMapsSettings(mapView: GMSMapView) {
     mapView.settings().setScrollGestures(scrollEnabled)
     mapView.settings().setZoomGestures(zoomEnabled)
     mapView.settings().setTiltGestures(iosUISettings.gmsTiltGesturesEnabled)
@@ -241,7 +232,6 @@ internal fun MapUISettings.toGoogleMapsSettings(mapView: UtilsGMSMapView) {
  *
  * @return GMSMapStyle from JSON string, or null if no JSON provided
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
     this?.json?.let { GMSMapStyle.styleWithJSONString(it, error = null) }
 
@@ -251,8 +241,7 @@ internal fun GoogleMapsMapStyleOptions?.toNativeStyleOptions() =
  * @param geoJson A UTF‑8 encoded GeoJSON document.
  * @return The created GMUGeometryRenderer, or null if encoding, parsing, or casting fails.
  */
-@OptIn(ExperimentalForeignApi::class)
-public fun UtilsGMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
+public fun GMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? {
     val dataString: NSString = geoJson as NSString
     val data = dataString.dataUsingEncoding(NSUTF8StringEncoding) ?: return null
     val parser = GMUGeoJSONParser(data = data)
@@ -271,8 +260,7 @@ public fun UtilsGMSMapView.renderGeoJson(geoJson: String): GMUGeometryRenderer? 
  *
  * @param position The camera position to apply
  */
-@OptIn(ExperimentalForeignApi::class)
-public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
+public fun GMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
     val bounds = position.bounds
     if (bounds != null) {
         moveCamera(
@@ -315,8 +303,7 @@ public fun UtilsGMSMapView.setUpGMSCameraPosition(position: CameraPosition) {
  *
  * @return The current visible geographic bounds of the map.
  */
-@OptIn(ExperimentalForeignApi::class)
-internal fun UtilsGMSMapView.getVisibleMapBounds(): MapBounds =
+internal fun GMSMapView.getVisibleMapBounds(): MapBounds =
     projection().let { proj ->
         proj.visibleRegion().useContents {
             val gmsBounds =
@@ -418,7 +405,6 @@ internal fun parseHexToUIColor(hexInput: String?): UIColor? {
 }
 
 /** Data class holding initialized clustering components for Google Maps. */
-@OptIn(ExperimentalForeignApi::class)
 internal data class ClusteringComponents(
     val manager: GMUClusterManager?,
     val renderer: GMUDefaultClusterRenderer?,
@@ -433,9 +419,8 @@ internal data class ClusteringComponents(
  * @param clusteringDelegate The clustering delegate for handling clustering events
  * @return Configured clustering components
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun initializeClustering(
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     mapDelegate: MapDelegate,
     clusteringDelegate: MarkerClusterManagerDelegate?,
 ): ClusteringComponents {
@@ -464,7 +449,6 @@ internal fun initializeClustering(
  * @param markerMapping Mutable map to store marker mappings
  * @return The created clustering delegate
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun updateClusteringMarkers(
     manager: GMUClusterManager,
     renderer: GMUDefaultClusterRenderer,
@@ -497,10 +481,9 @@ internal fun updateClusteringMarkers(
  * @param markerMapping Mutable map to store marker mappings
  * @param customMarkerContent Map of custom marker content composables
  */
-@OptIn(ExperimentalForeignApi::class)
 internal fun disableClusteringAndUpdateMarkers(
     manager: GMUClusterManager?,
-    mapView: UtilsGMSMapView,
+    mapView: GMSMapView,
     mapDelegate: MapDelegate?,
     markers: List<Marker>,
     markerMapping: MutableMap<GMSMarker, Marker>,

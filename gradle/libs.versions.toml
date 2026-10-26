@@ -1,24 +1,29 @@
 [versions]
 accompanistPermissions = "0.37.3"
-agp = "8.12.0"
-android-compileSdk = "36"
+agp = "9.3.3"
+android-compileSdk = "37"
 android-minSdk = "24"
-android-targetSdk = "36"
-androidXActivity = "1.11.0"
-androidXLifecycle = "2.9.4"
-buildkonfig = "0.17.1"
-compose = "1.9.0"
+android-targetSdk = "37"
+androidXActivity = "1.13.0"
+androidXLifecycle = "2.11.0"
+buildkonfig = "0.23.0"
+compose = "1.12.2"
+composeMaterial3 = "1.9.0"
+composeMaterialIcons = "1.7.3"
 composeWebViewMultiplatformDesktop = "2.0.3"
-dokka = "2.1.0"
-googleMapsCompose = "6.12.2"
-googleMapsComposeUtils = "6.12.2"
-jetbrainsKotlinJvm = "2.3.0"
-kcef = "2024.04.20.4"
-kotlin = "2.3.0"
-kotlinXCoroutines = "1.10.2"
-kotlinXSerializationJson = "1.9.0"
-mavenPublish = "0.34.0"
-playServicesMaps = "19.2.0"
+dokka = "2.2.0"
+googleMapsCompose = "9.0.1"
+googleMapsComposeUtils = "9.0.1"
+googleMapsIos = "11.2.0"
+googleMapsIosUtils = "7.1.2"
+ios-deploymentTarget = "16.0"
+jetbrainsKotlinJvm = "2.4.21"
+kcef = "2025.03.23"
+kotlin = "2.4.21"
+kotlinXCoroutines = "1.11.0"
+kotlinXSerializationJson = "1.12.0"
+mavenPublish = "0.37.0"
+playServicesMaps = "20.1.0"
 
 [libraries]
 androidX-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidXActivity" }
@@ -28,6 +33,14 @@ google-maps-android-mapsCompose = { module = "com.google.maps.android:maps-compo
 google-maps-android-mapsComposeUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "googleMapsComposeUtils" }
 jetBrains-androidX-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidXLifecycle" }
 jetBrains-androidX-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidXLifecycle" }
+jetBrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
+jetBrains-compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose" }
+jetBrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+jetBrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "composeMaterial3" }
+jetBrains-compose-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "composeMaterialIcons" }
+jetBrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+jetBrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose" }
+jetBrains-compose-uiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose" }
 jetBrains-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 jetBrains-kotlinX-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinXCoroutines" }
 jetBrains-kotlinX-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinXSerializationJson" }
@@ -36,7 +49,7 @@ kevinnZou-composeWebViewMultiplatformDesktop = { module = "io.github.kevinnzou:c
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 jetBrains-compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 jetBrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

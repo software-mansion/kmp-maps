@@ -15,13 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.viewinterop.UIKitInteropProperties
 import androidx.compose.ui.viewinterop.UIKitView
-import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSPolygon
-import cocoapods.GoogleMaps.GMSPolyline
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView as UtilsGMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMSMarker
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
-import cocoapods.Google_Maps_iOS_Utils.GMUDefaultClusterRenderer
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.ClusterSettings
@@ -39,11 +32,17 @@ import com.swmansion.kmpmaps.core.getId
 import com.swmansion.kmpmaps.core.toUIImage
 import com.swmansion.kmpmaps.googlemaps.GoogleMapsInitializer.ensureInitialized
 import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.ExperimentalForeignApi
 import platform.UIKit.UIEdgeInsetsMake
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCircle
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapView
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMarker
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolygon
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolyline
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterManager
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUDefaultClusterRenderer
 
 /** iOS implementation of the Map composable using Google Maps. */
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+@OptIn(BetaInteropApi::class)
 @Composable
 public actual fun Map(
     modifier: Modifier,
@@ -69,7 +68,7 @@ public actual fun Map(
     customMarkerContent: Map<String, @Composable (Marker) -> Unit>,
     webCustomMarkerContent: Map<String, (Marker) -> String>,
 ) {
-    var mapView by remember { mutableStateOf<UtilsGMSMapView?>(null) }
+    var mapView by remember { mutableStateOf<GMSMapView?>(null) }
     var mapDelegate by remember { mutableStateOf<MapDelegate?>(null) }
     val geoJsonManager = remember { GeoJsonRendererManager() }
     var geoJsonExtractedMarkers by remember { mutableStateOf<List<Marker>>(emptyList()) }
@@ -218,7 +217,7 @@ public actual fun Map(
     UIKitView(
         factory = {
             ensureInitialized()
-            val utilsMapView = UtilsGMSMapView()
+            val gmsMapView = GMSMapView()
             val delegate =
                 MapDelegate(
                     clusterManager = clusterManager,
@@ -240,7 +239,7 @@ public actual fun Map(
 
             val clusteringComponents =
                 initializeClustering(
-                    mapView = utilsMapView,
+                    mapView = gmsMapView,
                     mapDelegate = delegate,
                     clusteringDelegate = clusteringDelegate,
                 )
@@ -248,12 +247,12 @@ public actual fun Map(
             clusterManager = clusteringComponents.manager
             clusterRenderer = clusteringComponents.renderer
 
-            cameraPosition?.let { position -> utilsMapView.setUpGMSCameraPosition(position) }
+            cameraPosition?.let { position -> gmsMapView.setUpGMSCameraPosition(position) }
 
-            utilsMapView.setDelegate(delegate)
+            gmsMapView.setDelegate(delegate)
 
-            mapView = utilsMapView
-            utilsMapView
+            mapView = gmsMapView
+            gmsMapView
         },
         modifier = modifier.fillMaxSize(),
         update = { _ -> },

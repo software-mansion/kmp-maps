@@ -265,21 +265,21 @@ internal fun GoogleMap.renderGeoJsonLayer(
 
     if (clusterSettings.enabled) {
         for (feature in layer.features) {
-            if (feature.geometry is GeoJsonPoint) {
-                val point = feature.geometry as GeoJsonPoint
+            if (feature.getGeometry() is GeoJsonPoint) {
+                val point = feature.getGeometry() as GeoJsonPoint
                 val marker = point.toMarker(feature)
 
                 extractedMarkers.add(marker)
 
                 val hiddenStyle = GeoJsonPointStyle()
-                hiddenStyle.isVisible = false
+                hiddenStyle.setVisible(false)
                 feature.pointStyle = hiddenStyle
             }
         }
     } else {
         layer.setOnFeatureClickListener { feature ->
-            if (feature.geometry is GeoJsonPoint) {
-                val point = feature.geometry as GeoJsonPoint
+            if (feature.getGeometry() is GeoJsonPoint) {
+                val point = feature.getGeometry() as GeoJsonPoint
                 val marker = point.toMarker(feature as GeoJsonFeature)
                 onMarkerClick?.invoke(marker)
             }
@@ -299,7 +299,7 @@ private fun GeoJsonPoint.toMarker(feature: GeoJsonFeature): Marker {
     val zIndex = feature.getProperty("zIndex")?.toFloatOrNull()
 
     return Marker(
-        coordinates = Coordinates(coordinates.latitude, coordinates.longitude),
+        coordinates = Coordinates(getCoordinates().latitude, getCoordinates().longitude),
         title = title,
         androidMarkerOptions =
             AndroidMarkerOptions(
@@ -327,47 +327,49 @@ private fun GeoJsonFeature.parseGeoJsonAnchor(): GoogleMapsAnchor? {
 }
 
 private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
-    defaultLineStringStyle.pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
-    defaultLineStringStyle.isClickable = geo.isClickable == true
-    defaultLineStringStyle.color =
-        geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
-    defaultLineStringStyle.width = geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH
-    defaultLineStringStyle.zIndex = geo.zIndex
-    defaultLineStringStyle.isVisible = geo.visible != false
-    defaultLineStringStyle.isGeodesic = geo.isGeodesic == true
+    getDefaultLineStringStyle().apply {
+        setPattern(geo.lineStringStyle?.pattern?.toGooglePattern())
+        setClickable(geo.isClickable == true)
+        color = geo.lineStringStyle?.lineColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
+        setWidth(geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH)
+        setZIndex(geo.zIndex)
+        setVisible(geo.visible != false)
+        setGeodesic(geo.isGeodesic == true)
+    }
 
-    defaultPolygonStyle.fillColor =
-        geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
-    defaultPolygonStyle.strokeColor =
-        geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt()
-    defaultPolygonStyle.strokeWidth = geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH
-    defaultPolygonStyle.zIndex = geo.zIndex
-    defaultPolygonStyle.isGeodesic = geo.isGeodesic == true
-    defaultPolygonStyle.isClickable = geo.isClickable == true
-    defaultPolygonStyle.isVisible = geo.visible != false
+    getDefaultPolygonStyle().apply {
+        fillColor = geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
+        setStrokeColor(geo.polygonStyle?.strokeColor?.toArgb() ?: DEFAULT_STROKE_COLOR.toColorInt())
+        setStrokeWidth(geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH)
+        setZIndex(geo.zIndex)
+        setGeodesic(geo.isGeodesic == true)
+        setClickable(geo.isClickable == true)
+        setVisible(geo.visible != false)
+    }
 
-    defaultPointStyle.alpha = geo.pointStyle?.alpha ?: 1f
-    defaultPointStyle.isDraggable = geo.pointStyle?.isDraggable ?: true
-    defaultPointStyle.isFlat = geo.pointStyle?.isFlat ?: false
-    defaultPointStyle.rotation = geo.pointStyle?.rotation ?: 0f
-    defaultPointStyle.title = geo.pointStyle?.pointTitle
-    defaultPointStyle.snippet = geo.pointStyle?.snippet
-    defaultPointStyle.isVisible = geo.visible != false
-    defaultPointStyle.zIndex = geo.zIndex
-    defaultPointStyle.setInfoWindowAnchor(
-        geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
-        geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
-    )
-    defaultPointStyle.setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
+    getDefaultPointStyle().apply {
+        setAlpha(geo.pointStyle?.alpha ?: 1f)
+        setDraggable(geo.pointStyle?.isDraggable ?: true)
+        setFlat(geo.pointStyle?.isFlat ?: false)
+        setRotation(geo.pointStyle?.rotation ?: 0f)
+        setTitle(geo.pointStyle?.pointTitle)
+        setSnippet(geo.pointStyle?.snippet)
+        setVisible(geo.visible != false)
+        setZIndex(geo.zIndex)
+        setInfoWindowAnchor(
+            geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
+            geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
+        )
+        setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
+    }
 
     features.forEach { feature ->
         val jsonStroke = feature.getProperty("stroke")
         val jsonFill = feature.getProperty("fill")
         val jsonFillOpacity = feature.getProperty("fill-opacity")
         val jsonWidth = feature.getProperty("stroke-width")?.toFloatOrNull()
-        val width = jsonWidth ?: DEFAULT_STROKE_WIDTH
 
-        when (feature.geometry) {
+        when (feature.getGeometry()) {
             is GeoJsonLineString,
             is GeoJsonMultiLineString -> {
                 val strokeColor =
@@ -375,17 +377,16 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         ?: geo.lineStringStyle?.lineColor?.toArgb()
                         ?: DEFAULT_STROKE_COLOR.toColorInt()
 
-                feature.setLineStringStyle(
+                feature.lineStringStyle =
                     GeoJsonLineStringStyle().apply {
                         color = strokeColor
-                        this.width = width
-                        isClickable = geo.isClickable == true
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
-                        isGeodesic = geo.isGeodesic == true
-                        pattern = geo.lineStringStyle?.pattern?.toGooglePattern()
+                        setWidth(jsonWidth ?: geo.lineStringStyle?.lineWidth ?: DEFAULT_STROKE_WIDTH)
+                        setClickable(geo.isClickable == true)
+                        setVisible(geo.visible != false)
+                        setZIndex(geo.zIndex)
+                        setGeodesic(geo.isGeodesic == true)
+                        setPattern(geo.lineStringStyle?.pattern?.toGooglePattern())
                     }
-                )
             }
             is GeoJsonPolygon,
             is GeoJsonMultiPolygon -> {
@@ -400,17 +401,18 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         if (opacity != null) applyAlpha(c, opacity) else c
                     } ?: geo.polygonStyle?.fillColor?.toArgb() ?: DEFAULT_FILL_COLOR.toColorInt()
 
-                feature.setPolygonStyle(
+                feature.polygonStyle =
                     GeoJsonPolygonStyle().apply {
-                        this.strokeColor = strokeColor
-                        this.strokeWidth = strokeWidth
+                        setStrokeColor(strokeColor)
+                        setStrokeWidth(
+                            jsonWidth ?: geo.polygonStyle?.strokeWidth ?: DEFAULT_STROKE_WIDTH
+                        )
                         this.fillColor = fillColor
-                        isClickable = geo.isClickable == true
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
-                        isGeodesic = geo.isGeodesic == true
+                        setClickable(geo.isClickable == true)
+                        setVisible(geo.visible != false)
+                        setZIndex(geo.zIndex)
+                        setGeodesic(geo.isGeodesic == true)
                     }
-                )
             }
             is GeoJsonPoint -> {
                 val titleFromJson =
@@ -422,23 +424,22 @@ private fun GoogleGeoJsonLayer.applyStylesFrom(geo: GeoJsonLayer) {
                         ?: feature.getProperty("description")
                         ?: geo.pointStyle?.snippet
 
-                feature.setPointStyle(
+                feature.pointStyle =
                     GeoJsonPointStyle().apply {
-                        alpha = geo.pointStyle?.alpha ?: 1f
-                        isDraggable = geo.pointStyle?.isDraggable ?: true
-                        isFlat = geo.pointStyle?.isFlat ?: false
-                        rotation = geo.pointStyle?.rotation ?: 0f
-                        title = titleFromJson
-                        snippet = snippetFromJson
-                        isVisible = geo.visible != false
-                        zIndex = geo.zIndex
+                        setAlpha(geo.pointStyle?.alpha ?: 1f)
+                        setDraggable(geo.pointStyle?.isDraggable ?: true)
+                        setFlat(geo.pointStyle?.isFlat ?: false)
+                        setRotation(geo.pointStyle?.rotation ?: 0f)
+                        setTitle(titleFromJson)
+                        setSnippet(snippetFromJson)
+                        setVisible(geo.visible != false)
+                        setZIndex(geo.zIndex)
                         setInfoWindowAnchor(
                             geo.pointStyle?.infoWindowAnchorU ?: 0.5f,
                             geo.pointStyle?.infoWindowAnchorV ?: 0.5f,
                         )
                         setAnchor(geo.pointStyle?.anchorU ?: 0.5f, geo.pointStyle?.anchorV ?: 0.5f)
                     }
-                )
             }
             else -> Unit
         }

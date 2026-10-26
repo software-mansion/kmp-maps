@@ -1,65 +1,69 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.jetBrains.compose)
     alias(libs.plugins.jetBrains.dokka)
     alias(libs.plugins.jetBrains.kotlin.multiplatform)
     alias(libs.plugins.jetBrains.kotlin.plugin.compose)
     alias(libs.plugins.vanniktech.maven.publish)
-    kotlin("native.cocoapods")
 }
 
 kotlin {
     explicitApi()
     jvmToolchain(17)
-    androidTarget { publishLibraryVariants("release") }
-
-    listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "google-maps"
-            isStatic = true
-        }
+    android {
+        namespace = "com.swmansion.kmpmaps.googlemaps"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
     }
+
+    iosArm64()
+    iosSimulatorArm64()
+    targets
+        .withType<KotlinNativeTarget>()
+        .matching { it.konanTarget.family.isAppleFamily }
+        .configureEach {
+            binaries {
+                framework {
+                    baseName = "google-maps"
+                    isStatic = true
+                }
+            }
+        }
 
     jvm()
 
-    cocoapods {
-        summary = "Universal map component for Compose Multiplatform."
-        homepage = "https://github.com/software-mansion/kmp-maps"
-        ios.deploymentTarget = "16.0"
-        framework {
-            baseName = "google-maps"
-            isStatic = true
-        }
-        pod("GoogleMaps") { version = "10.4.0" }
-        pod("Google-Maps-iOS-Utils") {
-            version = "6.1.3"
-            moduleName = "GoogleMapsUtils"
-        }
+    compilerOptions { optIn.add("kotlinx.cinterop.ExperimentalForeignApi") }
+
+    swiftPMDependencies {
+        iosMinimumDeploymentTarget = libs.versions.ios.deploymentTarget.get()
+        swiftPackage(
+            url = url("https://github.com/googlemaps/ios-maps-sdk.git"),
+            version = exact(libs.versions.googleMapsIos.get()),
+            products = listOf(product("GoogleMaps")),
+        )
+        swiftPackage(
+            url = url("https://github.com/googlemaps/google-maps-ios-utils.git"),
+            version = from(libs.versions.googleMapsIosUtils.get()),
+            products = listOf(product("GoogleMapsUtils")),
+        )
     }
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.components.resources)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.runtime)
-            implementation(compose.ui)
+            implementation(libs.jetBrains.compose.components.resources)
+            implementation(libs.jetBrains.compose.foundation)
+            implementation(libs.jetBrains.compose.material3)
+            implementation(libs.jetBrains.compose.runtime)
+            implementation(libs.jetBrains.compose.ui)
             implementation(libs.jetBrains.androidX.lifecycle.runtimeCompose)
             implementation(libs.jetBrains.androidX.lifecycle.viewmodelCompose)
             api(project(":kmp-maps:core"))
         }
-    }
-}
-
-android {
-    namespace = "com.swmansion.kmpmaps.googlemaps"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig { minSdk = libs.versions.android.minSdk.get().toInt() }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

@@ -3,15 +3,6 @@ package com.swmansion.kmpmaps.googlemaps
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import cocoapods.GoogleMaps.GMSCircle
-import cocoapods.GoogleMaps.GMSPolygon
-import cocoapods.GoogleMaps.GMSPolyline
-import cocoapods.Google_Maps_iOS_Utils.GMSCameraPosition
-import cocoapods.Google_Maps_iOS_Utils.GMSMapView
-import cocoapods.Google_Maps_iOS_Utils.GMSMapViewDelegateProtocol
-import cocoapods.Google_Maps_iOS_Utils.GMSMarker
-import cocoapods.Google_Maps_iOS_Utils.GMSOverlay
-import cocoapods.Google_Maps_iOS_Utils.GMUClusterManager
 import com.swmansion.kmpmaps.core.CameraPosition
 import com.swmansion.kmpmaps.core.Circle
 import com.swmansion.kmpmaps.core.Coordinates
@@ -21,7 +12,6 @@ import com.swmansion.kmpmaps.core.Polygon
 import com.swmansion.kmpmaps.core.Polyline
 import com.swmansion.kmpmaps.core.getId
 import kotlinx.cinterop.CValue
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCSignatureOverride
 import kotlinx.cinterop.useContents
 import platform.CoreLocation.CLLocationCoordinate2D
@@ -29,9 +19,17 @@ import platform.UIKit.UIImage
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCameraPosition
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSCircle
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapView
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMapViewDelegateProtocol
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSMarker
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSOverlay
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolygon
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMSPolyline
+import swiftPMImport.com.swmansion.kmpmaps.kmp.maps.google.maps.GMUClusterManager
 
 /** iOS map delegate for handling Google Maps interactions and rendering. */
-@OptIn(ExperimentalForeignApi::class)
 internal class MapDelegate(
     var clusterManager: GMUClusterManager? = null,
     private var imageCache: MutableMap<String, UIImage> = mutableMapOf(),
